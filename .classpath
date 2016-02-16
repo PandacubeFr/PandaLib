@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="resources"/>
+	<classpathentry kind="lib" path="lib/BungeeCord-1071.jar" sourcepath="lib/BungeeCord-1071.src.zip"/>
+	<classpathentry kind="lib" path="lib/BungeePerms-3.0-alpha-1_modif.jar"/>
+	<classpathentry kind="lib" path="lib/spigot-1.8.8.jar" sourcepath="lib/spigot-1.8.8_source.zip"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
