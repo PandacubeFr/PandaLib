@@ -23,6 +23,8 @@ public class PlayerElement extends SQLElement {
 	private Long banTimeout = null;
 	private Long muteTimeout = null;
 	private boolean isWhitelisted = false;
+	private long bambou = 0;
+	private String grade = "default";
 
 	public PlayerElement(UUID pId, String dispName, long firstTimeIG, long lastWebAct, String onlineInServer) {
 		super("pandacube_player");
@@ -33,7 +35,7 @@ public class PlayerElement extends SQLElement {
 		setFirstTimeInGame(firstTimeIG);
 	}
 	
-	protected PlayerElement(int id, String pId, String dispName, long firstTimeIG, long lastWebAct, String onlineInServer) {
+	PlayerElement(int id, String pId, String dispName, long firstTimeIG, long lastWebAct, String onlineInServer) {
 		super("pandacube_player", id);
 		setPlayerId(UUID.fromString(pId));
 		setOnlineInServer(onlineInServer);
@@ -62,7 +64,9 @@ public class PlayerElement extends SQLElement {
 				Integer.toString(lastYearCelebratedBirthday),
 				(banTimeout!=null)?banTimeout.toString():null,
 				(muteTimeout!=null)?muteTimeout.toString():null,
-				isWhitelisted?"1":"0"
+				isWhitelisted?"1":"0",
+				Long.toString(bambou),
+				grade
 		};
 	}
 
@@ -86,7 +90,9 @@ public class PlayerElement extends SQLElement {
 				"lastYearCelebratedBirthday",
 				"banTimeout",
 				"muteTimeout",
-				"isWhitelisted"
+				"isWhitelisted",
+				"bambou",
+				"grade"
 		};
 	}
 
@@ -108,6 +114,8 @@ public class PlayerElement extends SQLElement {
 	public Long getBanTimeout() { return banTimeout; }
 	public Long getMuteTimeout() { return muteTimeout; }
 	public boolean isWhitelisted() { return isWhitelisted; }
+	public long getBambou() { return bambou; }
+	public String getGrade() { return grade; }
 	
 	
 
@@ -159,5 +167,13 @@ public class PlayerElement extends SQLElement {
 	public void setMuteTimeout(Long muteT) { muteTimeout = muteT; }
 	
 	public void setWhitelisted(boolean w) { isWhitelisted = w; }
+	
+	public void setBambou(long b) { bambou = b; }
+	
+	public void setGrade(String g) {
+		if (g == null || g.equals(""))
+			g = "default";
+		grade = g;
+	}
 
 }

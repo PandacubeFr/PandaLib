@@ -30,7 +30,9 @@ public class PlayerTable extends SQLTable<PlayerElement> {
 				+ "lastYearCelebratedBirthday INT NOT NULL DEFAULT 0,"
 				+ "banTimeout BIGINT NULL,"
 				+ "muteTimeout BIGINT NULL,"
-				+ "isWhitelisted TINYINT NOT NULL DEFAULT 0";
+				+ "isWhitelisted TINYINT NOT NULL DEFAULT 0,"
+				+ "bambou BIGINT NOT NULL DEFAULT 0,"
+				+ "grade VARCHAR(36) NOT NULL DEFAULT 'default'";
 	}
 
 	@Override
@@ -55,6 +57,8 @@ public class PlayerTable extends SQLTable<PlayerElement> {
 		el.setVanish(sqlResult.getBoolean("isVanish"));
 		el.setBirthday(sqlResult.getDate("birthday"));
 		el.setLastYearCelebratedBirthday(sqlResult.getInt("lastYearCelebratedBirthday"));
+		el.setBambou(sqlResult.getLong("bambou"));
+		el.setGrade(sqlResult.getString("grade"));
 		
 		long longVal;
 
