@@ -7,13 +7,13 @@ public class TimeUtil {
 		long msec = msec_time;
 		
 		j = (int) (msec / (1000 * 60 * 60 * 24));
-		msec -= (1000 * 60 * 60 * 24) * j;
+		msec -= (long)(1000 * 60 * 60 * 24) * j;
 		h = (int) (msec / (1000 * 60 * 60));
-		msec -= (1000 * 60 * 60) * h;
+		msec -= (long)(1000 * 60 * 60) * h;
 		m = (int) (msec / (1000 * 60));
-		msec -= (1000 * 60) * m;
+		msec -= (long)(1000 * 60) * m;
 		s = (int) (msec / 1000);
-		msec -= 1000 * s;
+		msec -= (long)1000 * s;
 		
 		String result = "";
 		if (j>0) result = result.concat(j+"j ");
@@ -36,4 +36,6 @@ public class TimeUtil {
 	{
 		return durationToString(msec_time, false);
 	}
+	
+	
 }
