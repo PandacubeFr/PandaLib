@@ -6,6 +6,7 @@ public class OnlineShopHistoryElement extends SQLElement {
 	
 	
 	private long time;// timestamp en millisecondes
+	private String transactionId;
 	private SourceType sourceType;// enum(REAL_MONEY, BAMBOU)
 	private String sourcePlayerId;// l'id du joueur duquel vient l'élément source
 	private double sourceQuantity;// la quantité d'entrée (en euro, ou bambou)
@@ -15,11 +16,10 @@ public class OnlineShopHistoryElement extends SQLElement {
 	private double destQuantity;// la quantité de sortie (bambou, ou 1 pour l'achat d'un grade)
 	private String destName;// le nom désignant la destination ("bambou", le nom du grade)
 
-	public OnlineShopHistoryElement(long t, SourceType st, UUID sPID, double sQtt, String sN, DestType dt, UUID dPID, double dQtt, String dN) {
+	public OnlineShopHistoryElement(long t, SourceType st, double sQtt, String sN, DestType dt, UUID dPID, double dQtt, String dN) {
 		super("pandacube_onlineshop_history");
 		setTime(t);
 		setSourceType(st);
-		setSourcePlayerId(sPID);
 		setSourceQuantity(sQtt);
 		setSourceName(sN);
 		setDestType(dt);
@@ -28,11 +28,10 @@ public class OnlineShopHistoryElement extends SQLElement {
 		setDestName(dN);
 	}
 	
-	OnlineShopHistoryElement(int id, long t, String st, String sPID, double sQtt, String sN, String dt, String dPID, double dQtt, String dN) {
+	OnlineShopHistoryElement(int id, long t, String st, double sQtt, String sN, String dt, String dPID, double dQtt, String dN) {
 		super("pandacube_onlineshop_history", id);
 		setTime(t);
 		setSourceType(SourceType.valueOf(st));
-		sourcePlayerId = sPID;
 		setSourceQuantity(sQtt);
 		setSourceName(sN);
 		setDestType(DestType.valueOf(dt));
@@ -45,6 +44,7 @@ public class OnlineShopHistoryElement extends SQLElement {
 	protected String[] getValues() {
 		return new String[] {
 				Long.toString(time),
+				transactionId,
 				sourceType.name(),
 				sourcePlayerId,
 				Double.toString(sourceQuantity),
@@ -61,6 +61,7 @@ public class OnlineShopHistoryElement extends SQLElement {
 	protected String[] getFieldsName() {
 		return new String[] {
 				"time",
+				"transactionId",
 				"sourceType",
 				"sourcePlayerId",
 				"sourceQuantity",
@@ -74,6 +75,7 @@ public class OnlineShopHistoryElement extends SQLElement {
 	
 	
 	public long getTime() { return time; }
+	public String getTransactionId() { return transactionId; }
 	public SourceType getSourceType() { return sourceType; }
 	public UUID getSourcePlayerId() { return UUID.fromString(sourcePlayerId); }
 	public double getSourceQuantity() { return sourceQuantity; }
@@ -90,14 +92,12 @@ public class OnlineShopHistoryElement extends SQLElement {
 	
 
 	public void setTime(long t) { time = t; }
+	public void setTransactionId(String t) { transactionId = t; }
 	public void setSourceType(SourceType st) {
 		if (st == null) throw new IllegalArgumentException("sourceType can't be null");
 		sourceType = st;
 	}
-	public void setSourcePlayerId(UUID pId) {
-		if (pId == null) throw new IllegalArgumentException("sourcePlayerId can't be null");
-		sourcePlayerId = pId.toString();
-	}
+	public void setSourcePlayerId(UUID pId) { sourcePlayerId = pId.toString(); }
 	public void setSourceQuantity(double qtt) { sourceQuantity = qtt; }
 	public void setSourceName(String name) {
 		if (name == null) throw new IllegalArgumentException("sourceName can't be null");
