@@ -6,7 +6,8 @@ public class SpigotMain extends JavaPlugin {
 
 	@Override
 	public void onLoad() {
-		
+		PandacubeUtil.setServerLogger(getServer().getLogger());
+		PandacubeUtil.setPluginLogger(getLogger());
 	}
-
+	
 }
