@@ -63,9 +63,7 @@ public class TextProgressBar {
 	
 	public static String progressBar(double value, ChatColor color, double max, int nbCar)
 	{
-		double[] d = new double[1]; 		d[0] = value;
-		ChatColor[] c = new ChatColor[1]; 	c[0] = color;
-		return progressBar(d, c, max, nbCar);
+		return progressBar(new double[] {value}, new ChatColor[] {color}, max, nbCar);
 	}
 	
 	
