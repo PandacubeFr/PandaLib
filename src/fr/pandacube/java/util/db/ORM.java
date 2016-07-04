@@ -22,8 +22,7 @@ import java.util.List;
  */
 public final class ORM {
 	
-	@SuppressWarnings("rawtypes")
-	private static List<SQLTable> tables = new ArrayList<SQLTable>();
+	private static List<SQLTable<?>> tables = new ArrayList<SQLTable<?>>();
 	
 	/* package */ static DBConnection connection;
 
@@ -39,17 +38,20 @@ public final class ORM {
 			tables.add(new LoginHistoryTable());
 			
 			tables.add(new ModoHistoryTable());
-			
-			tables.add(new StaffTicketTable());
 
-			tables.add(new MPMessageTable());
 			tables.add(new MPGroupTable());
 			tables.add(new MPGroupUserTable());
+			tables.add(new MPMessageTable());
+			
+			tables.add(new OnlineShopHistoryTable());
+			
 			tables.add(new PlayerTable());
 			
 			tables.add(new PlayerIgnoreTable());
 			
 			tables.add(new ShopStockTable());
+			
+			tables.add(new StaffTicketTable());
 			
 			
 		} catch (SQLException e) {
@@ -61,10 +63,9 @@ public final class ORM {
 	
 	
 	
-	@SuppressWarnings("rawtypes")
-	public synchronized static <T extends SQLTable> T getTable(Class<T> c) {
+	public synchronized static <T extends SQLTable<?>> T getTable(Class<T> c) {
 		if (c == null) return null;
-		for (SQLTable table : tables) {
+		for (SQLTable<?> table : tables) {
 			
 			if (c.isAssignableFrom(table.getClass())) {
 				return c.cast(table);
@@ -81,6 +82,14 @@ public final class ORM {
 
 	
 	private ORM() { } // rend la classe non instanciable
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 }

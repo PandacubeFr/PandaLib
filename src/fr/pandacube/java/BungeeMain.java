@@ -6,7 +6,7 @@ public class BungeeMain extends Plugin {
 
 	@Override
 	public void onLoad() {
-		PandacubeUtil.setServerLogger(getProxy().getLogger());
+		PandacubeUtil.setMasterLogger(getProxy().getLogger());
 		PandacubeUtil.setPluginLogger(getLogger());
 	}
 	

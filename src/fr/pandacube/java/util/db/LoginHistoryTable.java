@@ -16,9 +16,11 @@ public class LoginHistoryTable extends SQLTable<LoginHistoryElement> {
 		return "id INT AUTO_INCREMENT PRIMARY KEY,"
 				+ "time BIGINT NOT NULL,"
 				+ "playerId CHAR(36) NOT NULL,"
-				+ "ip VARCHAR(128) NOT NULL,"
+				+ "ip VARCHAR(128) NULL,"
 				+ "actionType ENUM('LOGIN', 'LOGOUT') NOT NULL,"
-				+ "nbOnline INT NOT NULL";
+				+ "nbOnline INT NOT NULL,"
+				+ "playerName VARCHAR(16) NULL,"
+				+ "minecraftVersion INT NOT NULL DEFAULT 0";
 	}
 
 	@Override
@@ -30,6 +32,8 @@ public class LoginHistoryTable extends SQLTable<LoginHistoryElement> {
 				sqlResult.getString("ip"),
 				ActionType.valueOf(sqlResult.getString("actionType")),
 				sqlResult.getInt("nbOnline"));
+		el.setPlayerName(sqlResult.getString("playerName"));
+		el.setMinecraftVersion(sqlResult.getInt("minecraftVersion"));
 		return el;
 	}
 

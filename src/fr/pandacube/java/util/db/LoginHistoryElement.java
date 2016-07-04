@@ -8,27 +8,28 @@ public class LoginHistoryElement extends SQLElement {
 	
 	private long time;
 	private String playerId;
-	private String ip;
+	private String ip = null;
 	private ActionType actionType;
 	private int nbOnline;
+	private String playerName;
+	private int minecraftVersion = 0;
 	
 	
-	public LoginHistoryElement(long t, UUID pId, InetAddress IP, ActionType action, int nbO) {
+	public LoginHistoryElement(long t, UUID pId, ActionType action, int nbO) {
 		super("pandacube_login_history");
 		setTime(t);
 		setPlayerId(pId);
-		setIp(IP);
 		setActionType(action);
 		setNbOnline(nbO);
 	}
 	
-	LoginHistoryElement(int id, long t, String pId, String IP, ActionType action, int nbO) {
+	LoginHistoryElement(int id, long t, String pId, String ip, ActionType action, int nbO) {
 		super("pandacube_login_history", id);
-		if (IP == null || pId == null)
-			throw new IllegalArgumentException("pId et IP ne peuvent être null");
+		if (pId == null)
+			throw new IllegalArgumentException("pId ne peuvent être null");
 		setTime(t);
 		playerId = pId;
-		ip = IP;
+		this.ip = ip;
 		setActionType(action);
 		setNbOnline(nbO);
 	}
@@ -40,7 +41,9 @@ public class LoginHistoryElement extends SQLElement {
 				playerId,
 				ip,
 				actionType.toString(),
-				Integer.toString(nbOnline)
+				Integer.toString(nbOnline),
+				playerName,
+				Integer.toString(minecraftVersion)
 		};
 	}
 
@@ -51,7 +54,9 @@ public class LoginHistoryElement extends SQLElement {
 				"playerId",
 				"ip",
 				"actionType",
-				"nbOnline"
+				"nbOnline",
+				"playerName",
+				"minecraftVersion"
 		};
 	}
 	
@@ -82,8 +87,9 @@ public class LoginHistoryElement extends SQLElement {
 
 	public void setIp(InetAddress addr) {
 		if (addr == null)
-			throw new IllegalArgumentException("addr ne peut être null");
-		ip = addr.getHostAddress();
+			ip = null;
+		else
+			ip = addr.getHostAddress();
 	}
 
 
@@ -105,6 +111,31 @@ public class LoginHistoryElement extends SQLElement {
 	public void setNbOnline(int nbOnline) {
 		this.nbOnline = nbOnline;
 	}
+	
+	public String getPlayerName() {
+		return playerName;
+	}
+	
+	public void setPlayerName(String pn) {
+		playerName = pn;
+	}
+	
+	public int getMinecraftVersion() {
+		return minecraftVersion;
+	}
+	
+	public void setMinecraftVersion(int m) {
+		minecraftVersion = m;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 
 	public enum ActionType {
