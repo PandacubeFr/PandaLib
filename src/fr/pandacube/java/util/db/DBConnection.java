@@ -5,14 +5,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
 public class DBConnection {
-	JavaPlugin plugin;
 	Connection conn;
-	String url;
-	String login;
-	String pass;
+	private String url;
+	private String login;
+	private String pass;
 	
 	public DBConnection(String host, int port, String dbname, String l, String p) throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.jdbc.Driver");

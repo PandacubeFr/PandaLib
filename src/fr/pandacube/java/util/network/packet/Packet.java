@@ -61,6 +61,7 @@ public abstract class Packet implements ByteSerializable {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private static <T extends Packet> void addPacket(Class<T> packetClass) {
 		try {
 			Packet p = (Packet)packetClass.newInstance();
