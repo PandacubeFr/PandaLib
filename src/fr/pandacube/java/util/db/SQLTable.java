@@ -6,6 +6,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.pandacube.java.util.db2.sql_tools.DBConnection;
+
 public abstract class SQLTable<T extends SQLElement> {
 
 	DBConnection db = ORM.connection;
@@ -24,7 +26,7 @@ public abstract class SQLTable<T extends SQLElement> {
 
 
 	private void createTable() throws SQLException {
-		Statement stmt = db.getConnection().createStatement();
+		Statement stmt = db.getNativeConnection().createStatement();
 		String sql = "CREATE TABLE IF NOT EXISTS "+tableName+" " +
             "("+createTableParameters()+")"; 
 		try {
@@ -39,7 +41,7 @@ public abstract class SQLTable<T extends SQLElement> {
 		ResultSet set = null;
 		boolean exist = false;
 		try {
-			set = db.getConnection().getMetaData().getTables(null, null, tableName, null);
+			set = db.getNativeConnection().getMetaData().getTables(null, null, tableName, null);
 			exist = set.next();
 		} finally {
 			if (set != null)
@@ -77,7 +79,7 @@ public abstract class SQLTable<T extends SQLElement> {
 	
 	public T get(int id) throws SQLException {
 		T elementInstance = null;
-		Statement stmt = db.getConnection().createStatement();
+		Statement stmt = db.getNativeConnection().createStatement();
 		try {
 			String sql = "SELECT * FROM "+tableName+" WHERE id = "+id+";";
 	
@@ -109,7 +111,7 @@ public abstract class SQLTable<T extends SQLElement> {
 	
 	
 	public List<T> getAll(String where, String orderBy, Integer limit, Integer offset) throws SQLException {
-		Statement stmt = db.getConnection().createStatement();
+		Statement stmt = db.getNativeConnection().createStatement();
 		String sql = "SELECT * FROM "+tableName;
 
 		if (where != null)

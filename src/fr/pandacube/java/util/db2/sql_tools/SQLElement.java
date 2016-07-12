@@ -16,7 +16,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 
-import fr.pandacube.java.PandacubeUtil;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+import fr.pandacube.java.util.Log;
+import fr.pandacube.java.util.db2.sql_tools.SQLWhereComp.SQLComparator;
 
 public abstract class SQLElement {
 	/** cache for fields for each subclass of SQLElement */
@@ -109,7 +112,7 @@ public abstract class SQLElement {
 				
 				listToFill.addField((SQLField<?>)val);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
-				PandacubeUtil.getMasterLogger().log(Level.SEVERE, "Can't get value of static field "+field.toString(), e);
+				Log.getLogger().log(Level.SEVERE, "Can't get value of static field "+field.toString(), e);
 			}
 		}
 		
@@ -193,6 +196,14 @@ public abstract class SQLElement {
 	}
 	
 	
+	public <T, E extends SQLElement> E getForeign(SQLFKField<T, E> field) throws ORMException {
+		T fkValue = get(field);
+		if (fkValue == null) return null;
+		return ORM.getFirst(field.getForeignElementClass(),
+				new SQLWhereComp(field.getForeignField(), SQLComparator.EQ, fkValue), null);
+	}
+	
+	
 	
 	public boolean isValidForSave() {
 		return values.keySet().containsAll(fields.keySet());
@@ -217,105 +228,109 @@ public abstract class SQLElement {
 	
 	
 	
-	public void save() throws SQLException {
+	public void save() throws ORMException {
 		if (!isValidForSave())
 			throw new IllegalStateException("this instance of " + getClass().getName() + " has at least one undefined value and can't be saved.");
 		
 		ORM.initTable(getClass());
 		
-		Connection conn = db.getNativeConnection();
-
-		
-		if (stored)
-		{	// mettre à jour les valeurs dans la base
+		try {
 			
-			// restaurer l'ID au cas il aurait été changé à la main dans values
-			@SuppressWarnings("unchecked")
-			SQLField<Integer> idField = (SQLField<Integer>) fields.get("id");
-			values.put(idField, id);
-			modifiedSinceLastSave.remove("id");
-			Map<SQLField<?>, Object> modifiedValues = getOnlyModifiedValues();
+			Connection conn = db.getNativeConnection();
+	
 			
-			
-			
-			String sql = "";
-			List<Object> psValues = new ArrayList<>();
-			
-			for(Map.Entry<SQLField<?>, Object> entry : modifiedValues.entrySet()) {
-				sql += entry.getKey() + " = ? ,";
-				psValues.add(entry.getValue());
-			}
-			
-			if (sql.length() > 0)
-				sql = sql.substring(0, sql.length()-1);
-			
-			PreparedStatement ps = conn.prepareStatement("UPDATE "+tableName+" SET "+sql+" WHERE id="+id);
-			
-			try {
-
-				int i = 1;
-				for (Object val : psValues) {
-					ps.setObject(i++, val);
+			if (stored)
+			{	// mettre à jour les valeurs dans la base
+				
+				// restaurer l'ID au cas il aurait été changé à la main dans values
+				@SuppressWarnings("unchecked")
+				SQLField<Integer> idField = (SQLField<Integer>) fields.get("id");
+				values.put(idField, id);
+				modifiedSinceLastSave.remove("id");
+				Map<SQLField<?>, Object> modifiedValues = getOnlyModifiedValues();
+				
+				
+				
+				String sql = "";
+				List<Object> psValues = new ArrayList<>();
+				
+				for(Map.Entry<SQLField<?>, Object> entry : modifiedValues.entrySet()) {
+					sql += entry.getKey() + " = ? ,";
+					psValues.add(entry.getValue());
 				}
 				
-				ps.executeUpdate();
-			} finally {
-				ps.close();
-			}
-		}
-		else
-		{	// ajouter dans la base
-
-			// restaurer l'ID au cas il aurait été changé à la main dans values
-			values.put(fields.get("id"), null);
-			
-			
-			String concat_vals = "";
-			String concat_fields = "";
-			List<Object> psValues = new ArrayList<>();
-			
-			boolean first = true;
-			for(Map.Entry<SQLField<?>, Object> entry : values.entrySet()) {
-				if (!first) {
-					concat_vals += ",";
-					concat_fields += ",";
-				}
-				first = false;
-				concat_vals += " ? ";
-				concat_fields += entry.getKey();
-				psValues.add(entry.getValue());
-			}
-			
-			
-			PreparedStatement ps = conn.prepareStatement("INSERT INTO "+tableName+"  ("+concat_fields+") VALUES ("+concat_vals+")", Statement.RETURN_GENERATED_KEYS);
-			try {
-
-				int i = 1;
-				for (Object val : psValues) {
-					ps.setObject(i++, val);
-				}
+				if (sql.length() > 0)
+					sql = sql.substring(0, sql.length()-1);
 				
-				ps.executeUpdate();
+				PreparedStatement ps = conn.prepareStatement("UPDATE "+tableName+" SET "+sql+" WHERE id="+id);
 				
-				ResultSet rs = ps.getGeneratedKeys();
 				try {
-	                if(rs.next())
-	                {
-	                    id = rs.getInt(1);
-	                }
-	                
-					stored = true;
+	
+					int i = 1;
+					for (Object val : psValues) {
+						ps.setObject(i++, val);
+					}
+					
+					ps.executeUpdate();
 				} finally {
-					rs.close();
+					ps.close();
 				}
-			} finally {
-				ps.close();
+			}
+			else
+			{	// ajouter dans la base
+	
+				// restaurer l'ID au cas il aurait été changé à la main dans values
+				values.put(fields.get("id"), null);
+				
+				
+				String concat_vals = "";
+				String concat_fields = "";
+				List<Object> psValues = new ArrayList<>();
+				
+				boolean first = true;
+				for(Map.Entry<SQLField<?>, Object> entry : values.entrySet()) {
+					if (!first) {
+						concat_vals += ",";
+						concat_fields += ",";
+					}
+					first = false;
+					concat_vals += " ? ";
+					concat_fields += entry.getKey();
+					psValues.add(entry.getValue());
+				}
+				
+				
+				PreparedStatement ps = conn.prepareStatement("INSERT INTO "+tableName+"  ("+concat_fields+") VALUES ("+concat_vals+")", Statement.RETURN_GENERATED_KEYS);
+				try {
+	
+					int i = 1;
+					for (Object val : psValues) {
+						ps.setObject(i++, val);
+					}
+					
+					ps.executeUpdate();
+					
+					ResultSet rs = ps.getGeneratedKeys();
+					try {
+		                if(rs.next())
+		                {
+		                    id = rs.getInt(1);
+		                }
+		                
+						stored = true;
+					} finally {
+						rs.close();
+					}
+				} finally {
+					ps.close();
+				}
+				
 			}
 			
+			modifiedSinceLastSave.clear();
+		} catch(SQLException e) {
+			throw new ORMException("Error while saving data in table "+tableName(), e);
 		}
-		
-		modifiedSinceLastSave.clear();
-		
 	}
 	
 	
@@ -334,7 +349,7 @@ public abstract class SQLElement {
 	
 	
 	
-	public void delete() {
+	public void delete() throws ORMException {
 		
 		try {
 			if (stored)
@@ -348,7 +363,7 @@ public abstract class SQLElement {
 				}
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new ORMException(e);
 		}
 		
 	}
@@ -383,6 +398,25 @@ public abstract class SQLElement {
 			put(f.name, f);
 		}
 		
+	}
+	
+	
+	
+	
+	@Override
+	public String toString() {
+		ToStringBuilder b = new ToStringBuilder(this);
+		
+		for (SQLField<?> f : fields.values()) {
+			try {
+				b.append(f.name, get(f));
+			} catch(IllegalArgumentException e) {
+				b.append(f.name, "(Must be defined before saving)");
+			}
+			
+		}
+		
+		return b.toString();
 	}
 	
 	

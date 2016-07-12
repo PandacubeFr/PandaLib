@@ -36,7 +36,7 @@ public class SQLWhereComp extends SQLWhere {
 	}
 	
 	
-	enum SQLComparator {
+	public enum SQLComparator {
 		/** Equivalent to SQL "<code>=</code>" */
 		EQ("="),
 		/** Equivalent to SQL "<code>></code>" */

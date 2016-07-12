@@ -13,9 +13,8 @@ public class SQLWhereLike extends SQLWhere {
 	
 	/**
 	 * Compare a field with a value
-	 * @param l the field at left of the comparison operator. Can't be null
-	 * @param c the comparison operator, can't be null
-	 * @param r the value at right of the comparison operator. Can't be null
+	 * @param f the field at left of the LIKE keyword. Can't be null
+	 * @param like the like expression.
 	 */
 	public SQLWhereLike(SQLField<String> f, String like) {
 		if (f == null || like == null)

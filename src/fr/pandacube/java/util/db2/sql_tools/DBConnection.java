@@ -16,9 +16,7 @@ public class DBConnection {
 		url = "jdbc:mysql://"+host+":"+port+"/"+dbname;
 		login = l;
 		pass = p;
-		conn = DriverManager.getConnection(url, login, pass);
-		
-		
+		connect();
 	}
 	
 	
@@ -31,8 +29,8 @@ public class DBConnection {
 		}
 		catch(SQLException e)
 		{
-			close();
-			conn = DriverManager.getConnection(url, login, pass);
+			try { close(); } catch(Exception ex) { }
+			connect();
 		}
 	}
 	
@@ -41,6 +39,11 @@ public class DBConnection {
 		if (!conn.isValid(1))
 			reconnectIfNecessary();
 		return conn;
+	}
+	
+	
+	private void connect() throws SQLException {
+		conn = DriverManager.getConnection(url, login, pass);
 	}
 	
 	

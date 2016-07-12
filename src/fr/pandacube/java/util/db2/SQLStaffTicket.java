@@ -3,6 +3,7 @@ package fr.pandacube.java.util.db2;
 import java.util.UUID;
 
 import fr.pandacube.java.util.db2.sql_tools.SQLElement;
+import fr.pandacube.java.util.db2.sql_tools.SQLFKField;
 import fr.pandacube.java.util.db2.sql_tools.SQLField;
 import fr.pandacube.java.util.db2.sql_tools.SQLType;
 
@@ -16,13 +17,12 @@ public class SQLStaffTicket extends SQLElement {
 	protected String tableName() { return "pandacube_staff_ticket"; }
 	
 	
-	public static final SQLField<String> playerId = new SQLField<>("playerId", SQLType.CHAR(36), false);
+	public static final SQLFKField<String, SQLPlayer> playerId = new SQLFKField<>("playerId", SQLType.CHAR(36), false, SQLPlayer.class, SQLPlayer.playerId);
 	public static final SQLField<String> message = new SQLField<>("message", SQLType.VARCHAR(1024), false);
 	public static final SQLField<Long> creationTime = new SQLField<>("creationTime", SQLType.BIGINT, false);
-	public static final SQLField<String> staffPlayerId = new SQLField<>("staffPlayerId", SQLType.CHAR(36), true);
+	public static final SQLFKField<String, SQLPlayer> staffPlayerId = new SQLFKField<>("staffPlayerId", SQLType.CHAR(36), true, SQLPlayer.class, SQLPlayer.playerId);
 	
 	
-
 	
 	public UUID getPlayerId() {
 		String id = get(playerId);

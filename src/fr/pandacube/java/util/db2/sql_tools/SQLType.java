@@ -25,6 +25,18 @@ public class SQLType<T> {
 		return false;
 	}
 	
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof SQLType))
+			return false;
+		return toString().equals(((SQLType<?>)obj).toString());
+	}
+	
 	
 	
 	

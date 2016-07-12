@@ -1,10 +1,18 @@
 package fr.pandacube.java.util.db2;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+import fr.pandacube.java.util.db2.sql_tools.ORM;
 import fr.pandacube.java.util.db2.sql_tools.SQLElement;
-import fr.pandacube.java.util.db2.sql_tools.SQLField;
+import fr.pandacube.java.util.db2.sql_tools.SQLFKField;
+import fr.pandacube.java.util.db2.sql_tools.SQLOrderBy;
 import fr.pandacube.java.util.db2.sql_tools.SQLType;
+import fr.pandacube.java.util.db2.sql_tools.SQLWhereChain;
+import fr.pandacube.java.util.db2.sql_tools.SQLWhereComp;
+import fr.pandacube.java.util.db2.sql_tools.SQLWhereChain.SQLBoolOp;
+import fr.pandacube.java.util.db2.sql_tools.SQLWhereComp.SQLComparator;
 
 public class SQLPlayerIgnore extends SQLElement {
 	
@@ -16,8 +24,8 @@ public class SQLPlayerIgnore extends SQLElement {
 	protected String tableName() { return "pandacube_player_ignore"; }
 	
 	
-	public static final SQLField<String> ignorer = new SQLField<>("ignorer", SQLType.CHAR(36), false);
-	public static final SQLField<String> ignored = new SQLField<>("ignored", SQLType.CHAR(36), false);
+	public static final SQLFKField<String, SQLPlayer> ignorer = new SQLFKField<>("ignorer", SQLType.CHAR(36), false, SQLPlayer.class, SQLPlayer.playerId);
+	public static final SQLFKField<String, SQLPlayer> ignored = new SQLFKField<>("ignored", SQLType.CHAR(36), false, SQLPlayer.class, SQLPlayer.playerId);
 	
 
 	
@@ -43,6 +51,48 @@ public class SQLPlayerIgnore extends SQLElement {
 		set(ignored, (pName == null) ? (String)null : pName.toString());
 	}
 	
+	
+	
+
+	public static SQLPlayerIgnore getPlayerIgnoringPlayer(UUID ignorer, UUID ignored) throws Exception {
+		return ORM.getFirst(SQLPlayerIgnore.class,
+				new SQLWhereChain(SQLBoolOp.AND)
+					.add(new SQLWhereComp(SQLPlayerIgnore.ignorer, SQLComparator.EQ, ignorer.toString()))
+					.add(new SQLWhereComp(SQLPlayerIgnore.ignored, SQLComparator.EQ, ignored.toString())),
+				null);
+	}
+	public static boolean isPlayerIgnoringPlayer(UUID ignorer, UUID ignored) throws Exception {
+		return getPlayerIgnoringPlayer(ignorer, ignored) != null;
+	}
+	
+	public static void setPlayerIgnorePlayer(UUID ignorer, UUID ignored, boolean newIgnoreState) throws Exception {
+		SQLPlayerIgnore el = getPlayerIgnoringPlayer(ignorer, ignored);
+		if (el == null && newIgnoreState) {
+			el = new SQLPlayerIgnore();
+			el.setIgnorerId(ignorer);
+			el.setIgnoredId(ignored);
+			el.save();
+			return;
+		}
+		if (el != null && !newIgnoreState) {
+			el.delete();
+			return;
+		}
+		
+	}
+	
+
+
+	public static List<UUID> getListIgnoredPlayer(UUID ignorer) throws Exception {
+		List<SQLPlayerIgnore> els = ORM.getAll(SQLPlayerIgnore.class,
+				new SQLWhereComp(SQLPlayerIgnore.ignorer, SQLComparator.EQ, ignorer.toString()),
+				new SQLOrderBy().addField(ORM.getSQLIdField(SQLPlayerIgnore.class)), null, null);
+		List<UUID> ret = new ArrayList<>(els.size());
+		for (SQLPlayerIgnore el : els) {
+			ret.add(el.getIgnoredId());
+		}
+		return ret;
+	}
 	
 	
 }

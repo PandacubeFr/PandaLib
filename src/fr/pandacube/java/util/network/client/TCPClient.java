@@ -12,7 +12,8 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
-import fr.pandacube.java.PandacubeUtil;
+import fr.pandacube.java.Pandacube;
+import fr.pandacube.java.util.Log;
 import fr.pandacube.java.util.network.packet.Packet;
 import fr.pandacube.java.util.network.packet.PacketClient;
 import fr.pandacube.java.util.network.packet.PacketException;
@@ -37,9 +38,9 @@ public class TCPClient extends Thread implements Closeable {
 		if (a == null || l == null)
 			throw new IllegalArgumentException("les arguments ne peuvent pas être null");
 		socket = new Socket();
-		socket.setReceiveBufferSize(PandacubeUtil.NETWORK_TCP_BUFFER_SIZE);
-		socket.setSendBufferSize(PandacubeUtil.NETWORK_TCP_BUFFER_SIZE);
-		socket.setSoTimeout(PandacubeUtil.NETWORK_TIMEOUT);
+		socket.setReceiveBufferSize(Pandacube.NETWORK_TCP_BUFFER_SIZE);
+		socket.setSendBufferSize(Pandacube.NETWORK_TCP_BUFFER_SIZE);
+		socket.setSoTimeout(Pandacube.NETWORK_TIMEOUT);
 		socket.connect(a);
 		addr = a;
 		listener = l;
@@ -79,9 +80,9 @@ public class TCPClient extends Thread implements Closeable {
 					
 					listener.onPacketReceive(this, ps);
 				} catch (PacketException|InvalidServerMessage e) {
-					PandacubeUtil.getMasterLogger().log(Level.SEVERE, "Message du serveur mal formé", e);
+					Log.getLogger().log(Level.SEVERE, "Message du serveur mal formé", e);
 				} catch (Exception e) {
-					PandacubeUtil.getMasterLogger().log(Level.SEVERE, "Erreur lors de la prise en charge du message par le serveur", e);
+					Log.getLogger().log(Level.SEVERE, "Erreur lors de la prise en charge du message par le serveur", e);
 				}
 			}
 			

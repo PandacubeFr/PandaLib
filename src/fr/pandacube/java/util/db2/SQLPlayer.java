@@ -3,9 +3,12 @@ package fr.pandacube.java.util.db2;
 import java.sql.Date;
 import java.util.UUID;
 
+import fr.pandacube.java.util.db2.sql_tools.ORM;
 import fr.pandacube.java.util.db2.sql_tools.SQLElement;
 import fr.pandacube.java.util.db2.sql_tools.SQLField;
 import fr.pandacube.java.util.db2.sql_tools.SQLType;
+import fr.pandacube.java.util.db2.sql_tools.SQLWhereComp;
+import fr.pandacube.java.util.db2.sql_tools.SQLWhereComp.SQLComparator;
 
 
 public class SQLPlayer extends SQLElement {
@@ -29,10 +32,10 @@ public class SQLPlayer extends SQLElement {
 	public static final SQLField<String>  password          = new SQLField<>("password",                   SQLType.VARCHAR(255), true);
 	public static final SQLField<String>  mail              = new SQLField<>("mail",                       SQLType.VARCHAR(255), true);
 	public static final SQLField<String>  playerDisplayName = new SQLField<>("playerDisplayName",          SQLType.VARCHAR(255), false);
-	public static final SQLField<Long>    firstTimeInGame   = new SQLField<>("firstTimeInGame",            SQLType.BIGINT,       false);
+	public static final SQLField<Long>    firstTimeInGame   = new SQLField<>("firstTimeInGame",            SQLType.BIGINT,       false, 0L);
 	public static final SQLField<Long>    timeWebRegister   = new SQLField<>("timeWebRegister",            SQLType.BIGINT,       true);
 	public static final SQLField<Long>    lastTimeInGame    = new SQLField<>("lastTimeInGame",             SQLType.BIGINT,       true);
-	public static final SQLField<Long>    lastWebActivity   = new SQLField<>("lastWebActivity",            SQLType.BIGINT,       false);
+	public static final SQLField<Long>    lastWebActivity   = new SQLField<>("lastWebActivity",            SQLType.BIGINT,       false, 0L);
 	public static final SQLField<String>  onlineInServer    = new SQLField<>("onlineInServer",             SQLType.VARCHAR(32),  true);
 	public static final SQLField<String>  skinURL           = new SQLField<>("skinURL",                    SQLType.VARCHAR(255), true);
 	public static final SQLField<Boolean> isVanish          = new SQLField<>("isVanish",                   SQLType.BOOLEAN,      false, (Boolean)false);
@@ -76,6 +79,21 @@ public class SQLPlayer extends SQLElement {
 	}
 	public void setToken(UUID t) {
 		set(token, (t == null) ? (String)null : t.toString());
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static SQLPlayer getPlayerFromUUID(UUID playerId) throws Exception {
+		return ORM.getFirst(SQLPlayer.class,
+				new SQLWhereComp(SQLPlayer.playerId, SQLComparator.EQ, playerId.toString()),
+				null);
 	}
 	
 }

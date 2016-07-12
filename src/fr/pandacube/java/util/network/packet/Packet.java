@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import fr.pandacube.java.PandacubeUtil;
+import fr.pandacube.java.Pandacube;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteBuffer;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteSerializable;
 
@@ -42,7 +42,7 @@ public abstract class Packet implements ByteSerializable {
 	
 	
 	
-	public static final Charset CHARSET = PandacubeUtil.NETWORK_CHARSET;
+	public static final Charset CHARSET = Pandacube.NETWORK_CHARSET;
 	
 	private static Map<Byte, Class<? extends Packet>> packetTypes = new HashMap<Byte, Class<? extends Packet>>();
 	

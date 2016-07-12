@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.pandacube.java.util.db2.sql_tools.DBConnection;
+
 /**
  * <b>ORM = Object-Relational Mapping</b><br/>
  * Liste des tables avec leur classes :

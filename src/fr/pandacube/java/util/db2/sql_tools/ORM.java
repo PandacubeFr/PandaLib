@@ -1,6 +1,5 @@
 package fr.pandacube.java.util.db2.sql_tools;
 
-import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,8 +8,24 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 
-import fr.pandacube.java.PandacubeUtil;
+import fr.pandacube.java.util.Log;
+import fr.pandacube.java.util.db2.SQLContact;
+import fr.pandacube.java.util.db2.SQLForumCategorie;
+import fr.pandacube.java.util.db2.SQLForumForum;
+import fr.pandacube.java.util.db2.SQLForumPost;
+import fr.pandacube.java.util.db2.SQLForumThread;
+import fr.pandacube.java.util.db2.SQLLoginHistory;
+import fr.pandacube.java.util.db2.SQLMPGroup;
+import fr.pandacube.java.util.db2.SQLMPGroupUser;
+import fr.pandacube.java.util.db2.SQLMPMessage;
+import fr.pandacube.java.util.db2.SQLModoHistory;
+import fr.pandacube.java.util.db2.SQLOnlineshopHistory;
 import fr.pandacube.java.util.db2.SQLPlayer;
+import fr.pandacube.java.util.db2.SQLPlayerIgnore;
+import fr.pandacube.java.util.db2.SQLShopStock;
+import fr.pandacube.java.util.db2.SQLStaffTicket;
+import fr.pandacube.java.util.db2.SQLStaticPages;
+import fr.pandacube.java.util.db2.SQLUUIDPlayer;
 import fr.pandacube.java.util.db2.sql_tools.SQLWhereChain.SQLBoolOp;
 import fr.pandacube.java.util.db2.sql_tools.SQLWhereComp.SQLComparator;
 import javafx.util.Pair;
@@ -41,14 +56,35 @@ public final class ORM {
 		 * utile des les initialiser ici, car on peut tout de suite déceler les bugs ou erreurs dans la déclaration des SQLFields
 		 */
 		
-		initTable(SQLPlayer.class);
+		try {
+			initTable(SQLContact.class);
+			initTable(SQLForumCategorie.class);
+			initTable(SQLForumForum.class);
+			initTable(SQLForumPost.class);
+			initTable(SQLForumThread.class);
+			initTable(SQLLoginHistory.class);
+			initTable(SQLModoHistory.class);
+			initTable(SQLMPGroup.class);
+			initTable(SQLMPGroupUser.class);
+			initTable(SQLMPMessage.class);
+			initTable(SQLOnlineshopHistory.class);
+			initTable(SQLPlayer.class);
+			initTable(SQLPlayerIgnore.class);
+			initTable(SQLShopStock.class);
+			initTable(SQLStaffTicket.class);
+			initTable(SQLStaticPages.class);
+			initTable(SQLUUIDPlayer.class);
+		} catch (ORMInitTableException e) {
+			Log.getLogger().log(Level.SEVERE, "Erreur d'initialisation d'une table dans l'ORM", e);
+		}
+		
 		
 		
 		
 	}
 	
 	
-	/* package */ static <T extends SQLElement> void initTable(Class<T> elemClass) {
+	/* package */ static <T extends SQLElement> void initTable(Class<T> elemClass) throws ORMInitTableException {
 		if (tables.contains(elemClass))
 			return;
 		try {
@@ -58,7 +94,7 @@ public final class ORM {
 				createTable(instance);
 			tables.add(elemClass);
 		} catch (Exception e) {
-			PandacubeUtil.getMasterLogger().log(Level.SEVERE, "Can't init table " + elemClass.getName(), e);
+			throw new ORMInitTableException(elemClass, e);
 		}
 	}
 	
@@ -123,16 +159,17 @@ public final class ORM {
 	
 	
 	@SuppressWarnings("unchecked")
-	public static <T extends SQLElement> SQLField<Integer> getSQLIdField(Class<T> elemClass) {
+	public static <T extends SQLElement> SQLField<Integer> getSQLIdField(Class<T> elemClass) throws ORMInitTableException {
+		initTable(elemClass);
 		return (SQLField<Integer>) SQLElement.fieldsCache.get(elemClass).get("id");
 	}
 	
 
-	public static <T extends SQLElement> List<T> getByIds(Class<T> elemClass, Collection<Integer> ids) throws Exception {
+	public static <T extends SQLElement> List<T> getByIds(Class<T> elemClass, Collection<Integer> ids) throws ORMException {
 		return getByIds(elemClass, ids.toArray(new Integer[ids.size()]));
 	}
 	
-	public static <T extends SQLElement> List<T> getByIds(Class<T> elemClass, Integer... ids) throws Exception {
+	public static <T extends SQLElement> List<T> getByIds(Class<T> elemClass, Integer... ids) throws ORMException {
 		SQLField<Integer> idField = getSQLIdField(elemClass);
 		SQLWhereChain where = new SQLWhereChain(SQLBoolOp.OR);
 		for (Integer id : ids)
@@ -141,65 +178,72 @@ public final class ORM {
 		return getAll(elemClass, where, new SQLOrderBy().addField(idField), 1, null);
 	}
 	
-	public static <T extends SQLElement> T getById(Class<T> elemClass, int id) throws Exception {
+	public static <T extends SQLElement> T getById(Class<T> elemClass, int id) throws ORMException {
 		return getFirst(elemClass, new SQLWhereComp(getSQLIdField(elemClass), SQLComparator.EQ, id), null);
 	}
 	
-	public static <T extends SQLElement> T getFirst(Class<T> elemClass, SQLWhere where, SQLOrderBy orderBy) throws Exception {
+	public static <T extends SQLElement> T getFirst(Class<T> elemClass, SQLWhere where, SQLOrderBy orderBy) throws ORMException {
 		SQLElementList<T> elts = getAll(elemClass, where, orderBy, 1, null);
 		return (elts.size() == 0)? null : elts.get(0);
 	}
 	
 	
 	
-	public static <T extends SQLElement> SQLElementList<T> getAll(Class<T> elemClass) throws Exception {
+	public static <T extends SQLElement> SQLElementList<T> getAll(Class<T> elemClass) throws ORMException {
 		return getAll(elemClass, null, null, null, null);
 	}
 	
-	public static <T extends SQLElement> SQLElementList<T> getAll(Class<T> elemClass, SQLWhere where, SQLOrderBy orderBy, Integer limit, Integer offset) throws Exception {
+	public static <T extends SQLElement> SQLElementList<T> getAll(Class<T> elemClass, SQLWhere where, SQLOrderBy orderBy, Integer limit, Integer offset) throws ORMException {
 		initTable(elemClass);
-		String sql = "SELECT * FROM "+elemClass.newInstance().tableName();
-		List<Object> params = new ArrayList<>();
-
-		if (where != null) {
-			Pair<String, List<Object>> ret = where.toSQL();
-			sql += " WHERE "+ret.getKey();
-			params.addAll(ret.getValue());
-		}
-		if (orderBy != null)
-			sql += " ORDER BY "+orderBy.toSQL();
-		if (limit != null)
-			sql += " LIMIT "+limit;
-		if (offset != null)
-			sql += " OFFSET "+offset;
-		sql += ";";
-		
-		SQLElementList<T> elmts = new SQLElementList<T>();
-		
-		PreparedStatement ps = connection.getNativeConnection().prepareStatement(sql);
 		
 		try {
+			String sql = "SELECT * FROM "+elemClass.newInstance().tableName();
 			
-			int i = 1;
-			for (Object val : params) {
-				ps.setObject(i++, val);
+			List<Object> params = new ArrayList<>();
+
+			if (where != null) {
+				Pair<String, List<Object>> ret = where.toSQL();
+				sql += " WHERE "+ret.getKey();
+				params.addAll(ret.getValue());
 			}
+			if (orderBy != null)
+				sql += " ORDER BY "+orderBy.toSQL();
+			if (limit != null)
+				sql += " LIMIT "+limit;
+			if (offset != null)
+				sql += " OFFSET "+offset;
+			sql += ";";
 			
-			System.out.println(ps.toString());
+			SQLElementList<T> elmts = new SQLElementList<T>();
 			
-			ResultSet set = ps.executeQuery();
+			PreparedStatement ps = connection.getNativeConnection().prepareStatement(sql);
 			
 			try {
-				while (set.next())
-					elmts.add(getElementInstance(set, elemClass));
+				
+				int i = 1;
+				for (Object val : params) {
+					ps.setObject(i++, val);
+				}
+				
+				System.out.println(ps.toString());
+				
+				ResultSet set = ps.executeQuery();
+				
+				try {
+					while (set.next())
+						elmts.add(getElementInstance(set, elemClass));
+				} finally {
+					set.close();
+				}
 			} finally {
-				set.close();
+				ps.close();
 			}
-		} finally {
-			ps.close();
+			
+			return elmts;
+		} catch (ReflectiveOperationException | SQLException e) {
+			throw new ORMException(e);
 		}
 		
-		return elmts;
 	}
 	
 	
@@ -215,7 +259,7 @@ public final class ORM {
 
 	
 	
-	private static <T extends SQLElement> T getElementInstance(ResultSet set, Class<T> elemClass) throws Exception {
+	private static <T extends SQLElement> T getElementInstance(ResultSet set, Class<T> elemClass) throws ReflectiveOperationException, SQLException {
 		try {
 			T instance = elemClass.getConstructor(int.class).newInstance(set.getInt("id"));
 			
@@ -231,11 +275,8 @@ public final class ORM {
 			}
 			
 			return instance;
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-			throw new Exception("Can't instanciate " + elemClass.getName(), e);
-		} catch (SQLException e) {
-			throw new Exception("Error reading ResultSet for creating instance of " + elemClass.getName(), e);
+		} catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
+			throw new ReflectiveOperationException("Can't instanciate " + elemClass.getName(), e);
 		}
 	}
 	

@@ -3,6 +3,7 @@ package fr.pandacube.java.util.db2;
 import java.util.UUID;
 
 import fr.pandacube.java.util.db2.sql_tools.SQLElement;
+import fr.pandacube.java.util.db2.sql_tools.SQLFKField;
 import fr.pandacube.java.util.db2.sql_tools.SQLField;
 import fr.pandacube.java.util.db2.sql_tools.SQLType;
 
@@ -16,16 +17,16 @@ public class SQLModoHistory extends SQLElement {
 	protected String tableName() { return "pandacube_modo_history"; }
 	
 	
-	public static final SQLField<String> modoId = new SQLField<>("modoId", SQLType.CHAR(36), true);
-	public static final SQLField<ActionType> actionType = new SQLField<>("actionType", SQLType.ENUM(ActionType.class), false);
-	public static final SQLField<Long> time = new SQLField<>("time", SQLType.BIGINT, false);
-	public static final SQLField<String> playerId = new SQLField<>("playerId", SQLType.CHAR(36), false);
-	public static final SQLField<Long> value = new SQLField<>("value", SQLType.BIGINT, true);
-	public static final SQLField<String> message = new SQLField<>("message", SQLType.VARCHAR(512), false);
+	public static final SQLFKField<String, SQLPlayer> modoId     = new SQLFKField<>("modoId",   SQLType.CHAR(36),               true, SQLPlayer.class, SQLPlayer.playerId);
+	public static final SQLField<ActionType>          actionType = new SQLField<>("actionType", SQLType.ENUM(ActionType.class), false);
+	public static final SQLField<Long>                time       = new SQLField<>("time",       SQLType.BIGINT,                 false);
+	public static final SQLFKField<String, SQLPlayer> playerId   = new SQLFKField<>("playerId", SQLType.CHAR(36),               false, SQLPlayer.class, SQLPlayer.playerId);
+	public static final SQLField<Long>                value      = new SQLField<>("value",      SQLType.BIGINT,                 true);
+	public static final SQLField<String>              message    = new SQLField<>("message",    SQLType.VARCHAR(512),           false);
 	
 	
 	
-
+	
 	public UUID getModoId() {
 		String id = (String)get(modoId);
 		return (id == null) ? null : UUID.fromString(id);

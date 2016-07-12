@@ -17,7 +17,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
-import fr.pandacube.java.PandacubeUtil;
+import fr.pandacube.java.Pandacube;
+import fr.pandacube.java.util.Log;
 import fr.pandacube.java.util.network.packet.Packet;
 import fr.pandacube.java.util.network.packet.PacketClient;
 import fr.pandacube.java.util.network.packet.PacketServer;
@@ -52,7 +53,7 @@ public class TCPServer extends Thread implements Closeable {
 		if (port <= 0 || port > 65535)
 			throw new IllegalArgumentException("le numéro de port est invalide");
 		socket = new ServerSocket();
-		socket.setReceiveBufferSize(PandacubeUtil.NETWORK_TCP_BUFFER_SIZE);
+		socket.setReceiveBufferSize(Pandacube.NETWORK_TCP_BUFFER_SIZE);
 		socket.setPerformancePreferences(0, 2, 1);
 		socket.bind(new InetSocketAddress(port));
 		listener = l;
@@ -67,8 +68,8 @@ public class TCPServer extends Thread implements Closeable {
 		try {
 			while(true) {
 				Socket socketClient = socket.accept();
-				socketClient.setSendBufferSize(PandacubeUtil.NETWORK_TCP_BUFFER_SIZE);
-				socketClient.setSoTimeout(PandacubeUtil.NETWORK_TIMEOUT);
+				socketClient.setSendBufferSize(Pandacube.NETWORK_TCP_BUFFER_SIZE);
+				socketClient.setSoTimeout(Pandacube.NETWORK_TIMEOUT);
 				
 				try {
 					TCPServerClientConnection co = new TCPServerClientConnection(socketClient, connectionCounterId.getAndIncrement());
@@ -76,11 +77,11 @@ public class TCPServer extends Thread implements Closeable {
 					listener.onClientConnect(this, co);
 					co.start();
 				} catch(IOException e) {
-					PandacubeUtil.getMasterLogger().log(Level.SEVERE, "Connexion impossible avec "+socketClient.getInetAddress());
+					Log.getLogger().log(Level.SEVERE, "Connexion impossible avec "+socketClient.getInetAddress());
 				}
 			}
 		} catch (Exception e) {
-			PandacubeUtil.getMasterLogger().log(Level.WARNING, "Plus aucune connexion ne peux être acceptée", e);
+			Log.getLogger().log(Level.WARNING, "Plus aucune connexion ne peux être acceptée", e);
 		}
 	}
 	
@@ -135,9 +136,9 @@ public class TCPServer extends Thread implements Closeable {
 					try {
 						interpreteReceivedMessage(this, packetData);
 					} catch (InvalidClientMessage e) {
-						PandacubeUtil.getMasterLogger().log(Level.SEVERE, "Erreur protocole de : ", e);
+						Log.getLogger().log(Level.SEVERE, "Erreur protocole de : ", e);
 					} catch (Exception e) {
-						PandacubeUtil.getMasterLogger().log(Level.SEVERE, "Erreur lors de la prise en charge du message par le serveur", e);
+						Log.getLogger().log(Level.SEVERE, "Erreur lors de la prise en charge du message par le serveur", e);
 						e.printStackTrace();
 					}
 				}
@@ -146,7 +147,7 @@ public class TCPServer extends Thread implements Closeable {
 				
 				
 			} catch (Exception e) {
-				PandacubeUtil.getMasterLogger().log(Level.SEVERE, "Fermeture de la connexion de "+address, e);
+				Log.getLogger().log(Level.SEVERE, "Fermeture de la connexion de "+address, e);
 			}
 			
 			

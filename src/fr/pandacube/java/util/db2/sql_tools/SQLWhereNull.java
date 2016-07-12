@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-import fr.pandacube.java.PandacubeUtil;
+import fr.pandacube.java.util.Log;
 import javafx.util.Pair;
 
 public class SQLWhereNull extends SQLWhere {
@@ -21,7 +21,7 @@ public class SQLWhereNull extends SQLWhere {
 		if (field == null)
 			throw new IllegalArgumentException("field can't be null");
 		if (!field.canBeNull)
-			PandacubeUtil.getMasterLogger().log(Level.WARNING, "Useless : Trying to check IS [NOT] NULL on the field "+field.getSQLElementType().getName()+"#"+field.name+" which is declared in the ORM as 'can't be null'");
+			Log.getLogger().log(Level.WARNING, "Useless : Trying to check IS [NOT] NULL on the field "+field.getSQLElementType().getName()+"#"+field.name+" which is declared in the ORM as 'can't be null'");
 		fild = field;
 		nulll = isNull;
 	}

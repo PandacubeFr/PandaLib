@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
 
-import fr.pandacube.java.PandacubeUtil;
+import fr.pandacube.java.util.Log;
 
 
 /**
@@ -44,7 +44,7 @@ public class PacketExecutor implements Runnable {
 				rep.sendPacket(new PrintStream(socket.getOutputStream()));
 			} catch (IOException e1) { }
 			if (e instanceof IOException)
-				PandacubeUtil.getPluginLogger().warning("Impossible de lire le packet reçu sur le socket "+socket+" : "+e.toString());
+				Log.getLogger().warning("Impossible de lire le packet reçu sur le socket "+socket+" : "+e.toString());
 			else
 				e.printStackTrace();
 		}

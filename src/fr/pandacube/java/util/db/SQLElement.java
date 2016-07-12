@@ -8,6 +8,8 @@ import java.sql.Statement;
 
 import org.apache.commons.lang.StringUtils;
 
+import fr.pandacube.java.util.db2.sql_tools.DBConnection;
+
 public abstract class SQLElement {
 	
 	DBConnection db = ORM.connection;
@@ -40,7 +42,7 @@ public abstract class SQLElement {
 		
 		try {
 			Connection conn;
-			conn = db.getConnection();
+			conn = db.getNativeConnection();
 
 			String[] fields = getFieldsName(), values = getValues();
 			
@@ -118,7 +120,7 @@ public abstract class SQLElement {
 		try {
 			if (saved)
 			{	//  supprimer la ligne de la base
-				PreparedStatement st = db.getConnection().prepareStatement("DELETE FROM "+tableName+" WHERE id="+id);
+				PreparedStatement st = db.getNativeConnection().prepareStatement("DELETE FROM "+tableName+" WHERE id="+id);
 				try {
 					st.executeUpdate();
 					saved = false;

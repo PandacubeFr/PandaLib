@@ -44,7 +44,7 @@ public class SQLWhereChain extends SQLWhere {
 	}
 	
 
-	enum SQLBoolOp {
+	public enum SQLBoolOp {
 		/** Equivalent to SQL "<code>AND</code>" */
 		AND("AND"),
 		/** Equivalent to SQL "<code>OR</code>" */
