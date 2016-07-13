@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.UUID;
 
 import fr.pandacube.java.util.db2.sql_tools.ORM;
+import fr.pandacube.java.util.db2.sql_tools.ORMException;
 import fr.pandacube.java.util.db2.sql_tools.SQLElement;
 import fr.pandacube.java.util.db2.sql_tools.SQLField;
 import fr.pandacube.java.util.db2.sql_tools.SQLType;
@@ -90,7 +91,7 @@ public class SQLPlayer extends SQLElement {
 	
 	
 	
-	public static SQLPlayer getPlayerFromUUID(UUID playerId) throws Exception {
+	public static SQLPlayer getPlayerFromUUID(UUID playerId) throws ORMException {
 		return ORM.getFirst(SQLPlayer.class,
 				new SQLWhereComp(SQLPlayer.playerId, SQLComparator.EQ, playerId.toString()),
 				null);

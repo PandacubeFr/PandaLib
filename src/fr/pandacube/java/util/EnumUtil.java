@@ -50,6 +50,25 @@ public class EnumUtil {
 	    return null;
 	}
 	
+	/**
+	 * Permet de rechercher l'existance d'un élément dans un enum, de façon insensible à la casse
+	 * La validité de la classe passé en premier paramètre est vérifiée dynamiquement et non
+	 * statiquement. Préférez l'utilisation de {@link #searchEnum(Class, String)} quand c'est possible.
+	 * @param enumType la classe correpondant à l'enum à lister
+	 * @param search l'élément à rechercher, insensible à la casse
+	 * @return l'élément de l'énumération, si elle a été trouvée et si la classe passée en paramètre est un enum, null dans les autres cas
+	 */
+	public static Enum<?> searchUncheckedEnum(Class<?> enumType, String search) {
+		if (!enumType.isEnum())
+			return null;
+		Enum<?>[] elements = (Enum<?>[]) enumType.getEnumConstants();
+		
+	    for (Enum<?> el : elements)
+	        if (el.name().equalsIgnoreCase(search))
+	            return el;
+	    return null;
+	}
+	
 	
 	
 	

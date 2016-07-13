@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 
+import fr.pandacube.java.util.EnumUtil;
 import fr.pandacube.java.util.Log;
 import fr.pandacube.java.util.db2.SQLContact;
 import fr.pandacube.java.util.db2.SQLForumCategorie;
@@ -127,7 +128,7 @@ public final class ORM {
 			ps.setObject(i++, val);
 		}
 		try {
-			System.out.println(ps.toString());
+			Log.info("Creating table "+elem.tableName()+":\n"+ps.toString());
 			ps.executeUpdate();
 		} finally {
 			ps.close();
@@ -222,11 +223,11 @@ public final class ORM {
 				
 				int i = 1;
 				for (Object val : params) {
+					if (val instanceof Enum<?>)
+						val = ((Enum<?>)val).name();
 					ps.setObject(i++, val);
 				}
-				
-				System.out.println(ps.toString());
-				
+				Log.debug(ps.toString());
 				ResultSet set = ps.executeQuery();
 				
 				try {
@@ -259,7 +260,7 @@ public final class ORM {
 
 	
 	
-	private static <T extends SQLElement> T getElementInstance(ResultSet set, Class<T> elemClass) throws ReflectiveOperationException, SQLException {
+	private static <T extends SQLElement> T getElementInstance(ResultSet set, Class<T> elemClass) throws ORMException {
 		try {
 			T instance = elemClass.getConstructor(int.class).newInstance(set.getInt("id"));
 			
@@ -271,17 +272,39 @@ public final class ORM {
 					continue; // ignore when field is present in database but not handled by SQLElement instance
 				@SuppressWarnings("unchecked")
 				SQLField<Object> sqlField = (SQLField<Object>) instance.getFields().get(fieldName);
-				instance.set(sqlField, set.getObject(c), false);
+				if (sqlField.type.getJavaType().isEnum()) {
+					// JDBC ne supporte pas les enums
+					String enumStrValue = set.getString(c);
+					if (enumStrValue == null || set.wasNull())
+						instance.set(sqlField, null, false);
+					else {
+						Enum<?> enumValue = EnumUtil.searchUncheckedEnum(sqlField.type.getJavaType(), enumStrValue);
+						if (enumValue == null)
+							throw new ORMException("The enum constant '"+enumStrValue+"' is not found in enum class "+sqlField.type.getJavaType().getName());
+						instance.set(sqlField, enumValue, false);
+					}
+				}
+				else {
+					Object val = set.getObject(c, sqlField.type.getJavaType());
+					if (val == null || set.wasNull())
+						instance.set(sqlField, null, false);
+					else
+						instance.set(sqlField, val, false);
+				}
+				
+				// la valeur venant de la BDD est marqué comme "non modifié" dans l'instance
+				// car le constructeur de l'instance met tout les champs comme modifiés
+				instance.modifiedSinceLastSave.remove(sqlField.name);
 			}
 			
+			if (!instance.isValidForSave())
+				throw new ORMException("This SQLElement representing a database entry is not valid for save : "+instance.toString());
+			
 			return instance;
-		} catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
-			throw new ReflectiveOperationException("Can't instanciate " + elemClass.getName(), e);
+		} catch (ReflectiveOperationException | IllegalArgumentException | SecurityException | SQLException e) {
+			throw new ORMException("Can't instanciate " + elemClass.getName(), e);
 		}
 	}
-	
-	
-	
 	
 	
 	

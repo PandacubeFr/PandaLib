@@ -1,4 +1,4 @@
-package fr.pandacube.java.util;
+package fr.pandacube.java.util.measurement;
 
 public class TimeUtil {
 	public static String durationToString (long msec_time, boolean dec_seconde)

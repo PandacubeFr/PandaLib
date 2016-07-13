@@ -7,6 +7,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import fr.pandacube.java.util.Log;
+
 /**
  * 
  * @param <E>
@@ -32,11 +34,11 @@ public class SQLElementList<E extends SQLElement> extends ArrayList<E> {
 	 * @param value la valeur à lui appliquer
 	 */
 	public synchronized <T> void setCommon(SQLField<T> field, T value) {
-		if (isEmpty()) throw new IllegalStateException("This SQLElementList is empty");
 		if (field != null && field.name == "id")
 			throw new IllegalArgumentException("Can't modify id field in a SQLElementList");
 		@SuppressWarnings("unchecked")
-		Class<E> elemClass = (Class<E>) get(0).getClass();
+		
+		Class<E> elemClass = (Class<E>) field.getSQLElementType();
 		try {
 			E emptyElement = elemClass.newInstance();
 			emptyElement.set(field, value, false);
@@ -71,7 +73,12 @@ public class SQLElementList<E extends SQLElement> extends ArrayList<E> {
 		
 		for(Map.Entry<SQLField<?>, Object> entry : modifiedValues.entrySet()) {
 			sqlSet += entry.getKey().name + " = ? ,";
-			psValues.add(entry.getValue());
+			if (entry.getKey().type.getJavaType().isEnum()) {
+				// prise en charge enum (non prise en charge par JDBC)
+				psValues.add(((Enum<?>)entry.getValue()).name());
+			}
+			else
+				psValues.add(entry.getValue());
 		}
 		
 		if (sqlSet.length() > 0)
@@ -93,6 +100,7 @@ public class SQLElementList<E extends SQLElement> extends ArrayList<E> {
 				ps.setObject(i++, val);
 			}
 			
+			Log.debug(ps.toString());
 			ps.executeUpdate();
 			
 			applyNewValuesToElements(storedEl);
@@ -140,6 +148,7 @@ public class SQLElementList<E extends SQLElement> extends ArrayList<E> {
 			
 			PreparedStatement st = ORM.getConnection().getNativeConnection().prepareStatement("DELETE FROM "+storedEl.get(0).tableName()+" WHERE "+sqlWhere);
 			try {
+				Log.debug(st.toString());
 				st.executeUpdate();
 				
 				for (E el : storedEl) {

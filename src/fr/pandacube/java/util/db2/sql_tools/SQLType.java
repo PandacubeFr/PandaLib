@@ -6,7 +6,7 @@ public class SQLType<T> {
 	
 	private final String sqlType;
 	private final String sqlTypeParam;
-	private final Class<?> javaTypes;
+	private final Class<T> javaTypes;
 	
 	public SQLType(String sqlT, String sqlP, Class<T> javaT) {
 		sqlType = sqlT;
@@ -35,6 +35,10 @@ public class SQLType<T> {
 		if (obj == null || !(obj instanceof SQLType))
 			return false;
 		return toString().equals(((SQLType<?>)obj).toString());
+	}
+	
+	public Class<T> getJavaType() {
+		return javaTypes;
 	}
 	
 	

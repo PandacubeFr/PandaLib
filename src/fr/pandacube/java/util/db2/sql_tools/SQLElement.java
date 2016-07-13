@@ -37,7 +37,7 @@ public abstract class SQLElement {
 	private final SQLFieldMap fields;
 
 	private final Map<SQLField<?>, Object> values;
-	private final Set<String> modifiedSinceLastSave;
+	/* package */ final Set<String> modifiedSinceLastSave;
 	
 
 	public SQLElement() {
@@ -206,7 +206,7 @@ public abstract class SQLElement {
 	
 	
 	public boolean isValidForSave() {
-		return values.keySet().containsAll(fields.keySet());
+		return values.keySet().containsAll(fields.values());
 	}
 	
 	
@@ -214,7 +214,7 @@ public abstract class SQLElement {
 	private Map<SQLField<?>, Object> getOnlyModifiedValues() {
 		Map<SQLField<?>, Object> modifiedValues = new LinkedHashMap<>();
 		values.forEach((k, v) -> {
-			if (modifiedSinceLastSave.contains(k))
+			if (modifiedSinceLastSave.contains(k.name))
 				modifiedValues.put(k, v);
 		});
 		return modifiedValues;
@@ -230,10 +230,10 @@ public abstract class SQLElement {
 	
 	public void save() throws ORMException {
 		if (!isValidForSave())
-			throw new IllegalStateException("this instance of " + getClass().getName() + " has at least one undefined value and can't be saved.");
+			throw new IllegalStateException(toString() + " has at least one undefined value and can't be saved.");
 		
 		ORM.initTable(getClass());
-		
+		String toStringStatement = "";
 		try {
 			
 			Connection conn = db.getNativeConnection();
@@ -249,14 +249,20 @@ public abstract class SQLElement {
 				modifiedSinceLastSave.remove("id");
 				Map<SQLField<?>, Object> modifiedValues = getOnlyModifiedValues();
 				
-				
+				if (modifiedValues.isEmpty())
+					return;
 				
 				String sql = "";
 				List<Object> psValues = new ArrayList<>();
 				
 				for(Map.Entry<SQLField<?>, Object> entry : modifiedValues.entrySet()) {
-					sql += entry.getKey() + " = ? ,";
-					psValues.add(entry.getValue());
+					sql += entry.getKey().name + " = ? ,";
+					if (entry.getKey().type.getJavaType().isEnum()) {
+						// prise en charge enum (non prise en charge par JDBC)
+						psValues.add(((Enum<?>)entry.getValue()).name());
+					}
+					else
+						psValues.add(entry.getValue());
 				}
 				
 				if (sql.length() > 0)
@@ -270,7 +276,8 @@ public abstract class SQLElement {
 					for (Object val : psValues) {
 						ps.setObject(i++, val);
 					}
-					
+
+					toStringStatement = ps.toString();
 					ps.executeUpdate();
 				} finally {
 					ps.close();
@@ -295,8 +302,13 @@ public abstract class SQLElement {
 					}
 					first = false;
 					concat_vals += " ? ";
-					concat_fields += entry.getKey();
-					psValues.add(entry.getValue());
+					concat_fields += entry.getKey().name;
+					if (entry.getKey().type.getJavaType().isEnum()) {
+						// prise en charge enum (non prise en charge par JDBC)
+						psValues.add(((Enum<?>)entry.getValue()).name());
+					}
+					else
+						psValues.add(entry.getValue());
 				}
 				
 				
@@ -307,7 +319,8 @@ public abstract class SQLElement {
 					for (Object val : psValues) {
 						ps.setObject(i++, val);
 					}
-					
+
+					toStringStatement = ps.toString();
 					ps.executeUpdate();
 					
 					ResultSet rs = ps.getGeneratedKeys();
@@ -329,8 +342,9 @@ public abstract class SQLElement {
 			
 			modifiedSinceLastSave.clear();
 		} catch(SQLException e) {
-			throw new ORMException("Error while saving data in table "+tableName(), e);
+			throw new ORMException("Error while executing SQL statement "+toStringStatement, e);
 		}
+		Log.debug(toStringStatement);
 	}
 	
 	
@@ -356,6 +370,7 @@ public abstract class SQLElement {
 			{	//  supprimer la ligne de la base
 				PreparedStatement st = db.getNativeConnection().prepareStatement("DELETE FROM "+tableName+" WHERE id="+id);
 				try {
+					Log.debug(st.toString());
 					st.executeUpdate();
 					markAsNotStored();
 				} finally {
@@ -411,7 +426,7 @@ public abstract class SQLElement {
 			try {
 				b.append(f.name, get(f));
 			} catch(IllegalArgumentException e) {
-				b.append(f.name, "(Must be defined before saving)");
+				b.append(f.name, "(Undefined)");
 			}
 			
 		}
