@@ -9,51 +9,48 @@ import fr.pandacube.java.util.db2.sql_tools.SQLType;
 
 public class SQLModoHistory extends SQLElement {
 
-	
-	public SQLModoHistory() { super(); }
-	public SQLModoHistory(int id) { super(id); }
+	public SQLModoHistory() {
+		super();
+	}
+
+	public SQLModoHistory(int id) {
+		super(id);
+	}
 
 	@Override
-	protected String tableName() { return "pandacube_modo_history"; }
-	
-	
-	public static final SQLFKField<String, SQLPlayer> modoId     = new SQLFKField<>("modoId",   SQLType.CHAR(36),               true, SQLPlayer.class, SQLPlayer.playerId);
-	public static final SQLField<ActionType>          actionType = new SQLField<>("actionType", SQLType.ENUM(ActionType.class), false);
-	public static final SQLField<Long>                time       = new SQLField<>("time",       SQLType.BIGINT,                 false);
-	public static final SQLFKField<String, SQLPlayer> playerId   = new SQLFKField<>("playerId", SQLType.CHAR(36),               false, SQLPlayer.class, SQLPlayer.playerId);
-	public static final SQLField<Long>                value      = new SQLField<>("value",      SQLType.BIGINT,                 true);
-	public static final SQLField<String>              message    = new SQLField<>("message",    SQLType.VARCHAR(512),           false);
-	
-	
-	
-	
+	protected String tableName() {
+		return "pandacube_modo_history";
+	}
+
+	public static final SQLFKField<String, SQLPlayer> modoId = new SQLFKField<>("modoId", SQLType.CHAR(36), true,
+			SQLPlayer.class, SQLPlayer.playerId);
+	public static final SQLField<ActionType> actionType = new SQLField<>("actionType", SQLType.ENUM(ActionType.class),
+			false);
+	public static final SQLField<Long> time = new SQLField<>("time", SQLType.BIGINT, false);
+	public static final SQLFKField<String, SQLPlayer> playerId = new SQLFKField<>("playerId", SQLType.CHAR(36), false,
+			SQLPlayer.class, SQLPlayer.playerId);
+	public static final SQLField<Long> value = new SQLField<>("value", SQLType.BIGINT, true);
+	public static final SQLField<String> message = new SQLField<>("message", SQLType.VARCHAR(512), false);
+
 	public UUID getModoId() {
-		String id = (String)get(modoId);
+		String id = get(modoId);
 		return (id == null) ? null : UUID.fromString(id);
 	}
-	
-	
+
 	public void setModoId(UUID pName) {
-		set(modoId, (pName == null) ? (String)null : pName.toString());
+		set(modoId, (pName == null) ? (String) null : pName.toString());
 	}
-	
-	
 
 	public UUID getPlayerId() {
-		String id = (String)get(playerId);
+		String id = get(playerId);
 		return (id == null) ? null : UUID.fromString(id);
 	}
-	
-	
+
 	public void setPlayerId(UUID pName) {
-		set(playerId, (pName == null) ? (String)null : pName.toString());
+		set(playerId, (pName == null) ? (String) null : pName.toString());
 	}
-	
-	
-	
 
-
-	public enum ActionType{
+	public enum ActionType {
 		BAN, UNBAN, MUTE, UNMUTE, REPORT, KICK
 	}
 

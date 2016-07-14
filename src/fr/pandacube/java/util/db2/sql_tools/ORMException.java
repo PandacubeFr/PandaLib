@@ -6,11 +6,11 @@ public class ORMException extends Exception {
 	public ORMException(Throwable initCause) {
 		super(initCause);
 	}
-	
+
 	public ORMException(String message, Throwable initCause) {
 		super(message, initCause);
 	}
-	
+
 	public ORMException(String message) {
 		super(message);
 	}

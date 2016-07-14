@@ -6,13 +6,13 @@ import java.util.List;
 import javafx.util.Pair;
 
 public class SQLWhereLike extends SQLWhere {
-	
 
 	private SQLField<String> field;
 	private String likeExpr;
-	
+
 	/**
 	 * Compare a field with a value
+	 *
 	 * @param f the field at left of the LIKE keyword. Can't be null
 	 * @param like the like expression.
 	 */
@@ -22,8 +22,7 @@ public class SQLWhereLike extends SQLWhere {
 		field = f;
 		likeExpr = like;
 	}
-	
-	
+
 	@Override
 	public Pair<String, List<Object>> toSQL() {
 		ArrayList<Object> params = new ArrayList<>();

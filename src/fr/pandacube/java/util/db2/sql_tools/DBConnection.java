@@ -10,48 +10,42 @@ public class DBConnection {
 	String url;
 	String login;
 	String pass;
-	
-	public DBConnection(String host, int port, String dbname, String l, String p) throws ClassNotFoundException, SQLException {
+
+	public DBConnection(String host, int port, String dbname, String l, String p)
+			throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.jdbc.Driver");
-		url = "jdbc:mysql://"+host+":"+port+"/"+dbname;
+		url = "jdbc:mysql://" + host + ":" + port + "/" + dbname;
 		login = l;
 		pass = p;
 		connect();
 	}
-	
-	
-	public void reconnectIfNecessary() throws SQLException
-	{
-		try
-		{
+
+	public void reconnectIfNecessary() throws SQLException {
+		try {
 			Statement stmt = conn.createStatement();
 			stmt.close();
-		}
-		catch(SQLException e)
-		{
-			try { close(); } catch(Exception ex) { }
+		} catch (SQLException e) {
+			try {
+				close();
+			} catch (Exception ex) {}
 			connect();
 		}
 	}
-	
-	public Connection getNativeConnection() throws SQLException
-	{
-		if (!conn.isValid(1))
-			reconnectIfNecessary();
+
+	public Connection getNativeConnection() throws SQLException {
+		if (!conn.isValid(1)) reconnectIfNecessary();
 		return conn;
 	}
-	
-	
+
 	private void connect() throws SQLException {
 		conn = DriverManager.getConnection(url, login, pass);
 	}
-	
-	
+
 	public void close() {
 		try {
 			conn.close();
-		} catch (Exception e) { }
-		
+		} catch (Exception e) {}
+
 	}
-	
+
 }

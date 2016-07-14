@@ -4,4 +4,3 @@ package fr.pandacube.java.util;
 public interface Callback<T> {
 	public void done(T arg);
 }
-

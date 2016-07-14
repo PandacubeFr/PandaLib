@@ -9,26 +9,25 @@ public enum MinecraftVersion {
 	v1_9_2(109, "1.9.2"),
 	v1_9_3_to_1_9_4(110, "1.9.3-1.9.4"),
 	v1_10(210, "1.10");
-	
+
 	public final int versionNumber;
 	public final String versionDisplay;
-	
+
 	private MinecraftVersion(int v, String d) {
 		versionNumber = v;
 		versionDisplay = d;
 	}
-	
-	
+
+	@Override
 	public String toString() {
 		return versionDisplay;
 	}
-	
+
 	public static MinecraftVersion getVersion(int v) {
 		for (MinecraftVersion mcV : MinecraftVersion.values())
-			if (mcV.versionNumber == v)
-				return mcV;
-		
+			if (mcV.versionNumber == v) return mcV;
+
 		return null;
 	}
-	
+
 }

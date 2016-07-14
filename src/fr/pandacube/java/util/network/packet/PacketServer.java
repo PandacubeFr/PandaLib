@@ -9,5 +9,5 @@ public abstract class PacketServer extends Packet {
 	public PacketServer(byte c) {
 		super(c);
 	}
-	
+
 }

@@ -6,24 +6,24 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ByteBuffer implements Cloneable {
-	
+
 	private java.nio.ByteBuffer buff;
 	private Charset charset;
-	
+
 	public ByteBuffer(Charset c) {
 		this(16, c);
 	}
-	
+
 	public ByteBuffer(int initSize, Charset c) {
 		buff = java.nio.ByteBuffer.allocate(initSize);
 		charset = c;
 	}
-	
+
 	public ByteBuffer(byte[] data, Charset c) {
 		buff = java.nio.ByteBuffer.wrap(Arrays.copyOf(data, data.length));
 		charset = c;
 	}
-	
+
 	private void askForBufferExtension(int needed) {
 		if (buff.remaining() >= needed) return;
 		java.nio.ByteBuffer newBuff = java.nio.ByteBuffer.wrap(Arrays.copyOf(buff.array(), buff.array().length * 2));
@@ -106,7 +106,7 @@ public class ByteBuffer implements Cloneable {
 	 * @see java.nio.ByteBuffer#put(byte[])
 	 */
 	public ByteBuffer putBytes(byte[] b) {
-		askForBufferExtension(b.length*Byte.BYTES);
+		askForBufferExtension(b.length * Byte.BYTES);
 		buff.put(b);
 		return this;
 	}
@@ -185,21 +185,21 @@ public class ByteBuffer implements Cloneable {
 	public int capacity() {
 		return buff.capacity();
 	}
-	
-	
+
 	public ByteBuffer putString(String s) {
 		byte[] charBytes = s.getBytes(charset);
 		putInt(charBytes.length);
 		putBytes(charBytes);
 		return this;
 	}
-	
+
 	public String getString() {
 		return new String(getBytes(new byte[getInt()]), charset);
 	}
-	
+
 	/**
 	 * The objet will be serialized and the data put in the current buffer
+	 *
 	 * @param obj the object to serialize
 	 * @return the current buffer
 	 */
@@ -207,11 +207,14 @@ public class ByteBuffer implements Cloneable {
 		obj.serializeToByteBuffer(this);
 		return this;
 	}
-	
+
 	/**
-	 * Ask to object passed as argument to deserialize data in buffer and fill the object content
+	 * Ask to object passed as argument to deserialize data in buffer and fill
+	 * the object content
+	 *
 	 * @param <T>
-	 * @param obj the objet to fill with his method {@link ByteSerializable#deserializeFromByteBuffer(ByteBuffer)}
+	 * @param obj the objet to fill with his method
+	 *        {@link ByteSerializable#deserializeFromByteBuffer(ByteBuffer)}
 	 * @return obj a reference to the same object
 	 */
 	public <T extends ByteSerializable> T getObject(Class<T> clazz) {
@@ -223,32 +226,27 @@ public class ByteBuffer implements Cloneable {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public ByteBuffer putListObject(List<ByteSerializable> list) {
 		putInt(list.size());
 		for (ByteSerializable obj : list)
 			putObject(obj);
 		return this;
 	}
-	
+
 	public <T extends ByteSerializable> List<T> getListObject(Class<T> clazz) {
 		List<T> list = new ArrayList<T>();
 		int size = getInt();
-		for (int i=0; i<size; i++) {
+		for (int i = 0; i < size; i++)
 			list.add(getObject(clazz));
-		}
 		return list;
 	}
-	
-	
-	
+
 	/**
 	 * @see java.nio.ByteBuffer#array()
 	 */
 	public byte[] array() {
 		return buff.array();
 	}
-	
-	
-	
+
 }

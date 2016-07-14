@@ -6,11 +6,11 @@ public class PacketException extends RuntimeException {
 	public PacketException(String m) {
 		super(m);
 	}
-	
+
 	public PacketException(String m, Throwable t) {
 		super(m, t);
 	}
-	
+
 	public PacketException(Throwable t) {
 		super(t);
 	}
