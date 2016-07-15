@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import fr.pandacube.java.util.db2.SQLLoginHistory;
-import fr.pandacube.java.util.db2.SQLPlayer;
-import fr.pandacube.java.util.db2.SQLUUIDPlayer;
-import fr.pandacube.java.util.db2.sql_tools.ORM;
-import fr.pandacube.java.util.db2.sql_tools.SQLOrderBy;
-import fr.pandacube.java.util.db2.sql_tools.SQLOrderBy.Direction;
-import fr.pandacube.java.util.db2.sql_tools.SQLWhereComp;
-import fr.pandacube.java.util.db2.sql_tools.SQLWhereComp.SQLComparator;
-import fr.pandacube.java.util.db2.sql_tools.SQLWhereLike;
+import fr.pandacube.java.util.db.SQLLoginHistory;
+import fr.pandacube.java.util.db.SQLPlayer;
+import fr.pandacube.java.util.db.SQLUUIDPlayer;
+import fr.pandacube.java.util.db.sql_tools.ORM;
+import fr.pandacube.java.util.db.sql_tools.SQLOrderBy;
+import fr.pandacube.java.util.db.sql_tools.SQLWhereComp;
+import fr.pandacube.java.util.db.sql_tools.SQLWhereLike;
+import fr.pandacube.java.util.db.sql_tools.SQLOrderBy.Direction;
+import fr.pandacube.java.util.db.sql_tools.SQLWhereComp.SQLComparator;
 import net.alpenblock.bungeeperms.BungeePerms;
 
 /*
