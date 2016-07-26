@@ -17,12 +17,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import fr.pandacube.java.Pandacube;
 import fr.pandacube.java.util.Log;
 import fr.pandacube.java.util.network.packet.Packet;
 import fr.pandacube.java.util.network.packet.PacketClient;
+import fr.pandacube.java.util.network.packet.PacketException;
 import fr.pandacube.java.util.network.packet.PacketServer;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteBuffer;
+import fr.pandacube.java.util.network.packet.packets.global.PacketServerException;
 
 /**
  *
@@ -50,7 +54,11 @@ public class TCPServer extends Thread implements Closeable {
 		socket.setPerformancePreferences(0, 2, 1);
 		socket.bind(new InetSocketAddress(port));
 		listener = l;
-		listener.onSocketOpen(this);
+		try {
+			listener.onSocketOpen(this);
+		} catch(Exception e) {
+			Log.severe("Exception while calling TCPServerListener.onSocketOpen()", e);
+		}
 		socketName = sckName;
 	}
 
@@ -67,7 +75,6 @@ public class TCPServer extends Thread implements Closeable {
 					TCPServerClientConnection co = new TCPServerClientConnection(socketClient,
 							connectionCounterId.getAndIncrement());
 					clients.add(co);
-					listener.onClientConnect(this, co);
 					co.start();
 				} catch (IOException e) {
 					Log.getLogger().log(Level.SEVERE, "Connexion impossible avec " + socketClient.getInetAddress());
@@ -91,7 +98,11 @@ public class TCPServer extends Thread implements Closeable {
 			in = socket.getInputStream();
 			out = socket.getOutputStream();
 			address = new InetSocketAddress(socket.getInetAddress(), socket.getPort());
-			listener.onClientConnect(TCPServer.this, this);
+			try {
+				listener.onClientConnect(TCPServer.this, this);
+			} catch(Exception e) {
+				Log.severe("Exception while calling TCPServerListener.onClientConnect()", e);
+			}
 			outThread = new TCPServerConnectionOutputThread(coId);
 			outThread.start();
 		}
@@ -102,7 +113,7 @@ public class TCPServer extends Thread implements Closeable {
 				byte[] code = new byte[1];
 				while (!socket.isClosed() && in.read(code) != -1) {
 					byte[] sizeB = new byte[4];
-					if (in.read(sizeB) != 4) throw new IOException("Socket " + address + " fermé");
+					if (in.read(sizeB) != 4) throw new IOException("Socket " + address + " closed");
 
 					int size = new ByteBuffer(sizeB, Packet.CHARSET).getInt();
 
@@ -117,17 +128,16 @@ public class TCPServer extends Thread implements Closeable {
 
 					try {
 						interpreteReceivedMessage(this, packetData);
-					} catch (InvalidClientMessage e) {
-						Log.getLogger().log(Level.SEVERE, "Erreur protocole de : ", e);
 					} catch (Exception e) {
-						Log.getLogger().log(Level.SEVERE, "Erreur lors de la prise en charge du message par le serveur",
-								e);
-						e.printStackTrace();
+						Log.severe("Exception while handling packet. This exception will be sent to the client with PacketServerException packet.", e);
+						PacketServerException packet = new PacketServerException();
+						packet.setException(e);
+						send(packet);
 					}
 				}
 
 			} catch (Exception e) {
-				Log.getLogger().log(Level.SEVERE, "Fermeture de la connexion de " + address, e);
+				Log.severe("Closing connection " + address, e);
 			}
 
 			close();
@@ -149,7 +159,11 @@ public class TCPServer extends Thread implements Closeable {
 		public void close() {
 			if (socket.isClosed()) return;
 
-			listener.onClientDisconnect(TCPServer.this, this);
+			try {
+				listener.onClientDisconnect(TCPServer.this, this);
+			} catch(Exception e) {
+				Log.severe("Exception while calling TCPServerListener.onClientDisconnect()", e);
+			}
 			clients.remove(this);
 
 			try {
@@ -163,9 +177,7 @@ public class TCPServer extends Thread implements Closeable {
 				});
 				// provoque une exception dans le thread de sortie, et la
 				// termine
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			} catch (IOException e) { }
 		}
 
 		private class TCPServerConnectionOutputThread extends Thread {
@@ -200,18 +212,30 @@ public class TCPServer extends Thread implements Closeable {
 
 		}
 
+
+		@Override
+		public String toString() {
+			return new ToStringBuilder(this)
+					.append("thread", getName())
+					.append("socket", socket).toString();
+		}
+		
 	}
 
 	private void interpreteReceivedMessage(TCPServerClientConnection co, byte[] data) {
 
 		Packet p = Packet.constructPacket(data);
 
-		if (!(p instanceof PacketClient)) throw new InvalidClientMessage(
-				"Le type de packet reçu n'est pas un packet attendu : " + p.getClass().getCanonicalName());
+		if (!(p instanceof PacketClient))
+			throw new PacketException(p.getClass().getCanonicalName() + " is not an instanceof PacketClient");
 
 		PacketClient pc = (PacketClient) p;
 
-		listener.onPacketReceive(this, co, pc);
+		try {
+			listener.onPacketReceive(this, co, pc);
+		} catch(Exception e) {
+			Log.severe("Exception while calling TCPServerListener.onPacketReceive()", e);
+		}
 	}
 
 	@Override
@@ -223,20 +247,25 @@ public class TCPServer extends Thread implements Closeable {
 
 			socket.close();
 			isClosed.set(true);
-			listener.onSocketClose(this);
+			try {
+				listener.onSocketClose(this);
+			} catch(Exception e) {
+				Log.severe("Exception while calling TCPServerListener.onSocketClose()", e);
+			}
 		} catch (IOException e) {}
 	}
 
 	public boolean isClosed() {
 		return isClosed.get() || socket.isClosed();
 	}
+	
 
-	public static class InvalidClientMessage extends RuntimeException {
-		private static final long serialVersionUID = 1L;
-
-		public InvalidClientMessage(String message) {
-			super(message);
-		}
+	
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+				.append("thread", getName())
+				.append("socket", socket).toString();
 	}
 
 }

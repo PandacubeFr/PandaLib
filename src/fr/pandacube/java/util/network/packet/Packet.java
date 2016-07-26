@@ -6,9 +6,31 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fr.pandacube.java.Pandacube;
+import fr.pandacube.java.util.Log;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteBuffer;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteSerializable;
+import fr.pandacube.java.util.network.packet.packets.global.PacketServerException;
+import fr.pandacube.java.util.network.packet.packets.web.PacketClientWebRequest;
+import fr.pandacube.java.util.network.packet.packets.web.PacketServerWebResponse;
 
+/** <pre>
+ * Identification des packets réseaux
+ * byte      (xxxxxxxx)
+ *                      client :       server :
+ * clt / sv  (x-------) (0-------)     (1-------)
+ *                      0x00 - 0x7F    0x80 - 0xFF
+ * use case  (-xxx----)
+ * - web     (-000----) 0x00 - 0x0F    0x80 - 0x8F (client is Apache, server is PandacubeCore master (PandacubeWeb))
+ * - spigot  (-001----) 0x10 - 0x1F    0x90 - 0x9F (client is PandacubeSpigot, server is PandacubeCore master)
+ * - bungee  (-010----) 0x20 - 0x2F    0xA0 - 0xAF (client is PandacubeBungee, server is PandacubeCore master)
+ * - global  (-101----) 0x50 - 0x5F    0xD0 - 0xDF
+ * 
+ * - reserved if not enough packet id in certain use case
+ *           (-11x----) 0x60 - 0x7F    0xE0 - 0xFF
+ * 
+ * packet id (----xxxx)
+ * </pre>
+ */
 public abstract class Packet implements ByteSerializable {
 
 	private final byte code;
@@ -34,7 +56,8 @@ public abstract class Packet implements ByteSerializable {
 
 	public static Packet constructPacket(byte[] data) {
 		if (!packetTypes.containsKey(data[0]))
-			throw new PacketException("l'identifiant du packet ne correspond à aucun type de packet : " + data[0]);
+			throw new PacketException("Packet identifier not recognized: 0x" + String.format("%02X", data[0])
+					+ ". Maybe this packet is not registered with Packet.addPacket()");
 
 		try {
 			Packet p = packetTypes.get(data[0]).newInstance();
@@ -42,27 +65,28 @@ public abstract class Packet implements ByteSerializable {
 			p.deserializeFromByteBuffer(dataBuffer);
 			return p;
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new PacketException("erreur lors de la construction du packet");
+			throw new PacketException("Error while constructing packet", e);
 		}
 	}
 
-	@SuppressWarnings("unused")
 	private static <T extends Packet> void addPacket(Class<T> packetClass) {
 		try {
 			Packet p = packetClass.newInstance();
 			packetTypes.put(p.code, packetClass);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.severe(e);
 		}
 	}
+	
 
 	static {
 
 		/*
 		 * Ajout des types de packets (client + serveur)
 		 */
-		// addPacket(PacketToto.class);
+		addPacket(PacketClientWebRequest.class);
+		addPacket(PacketServerWebResponse.class);
+		addPacket(PacketServerException.class);
 	}
 
 }

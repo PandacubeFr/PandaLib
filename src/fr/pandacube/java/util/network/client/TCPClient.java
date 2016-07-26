@@ -7,10 +7,10 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import fr.pandacube.java.Pandacube;
 import fr.pandacube.java.util.Log;
@@ -18,6 +18,7 @@ import fr.pandacube.java.util.network.packet.Packet;
 import fr.pandacube.java.util.network.packet.PacketClient;
 import fr.pandacube.java.util.network.packet.PacketException;
 import fr.pandacube.java.util.network.packet.PacketServer;
+import fr.pandacube.java.util.network.packet.packets.global.PacketServerException;
 
 public class TCPClient extends Thread implements Closeable {
 
@@ -40,7 +41,11 @@ public class TCPClient extends Thread implements Closeable {
 		socket.connect(a);
 		addr = a;
 		listener = l;
-		listener.onConnect(this);
+		try {
+			listener.onConnect(this);
+		} catch (Exception e) {
+			Log.severe("Exception while calling TCPClientListener.onConnect()", e);
+		}
 	}
 
 	@Override
@@ -61,28 +66,35 @@ public class TCPClient extends Thread implements Closeable {
 				byte[] packetData = ByteBuffer.allocate(1 + 4 + size).put(code).put(sizeB).put(content).array();
 
 				try {
-					if (listener == null) throw new InvalidServerMessage(
-							"Le serveur ne peut actuellement pas prendre en charge de nouvelles requêtes. Les listeners n'ont pas encore été définis");
-
+					
 					Packet p = Packet.constructPacket(packetData);
 
-					if (!(p instanceof PacketServer)) throw new InvalidServerMessage(
-							"Le type de packet reçu n'est pas un packet attendu : " + p.getClass().getCanonicalName());
+					if (!(p instanceof PacketServer))
+						throw new PacketException(p.getClass().getCanonicalName() + " is not a subclass of PacketServer");
+					
+					if (p instanceof PacketServerException) {
 
+						try {
+							listener.onServerException(this, ((PacketServerException)p).getExceptionString());
+						} catch (Exception e) {
+							Log.severe("Exception while calling TCPClientListener.onPacketReceive()", e);
+						}
+					}
+					
 					PacketServer ps = (PacketServer) p;
 
-					listener.onPacketReceive(this, ps);
-				} catch (PacketException | InvalidServerMessage e) {
-					Log.getLogger().log(Level.SEVERE, "Message du serveur mal formé", e);
+					try {
+						listener.onPacketReceive(this, ps);
+					} catch (Exception e) {
+						Log.severe("Exception while calling TCPClientListener.onPacketReceive()", e);
+					}
 				} catch (Exception e) {
-					Log.getLogger().log(Level.SEVERE, "Erreur lors de la prise en charge du message par le serveur", e);
+					Log.severe("Exception while handling packet from server", e);
 				}
 			}
 
-		} catch (SocketTimeoutException e) {
-			System.err.println("Le serveur a prit trop de temps à répondre");
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.severe(e);
 		}
 		close();
 	}
@@ -110,10 +122,15 @@ public class TCPClient extends Thread implements Closeable {
 				if (isClosed.get()) return;
 				socket.close();
 				isClosed.set(true);
-				listener.onDisconnect(this);
+
+				try {
+					listener.onDisconnect(this);
+				} catch (Exception e) {
+					Log.severe("Exception while calling TCPClientListener.onDisconnect()", e);
+				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.warning(e);
 		}
 	}
 
@@ -130,13 +147,12 @@ public class TCPClient extends Thread implements Closeable {
 	public boolean isClosed() {
 		return isClosed.get() || socket.isClosed();
 	}
-
-	public static class InvalidServerMessage extends RuntimeException {
-		private static final long serialVersionUID = 1L;
-
-		public InvalidServerMessage(String message) {
-			super(message);
-		}
+	
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+				.append("thread", getName())
+				.append("socket", socket.getRemoteSocketAddress()).toString();
 	}
 
 }
