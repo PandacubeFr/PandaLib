@@ -27,12 +27,12 @@ public class SQLOnlineshopHistory extends SQLElement<SQLOnlineshopHistory> {
 	public static final SQLField<SQLOnlineshopHistory, SourceType> sourceType = new SQLField<>("sourceType", SQLType.ENUM(SourceType.class),
 			false);
 	public static final SQLFKField<SQLOnlineshopHistory, String, SQLPlayer> sourcePlayerId = new SQLFKField<>("sourcePlayerId",
-			SQLType.CHAR(36), true, SQLPlayer.playerId);
+			SQLType.CHAR(36), true, SQLPlayer.class, SQLPlayer.playerId);
 	public static final SQLField<SQLOnlineshopHistory, Double> sourceQuantity = new SQLField<>("sourceQuantity", SQLType.DOUBLE, false);
 	public static final SQLField<SQLOnlineshopHistory, String> sourceName = new SQLField<>("sourceName", SQLType.VARCHAR(64), false);
 	public static final SQLField<SQLOnlineshopHistory, DestType> destType = new SQLField<>("destType", SQLType.ENUM(DestType.class), false);
 	public static final SQLFKField<SQLOnlineshopHistory, String, SQLPlayer> destPlayerId = new SQLFKField<>("destPlayerId", SQLType.CHAR(36),
-			false, SQLPlayer.playerId);
+			false, SQLPlayer.class, SQLPlayer.playerId);
 	public static final SQLField<SQLOnlineshopHistory, Double> destQuantity = new SQLField<>("destQuantity", SQLType.DOUBLE, false);
 	public static final SQLField<SQLOnlineshopHistory, String> destName = new SQLField<>("destName", SQLType.VARCHAR(64), false);
 

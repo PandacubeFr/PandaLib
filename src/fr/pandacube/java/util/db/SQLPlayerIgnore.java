@@ -30,9 +30,9 @@ public class SQLPlayerIgnore extends SQLElement<SQLPlayerIgnore> {
 	}
 
 	public static final SQLFKField<SQLPlayerIgnore, String, SQLPlayer> ignorer = new SQLFKField<>("ignorer", SQLType.CHAR(36), false,
-			SQLPlayer.playerId);
+			SQLPlayer.class, SQLPlayer.playerId);
 	public static final SQLFKField<SQLPlayerIgnore, String, SQLPlayer> ignored = new SQLFKField<>("ignored", SQLType.CHAR(36), false,
-			SQLPlayer.playerId);
+			SQLPlayer.class, SQLPlayer.playerId);
 
 	public UUID getIgnorerId() {
 		String id = get(ignorer);

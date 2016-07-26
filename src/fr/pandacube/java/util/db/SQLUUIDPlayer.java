@@ -23,7 +23,7 @@ public class SQLUUIDPlayer extends SQLElement<SQLUUIDPlayer> {
 	}
 
 	public static final SQLFKField<SQLUUIDPlayer, String, SQLPlayer> uuid = new SQLFKField<>("uuid", SQLType.CHAR(36), false,
-			SQLPlayer.playerId);
+			SQLPlayer.class, SQLPlayer.playerId);
 	public static final SQLField<SQLUUIDPlayer, String> player = new SQLField<>("player", SQLType.VARCHAR(16), false);
 
 	public UUID getUUID() {

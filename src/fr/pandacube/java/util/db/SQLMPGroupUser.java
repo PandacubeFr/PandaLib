@@ -30,7 +30,7 @@ public class SQLMPGroupUser extends SQLElement<SQLMPGroupUser> {
 	public static final SQLFKField<SQLMPGroupUser, Integer, SQLMPGroup> groupId = SQLFKField.idFK("groupId", SQLType.INT, false,
 			SQLMPGroup.class);
 	public static final SQLFKField<SQLMPGroupUser, String, SQLPlayer> playerId = new SQLFKField<>("playerId", SQLType.CHAR(36), false,
-			SQLPlayer.playerId);
+			SQLPlayer.class, SQLPlayer.playerId);
 
 	// TODO ajouter un champ qui dit si le joueur est admin du groupe
 

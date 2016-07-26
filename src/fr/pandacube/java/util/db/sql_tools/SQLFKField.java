@@ -7,21 +7,21 @@ public class SQLFKField<E extends SQLElement<E>, T, F extends SQLElement<F>> ext
 	private SQLField<F, T> sqlForeignKeyField;
 	private Class<F> sqlForeignKeyElemClass;
 
-	public SQLFKField(String n, SQLType<T> t, boolean nul, SQLField<F, T> fkF) {
+	public SQLFKField(String n, SQLType<T> t, boolean nul, Class<F> fkEl, SQLField<F, T> fkF) {
 		super(n, t, nul);
-		construct(fkF);
+		construct(fkEl, fkF);
 	}
 
-	public SQLFKField(String n, SQLType<T> t, boolean nul, T deflt, SQLField<F, T> fkF) {
+	public SQLFKField(String n, SQLType<T> t, boolean nul, T deflt, Class<F> fkEl, SQLField<F, T> fkF) {
 		super(n, t, nul, deflt);
-		construct(fkF);
+		construct(fkEl, fkF);
 	}
 
 	public static <E extends SQLElement<E>, F extends SQLElement<F>> SQLFKField<E, Integer, F> idFK(String n, SQLType<Integer> t, boolean nul,
 			Class<F> fkEl) {
 		if (fkEl == null) throw new IllegalArgumentException("foreignKeyElement can't be null");
 		try {
-			return new SQLFKField<>(n, t, nul, ORM.getSQLIdField(fkEl));
+			return new SQLFKField<>(n, t, nul, fkEl, ORM.getSQLIdField(fkEl));
 		} catch (ORMInitTableException e) {
 			Log.severe("Can't create Foreign key Field called '" + n + "'", e);
 			return null;
@@ -32,21 +32,19 @@ public class SQLFKField<E extends SQLElement<E>, T, F extends SQLElement<F>> ext
 			Integer deflt, Class<F> fkEl) {
 		if (fkEl == null) throw new IllegalArgumentException("foreignKeyElement can't be null");
 		try {
-			return new SQLFKField<>(n, t, nul, deflt, ORM.getSQLIdField(fkEl));
+			return new SQLFKField<>(n, t, nul, deflt, fkEl, ORM.getSQLIdField(fkEl));
 		} catch (ORMInitTableException e) {
 			Log.severe("Can't create Foreign key Field called '" + n + "'", e);
 			return null;
 		}
 	}
 
-	private void construct(SQLField<F, T> fkF) {
+	private void construct(Class<F> fkEl, SQLField<F, T> fkF) {
 		if (fkF == null) throw new IllegalArgumentException("foreignKeyField can't be null");
-		Class<F> fkEl = fkF.getSQLElementType();
 		try {
 			ORM.initTable(fkEl);
 		} catch (ORMInitTableException e) {
-			Log.severe(e);
-			return;
+			throw new RuntimeException(e);
 		}
 		if (!fkEl.equals(fkF.getSQLElementType()))
 			throw new IllegalArgumentException("foreignKeyField must be from supplied foreignKeyElement");

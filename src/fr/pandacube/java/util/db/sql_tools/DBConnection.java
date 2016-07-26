@@ -14,7 +14,13 @@ public class DBConnection {
 	public DBConnection(String host, int port, String dbname, String l, String p)
 			throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.jdbc.Driver");
-		url = "jdbc:mysql://" + host + ":" + port + "/" + dbname;
+		url = "jdbc:mysql://" + host + ":" + port + "/" + dbname
+				+ "?autoReconnect=true"
+				+ "&useUnicode=true"
+				+ "&characterEncoding=utf8"
+				+ "&characterSetResults=utf8"
+				+ "&character_set_server=utf8mb4"
+				+ "&character_set_connection=utf8mb4";
 		login = l;
 		pass = p;
 		connect();

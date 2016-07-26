@@ -24,13 +24,14 @@ public class SQLLoginHistory extends SQLElement<SQLLoginHistory> {
 
 	public static final SQLField<SQLLoginHistory, Long> time = new SQLField<>("time", SQLType.BIGINT, false);
 	public static final SQLFKField<SQLLoginHistory, String, SQLPlayer> playerId = new SQLFKField<>("playerId", SQLType.CHAR(36), false,
-			SQLPlayer.playerId);
+			SQLPlayer.class, SQLPlayer.playerId);
 	public static final SQLField<SQLLoginHistory, String> ip = new SQLField<>("ip", SQLType.VARCHAR(128), true);
 	public static final SQLField<SQLLoginHistory, ActionType> actionType = new SQLField<>("actionType", SQLType.ENUM(ActionType.class),
 			false);
 	public static final SQLField<SQLLoginHistory, Integer> nbOnline = new SQLField<>("nbOnline", SQLType.INT, false);
 	public static final SQLField<SQLLoginHistory, String> playerName = new SQLField<>("playerName", SQLType.VARCHAR(16), true);
 	public static final SQLField<SQLLoginHistory, Integer> minecraftVersion = new SQLField<>("minecraftVersion", SQLType.INT, false, 0);
+	public static final SQLField<SQLLoginHistory, String> hostName = new SQLField<>("hostName", SQLType.VARCHAR(128), true);
 
 	public UUID getPlayerId() {
 		String id = get(playerId);

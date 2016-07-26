@@ -23,11 +23,11 @@ public class SQLStaffTicket extends SQLElement<SQLStaffTicket> {
 	}
 
 	public static final SQLFKField<SQLStaffTicket, String, SQLPlayer> playerId = new SQLFKField<>("playerId", SQLType.CHAR(36), false,
-			SQLPlayer.playerId);
+			SQLPlayer.class, SQLPlayer.playerId);
 	public static final SQLField<SQLStaffTicket, String> message = new SQLField<>("message", SQLType.VARCHAR(1024), false);
 	public static final SQLField<SQLStaffTicket, Long> creationTime = new SQLField<>("creationTime", SQLType.BIGINT, false);
 	public static final SQLFKField<SQLStaffTicket, String, SQLPlayer> staffPlayerId = new SQLFKField<>("staffPlayerId",
-			SQLType.CHAR(36), true, SQLPlayer.playerId);
+			SQLType.CHAR(36), true, SQLPlayer.class, SQLPlayer.playerId);
 
 	public UUID getPlayerId() {
 		String id = get(playerId);

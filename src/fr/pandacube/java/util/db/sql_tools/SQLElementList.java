@@ -158,7 +158,7 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Log.severe(e);
 		}
 
 	}

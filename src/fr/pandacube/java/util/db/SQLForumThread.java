@@ -26,7 +26,7 @@ public class SQLForumThread extends SQLElement<SQLForumThread> {
 			SQLForumForum.class);
 	public static final SQLField<SQLForumThread, String> titre = new SQLField<>("titre", SQLType.VARCHAR(60), false);
 	public static final SQLFKField<SQLForumThread, String, SQLPlayer> createur = new SQLFKField<>("createur", SQLType.CHAR(36), false,
-			SQLPlayer.playerId);
+			SQLPlayer.class, SQLPlayer.playerId);
 	public static final SQLField<SQLForumThread, Integer> vu = new SQLField<>("vu", SQLType.INT, false);
 	public static final SQLField<SQLForumThread, Long> time = new SQLField<>("time", SQLType.BIGINT, false);
 	public static final SQLField<SQLForumThread, Boolean> anchored = new SQLField<>("anchored", SQLType.BOOLEAN, false);

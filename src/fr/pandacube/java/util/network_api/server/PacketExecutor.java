@@ -42,10 +42,10 @@ public class PacketExecutor implements Runnable {
 			try {
 				rep.sendPacket(new PrintStream(socket.getOutputStream()));
 			} catch (IOException e1) {}
-			if (e instanceof IOException) Log.getLogger()
-					.warning("Impossible de lire le packet reçu sur le socket " + socket + " : " + e.toString());
+			if (e instanceof IOException)
+				Log.warning("Impossible de lire le packet reçu sur le socket " + socket + " : " + e.toString());
 			else
-				e.printStackTrace();
+				Log.severe(e);
 		}
 
 		try {

@@ -37,11 +37,11 @@ public class SQLMPMessage extends SQLElement<SQLMPMessage> {
 	public static final SQLField<SQLMPMessage, Long> time = new SQLField<>("time", SQLType.BIGINT, false);
 	public static final SQLField<SQLMPMessage, Integer> securityKey = new SQLField<>("securityKey", SQLType.INT, false);
 	public static final SQLFKField<SQLMPMessage, String, SQLPlayer> viewerId = new SQLFKField<>("viewerId", SQLType.CHAR(36), false,
-			SQLPlayer.playerId);
+			SQLPlayer.class, SQLPlayer.playerId);
 	public static final SQLFKField<SQLMPMessage, String, SQLPlayer> sourceId = new SQLFKField<>("sourceId", SQLType.CHAR(36), true,
-			SQLPlayer.playerId);
+			SQLPlayer.class, SQLPlayer.playerId);
 	public static final SQLFKField<SQLMPMessage, String, SQLPlayer> destId = new SQLFKField<>("destId", SQLType.CHAR(36), true,
-			SQLPlayer.playerId);
+			SQLPlayer.class, SQLPlayer.playerId);
 	public static final SQLFKField<SQLMPMessage, Integer, SQLMPGroup> destGroup = SQLFKField.idFK("destGroup", SQLType.INT, true,
 			SQLMPGroup.class);
 	public static final SQLField<SQLMPMessage, String> message = new SQLField<>("message", SQLType.VARCHAR(512), false);

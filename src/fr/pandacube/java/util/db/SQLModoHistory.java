@@ -23,14 +23,14 @@ public class SQLModoHistory extends SQLElement<SQLModoHistory> {
 	}
 
 	public static final SQLFKField<SQLModoHistory, String, SQLPlayer> modoId = new SQLFKField<>("modoId", SQLType.CHAR(36), true,
-			SQLPlayer.playerId);
+			SQLPlayer.class, SQLPlayer.playerId);
 	public static final SQLField<SQLModoHistory, ActionType> actionType = new SQLField<>("actionType", SQLType.ENUM(ActionType.class),
 			false);
 	public static final SQLField<SQLModoHistory, Long> time = new SQLField<>("time", SQLType.BIGINT, false);
 	public static final SQLFKField<SQLModoHistory, String, SQLPlayer> playerId = new SQLFKField<>("playerId", SQLType.CHAR(36), false,
-			SQLPlayer.playerId);
+			SQLPlayer.class, SQLPlayer.playerId);
 	public static final SQLField<SQLModoHistory, Long> value = new SQLField<>("value", SQLType.BIGINT, true);
-	public static final SQLField<SQLModoHistory, String> message = new SQLField<>("message", SQLType.VARCHAR(512), false);
+	public static final SQLField<SQLModoHistory, String> message = new SQLField<>("message", SQLType.VARCHAR(2048), false);
 
 	public UUID getModoId() {
 		String id = get(modoId);

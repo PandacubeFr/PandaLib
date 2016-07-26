@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.logging.Level;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -39,6 +38,12 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 	@SuppressWarnings("unchecked")
 	public SQLElement() {
 		tableName = tableName();
+		
+		try {
+			ORM.initTable((Class<E>)getClass());
+		} catch (ORMInitTableException e) {
+			throw new RuntimeException(e);
+		}
 
 		if (fieldsCache.get(getClass()) == null) {
 			fields = new SQLFieldMap<>((Class<E>)getClass());
@@ -95,7 +100,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 
 				listToFill.addField((SQLField<?, ?>) val);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
-				Log.getLogger().log(Level.SEVERE, "Can't get value of static field " + field.toString(), e);
+				Log.severe("Can't get value of static field " + field.toString(), e);
 			}
 		}
 
@@ -116,7 +121,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 	/* package */ <T> void set(SQLField<E, T> sqlField, T value, boolean setModified) {
 		if (sqlField == null) throw new IllegalArgumentException("sqlField can't be null");
 		if (!fields.containsValue(sqlField))
-			throw new IllegalArgumentException(sqlField.name + " is not a SQLField of " + getClass().getName());
+			throw new IllegalArgumentException(sqlField.getSQLElementType().getName()+sqlField.name + " is not a SQLField of " + getClass().getName());
 
 		boolean modify = false;
 		if (value == null) {
@@ -352,7 +357,6 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 
 		private void addField(SQLField<?, ?> f) {
 			if (f == null) return;
-			if (!sqlElemClass.equals(f.getSQLElementType())) return;
 			if (containsKey(f.name)) throw new IllegalArgumentException(
 					"SQLField " + f.name + " already exist in " + sqlElemClass.getName());
 			@SuppressWarnings("unchecked")

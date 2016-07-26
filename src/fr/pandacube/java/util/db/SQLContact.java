@@ -24,7 +24,7 @@ public class SQLContact extends SQLElement<SQLContact> {
 
 	public static final SQLField<SQLContact, Integer> time = new SQLField<>("time", SQLType.INT, false);
 	public static final SQLFKField<SQLContact, String, SQLPlayer> playerId = new SQLFKField<>("playerId", SQLType.CHAR(36), true,
-			SQLPlayer.playerId);
+			SQLPlayer.class, SQLPlayer.playerId);
 	public static final SQLField<SQLContact, String> userName = new SQLField<>("userName", SQLType.VARCHAR(50), true);
 	public static final SQLField<SQLContact, String> userMail = new SQLField<>("userMail", SQLType.VARCHAR(50), true);
 	public static final SQLField<SQLContact, String> titre = new SQLField<>("titre", SQLType.VARCHAR(100), false);

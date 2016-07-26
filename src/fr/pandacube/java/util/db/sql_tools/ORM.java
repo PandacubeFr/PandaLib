@@ -16,11 +16,13 @@ import fr.pandacube.java.util.db.SQLForumForum;
 import fr.pandacube.java.util.db.SQLForumPost;
 import fr.pandacube.java.util.db.SQLForumThread;
 import fr.pandacube.java.util.db.SQLLoginHistory;
+import fr.pandacube.java.util.db.SQLLoginKickHistory;
 import fr.pandacube.java.util.db.SQLMPGroup;
 import fr.pandacube.java.util.db.SQLMPGroupUser;
 import fr.pandacube.java.util.db.SQLMPMessage;
 import fr.pandacube.java.util.db.SQLModoHistory;
 import fr.pandacube.java.util.db.SQLOnlineshopHistory;
+import fr.pandacube.java.util.db.SQLPingHistory;
 import fr.pandacube.java.util.db.SQLPlayer;
 import fr.pandacube.java.util.db.SQLPlayerIgnore;
 import fr.pandacube.java.util.db.SQLShopStock;
@@ -64,11 +66,13 @@ public final class ORM {
 			initTable(SQLForumPost.class);
 			initTable(SQLForumThread.class);
 			initTable(SQLLoginHistory.class);
+			initTable(SQLLoginKickHistory.class);
 			initTable(SQLModoHistory.class);
 			initTable(SQLMPGroup.class);
 			initTable(SQLMPGroupUser.class);
 			initTable(SQLMPMessage.class);
 			initTable(SQLOnlineshopHistory.class);
+			initTable(SQLPingHistory.class);
 			initTable(SQLPlayer.class);
 			initTable(SQLPlayerIgnore.class);
 			initTable(SQLShopStock.class);
@@ -81,14 +85,16 @@ public final class ORM {
 
 	}
 
-	/* package */ static <E extends SQLElement<E>> void initTable(Class<E> elemClass) throws ORMInitTableException {
+	/* package */ static synchronized <E extends SQLElement<E>> void initTable(Class<E> elemClass) throws ORMInitTableException {
 		if (tables.contains(elemClass)) return;
 		try {
+			tables.add(elemClass);
+			Log.info("Start initializing SQL table "+elemClass.getName());
 			E instance = elemClass.newInstance();
 			String tableName = instance.tableName();
 			if (!tableExist(tableName)) createTable(instance);
-			tables.add(elemClass);
-		} catch (Exception e) {
+			Log.info("End of initializing SQL table "+elemClass.getName());
+		} catch (Exception|ExceptionInInitializerError e) {
 			throw new ORMInitTableException(elemClass, e);
 		}
 	}

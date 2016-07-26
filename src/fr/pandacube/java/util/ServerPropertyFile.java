@@ -60,7 +60,7 @@ public class ServerPropertyFile {
 
 			return true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.severe(e);
 		} finally {
 			try {
 				in.close();
@@ -82,7 +82,7 @@ public class ServerPropertyFile {
 
 			return true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.severe(e);
 		} finally {
 			try {
 				out.close();

@@ -5,6 +5,8 @@ import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
 
+import fr.pandacube.java.util.Log;
+
 public abstract class AbstractRequestExecutor {
 
 	public final String command;
@@ -25,7 +27,7 @@ public abstract class AbstractRequestExecutor {
 
 		} catch (Exception e) {
 			new Response(false, e.toString()).sendPacket(new PrintStream(socket.getOutputStream()));
-			e.printStackTrace();
+			Log.severe(e);
 		}
 
 	}
