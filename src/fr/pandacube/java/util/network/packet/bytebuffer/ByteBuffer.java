@@ -25,10 +25,11 @@ public class ByteBuffer implements Cloneable {
 	}
 
 	private void askForBufferExtension(int needed) {
-		if (buff.remaining() >= needed) return;
-		java.nio.ByteBuffer newBuff = java.nio.ByteBuffer.wrap(Arrays.copyOf(buff.array(), buff.array().length * 2));
-		newBuff.position(buff.position());
-		buff = newBuff;
+		while (buff.remaining() < needed) {
+			java.nio.ByteBuffer newBuff = java.nio.ByteBuffer.wrap(Arrays.copyOf(buff.array(), buff.array().length * 2));
+			newBuff.position(buff.position());
+			buff = newBuff;
+		}
 	}
 
 	@Override

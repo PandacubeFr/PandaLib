@@ -21,8 +21,7 @@ public class PacketServerException extends PacketServer {
 	
 	@Override
 	public void deserializeFromByteBuffer(ByteBuffer buffer) {
-		// TODO Auto-generated method stub
-		
+		exception = buffer.getString();
 	}
 	
 	

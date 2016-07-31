@@ -8,6 +8,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -80,8 +81,10 @@ public class TCPServer extends Thread implements Closeable {
 					Log.getLogger().log(Level.SEVERE, "Connexion impossible avec " + socketClient.getInetAddress());
 				}
 			}
+		} catch(SocketException e) {
+			
 		} catch (Exception e) {
-			Log.getLogger().log(Level.WARNING, "Plus aucune connexion ne peux être acceptée", e);
+			Log.warning("Plus aucune connexion ne peux être acceptée", e);
 		}
 	}
 
@@ -136,6 +139,7 @@ public class TCPServer extends Thread implements Closeable {
 					}
 				}
 
+			} catch(SocketException e) {
 			} catch (Exception e) {
 				Log.severe("Closing connection " + address, e);
 			}
@@ -242,16 +246,17 @@ public class TCPServer extends Thread implements Closeable {
 	public void close() {
 		try {
 			if (isClosed.get()) return;
+			isClosed.set(true);
 
 			clients.forEach(el -> el.close());
-
-			socket.close();
-			isClosed.set(true);
+			
 			try {
 				listener.onSocketClose(this);
 			} catch(Exception e) {
 				Log.severe("Exception while calling TCPServerListener.onSocketClose()", e);
 			}
+
+			socket.close();
 		} catch (IOException e) {}
 	}
 

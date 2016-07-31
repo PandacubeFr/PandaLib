@@ -89,11 +89,11 @@ public final class ORM {
 		if (tables.contains(elemClass)) return;
 		try {
 			tables.add(elemClass);
-			Log.info("Start initializing SQL table "+elemClass.getName());
+			//Log.info("Start Init SQL table "+elemClass.getSimpleName());
 			E instance = elemClass.newInstance();
 			String tableName = instance.tableName();
 			if (!tableExist(tableName)) createTable(instance);
-			Log.info("End of initializing SQL table "+elemClass.getName());
+			//Log.info("End init SQL table "+elemClass.getSimpleName());
 		} catch (Exception|ExceptionInInitializerError e) {
 			throw new ORMInitTableException(elemClass, e);
 		}
@@ -287,8 +287,7 @@ public final class ORM {
 	 * for(SQLPlayer p : players) {
 	 * System.out.println(p.get(SQLPlayer.playerDisplayName));
 	 * }
-	 * // TODO LIST
-	 * - Gérer mise à jour relative d'un champ (incrément / décrément)
+	 * // TODO mise à jour relative d'un champ (incrément / décrément)
 	 * }
 	 */
 
