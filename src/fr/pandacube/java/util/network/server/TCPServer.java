@@ -235,11 +235,7 @@ public class TCPServer extends Thread implements Closeable {
 
 		PacketClient pc = (PacketClient) p;
 
-		try {
-			listener.onPacketReceive(this, co, pc);
-		} catch(Exception e) {
-			Log.severe("Exception while calling TCPServerListener.onPacketReceive()", e);
-		}
+		listener.onPacketReceive(this, co, pc);
 	}
 
 	@Override

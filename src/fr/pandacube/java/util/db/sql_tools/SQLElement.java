@@ -17,6 +17,9 @@ import java.util.Set;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import fr.pandacube.java.util.Log;
 import fr.pandacube.java.util.db.sql_tools.SQLWhereComp.SQLComparator;
 
@@ -392,6 +395,16 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 	@Override
 	public int hashCode() {
 		return super.hashCode();
+	}
+	
+	
+	
+	public JsonObject asJsonObject() {
+		JsonObject json = new JsonObject();
+		for (SQLField<E, ?> f : getFields().values()) {
+			json.add(f.name, new Gson().toJsonTree(get(f)));
+		}
+		return json;
 	}
 
 }
