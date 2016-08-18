@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public abstract class AbstractConfigManager {
 	
-	protected File configDir;
+	protected final File configDir;
 	
 	public AbstractConfigManager(File configD) throws IOException {
 		configDir = configD;

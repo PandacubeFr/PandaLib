@@ -6,9 +6,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import fr.pandacube.java.util.Log;
+import net.md_5.bungee.api.ChatColor;
 /**
  * Classe chargeant en mémoire un fichier de configuration ou un dossier donné
  * @author Marc Baloup
@@ -110,11 +112,22 @@ public abstract class AbstractConfig {
 		if (perms == null || perms.equals("*"))
 			return null;
 		else
-			return Arrays.asList(perms.split(";"));
+			return getSplittedString(perms, ";");
 	}
 	
 	
 	
+	
+	
+	public static List<String> getSplittedString(String value, String split) {
+		return Collections.unmodifiableList(Arrays.asList(value.split(split)));
+	}
+	
+
+
+	public static String getTranslatedColorCode(String string) {
+		return ChatColor.translateAlternateColorCodes('&', string);
+	}
 	
 	
 	
