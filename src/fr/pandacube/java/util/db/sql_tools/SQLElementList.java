@@ -3,13 +3,18 @@ package fr.pandacube.java.util.db.sql_tools;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.gson.JsonArray;
 
 import fr.pandacube.java.util.Log;
+import fr.pandacube.java.util.db.sql_tools.SQLWhereChain.SQLBoolOp;
+import fr.pandacube.java.util.db.sql_tools.SQLWhereComp.SQLComparator;
 
 /**
  *
@@ -164,6 +169,34 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 		}
 
 	}
+	
+	
+	
+	public <T, F extends SQLElement<F>> Map<T, F> getAllForeign(SQLFKField<E, T, F> foreignKey) throws ORMException {
+		Set<T> values = new HashSet<>();
+		forEach(v -> {
+			T val = v.get(foreignKey);
+			if (val != null)
+				values.add(val);
+		});
+		
+		if (values.isEmpty()) {
+			return new HashMap<>();
+		}
+		
+		SQLWhereChain where = new SQLWhereChain(SQLBoolOp.OR);
+		values.forEach(v -> where.add(new SQLWhereComp(foreignKey.getForeignField(), SQLComparator.EQ, v)));
+		
+		
+		SQLElementList<F> foreignElemts = ORM.getAll(foreignKey.getForeignElementClass(), where, null, null, null);
+		
+		Map<T, F> ret = new HashMap<>();
+		foreignElemts.forEach(foreignVal -> ret.put(foreignVal.get(foreignKey.getForeignField()), foreignVal));
+		return ret;
+	}
+	
+	
+	
 	
 	
 	public JsonArray asJsonArray() {
