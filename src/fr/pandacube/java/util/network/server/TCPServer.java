@@ -49,6 +49,7 @@ public class TCPServer extends Thread implements Closeable {
 
 	public TCPServer(int port, String sckName, TCPServerListener l) throws IOException {
 		super("TCPSv " + sckName);
+		setDaemon(true);
 		if (port <= 0 || port > 65535) throw new IllegalArgumentException("le numéro de port est invalide");
 		socket = new ServerSocket();
 		socket.setReceiveBufferSize(Pandacube.NETWORK_TCP_BUFFER_SIZE);
@@ -97,6 +98,7 @@ public class TCPServer extends Thread implements Closeable {
 
 		public TCPServerClientConnection(Socket s, int coId) throws IOException {
 			super("TCPSv " + socketName + " Conn#" + coId + " In");
+			setDaemon(true);
 			socket = s;
 			in = socket.getInputStream();
 			out = socket.getOutputStream();
@@ -189,6 +191,7 @@ public class TCPServer extends Thread implements Closeable {
 
 			public TCPServerConnectionOutputThread(int coId) {
 				super("TCPSv " + socketName + " Conn#" + coId + " Out");
+				setDaemon(true);
 			}
 
 			private void addPacket(PacketServer packet) {

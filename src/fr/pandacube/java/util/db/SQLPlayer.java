@@ -1,14 +1,19 @@
 package fr.pandacube.java.util.db;
 
 import java.sql.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import fr.pandacube.java.util.db.sql_tools.ORM;
 import fr.pandacube.java.util.db.sql_tools.ORMException;
 import fr.pandacube.java.util.db.sql_tools.SQLElement;
+import fr.pandacube.java.util.db.sql_tools.SQLElementList;
 import fr.pandacube.java.util.db.sql_tools.SQLField;
 import fr.pandacube.java.util.db.sql_tools.SQLType;
+import fr.pandacube.java.util.db.sql_tools.SQLWhereChain;
 import fr.pandacube.java.util.db.sql_tools.SQLWhereComp;
+import fr.pandacube.java.util.db.sql_tools.SQLWhereChain.SQLBoolOp;
 import fr.pandacube.java.util.db.sql_tools.SQLWhereComp.SQLComparator;
 
 public class SQLPlayer extends SQLElement<SQLPlayer> {
@@ -83,9 +88,32 @@ public class SQLPlayer extends SQLElement<SQLPlayer> {
 		set(token, (t == null) ? (String) null : t.toString());
 	}
 
+	
+	
+	
+	
 	public static SQLPlayer getPlayerFromUUID(UUID playerId) throws ORMException {
 		return ORM.getFirst(SQLPlayer.class,
 				new SQLWhereComp(SQLPlayer.playerId, SQLComparator.EQ, playerId.toString()), null);
+	}
+	
+	
+	public static SQLElementList<SQLPlayer> getPlayersFromUUIDs(Set<UUID> playerIds) throws ORMException {
+		Set<String> uuidsString = new HashSet<>();
+		for (UUID id : playerIds)
+			uuidsString.add(id.toString());
+		return getPlayersFromUUIDStr(uuidsString);
+	}
+	
+	public static SQLElementList<SQLPlayer> getPlayersFromUUIDStr(Set<String> playerIds) throws ORMException {
+
+		SQLWhereChain where = new SQLWhereChain(SQLBoolOp.OR);
+		for (String userId : playerIds) {
+			where.add(new SQLWhereComp(SQLPlayer.playerId, SQLComparator.EQ, userId));
+		}
+		
+		return ORM.getAll(SQLPlayer.class, where, null, null, null);
+		
 	}
 
 }

@@ -4,7 +4,9 @@ public class ThreadNAPIExecutionHandler implements NAPIExecutionHandler {
 
 	@Override
 	public void handleRun(Runnable executor) {
-		new Thread(executor).start();
+		Thread t = new Thread(executor);
+		t.setDaemon(true);
+		t.start();
 	}
 
 }

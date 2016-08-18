@@ -33,6 +33,7 @@ public class TCPClient extends Thread implements Closeable {
 
 	public TCPClient(InetSocketAddress a, String connName, TCPClientListener l) throws IOException {
 		super("TCPCl " + connName);
+		setDaemon(true);
 		if (a == null || l == null) throw new IllegalArgumentException("les arguments ne peuvent pas être null");
 		socket = new Socket();
 		socket.setReceiveBufferSize(Pandacube.NETWORK_TCP_BUFFER_SIZE);
