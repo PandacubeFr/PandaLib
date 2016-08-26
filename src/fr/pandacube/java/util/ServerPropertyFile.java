@@ -36,9 +36,7 @@ public class ServerPropertyFile {
 	 * @return true si le chargement a réussi, false sinon
 	 */
 	public boolean loadFromFile() {
-		BufferedReader in = null;
-		try {
-			in = new BufferedReader(new FileReader(file));
+		try (BufferedReader in = new BufferedReader(new FileReader(file))) {
 
 			@SuppressWarnings("unchecked")
 			Map<String, Object> dataFile = new Gson().fromJson(in, Map.class);
@@ -61,12 +59,8 @@ public class ServerPropertyFile {
 			return true;
 		} catch (IOException e) {
 			Log.severe(e);
-		} finally {
-			try {
-				in.close();
-			} catch (Exception e) {}
+			return false;
 		}
-		return false;
 	}
 
 	public boolean save() {
