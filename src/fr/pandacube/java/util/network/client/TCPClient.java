@@ -8,7 +8,13 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -18,7 +24,9 @@ import fr.pandacube.java.util.network.packet.Packet;
 import fr.pandacube.java.util.network.packet.PacketClient;
 import fr.pandacube.java.util.network.packet.PacketException;
 import fr.pandacube.java.util.network.packet.PacketServer;
+import fr.pandacube.java.util.network.packet.ResponseCallback;
 import fr.pandacube.java.util.network.packet.packets.global.PacketServerException;
+import javafx.util.Pair;
 
 public class TCPClient extends Thread implements Closeable {
 
@@ -28,6 +36,8 @@ public class TCPClient extends Thread implements Closeable {
 	private InputStream in;
 	private OutputStream out;
 	private Object outSynchronizer = new Object();
+	private List<Pair<Predicate<PacketServer>, ResponseCallback<PacketServer>>> callbacks = Collections.synchronizedList(new ArrayList<>());
+	private List<Pair<Predicate<PacketServer>, ResponseCallback<PacketServer>>> callbacksAvoidListener = Collections.synchronizedList(new ArrayList<>());
 
 	private AtomicBoolean isClosed = new AtomicBoolean(false);
 
@@ -78,17 +88,23 @@ public class TCPClient extends Thread implements Closeable {
 						try {
 							listener.onServerException(this, ((PacketServerException)p).getExceptionString());
 						} catch (Exception e) {
-							Log.severe("Exception while calling TCPClientListener.onPacketReceive()", e);
+							Log.severe("Exception while calling TCPClientListener.onServerException()", e);
 						}
 					}
 					
 					PacketServer ps = (PacketServer) p;
 
+					boolean callbackExecuted = executeCallbacks(ps, callbacksAvoidListener);
+					
 					try {
-						listener.onPacketReceive(this, ps);
+						if (!callbackExecuted)
+							listener.onPacketReceive(this, ps);
 					} catch (Exception e) {
 						Log.severe("Exception while calling TCPClientListener.onPacketReceive()", e);
 					}
+					
+					executeCallbacks(ps, callbacks);
+					
 				} catch (Exception e) {
 					Log.severe("Exception while handling packet from server", e);
 				}
@@ -99,6 +115,27 @@ public class TCPClient extends Thread implements Closeable {
 		}
 		close();
 	}
+	
+	
+	private boolean executeCallbacks(PacketServer ps, List<Pair<Predicate<PacketServer>, ResponseCallback<PacketServer>>> callbacks) {
+		boolean executedOne = false;
+		synchronized (callbacks) {
+			for(Iterator<Pair<Predicate<PacketServer>, ResponseCallback<PacketServer>>> it = callbacks.iterator(); it.hasNext();) {
+				Pair<Predicate<PacketServer>, ResponseCallback<PacketServer>> c = it.next();
+				try {
+					if (c.getKey().test(ps)) {
+						it.remove();
+						c.getValue().call(ps);
+						executedOne = true;
+					}
+				} catch (Exception e) {
+					Log.severe("Exception while executing callback", e);
+				}
+			}
+		}
+		return executedOne;
+	}
+	
 
 	private void forceReadBytes(byte[] buff) throws IOException {
 		int pos = 0;
@@ -115,6 +152,34 @@ public class TCPClient extends Thread implements Closeable {
 			out.flush();
 		}
 	}
+
+	
+	public void sendAndGetResponse(PacketClient packet, Predicate<PacketServer> responseCondition, ResponseCallback<PacketServer> callback, boolean avoidListener) throws IOException {
+		Pair<Predicate<PacketServer>, ResponseCallback<PacketServer>> p = new Pair<>(responseCondition, callback);
+		if (avoidListener)
+			callbacksAvoidListener.add(p);
+		else
+			callbacks.add(p);
+		send(packet);
+	}
+	
+	
+	public PacketServer sendAndWaitForResponse(PacketClient packet, Predicate<PacketServer> responseCondition, boolean avoidListener) throws IOException, InterruptedException {
+		AtomicReference<PacketServer> psStorage = new AtomicReference<>(null);
+		synchronized (psStorage) {
+			sendAndGetResponse(packet, responseCondition, packetServer -> {
+				synchronized (psStorage) {
+					psStorage.set(packetServer);
+					psStorage.notifyAll();
+				}
+			}, true);
+			
+			psStorage.wait();
+			return psStorage.get();
+		}
+	}
+	
+	
 
 	@Override
 	public void close() {

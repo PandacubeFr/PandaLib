@@ -23,6 +23,7 @@ import fr.pandacube.java.util.network.packet.packets.web.PacketServerWebResponse
  * - web     (-000----) 0x00 - 0x0F    0x80 - 0x8F (client is Apache, server is PandacubeCore master (PandacubeWeb))
  * - spigot  (-001----) 0x10 - 0x1F    0x90 - 0x9F (client is PandacubeSpigot, server is PandacubeCore master)
  * - bungee  (-010----) 0x20 - 0x2F    0xA0 - 0xAF (client is PandacubeBungee, server is PandacubeCore master)
+ * -coreslave(-011----) 0x30 - 0x3F    0xB0 - 0xBF (client is PandacubeCore slave, sv is PandacubeCore master)
  * - global  (-101----) 0x50 - 0x5F    0xD0 - 0xDF
  * 
  * - reserved if not enough packet id in certain use case
@@ -47,7 +48,7 @@ public abstract class Packet implements ByteSerializable {
 		ByteBuffer internal = new ByteBuffer(CHARSET).putObject(this);
 		byte[] data = Arrays.copyOfRange(internal.array(), 0, internal.getPosition());
 
-		return new ByteBuffer(5 + data.length, CHARSET).putByte(code).putInt(data.length).putBytes(data).array();
+		return new ByteBuffer(5 + data.length, CHARSET).putByte(code).putInt(data.length).putByteArray(data).array();
 	}
 
 	public static final Charset CHARSET = Pandacube.NETWORK_CHARSET;

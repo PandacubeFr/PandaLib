@@ -47,9 +47,20 @@ public class ByteBuffer implements Cloneable {
 	/**
 	 * @see java.nio.ByteBuffer#get(byte[])
 	 */
-	public byte[] getBytes(byte[] b) {
+	public byte[] getByteArray(byte[] b) {
 		buff.get(b);
 		return b;
+	}
+	
+	/**
+	 * Return the next byte array wich is preceded with his size as integer,
+	 * or null if the founded size is negative.
+	 * @return
+	 */
+	public byte[] getSizedByteArray() {
+		int size = getInt();
+		if (size < 0) return null;
+		return getByteArray(new byte[size]);
 	}
 
 	/**
@@ -106,10 +117,18 @@ public class ByteBuffer implements Cloneable {
 	/**
 	 * @see java.nio.ByteBuffer#put(byte[])
 	 */
-	public ByteBuffer putBytes(byte[] b) {
+	public ByteBuffer putByteArray(byte[] b) {
 		askForBufferExtension(b.length * Byte.BYTES);
 		buff.put(b);
 		return this;
+	}
+	
+	public ByteBuffer putSizedByteArray(byte[] b) {
+		if (b == null) {
+			return putInt(-1);
+		}
+		putInt(b.length);
+		return putByteArray(b);
 	}
 
 	/**
@@ -187,21 +206,31 @@ public class ByteBuffer implements Cloneable {
 		return buff.capacity();
 	}
 
+	/**
+	 * 
+	 * @param s null String are supported
+	 * @return
+	 */
 	public ByteBuffer putString(String s) {
-		byte[] charBytes = s.getBytes(charset);
-		putInt(charBytes.length);
-		putBytes(charBytes);
-		return this;
+		if (s == null) {
+			return putInt(-1);
+		}
+		return putSizedByteArray(s.getBytes(charset));
 	}
 
+	/**
+	 * returned string can be null
+	 * @return
+	 */
 	public String getString() {
-		return new String(getBytes(new byte[getInt()]), charset);
+		byte[] binaryString = getSizedByteArray();
+		return (binaryString == null) ? null : new String(binaryString, charset);
 	}
 
 	/**
 	 * The objet will be serialized and the data put in the current buffer
 	 *
-	 * @param obj the object to serialize
+	 * @param obj the object to serialize. Can't be null.
 	 * @return the current buffer
 	 */
 	public ByteBuffer putObject(ByteSerializable obj) {
@@ -211,12 +240,12 @@ public class ByteBuffer implements Cloneable {
 
 	/**
 	 * Ask to object passed as argument to deserialize data in buffer and fill
-	 * the object content
+	 * the object content. ByteSerializable object are never null.
 	 *
 	 * @param <T>
-	 * @param obj the objet to fill with his method
-	 *        {@link ByteSerializable#deserializeFromByteBuffer(ByteBuffer)}
-	 * @return obj a reference to the same object
+	 * @param clazz the class wich will be instanciated with his no-argument Constructor
+	 * 	before filled by using {@link ByteSerializable#deserializeFromByteBuffer(ByteBuffer)}
+	 * @return obj a reference to the filled object
 	 */
 	public <T extends ByteSerializable> T getObject(Class<T> clazz) {
 		try {
@@ -224,22 +253,64 @@ public class ByteBuffer implements Cloneable {
 			obj.deserializeFromByteBuffer(this);
 			return obj;
 		} catch (InstantiationException | IllegalAccessException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException("A ByteSerializable must have a no-argument Constructor", e);
 		}
 	}
 
+	/**
+	 * 
+	 * @param list The list itself can be null, but not the values.
+	 * @return
+	 */
 	public ByteBuffer putListObject(List<ByteSerializable> list) {
+		if (list.stream().anyMatch(e -> e == null))
+			throw new IllegalArgumentException("List of object can't contains any null value");
 		putInt(list.size());
 		for (ByteSerializable obj : list)
 			putObject(obj);
 		return this;
 	}
 
+	/**
+	 * 
+	 * @param list The list can be null, and any String can be null too.
+	 * @return
+	 */
+	public ByteBuffer putListOfString(List<String> list) {
+		if (list == null) {
+			return putInt(-1);
+		}
+		putInt(list.size());
+		for (String str : list)
+			putString(str);
+		return this;
+	}
+
+	/**
+	 * 
+	 * @param clazz
+	 * @return Can be null. If not, there is no null element inside.
+	 */
 	public <T extends ByteSerializable> List<T> getListObject(Class<T> clazz) {
-		List<T> list = new ArrayList<T>();
 		int size = getInt();
+		if (size < 0)
+			return null;
+		List<T> list = new ArrayList<>();
 		for (int i = 0; i < size; i++)
 			list.add(getObject(clazz));
+		return list;
+	}
+
+	/**
+	 * @return a List of String. The list can be null, and any element can be null too.
+	 */
+	public <T extends ByteSerializable> List<String> getListOfString() {
+		int size = getInt();
+		if (size < 0)
+			return null;
+		List<String> list = new ArrayList<>();
+		for (int i = 0; i < size; i++)
+			list.add(getString());
 		return list;
 	}
 
