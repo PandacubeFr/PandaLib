@@ -9,6 +9,16 @@ import fr.pandacube.java.Pandacube;
 import fr.pandacube.java.util.Log;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteBuffer;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteSerializable;
+import fr.pandacube.java.util.network.packet.packets.core_slave.PacketClientClose;
+import fr.pandacube.java.util.network.packet.packets.core_slave.PacketClientDeclareProcess;
+import fr.pandacube.java.util.network.packet.packets.core_slave.PacketClientProcessQueryResponse;
+import fr.pandacube.java.util.network.packet.packets.core_slave.PacketServerClose;
+import fr.pandacube.java.util.network.packet.packets.core_slave.PacketServerConnectSuccess;
+import fr.pandacube.java.util.network.packet.packets.core_slave.PacketServerProcessDeclarationConfirm;
+import fr.pandacube.java.util.network.packet.packets.core_slave.PacketServerProcessInput;
+import fr.pandacube.java.util.network.packet.packets.core_slave.PacketServerProcessQuery;
+import fr.pandacube.java.util.network.packet.packets.global.PacketClientAuthenticate;
+import fr.pandacube.java.util.network.packet.packets.global.PacketServerCantAuthenticate;
 import fr.pandacube.java.util.network.packet.packets.global.PacketServerException;
 import fr.pandacube.java.util.network.packet.packets.web.PacketClientWebRequest;
 import fr.pandacube.java.util.network.packet.packets.web.PacketServerWebResponse;
@@ -85,9 +95,22 @@ public abstract class Packet implements ByteSerializable {
 		/*
 		 * Ajout des types de packets (client + serveur)
 		 */
+		addPacket(PacketClientClose.class);
+		addPacket(PacketClientDeclareProcess.class);
+		addPacket(PacketClientProcessQueryResponse.class);
+		addPacket(PacketServerClose.class);
+		addPacket(PacketServerConnectSuccess.class);
+		addPacket(PacketServerProcessDeclarationConfirm.class);
+		addPacket(PacketServerProcessInput.class);
+		addPacket(PacketServerProcessQuery.class);
+		
+		addPacket(PacketClientAuthenticate.class);
+		addPacket(PacketServerCantAuthenticate.class);
+		addPacket(PacketServerException.class);
+		
 		addPacket(PacketClientWebRequest.class);
 		addPacket(PacketServerWebResponse.class);
-		addPacket(PacketServerException.class);
+		
 	}
 
 }

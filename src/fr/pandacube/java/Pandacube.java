@@ -8,6 +8,6 @@ public class Pandacube {
 
 	public static final int NETWORK_TCP_BUFFER_SIZE = 1024 * 1024;
 
-	public static final int NETWORK_TIMEOUT = 30 * 1000; // 30 secondes
+	public static final int NETWORK_TIMEOUT = 0; // no timeout (milli-seconds)
 
 }

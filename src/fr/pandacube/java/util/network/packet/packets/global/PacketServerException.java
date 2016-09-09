@@ -11,7 +11,7 @@ public class PacketServerException extends PacketServer {
 	private String exception;
 	
 	public PacketServerException() {
-		super((byte)0xE0);
+		super((byte)0xD0);
 	}
 	
 	@Override
