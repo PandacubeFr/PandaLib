@@ -50,13 +50,14 @@ public class AbstractCommand {
 	 * @return
 	 */
 	public static List<String> getTabProposalFromToken(String token, Collection<String> allProposal) {
-		List<String> ret = new ArrayList<String>();
+		List<String> ret = new ArrayList<>();
 
 		for (String s : allProposal)
-			if (s.toLowerCase().startsWith(token.toLowerCase())) ret.add(s);
+			if (s != null && s.toLowerCase().startsWith(token.toLowerCase())) ret.add(s);
 
 		if (ret.isEmpty()) ret.addAll(allProposal);
 		
+		ret.removeIf(s -> s == null);
 		ret.sort(null); // String implents Comparable
 
 		return ret;

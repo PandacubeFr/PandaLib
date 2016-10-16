@@ -294,7 +294,7 @@ public class TCPServer extends Thread implements Closeable {
 						}
 
 					}
-				} catch (InterruptedException e) {} catch (IOException e) {}
+				} catch (InterruptedException|IOException e) {}
 
 				close();
 			}

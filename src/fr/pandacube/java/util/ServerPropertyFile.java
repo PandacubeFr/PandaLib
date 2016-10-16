@@ -38,7 +38,6 @@ public class ServerPropertyFile {
 	public boolean loadFromFile() {
 		try (BufferedReader in = new BufferedReader(new FileReader(file))) {
 
-			@SuppressWarnings("unchecked")
 			Map<String, Object> dataFile = new Gson().fromJson(in, Map.class);
 
 			if (!dataFile.containsKey("name") || !(dataFile.get("name") instanceof String)) return false;
