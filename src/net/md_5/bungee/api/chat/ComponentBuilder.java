@@ -10,7 +10,7 @@ import net.md_5.bungee.api.ChatColor;
 
 public class ComponentBuilder {
 	private TextComponent current;
-	private final List<BaseComponent> parts = new ArrayList<BaseComponent>();
+	private final List<BaseComponent> parts = new ArrayList<>();
 
 	public ComponentBuilder(ComponentBuilder original) {
 		current = new TextComponent(original.current);

@@ -75,7 +75,7 @@ public enum ChatColor {
 
 	static {
 		STRIP_COLOR_PATTERN = Pattern.compile("(?i)" + String.valueOf('\u00a7') + "[0-9A-FK-OR]");
-		BY_CHAR = new HashMap<Character, ChatColor>();
+		BY_CHAR = new HashMap<>();
 		for (ChatColor colour : ChatColor.values())
 			BY_CHAR.put(Character.valueOf(colour.code), colour);
 	}

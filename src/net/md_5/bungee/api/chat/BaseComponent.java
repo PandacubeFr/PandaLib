@@ -119,7 +119,7 @@ public abstract class BaseComponent {
 	}
 
 	public void addExtra(BaseComponent component) {
-		if (extra == null) extra = new ArrayList<BaseComponent>();
+		if (extra == null) extra = new ArrayList<>();
 		component.parent = this;
 		extra.add(component);
 	}

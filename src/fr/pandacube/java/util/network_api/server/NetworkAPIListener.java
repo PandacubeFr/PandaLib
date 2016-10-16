@@ -11,7 +11,7 @@ public class NetworkAPIListener implements Runnable {
 	private int port = 0;
 	String pass;
 	private ServerSocket serverSocket;
-	private HashMap<String, AbstractRequestExecutor> requestExecutors = new HashMap<String, AbstractRequestExecutor>();
+	private HashMap<String, AbstractRequestExecutor> requestExecutors = new HashMap<>();
 	private String name;
 	private NAPIExecutionHandler nAPIExecutionHandler;
 
@@ -47,6 +47,7 @@ public class NetworkAPIListener implements Runnable {
 		try {
 			// réception des connexion client
 			while (!serverSocket.isClosed()) {
+				@SuppressWarnings("resource")
 				Socket socketClient = serverSocket.accept();
 				nAPIExecutionHandler.handleRun(new PacketExecutor(socketClient, this));
 			}

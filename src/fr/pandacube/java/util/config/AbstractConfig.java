@@ -52,7 +52,7 @@ public abstract class AbstractConfig {
 		
 		BufferedReader reader = new BufferedReader(new FileReader(f));
 		
-		List<String> lines = new ArrayList<String>();
+		List<String> lines = new ArrayList<>();
 		
 		String line;
 		while ((line = reader.readLine()) != null) {
@@ -111,8 +111,7 @@ public abstract class AbstractConfig {
 	public static List<String> splitPermissionsString(String perms) {
 		if (perms == null || perms.equals("*"))
 			return null;
-		else
-			return getSplittedString(perms, ";");
+		return getSplittedString(perms, ";");
 	}
 	
 	

@@ -2,9 +2,9 @@ package fr.pandacube.java.util;
 
 public class StringUtil {
 	public static String formatDouble(double d) {
-		if (d == (long) d) return String.format("%d", (long) d);
-		else
-			return String.valueOf(d);
+		if (d == (long) d)
+			return String.format("%d", (long) d);
+		return String.valueOf(d);
 	}
 
 	/**

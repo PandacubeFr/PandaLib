@@ -16,7 +16,7 @@ public class TextComponent extends BaseComponent {
 	private String text;
 
 	public static BaseComponent[] fromLegacyText(String message) {
-		ArrayList<TextComponent> components = new ArrayList<TextComponent>();
+		ArrayList<TextComponent> components = new ArrayList<>();
 		StringBuilder builder = new StringBuilder();
 		TextComponent component = new TextComponent();
 		Matcher matcher = url.matcher(message);
@@ -103,7 +103,7 @@ public class TextComponent extends BaseComponent {
 
 	public /* varargs */ TextComponent(BaseComponent... extras) {
 		setText("");
-		setExtra(new ArrayList<BaseComponent>(Arrays.asList(extras)));
+		setExtra(new ArrayList<>(Arrays.asList(extras)));
 	}
 
 	@Override

@@ -58,7 +58,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 			fieldsCache.put((Class<E>)getClass(), fields);
 		}
 		else
-			fields = (SQLFieldMap<E>) fieldsCache.get((Class<E>)getClass());
+			fields = (SQLFieldMap<E>) fieldsCache.get(getClass());
 
 		values = new LinkedHashMap<>(fields.size());
 		modifiedSinceLastSave = new HashSet<>(fields.size());
@@ -188,7 +188,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 		return modifiedSinceLastSave.contains(field.name);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "resource" })
 	public void save() throws ORMException {
 		if (!isValidForSave())
 			throw new IllegalStateException(toString() + " has at least one undefined value and can't be saved.");

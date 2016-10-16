@@ -193,7 +193,7 @@ public final class ORM {
 			if (offset != null) sql += " OFFSET " + offset;
 			sql += ";";
 
-			SQLElementList<E> elmts = new SQLElementList<E>();
+			SQLElementList<E> elmts = new SQLElementList<>();
 
 			PreparedStatement ps = connection.getNativeConnection().prepareStatement(sql);
 

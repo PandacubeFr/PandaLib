@@ -164,7 +164,7 @@ public class TCPClient extends Thread implements Closeable {
 	}
 	
 	
-	public PacketServer sendAndWaitForResponse(PacketClient packet, Predicate<PacketServer> responseCondition, boolean avoidListener) throws IOException, InterruptedException {
+	public PacketServer sendAndWaitForResponse(PacketClient packet, Predicate<PacketServer> responseCondition) throws IOException, InterruptedException {
 		AtomicReference<PacketServer> psStorage = new AtomicReference<>(null);
 		synchronized (psStorage) {
 			sendAndGetResponse(packet, responseCondition, packetServer -> {

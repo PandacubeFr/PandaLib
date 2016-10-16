@@ -8,7 +8,7 @@ import fr.pandacube.java.util.network.server.TCPServer.TCPServerClientConnection
 
 public class BandwidthCalculation {
 
-	private List<PacketStat> packetHistory = new LinkedList<PacketStat>();
+	private List<PacketStat> packetHistory = new LinkedList<>();
 
 	public synchronized void addPacket(TCPServerClientConnection co, boolean in, long size) {
 		packetHistory.add(new PacketStat(co, in, size));

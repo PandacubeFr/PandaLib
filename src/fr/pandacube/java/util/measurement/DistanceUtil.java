@@ -32,7 +32,7 @@ public class DistanceUtil {
 		return distanceToString(meterDist, precision, DistanceUnit.M, DistanceUnit.KM);
 	}
 
-	public enum DistanceUnit implements Comparable<DistanceUnit> {
+	public enum DistanceUnit {
 		NM(0.000000001, "nm"), µM(0.000001, "µm"), MM(0.001, "mm"), CM(0.01, "cm"), M(1, "m"), KM(1000, "km");
 
 		private final double multiplicator;

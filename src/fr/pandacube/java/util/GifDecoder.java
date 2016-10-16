@@ -122,7 +122,7 @@ public class GifDecoder {
 		//
 		delay = -1;
 		if ((n >= 0) && (n < frameCount)) {
-			delay = ((GifFrame) frames.get(n)).delay;
+			delay = frames.get(n).delay;
 		}
 		return delay;
 	}
@@ -234,7 +234,7 @@ public class GifDecoder {
 				int sx = i * iw; // start of line in source
 				while (dx < dlim) {
 					// map color and insert in destination
-					int index = ((int) pixels[sx++]) & 0xff;
+					int index = (pixels[sx++]) & 0xff;
 					int c = act[index];
 					if (c != 0) {
 						dest[dx] = c;
@@ -253,7 +253,7 @@ public class GifDecoder {
 	public BufferedImage getFrame(int n) {
 		BufferedImage im = null;
 		if ((n >= 0) && (n < frameCount)) {
-			im = ((GifFrame) frames.get(n)).image;
+			im = frames.get(n).image;
 		}
 		return im;
 	}
@@ -284,12 +284,12 @@ public class GifDecoder {
 					status = STATUS_FORMAT_ERROR;
 				}
 			}
+			try {
+				is.close();
+			} catch (IOException e) {
+			}
 		} else {
 			status = STATUS_OPEN_ERROR;
-		}
-		try {
-			is.close();
-		} catch (IOException e) {
 		}
 		return status;
 	}
@@ -313,12 +313,12 @@ public class GifDecoder {
 					status = STATUS_FORMAT_ERROR;
 				}
 			}
+			try {
+				is.close();
+			} catch (IOException e) {
+			}
 		} else {
 			status = STATUS_OPEN_ERROR;
-		}
-		try {
-			is.close();
-		} catch (IOException e) {
 		}
 		return status;
 	}
@@ -410,7 +410,7 @@ public class GifDecoder {
 							break;
 						bi = 0;
 					}
-					datum += (((int) block[bi]) & 0xff) << bits;
+					datum += ((block[bi]) & 0xff) << bits;
 					bits += 8;
 					bi++;
 					count--;
@@ -450,7 +450,7 @@ public class GifDecoder {
 					pixelStack[top++] = suffix[code];
 					code = prefix[code];
 				}
-				first = ((int) suffix[code]) & 0xff;
+				first = (suffix[code]) & 0xff;
 
 				//  Add a new string to the string table,
 
@@ -563,9 +563,9 @@ public class GifDecoder {
 			int i = 0;
 			int j = 0;
 			while (i < ncolors) {
-				int r = ((int) c[j++]) & 0xff;
-				int g = ((int) c[j++]) & 0xff;
-				int b = ((int) c[j++]) & 0xff;
+				int r = (c[j++]) & 0xff;
+				int g = (c[j++]) & 0xff;
+				int b = (c[j++]) & 0xff;
 				tab[i++] = 0xff000000 | (r << 16) | (g << 8) | b;
 			}
 		}
@@ -746,8 +746,8 @@ public class GifDecoder {
 			readBlock();
 			if (block[0] == 1) {
 				// loop count sub-block
-				int b1 = ((int) block[1]) & 0xff;
-				int b2 = ((int) block[2]) & 0xff;
+				int b1 = (block[1]) & 0xff;
+				int b2 = (block[2]) & 0xff;
 				loopCount = (b2 << 8) | b1;
 			}
 		} while ((blockSize > 0) && !err());

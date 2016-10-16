@@ -47,8 +47,10 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 	public synchronized <T> void setCommon(SQLField<E, T> field, T value) {
 		if (field != null && field.name == "id")
 			throw new IllegalArgumentException("Can't modify id field in a SQLElementList");
+		if (field == null)
+			throw new IllegalArgumentException("field can't be null");
 		
-		Class<E> elemClass = (Class<E>) field.getSQLElementType();
+		Class<E> elemClass = field.getSQLElementType();
 		try {
 			E emptyElement = elemClass.newInstance();
 			emptyElement.set(field, value, false);

@@ -21,7 +21,7 @@ public class ServerPropertyFile {
 		if (f == null) throw new IllegalArgumentException("f ne doit pas être null");
 		file = f;
 
-		data = new HashMap<String, Object>();
+		data = new HashMap<>();
 		data.put("name", "default_name");
 		data.put("memory", "512M");
 		data.put("javaArgs", "");
@@ -63,9 +63,7 @@ public class ServerPropertyFile {
 	}
 
 	public boolean save() {
-		BufferedWriter out = null;
-		try {
-			out = new BufferedWriter(new FileWriter(file, false));
+		try (BufferedWriter out = new BufferedWriter(new FileWriter(file, false))) {
 
 			String jsonStr = new Gson().toJson(data);
 
@@ -76,10 +74,6 @@ public class ServerPropertyFile {
 			return true;
 		} catch (IOException e) {
 			Log.severe(e);
-		} finally {
-			try {
-				out.close();
-			} catch (Exception e) {}
 		}
 
 		return false;

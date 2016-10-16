@@ -64,7 +64,7 @@ public abstract class Packet implements ByteSerializable {
 
 	public static final Charset CHARSET = Pandacube.NETWORK_CHARSET;
 
-	private static Map<Byte, Class<? extends Packet>> packetTypes = new HashMap<Byte, Class<? extends Packet>>();
+	private static Map<Byte, Class<? extends Packet>> packetTypes = new HashMap<>();
 
 	public static Packet constructPacket(byte[] data) {
 		if (!packetTypes.containsKey(data[0]))

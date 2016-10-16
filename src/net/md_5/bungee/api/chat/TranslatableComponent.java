@@ -22,7 +22,7 @@ public class TranslatableComponent extends BaseComponent {
 		super(original);
 		setTranslate(original.getTranslate());
 		if (original.getWith() != null) {
-			ArrayList<BaseComponent> temp = new ArrayList<BaseComponent>();
+			ArrayList<BaseComponent> temp = new ArrayList<>();
 			for (BaseComponent baseComponent : original.getWith())
 				temp.add(baseComponent.duplicate());
 			setWith(temp);
@@ -31,7 +31,7 @@ public class TranslatableComponent extends BaseComponent {
 
 	public /* varargs */ TranslatableComponent(String translate, Object... with) {
 		setTranslate(translate);
-		ArrayList<BaseComponent> temp = new ArrayList<BaseComponent>();
+		ArrayList<BaseComponent> temp = new ArrayList<>();
 		for (Object w : with) {
 			if (w instanceof String) {
 				temp.add(new TextComponent((String) w));
@@ -58,7 +58,7 @@ public class TranslatableComponent extends BaseComponent {
 	}
 
 	public void addWith(BaseComponent component) {
-		if (with == null) with = new ArrayList<BaseComponent>();
+		if (with == null) with = new ArrayList<>();
 		component.parent = this;
 		with.add(component);
 	}

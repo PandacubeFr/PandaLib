@@ -75,6 +75,7 @@ public class TCPServer extends Thread implements Closeable {
 
 		try {
 			while (true) {
+				@SuppressWarnings("resource")
 				Socket socketClient = socket.accept();
 				socketClient.setSendBufferSize(Pandacube.NETWORK_TCP_BUFFER_SIZE);
 				socketClient.setSoTimeout(Pandacube.NETWORK_TIMEOUT);
@@ -96,7 +97,7 @@ public class TCPServer extends Thread implements Closeable {
 	}
 
 	public class TCPServerClientConnection extends Thread {
-		private Socket socket;
+		private Socket cSocket;
 		private InputStream in;
 		private OutputStream out;
 		private SocketAddress address;
@@ -108,10 +109,10 @@ public class TCPServer extends Thread implements Closeable {
 		public TCPServerClientConnection(Socket s, int coId) throws IOException {
 			super("TCPSv " + socketName + " Conn#" + coId + " In");
 			setDaemon(true);
-			socket = s;
-			in = socket.getInputStream();
-			out = socket.getOutputStream();
-			address = new InetSocketAddress(socket.getInetAddress(), socket.getPort());
+			cSocket = s;
+			in = cSocket.getInputStream();
+			out = cSocket.getOutputStream();
+			address = new InetSocketAddress(cSocket.getInetAddress(), cSocket.getPort());
 			try {
 				listener.onClientConnect(TCPServer.this, this);
 			} catch(Exception e) {
@@ -125,7 +126,7 @@ public class TCPServer extends Thread implements Closeable {
 		public void run() {
 			try {
 				byte[] code = new byte[1];
-				while (!socket.isClosed() && in.read(code) != -1) {
+				while (!cSocket.isClosed() && in.read(code) != -1) {
 					byte[] sizeB = new byte[4];
 					if (in.read(sizeB) != 4) throw new IOException("Socket " + address + " closed");
 
@@ -241,7 +242,7 @@ public class TCPServer extends Thread implements Closeable {
 		}
 
 		public void close() {
-			if (socket.isClosed()) return;
+			if (cSocket.isClosed()) return;
 
 			try {
 				listener.onClientDisconnect(TCPServer.this, this);
@@ -252,7 +253,7 @@ public class TCPServer extends Thread implements Closeable {
 
 			try {
 				Thread.sleep(200);
-				socket.close();
+				cSocket.close();
 				if (!Thread.currentThread().equals(outThread)) send(new PacketServer((byte) 0) {
 					@Override public void serializeToByteBuffer(ByteBuffer buffer) {}
 					@Override public void deserializeFromByteBuffer(ByteBuffer buffer) {}
@@ -263,7 +264,7 @@ public class TCPServer extends Thread implements Closeable {
 		}
 
 		private class TCPServerConnectionOutputThread extends Thread {
-			private BlockingQueue<PacketServer> packetQueue = new LinkedBlockingDeque<PacketServer>();
+			private BlockingQueue<PacketServer> packetQueue = new LinkedBlockingDeque<>();
 
 			public TCPServerConnectionOutputThread(int coId) {
 				super("TCPSv " + socketName + " Conn#" + coId + " Out");
@@ -277,7 +278,7 @@ public class TCPServer extends Thread implements Closeable {
 			@Override
 			public void run() {
 				try {
-					while (!socket.isClosed()) {
+					while (!cSocket.isClosed()) {
 						PacketServer packet = packetQueue.poll(1, TimeUnit.SECONDS);
 						byte[] data;
 						if (packet != null) {
@@ -306,7 +307,7 @@ public class TCPServer extends Thread implements Closeable {
 		public String toString() {
 			return new ToStringBuilder(this)
 					.append("thread", getName())
-					.append("socket", socket).toString();
+					.append("socket", cSocket).toString();
 		}
 		
 	}
