@@ -18,6 +18,7 @@ import fr.pandacube.java.util.network.packet.packets.core_slave.PacketServerProc
 import fr.pandacube.java.util.network.packet.packets.core_slave.PacketServerProcessInput;
 import fr.pandacube.java.util.network.packet.packets.core_slave.PacketServerProcessQuery;
 import fr.pandacube.java.util.network.packet.packets.global.PacketClientAuthenticate;
+import fr.pandacube.java.util.network.packet.packets.global.PacketClientLogRecord;
 import fr.pandacube.java.util.network.packet.packets.global.PacketServerCantAuthenticate;
 import fr.pandacube.java.util.network.packet.packets.global.PacketServerException;
 import fr.pandacube.java.util.network.packet.packets.web.PacketClientWebRequest;
@@ -105,6 +106,7 @@ public abstract class Packet implements ByteSerializable {
 		addPacket(PacketServerProcessQuery.class);
 		
 		addPacket(PacketClientAuthenticate.class);
+		addPacket(PacketClientLogRecord.class);
 		addPacket(PacketServerCantAuthenticate.class);
 		addPacket(PacketServerException.class);
 		
