@@ -6,28 +6,23 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.google.gson.Gson;
 
 public class ServerPropertyFile {
 
-	private File file;
-
-	private Map<String, Object> data;
+	private transient File file;
+	
+	private String name = "default_name";
+	private String memory = "512M";
+	private String javaArgs = "";
+	private String MinecraftArgs = "";
+	private String jarFile = "";
 
 	public ServerPropertyFile(File f) {
 		if (f == null) throw new IllegalArgumentException("f ne doit pas être null");
 		file = f;
 
-		data = new HashMap<>();
-		data.put("name", "default_name");
-		data.put("memory", "512M");
-		data.put("javaArgs", "");
-		data.put("MinecraftArgs", "");
-		data.put("jarFile", "");
-		data.put("isLobby", false);
 	}
 
 	/**
@@ -38,23 +33,14 @@ public class ServerPropertyFile {
 	public boolean loadFromFile() {
 		try (BufferedReader in = new BufferedReader(new FileReader(file))) {
 
-			Map<String, Object> dataFile = new Gson().fromJson(in, Map.class);
-
-			if (!dataFile.containsKey("name") || !(dataFile.get("name") instanceof String)) return false;
-
-			if (!dataFile.containsKey("memory") || !(dataFile.get("memory") instanceof String)) return false;
-
-			if (!dataFile.containsKey("javaArgs") || !(dataFile.get("javaArgs") instanceof String)) return false;
-
-			if (!dataFile.containsKey("MinecraftArgs") || !(dataFile.get("MinecraftArgs") instanceof String))
-				return false;
-
-			if (!dataFile.containsKey("jarFile") || !(dataFile.get("jarFile") instanceof String)) return false;
-
-			if (!dataFile.containsKey("isLobby") || !(dataFile.get("isLobby") instanceof Boolean)) return false;
-
-			data = dataFile;
-
+			ServerPropertyFile dataFile = new Gson().fromJson(in, getClass());
+			
+			name = dataFile.name;
+			memory = dataFile.memory;
+			javaArgs = dataFile.javaArgs;
+			MinecraftArgs = dataFile.MinecraftArgs;
+			jarFile = dataFile.jarFile;
+			
 			return true;
 		} catch (IOException e) {
 			Log.severe(e);
@@ -65,10 +51,7 @@ public class ServerPropertyFile {
 	public boolean save() {
 		try (BufferedWriter out = new BufferedWriter(new FileWriter(file, false))) {
 
-			String jsonStr = new Gson().toJson(data);
-
-			out.append(jsonStr);
-
+			new Gson().toJson(this, out);
 			out.flush();
 
 			return true;
@@ -80,56 +63,48 @@ public class ServerPropertyFile {
 	}
 
 	public String getName() {
-		return (String) data.get("name");
+		return name;
 	}
 
 	public String getMemory() {
-		return (String) data.get("memory");
+		return memory;
 	}
 
 	public String getJavaArgs() {
-		return (String) data.get("javaArgs");
+		return javaArgs;
 	}
 
 	public String getMinecraftArgs() {
-		return (String) data.get("MinecraftArgs");
+		return MinecraftArgs;
 	}
 
 	public String getJarFile() {
-		return (String) data.get("jarFile");
-	}
-
-	public boolean getIsLobby() {
-		return (boolean) data.get("isLobby");
+		return jarFile;
 	}
 
 	public void setName(String n) {
 		if (n == null || !n.matches("^[a-zA-Z]$")) throw new IllegalArgumentException();
-		data.put("name", n);
+		name = n;
 	}
 
 	public void setMemory(String m) {
 		if (m == null || !m.matches("^[0-9]+[mgMG]$")) throw new IllegalArgumentException();
-		data.put("memory", m);
+		memory = m;
 	}
 
 	public void setJavaArgs(String ja) {
 		if (ja == null) throw new IllegalArgumentException();
-		data.put("javaArgs", ja);
+		javaArgs = ja;
 	}
 
 	public void setMinecraftArgs(String ma) {
 		if (ma == null) throw new IllegalArgumentException();
-		data.put("MinecraftArgs", ma);
+		MinecraftArgs = ma;
 	}
 
 	public void setJarFile(String j) {
 		if (j == null) throw new IllegalArgumentException();
-		data.put("jarFile", j);
-	}
-
-	public void setIsLobby(boolean l) {
-		data.put("isLobby", l);
+		jarFile = j;
 	}
 
 }
