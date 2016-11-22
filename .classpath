@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="resources"/>
-	<classpathentry kind="lib" path="lib/BungeePerms-3.0-alpha-1_modif.jar"/>
-	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="/Pandacube/libs/BungeePerms-3.0-alpha-1_modif.jar"/>
+	<classpathentry kind="lib" path="/Pandacube/libs/commons-lang-2.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
