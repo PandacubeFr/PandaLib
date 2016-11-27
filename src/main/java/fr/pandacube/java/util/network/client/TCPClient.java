@@ -26,7 +26,7 @@ import fr.pandacube.java.util.network.packet.PacketException;
 import fr.pandacube.java.util.network.packet.PacketServer;
 import fr.pandacube.java.util.network.packet.ResponseCallback;
 import fr.pandacube.java.util.network.packet.packets.global.PacketServerException;
-import javafx.util.Pair;
+import org.javatuples.Pair;
 
 public class TCPClient extends Thread implements Closeable {
 
@@ -123,9 +123,9 @@ public class TCPClient extends Thread implements Closeable {
 			for(Iterator<Pair<Predicate<PacketServer>, ResponseCallback<PacketServer>>> it = callbacks.iterator(); it.hasNext();) {
 				Pair<Predicate<PacketServer>, ResponseCallback<PacketServer>> c = it.next();
 				try {
-					if (c.getKey().test(ps)) {
+					if (c.getValue0().test(ps)) {
 						it.remove();
-						c.getValue().call(ps);
+						c.getValue1().call(ps);
 						executedOne = true;
 					}
 				} catch (Exception e) {

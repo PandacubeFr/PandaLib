@@ -31,7 +31,7 @@ import fr.pandacube.java.util.db.SQLStaticPages;
 import fr.pandacube.java.util.db.SQLUUIDPlayer;
 import fr.pandacube.java.util.db.sql_tools.SQLWhereChain.SQLBoolOp;
 import fr.pandacube.java.util.db.sql_tools.SQLWhereComp.SQLComparator;
-import javafx.util.Pair;
+import org.javatuples.Pair;
 
 /**
  * <b>ORM = Object-Relational Mapping</b>
@@ -108,11 +108,11 @@ public final class ORM {
 		boolean first = true;
 		for (SQLField<E, ?> f : tableFields) {
 			Pair<String, List<Object>> statementPart = f.forSQLPreparedStatement();
-			params.addAll(statementPart.getValue());
+			params.addAll(statementPart.getValue1());
 
 			if (!first) sql += ", ";
 			first = false;
-			sql += statementPart.getKey();
+			sql += statementPart.getValue0();
 		}
 
 		sql += ", PRIMARY KEY id(id))";
@@ -185,8 +185,8 @@ public final class ORM {
 
 			if (where != null) {
 				Pair<String, List<Object>> ret = where.toSQL();
-				sql += " WHERE " + ret.getKey();
-				params.addAll(ret.getValue());
+				sql += " WHERE " + ret.getValue0();
+				params.addAll(ret.getValue1());
 			}
 			if (orderBy != null) sql += " ORDER BY " + orderBy.toSQL();
 			if (limit != null) sql += " LIMIT " + limit;

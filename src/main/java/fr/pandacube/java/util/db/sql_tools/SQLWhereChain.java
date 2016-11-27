@@ -3,7 +3,7 @@ package fr.pandacube.java.util.db.sql_tools;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.util.Pair;
+import org.javatuples.Pair;
 
 public class SQLWhereChain extends SQLWhere {
 
@@ -32,8 +32,8 @@ public class SQLWhereChain extends SQLWhere {
 			first = false;
 
 			Pair<String, List<Object>> ret = w.toSQL();
-			sql += "(" + ret.getKey() + ")";
-			params.addAll(ret.getValue());
+			sql += "(" + ret.getValue0() + ")";
+			params.addAll(ret.getValue1());
 		}
 
 		return new Pair<>(sql, params);

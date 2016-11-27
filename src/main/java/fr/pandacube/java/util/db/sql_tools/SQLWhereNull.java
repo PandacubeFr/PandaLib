@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import fr.pandacube.java.util.Log;
-import javafx.util.Pair;
+import org.javatuples.Pair;
 
 public class SQLWhereNull extends SQLWhere {
 

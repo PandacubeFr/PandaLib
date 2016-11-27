@@ -2,7 +2,7 @@ package fr.pandacube.java.util.db.sql_tools;
 
 import java.util.List;
 
-import javafx.util.Pair;
+import org.javatuples.Pair;
 
 public abstract class SQLWhere {
 
@@ -10,7 +10,7 @@ public abstract class SQLWhere {
 
 	@Override
 	public String toString() {
-		return toSQL().getKey();
+		return toSQL().getValue0();
 	}
 
 }

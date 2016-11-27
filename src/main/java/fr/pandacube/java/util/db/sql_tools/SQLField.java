@@ -3,7 +3,7 @@ package fr.pandacube.java.util.db.sql_tools;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.util.Pair;
+import org.javatuples.Pair;
 
 public class SQLField<E extends SQLElement<E>, T> {
 
@@ -58,7 +58,7 @@ public class SQLField<E extends SQLElement<E>, T> {
 	 */
 	@Override
 	public String toString() {
-		return forSQLPreparedStatement().getKey().replaceFirst("\\?",
+		return forSQLPreparedStatement().getValue0().replaceFirst("\\?",
 				(defaultValue != null && !autoIncrement) ? defaultValue.toString() : "");
 	}
 

@@ -33,7 +33,7 @@ import fr.pandacube.java.util.network.packet.PacketServer;
 import fr.pandacube.java.util.network.packet.ResponseCallback;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteBuffer;
 import fr.pandacube.java.util.network.packet.packets.global.PacketServerException;
-import javafx.util.Pair;
+import org.javatuples.Pair;
 
 /**
  *
@@ -179,9 +179,9 @@ public class TCPServer extends Thread implements Closeable {
 				for(Iterator<Pair<Predicate<PacketClient>, ResponseCallback<PacketClient>>> it = callbacks.iterator(); it.hasNext();) {
 					Pair<Predicate<PacketClient>, ResponseCallback<PacketClient>> c = it.next();
 					try {
-						if (c.getKey().test(pc)) {
+						if (c.getValue0().test(pc)) {
 							it.remove();
-							c.getValue().call(pc);
+							c.getValue1().call(pc);
 							executedOne = true;
 						}
 					} catch (Exception e) {

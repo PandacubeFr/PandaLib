@@ -34,5 +34,11 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/../libs/BungeePerms-3.0-alpha1-modif.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>org.javatuples</groupId>
+            <artifactId>javatuples</artifactId>
+            <version>1.2</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>

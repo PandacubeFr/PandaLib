@@ -3,7 +3,7 @@ package fr.pandacube.java.util.db.sql_tools;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.util.Pair;
+import org.javatuples.Pair;
 
 public class SQLWhereLike extends SQLWhere {
 
