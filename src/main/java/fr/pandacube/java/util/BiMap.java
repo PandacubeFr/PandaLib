@@ -1,8 +1,11 @@
 package fr.pandacube.java.util;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.function.BiConsumer;
 
-public class BiMap<K,V> {
+public class BiMap<K, V> implements Iterable<Entry<K, V>> {
 
     HashMap<K, V> map = new HashMap<>();
     HashMap<V, K> inversedMap = new HashMap<>();
@@ -42,6 +45,17 @@ public class BiMap<K,V> {
     	K k = inversedMap.remove(v);
     	map.remove(k);
     	return k;
+    }
+    
+    @Override
+    public Iterator<Entry<K, V>> iterator() {
+    	return map.entrySet().iterator();
+    }
+    
+    public synchronized void forEach(BiConsumer<K, V> c) {
+    	for(Entry<K, V> entry : this) {
+    		c.accept(entry.getKey(), entry.getValue());
+    	}
     }
 
 }
