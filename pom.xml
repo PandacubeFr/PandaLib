@@ -28,13 +28,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>fr.pandacube.local_dependencies</groupId>
-            <artifactId>bungeeperms</artifactId>
-            <version>3.0-alpha1-modif</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../libs/BungeePerms-3.0-alpha1-modif.jar</systemPath>
-        </dependency>
-        <dependency>
             <groupId>org.javatuples</groupId>
             <artifactId>javatuples</artifactId>
             <version>1.2</version>

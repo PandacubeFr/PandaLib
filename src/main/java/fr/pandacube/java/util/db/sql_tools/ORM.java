@@ -6,29 +6,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Level;
 
 import fr.pandacube.java.util.EnumUtil;
 import fr.pandacube.java.util.Log;
-import fr.pandacube.java.util.db.SQLContact;
-import fr.pandacube.java.util.db.SQLForumCategorie;
-import fr.pandacube.java.util.db.SQLForumForum;
-import fr.pandacube.java.util.db.SQLForumPost;
-import fr.pandacube.java.util.db.SQLForumThread;
-import fr.pandacube.java.util.db.SQLLoginHistory;
-import fr.pandacube.java.util.db.SQLLoginKickHistory;
-import fr.pandacube.java.util.db.SQLMPGroup;
-import fr.pandacube.java.util.db.SQLMPGroupUser;
-import fr.pandacube.java.util.db.SQLMPMessage;
-import fr.pandacube.java.util.db.SQLModoHistory;
-import fr.pandacube.java.util.db.SQLOnlineshopHistory;
-import fr.pandacube.java.util.db.SQLPingHistory;
-import fr.pandacube.java.util.db.SQLPlayer;
-import fr.pandacube.java.util.db.SQLPlayerIgnore;
-import fr.pandacube.java.util.db.SQLShopStock;
-import fr.pandacube.java.util.db.SQLStaffTicket;
-import fr.pandacube.java.util.db.SQLStaticPages;
-import fr.pandacube.java.util.db.SQLUUIDPlayer;
 import fr.pandacube.java.util.db.sql_tools.SQLWhereChain.SQLBoolOp;
 import fr.pandacube.java.util.db.sql_tools.SQLWhereComp.SQLComparator;
 import org.javatuples.Pair;
@@ -49,43 +29,14 @@ public final class ORM {
 		return connection;
 	}
 
-	public synchronized static void init(DBConnection conn) {
+	public synchronized static <E extends SQLElement<E>> void init(DBConnection conn) {
 
 		connection = conn;
 
-		/*
-		 * Les tables à initialiser
-		 * utile des les initialiser ici, car on peut tout de suite déceler les
-		 * bugs ou erreurs dans la déclaration des SQLFields
-		 */
-
-		try {
-			initTable(SQLContact.class);
-			initTable(SQLForumCategorie.class);
-			initTable(SQLForumForum.class);
-			initTable(SQLForumPost.class);
-			initTable(SQLForumThread.class);
-			initTable(SQLLoginHistory.class);
-			initTable(SQLLoginKickHistory.class);
-			initTable(SQLModoHistory.class);
-			initTable(SQLMPGroup.class);
-			initTable(SQLMPGroupUser.class);
-			initTable(SQLMPMessage.class);
-			initTable(SQLOnlineshopHistory.class);
-			initTable(SQLPingHistory.class);
-			initTable(SQLPlayer.class);
-			initTable(SQLPlayerIgnore.class);
-			initTable(SQLShopStock.class);
-			initTable(SQLStaffTicket.class);
-			initTable(SQLStaticPages.class);
-			initTable(SQLUUIDPlayer.class);
-		} catch (ORMInitTableException e) {
-			Log.getLogger().log(Level.SEVERE, "Erreur d'initialisation d'une table dans l'ORM", e);
-		}
 
 	}
 
-	/* package */ static synchronized <E extends SQLElement<E>> void initTable(Class<E> elemClass) throws ORMInitTableException {
+	public static synchronized <E extends SQLElement<E>> void initTable(Class<E> elemClass) throws ORMInitTableException {
 		if (tables.contains(elemClass)) return;
 		try {
 			tables.add(elemClass);

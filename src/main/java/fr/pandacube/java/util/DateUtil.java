@@ -1,4 +1,4 @@
-package com.earth2me.essentials.utils;
+package fr.pandacube.java.util;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -6,6 +6,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DateUtil {
+	
+	/**
+	 * @see {@link com.earth2me.essentials.utils.DateUtil#parseDateDiff(String, boolean)}
+	 */
 	public static long parseDateDiff(String time, boolean future) throws Exception {
 		Pattern timePattern = Pattern.compile("(?:([0-9]+)\\s*y[a-z]*[,\\s]*)?" + "(?:([0-9]+)\\s*mo[a-z]*[,\\s]*)?"
 				+ "(?:([0-9]+)\\s*w[a-z]*[,\\s]*)?" + "(?:([0-9]+)\\s*d[a-z]*[,\\s]*)?"
@@ -53,45 +57,4 @@ public class DateUtil {
 		return c.getTimeInMillis();
 	}
 
-	static int dateDiff(int type, Calendar fromDate, Calendar toDate, boolean future) {
-		int diff = 0;
-		long savedDate = fromDate.getTimeInMillis();
-		while ((future && !fromDate.after(toDate)) || (!future && !fromDate.before(toDate))) {
-			savedDate = fromDate.getTimeInMillis();
-			fromDate.add(type, future ? 1 : -1);
-			diff++;
-		}
-		diff--;
-		fromDate.setTimeInMillis(savedDate);
-		return diff;
-	}
-
-	public static String formatDateDiff(long date) {
-		Calendar c = new GregorianCalendar();
-		c.setTimeInMillis(date);
-		Calendar now = new GregorianCalendar();
-		return DateUtil.formatDateDiff(now, c);
-	}
-
-	public static String formatDateDiff(Calendar fromDate, Calendar toDate) {
-		boolean future = false;
-		if (toDate.equals(fromDate)) return "now";
-		if (toDate.after(fromDate)) future = true;
-		StringBuilder sb = new StringBuilder();
-		int[] types = new int[] { Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, Calendar.HOUR_OF_DAY,
-				Calendar.MINUTE, Calendar.SECOND };
-		String[] names = new String[] { "year", "years", "month", "months", "day", "days", "hour", "hours", "minute",
-				"minutes", "second", "seconds" };
-		int accuracy = 0;
-		for (int i = 0; i < types.length; i++) {
-			if (accuracy > 2) break;
-			int diff = dateDiff(types[i], fromDate, toDate, future);
-			if (diff > 0) {
-				accuracy++;
-				sb.append(" ").append(diff).append(" ").append(names[i * 2 + (diff > 1 ? 1 : 0)]);
-			}
-		}
-		if (sb.length() == 0) return "now";
-		return sb.toString().trim();
-	}
 }
