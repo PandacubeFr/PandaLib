@@ -1,4 +1,4 @@
-package fr.pandacube.java.util.db.sql_tools;
+package fr.pandacube.java.util.orm;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,8 +9,9 @@ import java.util.List;
 
 import fr.pandacube.java.util.EnumUtil;
 import fr.pandacube.java.util.Log;
-import fr.pandacube.java.util.db.sql_tools.SQLWhereChain.SQLBoolOp;
-import fr.pandacube.java.util.db.sql_tools.SQLWhereComp.SQLComparator;
+import fr.pandacube.java.util.orm.SQLWhereChain.SQLBoolOp;
+import fr.pandacube.java.util.orm.SQLWhereComp.SQLComparator;
+
 import org.javatuples.Pair;
 
 /**

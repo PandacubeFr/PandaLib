@@ -1,4 +1,4 @@
-package fr.pandacube.java.util.db.sql_tools;
+package fr.pandacube.java.util.orm;
 
 import java.util.List;
 

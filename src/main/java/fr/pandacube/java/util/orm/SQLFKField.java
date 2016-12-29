@@ -1,4 +1,4 @@
-package fr.pandacube.java.util.db.sql_tools;
+package fr.pandacube.java.util.orm;
 
 import fr.pandacube.java.util.Log;
 

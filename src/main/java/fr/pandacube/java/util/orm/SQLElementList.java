@@ -1,4 +1,4 @@
-package fr.pandacube.java.util.db.sql_tools;
+package fr.pandacube.java.util.orm;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -13,8 +13,8 @@ import java.util.Set;
 import com.google.gson.JsonArray;
 
 import fr.pandacube.java.util.Log;
-import fr.pandacube.java.util.db.sql_tools.SQLWhereChain.SQLBoolOp;
-import fr.pandacube.java.util.db.sql_tools.SQLWhereComp.SQLComparator;
+import fr.pandacube.java.util.orm.SQLWhereChain.SQLBoolOp;
+import fr.pandacube.java.util.orm.SQLWhereComp.SQLComparator;
 
 /**
  *

@@ -1,4 +1,4 @@
-package fr.pandacube.java.util.db.sql_tools;
+package fr.pandacube.java.util.orm;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,7 +21,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import fr.pandacube.java.util.Log;
-import fr.pandacube.java.util.db.sql_tools.SQLWhereComp.SQLComparator;
+import fr.pandacube.java.util.orm.SQLWhereComp.SQLComparator;
 
 public abstract class SQLElement<E extends SQLElement<E>> {
 	/** cache for fields for each subclass of SQLElement */

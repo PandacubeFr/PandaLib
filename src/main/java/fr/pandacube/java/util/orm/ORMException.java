@@ -1,4 +1,4 @@
-package fr.pandacube.java.util.db.sql_tools;
+package fr.pandacube.java.util.orm;
 
 public class ORMException extends Exception {
 	private static final long serialVersionUID = 1L;

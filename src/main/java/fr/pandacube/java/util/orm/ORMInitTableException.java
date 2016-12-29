@@ -1,4 +1,4 @@
-package fr.pandacube.java.util.db.sql_tools;
+package fr.pandacube.java.util.orm;
 
 public class ORMInitTableException extends ORMException {
 	private static final long serialVersionUID = 1L;
