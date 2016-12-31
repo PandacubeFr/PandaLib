@@ -13,7 +13,8 @@ public enum MinecraftVersion {
 	v1_9_2(109, "1.9.2"),
 	v1_9_3_to_1_9_4(110, "1.9.3-1.9.4"),
 	v1_10(210, "1.10.x"),
-	v1_11(315, "1.11");
+	v1_11(315, "1.11"),
+	v1_11_1_to_1_11_2(316, "1.11.1-1.11.2");
 
 	public final int versionNumber;
 	public final String versionDisplay;
