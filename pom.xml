@@ -5,7 +5,7 @@
 
     <parent>
         <groupId>fr.pandacube.pandacube</groupId>
-        <artifactId>pandacube-parent</artifactId>
+        <artifactId>pandacube-parent-public</artifactId>
         <version>1.0-beta4</version>
     </parent>
 
