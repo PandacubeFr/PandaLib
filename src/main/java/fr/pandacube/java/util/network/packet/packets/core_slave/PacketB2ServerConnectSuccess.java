@@ -1,12 +1,12 @@
 package fr.pandacube.java.util.network.packet.packets.core_slave;
 
-import fr.pandacube.java.util.network.packet.PacketClient;
+import fr.pandacube.java.util.network.packet.PacketServer;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteBuffer;
 
-public class PacketClientClose extends PacketClient {
+public class PacketB2ServerConnectSuccess extends PacketServer {
 	
-	public PacketClientClose() {
-		super((byte)0x31);
+	public PacketB2ServerConnectSuccess() {
+		super((byte)0xB2);
 	}
 
 	@Override

@@ -3,10 +3,10 @@ package fr.pandacube.java.util.network.packet.packets.core_slave;
 import fr.pandacube.java.util.network.packet.PacketServer;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteBuffer;
 
-public class PacketServerConnectSuccess extends PacketServer {
+public class PacketB0ServerClose extends PacketServer {
 	
-	public PacketServerConnectSuccess() {
-		super((byte)0xB2);
+	public PacketB0ServerClose() {
+		super((byte)0xB0);
 	}
 
 	@Override

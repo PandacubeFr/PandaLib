@@ -3,12 +3,12 @@ package fr.pandacube.java.util.network.packet.packets.global;
 import fr.pandacube.java.util.network.packet.PacketClient;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteBuffer;
 
-public class PacketClientAuthenticate extends PacketClient {
+public class Packet50ClientAuthenticate extends PacketClient {
 	
 	private String password;
 	private String additionalData = "";
 	
-	public PacketClientAuthenticate() {
+	public Packet50ClientAuthenticate() {
 		super((byte)0x50);
 	}
 	

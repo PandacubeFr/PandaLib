@@ -25,7 +25,7 @@ import fr.pandacube.java.util.network.packet.PacketClient;
 import fr.pandacube.java.util.network.packet.PacketException;
 import fr.pandacube.java.util.network.packet.PacketServer;
 import fr.pandacube.java.util.network.packet.ResponseCallback;
-import fr.pandacube.java.util.network.packet.packets.global.PacketServerException;
+import fr.pandacube.java.util.network.packet.packets.global.PacketD0ServerException;
 import org.javatuples.Pair;
 
 public class TCPClient extends Thread implements Closeable {
@@ -83,10 +83,10 @@ public class TCPClient extends Thread implements Closeable {
 					if (!(p instanceof PacketServer))
 						throw new PacketException(p.getClass().getCanonicalName() + " is not a subclass of PacketServer");
 					
-					if (p instanceof PacketServerException) {
+					if (p instanceof PacketD0ServerException) {
 
 						try {
-							listener.onServerException(this, ((PacketServerException)p).getExceptionString());
+							listener.onServerException(this, ((PacketD0ServerException)p).getExceptionString());
 						} catch (Exception e) {
 							Log.severe("Exception while calling TCPClientListener.onServerException()", e);
 						}

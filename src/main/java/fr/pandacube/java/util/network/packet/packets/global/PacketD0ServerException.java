@@ -6,11 +6,11 @@ import java.io.StringWriter;
 import fr.pandacube.java.util.network.packet.PacketServer;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteBuffer;
 
-public class PacketServerException extends PacketServer {
+public class PacketD0ServerException extends PacketServer {
 	
 	private String exception;
 	
-	public PacketServerException() {
+	public PacketD0ServerException() {
 		super((byte)0xD0);
 	}
 	

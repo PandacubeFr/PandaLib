@@ -3,12 +3,12 @@ package fr.pandacube.java.util.network.packet.packets.web;
 import fr.pandacube.java.util.network.packet.PacketClient;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteBuffer;
 
-public class PacketClientWebRequest extends PacketClient {
+public class Packet00ClientWebRequest extends PacketClient {
 	
 	private String password;
 	private String jsonData;
 	
-	public PacketClientWebRequest() {
+	public Packet00ClientWebRequest() {
 		super((byte)0x00);
 	}
 

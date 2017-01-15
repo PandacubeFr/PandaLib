@@ -3,12 +3,12 @@ package fr.pandacube.java.util.network.packet.packets.core_slave;
 import fr.pandacube.java.util.network.packet.PacketClient;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteBuffer;
 
-public class PacketClientDeclareProcess extends PacketClient {
+public class Packet30ClientDeclareProcess extends PacketClient {
 	
 	private String processName;
 	private String type;
 	
-	public PacketClientDeclareProcess() {
+	public Packet30ClientDeclareProcess() {
 		super((byte)0x30);
 	}
 	

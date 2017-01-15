@@ -32,7 +32,7 @@ import fr.pandacube.java.util.network.packet.PacketException;
 import fr.pandacube.java.util.network.packet.PacketServer;
 import fr.pandacube.java.util.network.packet.ResponseCallback;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteBuffer;
-import fr.pandacube.java.util.network.packet.packets.global.PacketServerException;
+import fr.pandacube.java.util.network.packet.packets.global.PacketD0ServerException;
 import org.javatuples.Pair;
 
 /**
@@ -158,7 +158,7 @@ public class TCPServer extends Thread implements Closeable {
 						
 					} catch (Exception e) {
 						Log.severe("Exception while handling packet. This exception will be sent to the client with PacketServerException packet.", e);
-						PacketServerException packet = new PacketServerException();
+						PacketD0ServerException packet = new PacketD0ServerException();
 						packet.setException(e);
 						send(packet);
 					}

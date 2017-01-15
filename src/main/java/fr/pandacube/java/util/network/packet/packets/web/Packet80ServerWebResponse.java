@@ -3,11 +3,11 @@ package fr.pandacube.java.util.network.packet.packets.web;
 import fr.pandacube.java.util.network.packet.PacketServer;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteBuffer;
 
-public class PacketServerWebResponse extends PacketServer {
+public class Packet80ServerWebResponse extends PacketServer {
 	
 	private String jsonData;
 	
-	public PacketServerWebResponse() {
+	public Packet80ServerWebResponse() {
 		super((byte)0x80);
 	}
 	

@@ -3,13 +3,13 @@ package fr.pandacube.java.util.network.packet.packets.global;
 import fr.pandacube.java.util.network.packet.PacketServer;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteBuffer;
 
-public class PacketServerCommand extends PacketServer {
+public class PacketD2ServerCommand extends PacketServer {
 	
 	private String command;
 	private boolean async;
 	private boolean returnResult;
 	
-	public PacketServerCommand() {
+	public PacketD2ServerCommand() {
 		super((byte)0xD2);
 	}
 

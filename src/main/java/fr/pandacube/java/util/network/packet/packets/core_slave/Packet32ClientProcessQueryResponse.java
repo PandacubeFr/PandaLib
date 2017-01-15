@@ -2,16 +2,16 @@ package fr.pandacube.java.util.network.packet.packets.core_slave;
 
 import fr.pandacube.java.util.network.packet.PacketClient;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteBuffer;
-import fr.pandacube.java.util.network.packet.packets.core_slave.PacketServerProcessQuery.QueryType;
+import fr.pandacube.java.util.network.packet.packets.core_slave.PacketB4ServerProcessQuery.QueryType;
 
-public class PacketClientProcessQueryResponse extends PacketClient {
+public class Packet32ClientProcessQueryResponse extends PacketClient {
 
 	private QueryType type;
 	private int queryId;
 	private byte[] responseData = null;
 	
 	
-	public PacketClientProcessQueryResponse() {
+	public Packet32ClientProcessQueryResponse() {
 		super((byte)0x32);
 	}
 	
@@ -35,23 +35,23 @@ public class PacketClientProcessQueryResponse extends PacketClient {
 	}
 	
 
-	public static PacketClientProcessQueryResponse destroyResponse(int queryId) {
-		PacketClientProcessQueryResponse q = new PacketClientProcessQueryResponse();
+	public static Packet32ClientProcessQueryResponse destroyResponse(int queryId) {
+		Packet32ClientProcessQueryResponse q = new Packet32ClientProcessQueryResponse();
 		q.type = QueryType.DESTROY;
 		q.queryId = queryId;
 		return q;
 	}
 	
-	public static PacketClientProcessQueryResponse isAliveResponse(int queryId, boolean resp) {
-		PacketClientProcessQueryResponse q = new PacketClientProcessQueryResponse();
+	public static Packet32ClientProcessQueryResponse isAliveResponse(int queryId, boolean resp) {
+		Packet32ClientProcessQueryResponse q = new Packet32ClientProcessQueryResponse();
 		q.type = QueryType.IS_ALIVE;
 		q.queryId = queryId;
 		q.responseData = new byte[] {(byte)(resp ? 1 : 0)};
 		return q;
 	}
 	
-	public static PacketClientProcessQueryResponse exitStatusResponse(int queryId, int resp) {
-		PacketClientProcessQueryResponse q = new PacketClientProcessQueryResponse();
+	public static Packet32ClientProcessQueryResponse exitStatusResponse(int queryId, int resp) {
+		Packet32ClientProcessQueryResponse q = new Packet32ClientProcessQueryResponse();
 		q.type = QueryType.EXIT_STATUS;
 		q.queryId = queryId;
 		q.responseData = new ByteBuffer(4, CHARSET).putInt(resp).array();

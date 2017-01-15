@@ -9,20 +9,20 @@ import fr.pandacube.java.Pandacube;
 import fr.pandacube.java.util.Log;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteBuffer;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteSerializable;
-import fr.pandacube.java.util.network.packet.packets.core_slave.PacketClientClose;
-import fr.pandacube.java.util.network.packet.packets.core_slave.PacketClientDeclareProcess;
-import fr.pandacube.java.util.network.packet.packets.core_slave.PacketClientProcessQueryResponse;
-import fr.pandacube.java.util.network.packet.packets.core_slave.PacketServerClose;
-import fr.pandacube.java.util.network.packet.packets.core_slave.PacketServerConnectSuccess;
-import fr.pandacube.java.util.network.packet.packets.core_slave.PacketServerProcessDeclarationConfirm;
-import fr.pandacube.java.util.network.packet.packets.core_slave.PacketServerProcessInput;
-import fr.pandacube.java.util.network.packet.packets.core_slave.PacketServerProcessQuery;
-import fr.pandacube.java.util.network.packet.packets.global.PacketClientAuthenticate;
-import fr.pandacube.java.util.network.packet.packets.global.PacketClientLogRecord;
-import fr.pandacube.java.util.network.packet.packets.global.PacketServerCantAuthenticate;
-import fr.pandacube.java.util.network.packet.packets.global.PacketServerException;
-import fr.pandacube.java.util.network.packet.packets.web.PacketClientWebRequest;
-import fr.pandacube.java.util.network.packet.packets.web.PacketServerWebResponse;
+import fr.pandacube.java.util.network.packet.packets.core_slave.Packet31ClientClose;
+import fr.pandacube.java.util.network.packet.packets.core_slave.Packet30ClientDeclareProcess;
+import fr.pandacube.java.util.network.packet.packets.core_slave.Packet32ClientProcessQueryResponse;
+import fr.pandacube.java.util.network.packet.packets.core_slave.PacketB0ServerClose;
+import fr.pandacube.java.util.network.packet.packets.core_slave.PacketB2ServerConnectSuccess;
+import fr.pandacube.java.util.network.packet.packets.core_slave.PacketB1ServerProcessDeclarationConfirm;
+import fr.pandacube.java.util.network.packet.packets.core_slave.PacketB3ServerProcessInput;
+import fr.pandacube.java.util.network.packet.packets.core_slave.PacketB4ServerProcessQuery;
+import fr.pandacube.java.util.network.packet.packets.global.Packet50ClientAuthenticate;
+import fr.pandacube.java.util.network.packet.packets.global.Packet51ClientLogRecord;
+import fr.pandacube.java.util.network.packet.packets.global.PacketD1ServerCantAuthenticate;
+import fr.pandacube.java.util.network.packet.packets.global.PacketD0ServerException;
+import fr.pandacube.java.util.network.packet.packets.web.Packet00ClientWebRequest;
+import fr.pandacube.java.util.network.packet.packets.web.Packet80ServerWebResponse;
 
 /** <pre>
  * Identification des packets réseaux
@@ -96,22 +96,22 @@ public abstract class Packet implements ByteSerializable {
 		/*
 		 * Ajout des types de packets (client + serveur)
 		 */
-		addPacket(PacketClientClose.class);
-		addPacket(PacketClientDeclareProcess.class);
-		addPacket(PacketClientProcessQueryResponse.class);
-		addPacket(PacketServerClose.class);
-		addPacket(PacketServerConnectSuccess.class);
-		addPacket(PacketServerProcessDeclarationConfirm.class);
-		addPacket(PacketServerProcessInput.class);
-		addPacket(PacketServerProcessQuery.class);
+		addPacket(Packet31ClientClose.class);
+		addPacket(Packet30ClientDeclareProcess.class);
+		addPacket(Packet32ClientProcessQueryResponse.class);
+		addPacket(PacketB0ServerClose.class);
+		addPacket(PacketB2ServerConnectSuccess.class);
+		addPacket(PacketB1ServerProcessDeclarationConfirm.class);
+		addPacket(PacketB3ServerProcessInput.class);
+		addPacket(PacketB4ServerProcessQuery.class);
 		
-		addPacket(PacketClientAuthenticate.class);
-		addPacket(PacketClientLogRecord.class);
-		addPacket(PacketServerCantAuthenticate.class);
-		addPacket(PacketServerException.class);
+		addPacket(Packet50ClientAuthenticate.class);
+		addPacket(Packet51ClientLogRecord.class);
+		addPacket(PacketD1ServerCantAuthenticate.class);
+		addPacket(PacketD0ServerException.class);
 		
-		addPacket(PacketClientWebRequest.class);
-		addPacket(PacketServerWebResponse.class);
+		addPacket(Packet00ClientWebRequest.class);
+		addPacket(Packet80ServerWebResponse.class);
 		
 	}
 

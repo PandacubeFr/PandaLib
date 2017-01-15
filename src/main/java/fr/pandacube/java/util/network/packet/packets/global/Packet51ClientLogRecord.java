@@ -3,7 +3,7 @@ package fr.pandacube.java.util.network.packet.packets.global;
 import fr.pandacube.java.util.network.packet.PacketClient;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteBuffer;
 
-public class PacketClientLogRecord extends PacketClient {
+public class Packet51ClientLogRecord extends PacketClient {
 	
 	private long time;
 	private String level;
@@ -11,7 +11,7 @@ public class PacketClientLogRecord extends PacketClient {
 	private String message;
 	private String throwable;
 	
-	public PacketClientLogRecord() {
+	public Packet51ClientLogRecord() {
 		super((byte)0x51);
 	}
 	

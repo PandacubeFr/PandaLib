@@ -2,37 +2,31 @@ package fr.pandacube.java.util.network.packet.bytebuffer;
 
 import java.util.Arrays;
 
-public class Array8Bit {
+public class Array8Bit implements ByteSerializable {
 	
-	public static final int BIT_COUNT = 8;
+	public static final int BIT_COUNT = Byte.SIZE;
 	
 	private boolean[] values = new boolean[BIT_COUNT];
 	
-	/**
-	 * 
-	 * @param b unsigned integer value. Lowest significant bit will be used.
-	 */
-	public Array8Bit(int b) {
-		for (int i = 0; i<BIT_COUNT; i++) {
-			values[i] = (b % 2 == 1);
-			b >>= 1;
-		}
+	public Array8Bit(byte b) {
+		fromByte(b);
 	}
-	
-	
+
+	/**
+	 * @param bits (index 0 is the lowest significant bit)
+	 */
 	public Array8Bit(boolean[] bits) {
 		if (bits == null || bits.length != BIT_COUNT)
 			throw new IllegalArgumentException("bits is null or bits.length != "+BIT_COUNT);
 		values = Arrays.copyOf(bits, BIT_COUNT);
 	}
 	
-	
 	/**
 	 * i = 0 is the lowest significant bit
 	 * @param i
 	 * @return
 	 */
-	public boolean getValue(int i) {
+	public boolean getBit(int i) {
 		return values[i];
 	}
 	
@@ -41,12 +35,23 @@ public class Array8Bit {
 	 * @param i
 	 * @param b
 	 */
-	public void setValue(int i, boolean b) {
+	public void setBit(int i, boolean b) {
 		values[i] = b;
 	}
 	
 	
-	public byte getValuesAsByte() {
+	
+	public void fromByte(byte b) {
+		int mask = 1;
+		for (int i = 0; i < BIT_COUNT; i++) {
+			values[i] = (b & mask) != 0;
+			mask <<= 1;
+		}
+	}
+	
+	
+	
+	public byte toByte() {
 		byte b = 0;
 		for (int i=BIT_COUNT-1; i>=0; i--) {
 			b <<= 1;
@@ -54,5 +59,19 @@ public class Array8Bit {
 		}
 		return b;
 	}
+	
+	
+	
+	
+	@Override
+	public void deserializeFromByteBuffer(ByteBuffer buffer) {
+		fromByte(buffer.getByte());
+	}
+	
+	@Override
+	public void serializeToByteBuffer(ByteBuffer buffer) {
+		buffer.putByte(toByte());
+	}
+	
 	
 }

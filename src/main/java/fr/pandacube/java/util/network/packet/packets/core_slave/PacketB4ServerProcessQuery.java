@@ -4,7 +4,7 @@ import fr.pandacube.java.util.RandomUtil;
 import fr.pandacube.java.util.network.packet.PacketServer;
 import fr.pandacube.java.util.network.packet.bytebuffer.ByteBuffer;
 
-public class PacketServerProcessQuery extends PacketServer {
+public class PacketB4ServerProcessQuery extends PacketServer {
 	
 	private String processName;
 	private QueryType type;
@@ -12,7 +12,7 @@ public class PacketServerProcessQuery extends PacketServer {
 	private byte[] queryData = null;
 
 	
-	public PacketServerProcessQuery() {
+	public PacketB4ServerProcessQuery() {
 		super((byte)0xB4);
 	}
 
@@ -36,30 +36,30 @@ public class PacketServerProcessQuery extends PacketServer {
 	}
 	
 
-	public static PacketServerProcessQuery startQuery(String processName) {
-		PacketServerProcessQuery q = new PacketServerProcessQuery();
+	public static PacketB4ServerProcessQuery startQuery(String processName) {
+		PacketB4ServerProcessQuery q = new PacketB4ServerProcessQuery();
 		q.processName = processName;
 		q.type = QueryType.START;
 		return q;
 	}
 	
-	public static PacketServerProcessQuery destroyQuery(String processName, boolean wait) {
-		PacketServerProcessQuery q = new PacketServerProcessQuery();
+	public static PacketB4ServerProcessQuery destroyQuery(String processName, boolean wait) {
+		PacketB4ServerProcessQuery q = new PacketB4ServerProcessQuery();
 		q.processName = processName;
 		q.type = QueryType.DESTROY;
 		q.queryData = new byte[] {(byte)(wait ? 1 : 0)};
 		return q;
 	}
 	
-	public static PacketServerProcessQuery isAliveQuery(String processName) {
-		PacketServerProcessQuery q = new PacketServerProcessQuery();
+	public static PacketB4ServerProcessQuery isAliveQuery(String processName) {
+		PacketB4ServerProcessQuery q = new PacketB4ServerProcessQuery();
 		q.processName = processName;
 		q.type = QueryType.IS_ALIVE;
 		return q;
 	}
 	
-	public static PacketServerProcessQuery exitStatusQuery(String processName) {
-		PacketServerProcessQuery q = new PacketServerProcessQuery();
+	public static PacketB4ServerProcessQuery exitStatusQuery(String processName) {
+		PacketB4ServerProcessQuery q = new PacketB4ServerProcessQuery();
 		q.processName = processName;
 		q.type = QueryType.EXIT_STATUS;
 		return q;
