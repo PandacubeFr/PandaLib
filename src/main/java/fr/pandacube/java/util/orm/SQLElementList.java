@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.gson.JsonArray;
 
@@ -45,10 +46,10 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 	 * @param value la valeur à lui appliquer
 	 */
 	public synchronized <T> void setCommon(SQLField<E, T> field, T value) {
-		if (field != null && field.name == "id")
-			throw new IllegalArgumentException("Can't modify id field in a SQLElementList");
 		if (field == null)
 			throw new IllegalArgumentException("field can't be null");
+		if (field.name == "id")
+			throw new IllegalArgumentException("Can't modify id field in a SQLElementList");
 		
 		Class<E> elemClass = field.getSQLElementType();
 		try {
@@ -132,11 +133,7 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 	}
 
 	private List<E> getStoredEl() {
-		List<E> listStored = new ArrayList<>();
-		forEach(el -> {
-			if (el.isStored()) listStored.add(el);
-		});
-		return listStored;
+		return stream().filter(SQLElement::isStored).collect(Collectors.toCollection(() -> new ArrayList<>()));
 	}
 
 	public synchronized void removeFromDB() {

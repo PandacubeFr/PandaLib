@@ -25,9 +25,9 @@ public class PacketD0ServerException extends PacketServer {
 	}
 	
 	
-	public void setException(Exception e) {
+	public void setException(Throwable t) {
 		StringWriter sw = new StringWriter();
-		e.printStackTrace(new PrintWriter(sw));
+		t.printStackTrace(new PrintWriter(sw));
 		exception = sw.toString();
 	}
 	

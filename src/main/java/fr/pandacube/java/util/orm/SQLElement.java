@@ -188,7 +188,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 		return modifiedSinceLastSave.contains(field.name);
 	}
 
-	@SuppressWarnings({ "unchecked", "resource" })
+	@SuppressWarnings("unchecked")
 	public void save() throws ORMException {
 		if (!isValidForSave())
 			throw new IllegalStateException(toString() + " has at least one undefined value and can't be saved.");

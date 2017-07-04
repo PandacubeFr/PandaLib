@@ -57,5 +57,9 @@ public class BiMap<K, V> implements Iterable<Entry<K, V>> {
     		c.accept(entry.getKey(), entry.getValue());
     	}
     }
+    
+    public int size() {
+    	return map.size();
+    }
 
 }

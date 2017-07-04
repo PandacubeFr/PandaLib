@@ -47,7 +47,6 @@ public class NetworkAPIListener implements Runnable {
 		try {
 			// réception des connexion client
 			while (!serverSocket.isClosed()) {
-				@SuppressWarnings("resource")
 				Socket socketClient = serverSocket.accept();
 				nAPIExecutionHandler.handleRun(new PacketExecutor(socketClient, this));
 			}

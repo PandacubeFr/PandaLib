@@ -75,7 +75,6 @@ public class TCPServer extends Thread implements Closeable {
 
 		try {
 			while (true) {
-				@SuppressWarnings("resource")
 				Socket socketClient = socket.accept();
 				socketClient.setSendBufferSize(Pandacube.NETWORK_TCP_BUFFER_SIZE);
 				socketClient.setSoTimeout(Pandacube.NETWORK_TIMEOUT);
@@ -156,11 +155,13 @@ public class TCPServer extends Thread implements Closeable {
 						
 						executeCallbacks(pc, callbacks);
 						
-					} catch (Exception e) {
+					} catch (Throwable e) {
 						Log.severe("Exception while handling packet. This exception will be sent to the client with PacketServerException packet.", e);
 						PacketD0ServerException packet = new PacketD0ServerException();
 						packet.setException(e);
 						send(packet);
+						if (e instanceof InterruptedException || e instanceof Error)
+							throw e;
 					}
 				}
 
