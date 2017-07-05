@@ -24,7 +24,7 @@
         <dependency>
             <groupId>fr.pandacube.bungeecord</groupId>
             <artifactId>bungeecord-chat</artifactId>
-            <version>1.12-SNAPSHOT</version>
+            <version>${bungeecord.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
