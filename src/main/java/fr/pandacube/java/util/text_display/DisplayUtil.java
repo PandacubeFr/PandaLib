@@ -1,6 +1,8 @@
 package fr.pandacube.java.util.text_display;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
@@ -272,5 +274,147 @@ public class DisplayUtil {
 			if (CHARS_SIZE.get(px).indexOf(c) >= 0) return px + (bold ? 1 : 0);
 		return 6 + (bold ? 1 : 0);
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	public static List<String> wrapInLimitedPixels(String legacyText, int pixelWidth) {
+		List<String> lines = new ArrayList<>();
+		
+		legacyText += "\n"; // workaround to force algorithm to compute last lines;
+		
+		String currentLine = "";
+		int currentLineSize = 0;
+		int index = 0;
+		
+		String currentWord = "";
+		int currentWordSize = 0;
+		boolean bold = false;
+		boolean firstCharCurrentWorldBold = false;
+		
+		do {
+			char c = legacyText.charAt(index);
+			if (c == ChatColor.COLOR_CHAR && index < legacyText.length() - 1) {
+				currentWord += c;
+				c = legacyText.charAt(++index);
+				currentWord += c;
+				
+				if (c == 'l' || c == 'L') // bold
+					bold = true;
+				if ((c >= '0' && c <= '9') // reset bold
+						|| (c >= 'a' && c <= 'f')
+						|| (c >= 'A' && c <= 'F')
+						|| c == 'r' || c == 'R')
+					bold = false;
+				
+			}
+			else if (c == ' ') {
+				if (currentLineSize + currentWordSize > pixelWidth && currentLineSize > 0) { // wrap before word
+					lines.add(currentLine);
+					String lastStyle = getLastColors(currentLine);
+					if (currentWord.charAt(0) == ' ') {
+						currentWord = currentWord.substring(1);
+						currentWordSize -= charW(' ', false, firstCharCurrentWorldBold);
+					}
+					currentLine = (lastStyle.equals("§r") ? "" : lastStyle) + currentWord;
+					currentLineSize = currentWordSize;
+				}
+				else {
+					currentLine += currentWord;
+					currentLineSize += currentWordSize;
+				}
+				currentWord = ""+c;
+				currentWordSize = charW(c, false, bold);
+				firstCharCurrentWorldBold = bold;
+			}
+			else if (c == '\n') {
+				if (currentLineSize + currentWordSize > pixelWidth && currentLineSize > 0) { // wrap before word
+					lines.add(currentLine);
+					String lastStyle = getLastColors(currentLine);
+					if (currentWord.charAt(0) == ' ') {
+						currentWord = currentWord.substring(1);
+						currentWordSize -= charW(' ', false, firstCharCurrentWorldBold);
+					}
+					currentLine = (lastStyle.equals("§r") ? "" : lastStyle) + currentWord;
+					currentLineSize = currentWordSize;
+				}
+				else {
+					currentLine += currentWord;
+					currentLineSize += currentWordSize;
+				}
+				// wrap after
+				lines.add(currentLine);
+				String lastStyle = getLastColors(currentLine);
+				
+				currentLine = lastStyle.equals("§r") ? "" : lastStyle;
+				currentLineSize = 0;
+				currentWord = "";
+				currentWordSize = 0;
+				firstCharCurrentWorldBold = bold;
+			}
+			else {
+				currentWord += c;
+				currentWordSize += charW(c, false, bold);
+			}
+			
+		} while(++index < legacyText.length());
+		
+		
+		
+		
+		
+		
+		return lines;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	public static String getLastColors(String legacyText) {
+        String result = "";
+        int length = legacyText.length();
+
+        // Search backwards from the end as it is faster
+        for (int index = length - 1; index > -1; index--) {
+            char section = legacyText.charAt(index);
+            if (section == ChatColor.COLOR_CHAR && index < length - 1) {
+                char c = legacyText.charAt(index + 1);
+                ChatColor color = getChatColorByChar(c);
+
+                if (color != null) {
+                    result = color.toString() + result;
+
+                    // Once we find a color or reset we can stop searching
+                    char col = color.toString().charAt(1);
+                    if ((col >= '0' && col <= '9')
+    						|| (col >= 'a' && col <= 'f')
+    						|| col == 'r') {
+                        break;
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+	
+	public static ChatColor getChatColorByChar(char code) {
+        return ChatColor.getByChar(Character.toLowerCase(code));
+    }
+	
+	
+	
+	
 
 }
