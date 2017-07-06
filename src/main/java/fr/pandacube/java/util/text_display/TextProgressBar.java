@@ -1,4 +1,4 @@
-package fr.pandacube.java.util.chat_display;
+package fr.pandacube.java.util.text_display;
 
 import net.md_5.bungee.api.ChatColor;
 

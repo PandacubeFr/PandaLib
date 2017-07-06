@@ -1,11 +1,9 @@
 package fr.pandacube.java.util.commands;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class AbstractCommand {
 	
@@ -50,91 +48,10 @@ public class AbstractCommand {
 	 * @return
 	 */
 	public static List<String> getTabProposalFromToken(String token, Collection<String> allProposal) {
-		List<String> ret = new ArrayList<>();
-
-		for (String s : allProposal)
-			if (s != null && s.toLowerCase().startsWith(token.toLowerCase())) ret.add(s);
-
-		if (ret.isEmpty()) ret.addAll(allProposal);
-		
-		ret.removeIf(s -> s == null);
-		ret.sort(null); // String implents Comparable
-
-		return ret;
-	}
-	
-	
-	
-	public static final TabProposal TAB_NO_PROPOSAL = () -> Collections.emptyList();
-
-	public static TabProposal TAB_PROPOSAL(Collection<String> proposals) { 
-		return () -> proposals;
-	}
-	
-	public static TabProposal TAB_INTEGERS(int startIncluded, int endIncluded) {
-		List<String> proposals = new ArrayList<>(endIncluded - startIncluded + 1);
-		for (int i = startIncluded; i <= endIncluded; i++) {
-			proposals.add(Integer.toString(i));
-		}
-		return () -> proposals;
-	}
-	
-	public static TabProposal TAB_PROPOSAL_LAST_PARAMS(String[] args, int index, Collection<String> proposals) { 
-		String lastParamToken = getLastParams(args, index);
-		String[] splittedToken = lastParamToken.split(" ", -1);	
-		int currentTokenPosition = splittedToken.length - 1;
-		String[] previousTokens = Arrays.copyOf(splittedToken, currentTokenPosition);
-		
-		List<String> currentTokenProposal = new ArrayList<>();
-		for (String p : proposals) {
-			String[] splittedProposal = p.split(" ", -1);
-			if (splittedProposal.length <= currentTokenPosition)
-				continue;
-			if (!Arrays.equals(Arrays.copyOf(splittedToken, currentTokenPosition), previousTokens))
-				continue;
-			if (splittedProposal[currentTokenPosition].isEmpty())
-				continue;
-			
-			currentTokenProposal.add(splittedProposal[currentTokenPosition]);
-		}
-		
-		return () -> currentTokenProposal;
-	}
-	
-	@FunctionalInterface
-	public interface TabProposal {
-		public abstract Collection<String> getProposal();
-	}
-	
-	
-	
-	
-	/**
-	 * Throw an instance of this exception to indicate to the plugin command handler
-	 * that the user has missused the command. The message, if provided, must indicate
-	 * the reason of the mussusage of the command. It will be displayed on the screen
-	 * with eventually indication of how to use the command (help command for example).
-	 * If a {@link Throwable} cause is provided, it will be relayed to the plugin {@link Logger}.
-	 * 
-	 */
-	public static class BadCommandUsage extends RuntimeException {
-		private static final long serialVersionUID = 1L;
-
-		public BadCommandUsage() {
-			super();
-		}
-		
-		public BadCommandUsage(Throwable cause) {
-			super(cause);
-		}
-
-		public BadCommandUsage(String message) {
-			super(message);
-		}
-		
-		public BadCommandUsage(String message, Throwable cause) {
-			super(message, cause);
-		}
+		return allProposal.stream()
+				.filter(s -> s != null && s.toLowerCase().startsWith(token.toLowerCase()))
+				.sorted()
+				.collect(Collectors.toList());
 	}
 	
 	
