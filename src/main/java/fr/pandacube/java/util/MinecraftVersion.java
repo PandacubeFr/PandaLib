@@ -15,7 +15,8 @@ public enum MinecraftVersion {
 	v1_10(210, "1.10.x"),
 	v1_11(315, "1.11"),
 	v1_11_1_to_1_11_2(316, "1.11.1-1.11.2"),
-	v1_12(335, "1.12");
+	v1_12(335, "1.12"),
+	v1_12_1(338, "1.12.1");
 
 	public final int versionNumber;
 	public final String versionDisplay;
@@ -82,8 +83,9 @@ public enum MinecraftVersion {
 			ret.add("1.11");
 		}
 		// grouping 1.12 versions
-		if (versions.contains(v1_12)) {
+		if (versions.contains(v1_12) && versions.contains(v1_12_1)) {
 			versions.remove(v1_12);
+			versions.remove(v1_12_1);
 			ret.add("1.12");
 		}
 		
