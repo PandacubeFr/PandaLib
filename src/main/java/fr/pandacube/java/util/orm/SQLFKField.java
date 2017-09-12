@@ -7,36 +7,33 @@ public class SQLFKField<E extends SQLElement<E>, T, F extends SQLElement<F>> ext
 	private SQLField<F, T> sqlForeignKeyField;
 	private Class<F> sqlForeignKeyElemClass;
 
-	public SQLFKField(String n, SQLType<T> t, boolean nul, Class<F> fkEl, SQLField<F, T> fkF) {
-		super(n, t, nul);
+	protected SQLFKField(SQLType<T> t, boolean nul, T deflt, Class<F> fkEl, SQLField<F, T> fkF) {
+		super(t, nul, deflt);
 		construct(fkEl, fkF);
 	}
 
-	public SQLFKField(String n, SQLType<T> t, boolean nul, T deflt, Class<F> fkEl, SQLField<F, T> fkF) {
-		super(n, t, nul, deflt);
-		construct(fkEl, fkF);
+	public static <E extends SQLElement<E>, F extends SQLElement<F>> SQLFKField<E, Integer, F> idFK(boolean nul, Class<F> fkEl) {
+		return idFK(nul, null, fkEl);
 	}
 
-	public static <E extends SQLElement<E>, F extends SQLElement<F>> SQLFKField<E, Integer, F> idFK(String n, SQLType<Integer> t, boolean nul,
-			Class<F> fkEl) {
+	public static <E extends SQLElement<E>, F extends SQLElement<F>> SQLFKField<E, Integer, F> idFK(boolean nul, Integer deflt, Class<F> fkEl) {
 		if (fkEl == null) throw new IllegalArgumentException("foreignKeyElement can't be null");
 		try {
-			return new SQLFKField<>(n, t, nul, fkEl, ORM.getSQLIdField(fkEl));
+			SQLField<F, Integer> f = ORM.getSQLIdField(fkEl);
+			return new SQLFKField<>(f.type, nul, deflt, fkEl, f);
 		} catch (ORMInitTableException e) {
-			Log.severe("Can't create Foreign key Field called '" + n + "'", e);
+			Log.severe("Can't create Foreign key Field targetting id field of '"+fkEl+"'", e);
 			return null;
 		}
 	}
 
-	public static <E extends SQLElement<E>, F extends SQLElement<F>> SQLFKField<E, Integer, F> idFKField(String n, SQLType<Integer> t, boolean nul,
-			Integer deflt, Class<F> fkEl) {
+	public static <E extends SQLElement<E>, T, F extends SQLElement<F>> SQLFKField<E, T, F> customFK(boolean nul, Class<F> fkEl, SQLField<F, T> fkF) {
+		return customFK(nul, null, fkEl, fkF);
+	}
+
+	public static <E extends SQLElement<E>, T, F extends SQLElement<F>> SQLFKField<E, T, F> customFK(boolean nul, T deflt, Class<F> fkEl, SQLField<F, T> fkF) {
 		if (fkEl == null) throw new IllegalArgumentException("foreignKeyElement can't be null");
-		try {
-			return new SQLFKField<>(n, t, nul, deflt, fkEl, ORM.getSQLIdField(fkEl));
-		} catch (ORMInitTableException e) {
-			Log.severe("Can't create Foreign key Field called '" + n + "'", e);
-			return null;
-		}
+		return new SQLFKField<>(fkF.type, nul, deflt, fkEl, fkF);
 	}
 
 	private void construct(Class<F> fkEl, SQLField<F, T> fkF) {

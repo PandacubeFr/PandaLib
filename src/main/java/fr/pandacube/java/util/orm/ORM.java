@@ -7,12 +7,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import fr.pandacube.java.util.EnumUtil;
+import org.javatuples.Pair;
+
 import fr.pandacube.java.util.Log;
 import fr.pandacube.java.util.orm.SQLWhereChain.SQLBoolOp;
 import fr.pandacube.java.util.orm.SQLWhereComp.SQLComparator;
-
-import org.javatuples.Pair;
 
 /**
  * <b>ORM = Object-Relational Mapping</b>
@@ -99,12 +98,12 @@ public final class ORM {
 		return (SQLField<E, Integer>) SQLElement.fieldsCache.get(elemClass).get("id");
 	}
 
-	public static <E extends SQLElement<E>> List<E> getByIds(Class<E> elemClass, Collection<Integer> ids)
+	public static <E extends SQLElement<E>> SQLElementList<E> getByIds(Class<E> elemClass, Collection<Integer> ids)
 			throws ORMException {
 		return getByIds(elemClass, ids.toArray(new Integer[ids.size()]));
 	}
 
-	public static <E extends SQLElement<E>> List<E> getByIds(Class<E> elemClass, Integer... ids) throws ORMException {
+	public static <E extends SQLElement<E>> SQLElementList<E> getByIds(Class<E> elemClass, Integer... ids) throws ORMException {
 		SQLField<E, Integer> idField = getSQLIdField(elemClass);
 		SQLWhereChain where = new SQLWhereChain(SQLBoolOp.OR);
 		for (Integer id : ids)
@@ -176,6 +175,7 @@ public final class ORM {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private static <E extends SQLElement<E>> E getElementInstance(ResultSet set, Class<E> elemClass) throws ORMException {
 		try {
 			E instance = elemClass.getConstructor(int.class).newInstance(set.getInt("id"));
@@ -184,33 +184,38 @@ public final class ORM {
 
 			for (int c = 1; c <= fieldCount; c++) {
 				String fieldName = set.getMetaData().getColumnLabel(c);
-				if (!instance.getFields().containsKey(fieldName)) continue;
+				
 				// ignore when field is present in database but not handled by SQLElement instance
-				@SuppressWarnings("unchecked")
+				if (!instance.getFields().containsKey(fieldName)) continue;
+				
 				SQLField<E, Object> sqlField = (SQLField<E, Object>) instance.getFields().get(fieldName);
-				if (sqlField.type.getJavaType().isEnum()) {
-					// JDBC ne supporte pas les enums
-					String enumStrValue = set.getString(c);
-					if (enumStrValue == null || set.wasNull()) instance.set(sqlField, null, false);
-					else {
-						Enum<?> enumValue = EnumUtil.searchUncheckedEnum(sqlField.type.getJavaType(), enumStrValue);
-						if (enumValue == null) throw new ORMException("The enum constant '" + enumStrValue
-								+ "' is not found in enum class " + sqlField.type.getJavaType().getName());
-						instance.set(sqlField, enumValue, false);
-					}
+				
+				boolean customType = sqlField.type instanceof SQLCustomType;
+				
+				Object val = set.getObject(c,
+						(Class<?>)(customType ? ((SQLCustomType<?, ?>)sqlField.type).intermediateJavaType
+								: sqlField.type.getJavaType()));
+				
+				if (val == null || set.wasNull()) {
+					instance.set(sqlField, null, false);
 				}
 				else {
-					Object val = set.getObject(c, sqlField.type.getJavaType());
-					if (val == null || set.wasNull()) instance.set(sqlField, null, false);
-					else
-						instance.set(sqlField, val, false);
+					if (customType) {
+						try {
+							val = ((SQLCustomType<Object, Object>)sqlField.type).dbToJavaConv.apply(val);
+						} catch (Exception e) {
+							throw new ORMException("Error while converting value of field '"+sqlField.getName()+"' with SQLCustomType from "+((SQLCustomType<Object, Object>)sqlField.type).intermediateJavaType
+									+"(jdbc source) to "+sqlField.type.getJavaType()+"(java destination). The original value is '"+val.toString()+"'", e);
+						}
+					}
+					
+					instance.set(sqlField, val, false);
+					// la valeur venant de la BDD est marqué comme "non modifié"
+					// dans l'instance car le constructeur de l'instance met
+					// tout les champs comme modifiés
+					instance.modifiedSinceLastSave.remove(sqlField.getName());
+					
 				}
-
-				// la valeur venant de la BDD est marqué comme "non modifié"
-				// dans l'instance
-				// car le constructeur de l'instance met tout les champs comme
-				// modifiés
-				instance.modifiedSinceLastSave.remove(sqlField.name);
 			}
 
 			if (!instance.isValidForSave()) throw new ORMException(

@@ -22,7 +22,7 @@ public class SQLWhereChain extends SQLWhere {
 	}
 
 	@Override
-	public Pair<String, List<Object>> toSQL() {
+	public Pair<String, List<Object>> toSQL() throws ORMException {
 		String sql = "";
 		List<Object> params = new ArrayList<>();
 		boolean first = true;

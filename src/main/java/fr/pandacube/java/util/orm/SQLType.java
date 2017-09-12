@@ -1,22 +1,23 @@
 package fr.pandacube.java.util.orm;
 
 import java.sql.Date;
+import java.util.UUID;
+
+import fr.pandacube.java.util.EnumUtil;
 
 public class SQLType<T> {
 
-	private final String sqlType;
-	private final String sqlTypeParam;
+	protected final String sqlDeclaration;
 	private final Class<T> javaTypes;
 
-	public SQLType(String sqlT, String sqlP, Class<T> javaT) {
-		sqlType = sqlT;
-		sqlTypeParam = sqlP;
+	protected SQLType(String sqlD, Class<T> javaT) {
+		sqlDeclaration = sqlD;
 		javaTypes = javaT;
 	}
 
 	@Override
 	public String toString() {
-		return sqlType + sqlTypeParam;
+		return sqlDeclaration;
 	}
 
 	public boolean isAssignableFrom(Object val) {
@@ -39,37 +40,38 @@ public class SQLType<T> {
 		return javaTypes;
 	}
 
-	public static final SQLType<Boolean> BOOLEAN = new SQLType<>("BOOLEAN", "", Boolean.class);
+	public static final SQLType<Boolean> BOOLEAN = new SQLType<>("BOOLEAN", Boolean.class);
 
-	public static final SQLType<Byte> TINYINT = new SQLType<>("TINYINT", "", Byte.class);
+	public static final SQLType<Byte> TINYINT = new SQLType<>("TINYINT", Byte.class);
 	public static final SQLType<Byte> BYTE = TINYINT;
 
-	public static final SQLType<Short> SMALLINT = new SQLType<>("SMALLINT", "", Short.class);
+	public static final SQLType<Short> SMALLINT = new SQLType<>("SMALLINT", Short.class);
 	public static final SQLType<Short> SHORT = SMALLINT;
 
-	public static final SQLType<Integer> INT = new SQLType<>("INT", "", Integer.class);
+	public static final SQLType<Integer> INT = new SQLType<>("INT", Integer.class);
 	public static final SQLType<Integer> INTEGER = INT;
 
-	public static final SQLType<Long> BIGINT = new SQLType<>("BIGINT", "", Long.class);
+	public static final SQLType<Long> BIGINT = new SQLType<>("BIGINT", Long.class);
 	public static final SQLType<Long> LONG = BIGINT;
 
-	public static final SQLType<Date> DATE = new SQLType<>("DATE", "", Date.class);
+	public static final SQLType<Date> DATE = new SQLType<>("DATE", Date.class);
 
-	public static final SQLType<Float> FLOAT = new SQLType<>("FLOAT", "", Float.class);
+	public static final SQLType<Float> FLOAT = new SQLType<>("FLOAT", Float.class);
 
-	public static final SQLType<Double> DOUBLE = new SQLType<>("DOUBLE", "", Double.class);
-
+	public static final SQLType<Double> DOUBLE = new SQLType<>("DOUBLE", Double.class);
+	
+	@Deprecated
 	public static final SQLType<String> CHAR(int charCount) {
 		if (charCount <= 0) throw new IllegalArgumentException("charCount must be positive.");
-		return new SQLType<>("CHAR", "(" + charCount + ")", String.class);
+		return new SQLType<>("CHAR(" + charCount + ")", String.class);
 	}
 
 	public static final SQLType<String> VARCHAR(int charCount) {
 		if (charCount <= 0) throw new IllegalArgumentException("charCount must be positive.");
-		return new SQLType<>("VARCHAR", "(" + charCount + ")", String.class);
+		return new SQLType<>("VARCHAR(" + charCount + ")", String.class);
 	}
 
-	public static final SQLType<String> TEXT = new SQLType<>("TEXT", "", String.class);
+	public static final SQLType<String> TEXT = new SQLType<>("TEXT", String.class);
 	public static final SQLType<String> STRING = TEXT;
 
 	public static final <T extends Enum<T>> SQLType<T> ENUM(Class<T> enumType) {
@@ -84,7 +86,10 @@ public class SQLType<T> {
 		}
 		enumStr += "'";
 
-		return new SQLType<>("VARCHAR", "(" + enumStr + ")", enumType);
+		return new SQLCustomType<>("VARCHAR(" + enumStr + ")", String.class, enumType, s -> EnumUtil.searchEnum(enumType, s), Enum::name);
 	}
+
+	
+	public static final SQLType<UUID> CHAR36_UUID = new SQLCustomType<>(SQLType.CHAR(36), UUID.class, UUID::fromString, UUID::toString);
 
 }

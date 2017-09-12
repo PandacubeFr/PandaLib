@@ -52,7 +52,9 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 			fields = new SQLFieldMap<>((Class<E>)getClass());
 
 			// le champ id commun à toutes les tables
-			fields.addField(new SQLField<>("id", SQLType.INT, false, true, 0));
+			SQLField<E, Integer> idF = new SQLField<>(SQLType.INT, false, true, 0);
+			idF.setName("id");
+			fields.addField(idF);
 
 			generateFields(fields);
 			fieldsCache.put((Class<E>)getClass(), fields);
@@ -91,6 +93,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 			else if (f.canBeNull || (f.autoIncrement && !stored)) set(f, null);
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void generateFields(SQLFieldMap<E> listToFill) {
 
 		java.lang.reflect.Field[] declaredFields = getClass().getDeclaredFields();
@@ -100,7 +103,11 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 			try {
 				Object val = field.get(null);
 				if (val == null || !(val instanceof SQLField)) continue;
-
+				SQLField<E, ?> checkedF = (SQLField<E, ?>) val;
+				checkedF.setName(field.getName());
+				if (listToFill.containsKey(checkedF.getName())) throw new IllegalArgumentException(
+						"SQLField " + checkedF.getName() + " already exist in " + getClass().getName());
+				checkedF.setSQLElementType((Class<E>) getClass());
 				listToFill.addField((SQLField<?, ?>) val);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				Log.severe("Can't get value of static field " + field.toString(), e);
@@ -124,30 +131,30 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 	/* package */ <T> void set(SQLField<E, T> sqlField, T value, boolean setModified) {
 		if (sqlField == null) throw new IllegalArgumentException("sqlField can't be null");
 		if (!fields.containsValue(sqlField))
-			throw new IllegalArgumentException(sqlField.getSQLElementType().getName()+sqlField.name + " is not a SQLField of " + getClass().getName());
+			throw new IllegalArgumentException(sqlField.getSQLElementType().getName()+sqlField.getName() + " is not a SQLField of " + getClass().getName());
 
 		boolean modify = false;
 		if (value == null) {
 			if (sqlField.canBeNull || (sqlField.autoIncrement && !stored)) modify = true;
 			else
 				throw new IllegalArgumentException(
-						"SQLField '" + sqlField.name + "' of " + getClass().getName() + " is a NOT NULL field");
+						"SQLField '" + sqlField.getName() + "' of " + getClass().getName() + " is a NOT NULL field");
 		}
 		else if (sqlField.type.isAssignableFrom(value)) modify = true;
 		else
-			throw new IllegalArgumentException("SQLField '" + sqlField.name + "' of " + getClass().getName()
+			throw new IllegalArgumentException("SQLField '" + sqlField.getName() + "' of " + getClass().getName()
 					+ " type is '" + sqlField.type.toString() + "' and can't accept values of type "
 					+ value.getClass().getName());
 
 		if (modify) if (!values.containsKey(sqlField)) {
 			values.put(sqlField, value);
-			if (setModified) modifiedSinceLastSave.add(sqlField.name);
+			if (setModified) modifiedSinceLastSave.add(sqlField.getName());
 		}
 		else {
 			Object oldVal = values.get(sqlField);
 			if (!Objects.equals(oldVal, value)) {
 				values.put(sqlField, value);
-				if (setModified) modifiedSinceLastSave.add(sqlField.name);
+				if (setModified) modifiedSinceLastSave.add(sqlField.getName());
 			}
 			// sinon, rien n'est modifié
 		}
@@ -161,7 +168,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 			T val = (T) values.get(field);
 			return val;
 		}
-		throw new IllegalArgumentException("The field '" + field.name + "' in this instance of " + getClass().getName()
+		throw new IllegalArgumentException("The field '" + field.getName() + "' in this instance of " + getClass().getName()
 				+ " does not exist or is not set");
 	}
 
@@ -179,13 +186,13 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 	private Map<SQLField<E, ?>, Object> getOnlyModifiedValues() {
 		Map<SQLField<E, ?>, Object> modifiedValues = new LinkedHashMap<>();
 		values.forEach((k, v) -> {
-			if (modifiedSinceLastSave.contains(k.name)) modifiedValues.put(k, v);
+			if (modifiedSinceLastSave.contains(k.getName())) modifiedValues.put(k, v);
 		});
 		return modifiedValues;
 	}
 
 	public boolean isModified(SQLField<E, ?> field) {
-		return modifiedSinceLastSave.contains(field.name);
+		return modifiedSinceLastSave.contains(field.getName());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -214,16 +221,8 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 				List<Object> psValues = new ArrayList<>();
 
 				for (Map.Entry<SQLField<E, ?>, Object> entry : modifiedValues.entrySet()) {
-					sql += entry.getKey().name + " = ? ,";
-					if (entry.getKey().type.getJavaType().isEnum()) // prise en
-																	// charge
-																	// enum (non
-																	// prise en
-																	// charge
-																	// par JDBC)
-						psValues.add(((Enum<?>) entry.getValue()).name());
-					else
-						psValues.add(entry.getValue());
+					sql += entry.getKey().getName() + " = ? ,";
+					addValueToSQLObjectList(psValues, entry.getKey(), entry.getValue());
 				}
 
 				if (sql.length() > 0) sql = sql.substring(0, sql.length() - 1);
@@ -260,16 +259,8 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 					}
 					first = false;
 					concat_vals += " ? ";
-					concat_fields += entry.getKey().name;
-					if (entry.getKey().type.getJavaType().isEnum()) // prise en
-																	// charge
-																	// enum (non
-																	// prise en
-																	// charge
-																	// par JDBC)
-						psValues.add(((Enum<?>) entry.getValue()).name());
-					else
-						psValues.add(entry.getValue());
+					concat_fields += entry.getKey().getName();
+					addValueToSQLObjectList(psValues, entry.getKey(), entry.getValue());
 				}
 
 				PreparedStatement ps = conn.prepareStatement(
@@ -303,6 +294,20 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 			throw new ORMException("Error while executing SQL statement " + toStringStatement, e);
 		}
 		Log.debug(toStringStatement);
+	}
+	
+	
+	@SuppressWarnings("rawtypes")
+	protected static <E extends SQLElement<E>> void addValueToSQLObjectList(List<Object> list, SQLField<E, ?> field, Object jValue) throws ORMException {
+		if (jValue != null && field.type instanceof SQLCustomType) {
+			try {
+				jValue = ((SQLCustomType)field.type).javaToDbConv.apply(jValue);
+			} catch (Exception e) {
+				throw new ORMException("Error while converting value of field '"+field.getName()+"' with SQLCustomType from "+field.type.getJavaType()
+						+"(java source) to "+((SQLCustomType<?, ?>)field.type).intermediateJavaType+"(jdbc destination). The original value is '"+jValue.toString()+"'", e);
+			}
+		}
+		list.add(jValue);
 	}
 
 	public boolean isStored() {
@@ -346,7 +351,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 		stored = false;
 		id = 0;
 		modifiedSinceLastSave.clear();
-		values.forEach((k, v) -> modifiedSinceLastSave.add(k.name));
+		values.forEach((k, v) -> modifiedSinceLastSave.add(k.getName()));
 	}
 
 	protected static class SQLFieldMap<E extends SQLElement<E>> extends LinkedHashMap<String, SQLField<E, ?>> {
@@ -360,12 +365,12 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 
 		private void addField(SQLField<?, ?> f) {
 			if (f == null) return;
-			if (containsKey(f.name)) throw new IllegalArgumentException(
-					"SQLField " + f.name + " already exist in " + sqlElemClass.getName());
+			if (containsKey(f.getName())) throw new IllegalArgumentException(
+					"SQLField " + f.getName() + " already exist in " + sqlElemClass.getName());
 			@SuppressWarnings("unchecked")
 			SQLField<E, ?> checkedF = (SQLField<E, ?>) f;
 			checkedF.setSQLElementType(sqlElemClass);
-			put(checkedF.name, checkedF);
+			put(checkedF.getName(), checkedF);
 		}
 
 	}
@@ -376,9 +381,9 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 
 		for (SQLField<E, ?> f : fields.values())
 			try {
-				b.append(f.name, get(f));
+				b.append(f.getName(), get(f));
 			} catch (IllegalArgumentException e) {
-				b.append(f.name, "(Undefined)");
+				b.append(f.getName(), "(Undefined)");
 			}
 
 		return b.toString();
@@ -402,7 +407,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 	public JsonObject asJsonObject() {
 		JsonObject json = new JsonObject();
 		for (SQLField<E, ?> f : getFields().values()) {
-			json.add(f.name, new Gson().toJsonTree(get(f)));
+			json.add(f.getName(), new Gson().toJsonTree(get(f)));
 		}
 		return json;
 	}

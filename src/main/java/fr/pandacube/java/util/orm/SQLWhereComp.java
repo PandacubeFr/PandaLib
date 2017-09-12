@@ -27,19 +27,24 @@ public class SQLWhereComp extends SQLWhere {
 	}
 
 	@Override
-	public Pair<String, List<Object>> toSQL() {
+	public Pair<String, List<Object>> toSQL() throws ORMException {
 		List<Object> params = new ArrayList<>();
-		params.add(right);
-		return new Pair<>(left.name + " " + comp.sql + " ? ", params);
+		SQLElement.addValueToSQLObjectList(params, left, right);
+		return new Pair<>(left.getName() + " " + comp.sql + " ? ", params);
 	}
 
 	public enum SQLComparator {
 		/** Equivalent to SQL "<code>=</code>" */
-		EQ("="), /** Equivalent to SQL "<code>></code>" */
-		GT(">"), /** Equivalent to SQL "<code>>=</code>" */
-		GEQ(">="), /** Equivalent to SQL "<code>&lt;</code>" */
-		LT("<"), /** Equivalent to SQL "<code>&lt;=</code>" */
-		LEQ("<="), /** Equivalent to SQL "<code>!=</code>" */
+		EQ("="),
+		/** Equivalent to SQL "<code>></code>" */
+		GT(">"),
+		/** Equivalent to SQL "<code>>=</code>" */
+		GEQ(">="),
+		/** Equivalent to SQL "<code>&lt;</code>" */
+		LT("<"),
+		/** Equivalent to SQL "<code>&lt;=</code>" */
+		LEQ("<="),
+		/** Equivalent to SQL "<code>!=</code>" */
 		NEQ("!=");
 
 		public final String sql;

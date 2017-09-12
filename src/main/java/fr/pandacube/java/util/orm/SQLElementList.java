@@ -48,7 +48,7 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 	public synchronized <T> void setCommon(SQLField<E, T> field, T value) {
 		if (field == null)
 			throw new IllegalArgumentException("field can't be null");
-		if (field.name == "id")
+		if (field.getName() == "id")
 			throw new IllegalArgumentException("Can't modify id field in a SQLElementList");
 		
 		Class<E> elemClass = field.getSQLElementType();
@@ -78,7 +78,7 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 	 *
 	 * @throws SQLException
 	 */
-	public synchronized void saveCommon() throws SQLException {
+	public synchronized void saveCommon() throws ORMException {
 		List<E> storedEl = getStoredEl();
 		if (storedEl.isEmpty()) return;
 
@@ -86,12 +86,12 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 		List<Object> psValues = new ArrayList<>();
 
 		for (Map.Entry<SQLField<E, ?>, Object> entry : modifiedValues.entrySet()) {
-			sqlSet += entry.getKey().name + " = ? ,";
-			if (entry.getKey().type.getJavaType().isEnum()) // prise en charge
-															// enum (non prise
-															// en charge par
-															// JDBC)
+			sqlSet += entry.getKey().getName() + " = ? ,";
+			SQLElement.addValueToSQLObjectList(psValues, entry.getKey(), entry.getValue());
+			if (entry.getKey().type.getJavaType().isEnum()) {
+				// prise en charge  enum (non prise  en charge par  JDBC)
 				psValues.add(((Enum<?>) entry.getValue()).name());
+			}
 			else
 				psValues.add(entry.getValue());
 		}
@@ -106,9 +106,9 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 			sqlWhere += "id = " + el.getId();
 		}
 
-		PreparedStatement ps = ORM.getConnection().getNativeConnection()
-				.prepareStatement("UPDATE " + storedEl.get(0).tableName() + " SET " + sqlSet + " WHERE " + sqlWhere);
-		try {
+		try(PreparedStatement ps = ORM.getConnection().getNativeConnection()
+					.prepareStatement("UPDATE " + storedEl.get(0).tableName() + " SET " + sqlSet + " WHERE " + sqlWhere);) {
+			
 
 			int i = 1;
 			for (Object val : psValues)
@@ -118,8 +118,8 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 			ps.executeUpdate();
 
 			applyNewValuesToElements(storedEl);
-		} finally {
-			ps.close();
+		} catch (SQLException e) {
+			throw new ORMException(e);
 		}
 	}
 

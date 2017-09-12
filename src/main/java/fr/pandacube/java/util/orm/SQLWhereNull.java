@@ -23,14 +23,14 @@ public class SQLWhereNull extends SQLWhere {
 		if (field == null) throw new IllegalArgumentException("field can't be null");
 		if (!field.canBeNull) Log.getLogger().log(Level.WARNING,
 				"Useless : Trying to check IS [NOT] NULL on the field " + field.getSQLElementType().getName() + "#"
-						+ field.name + " which is declared in the ORM as 'can't be null'");
+						+ field.getName() + " which is declared in the ORM as 'can't be null'");
 		fild = field;
 		nulll = isNull;
 	}
 
 	@Override
 	public Pair<String, List<Object>> toSQL() {
-		return new Pair<>(fild.name + " IS" + ((nulll) ? " NULL" : " NOT NULL"), new ArrayList<>());
+		return new Pair<>(fild.getName() + ((nulll) ? " IS NULL" : " IS NOT NULL"), new ArrayList<>());
 	}
 
 }

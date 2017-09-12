@@ -8,36 +8,35 @@ import org.javatuples.Pair;
 public class SQLField<E extends SQLElement<E>, T> {
 
 	private Class<E> sqlElemClass;
-	public final String name;
+	private String name = null;
 	public final SQLType<T> type;
 	public final boolean canBeNull;
 	public final boolean autoIncrement;
 	/* package */ final T defaultValue;
 
-	public SQLField(String n, SQLType<T> t, boolean nul, boolean autoIncr, T deflt) {
-		name = n;
+	public SQLField(SQLType<T> t, boolean nul, boolean autoIncr, T deflt) {
 		type = t;
 		canBeNull = nul;
 		autoIncrement = autoIncr;
 		defaultValue = deflt;
 	}
 
-	public SQLField(String n, SQLType<T> t, boolean nul) {
-		this(n, t, nul, false, null);
+	public SQLField(SQLType<T> t, boolean nul) {
+		this(t, nul, false, null);
 	}
 
-	public SQLField(String n, SQLType<T> t, boolean nul, boolean autoIncr) {
-		this(n, t, nul, autoIncr, null);
+	public SQLField(SQLType<T> t, boolean nul, boolean autoIncr) {
+		this(t, nul, autoIncr, null);
 	}
 
-	public SQLField(String n, SQLType<T> t, boolean nul, T deflt) {
-		this(n, t, nul, false, deflt);
+	public SQLField(SQLType<T> t, boolean nul, T deflt) {
+		this(t, nul, false, deflt);
 	}
 
 	/* package */ Pair<String, List<Object>> forSQLPreparedStatement() {
 		List<Object> params = new ArrayList<>(1);
 		if (defaultValue != null && !autoIncrement) params.add(defaultValue);
-		return new Pair<>(name + " " + type.toString() + (canBeNull ? " NULL" : " NOT NULL")
+		return new Pair<>(getName() + " " + type.toString() + (canBeNull ? " NULL" : " NOT NULL")
 				+ (autoIncrement ? " AUTO_INCREMENT" : "")
 				+ ((defaultValue == null || autoIncrement) ? "" : " DEFAULT ?"), params);
 	}
@@ -48,6 +47,14 @@ public class SQLField<E extends SQLElement<E>, T> {
 
 	public Class<E> getSQLElementType() {
 		return sqlElemClass;
+	}
+	
+	/* package */ void setName(String n) {
+		name = n;
+	}
+	
+	public String getName() {
+		return name;
 	}
 
 	/**
@@ -67,14 +74,14 @@ public class SQLField<E extends SQLElement<E>, T> {
 		if (obj == null) return false;
 		if (!(obj instanceof SQLField)) return false;
 		SQLField<?, ?> f = (SQLField<?, ?>) obj;
-		if (!f.name.equals(name)) return false;
+		if (!f.getName().equals(getName())) return false;
 		if (!f.sqlElemClass.equals(sqlElemClass)) return false;
 		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		return name.hashCode() + sqlElemClass.hashCode();
+		return getName().hashCode() + sqlElemClass.hashCode();
 	}
 
 }

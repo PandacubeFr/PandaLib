@@ -27,7 +27,7 @@ public class SQLWhereLike extends SQLWhere {
 	public Pair<String, List<Object>> toSQL() {
 		ArrayList<Object> params = new ArrayList<>();
 		params.add(likeExpr);
-		return new Pair<>(field.name + " LIKE ? ", params);
+		return new Pair<>(field.getName() + " LIKE ? ", params);
 	}
 
 }
