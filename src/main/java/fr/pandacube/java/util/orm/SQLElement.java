@@ -172,11 +172,18 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 				+ " does not exist or is not set");
 	}
 
-	public <T, F extends SQLElement<F>> F getForeign(SQLFKField<E, T, F> field) throws ORMException {
+	public <T, F extends SQLElement<F>> F getForeignKeyTarget(SQLFKField<E, T, F> field) throws ORMException {
 		T fkValue = get(field);
 		if (fkValue == null) return null;
 		return ORM.getFirst(field.getForeignElementClass(),
 				new SQLWhereComp(field.getForeignField(), SQLComparator.EQ, fkValue), null);
+	}
+
+	public <T, S extends SQLElement<S>> SQLElementList<S> getForeignKeySources(SQLFKField<S, T, E> field, SQLOrderBy orderBy, Integer limit, Integer offset) throws ORMException {
+		T value = get(field.getForeignField());
+		if (value == null) return new SQLElementList<>();
+		return ORM.getAll(field.getSQLElementType(),
+				new SQLWhereComp(field, SQLComparator.EQ, value), orderBy, limit, offset);
 	}
 
 	public boolean isValidForSave() {

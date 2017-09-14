@@ -108,7 +108,7 @@ public final class ORM {
 		SQLWhereChain where = new SQLWhereChain(SQLBoolOp.OR);
 		for (Integer id : ids)
 			if (id != null) where.add(new SQLWhereComp(idField, SQLComparator.EQ, id));
-		return getAll(elemClass, where, new SQLOrderBy().addField(idField), 1, null);
+		return getAll(elemClass, where, new SQLOrderBy().add(idField), 1, null);
 	}
 
 	public static <E extends SQLElement<E>> E getById(Class<E> elemClass, int id) throws ORMException {

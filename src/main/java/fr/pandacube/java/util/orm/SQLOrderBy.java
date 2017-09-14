@@ -19,7 +19,7 @@ public class SQLOrderBy {
 	 * @param d le sens de tri (croissant ASC ou décroissant DESC)
 	 * @return l'objet courant (permet de chainer les ajouts de champs)
 	 */
-	public SQLOrderBy addField(SQLField<?, ?> field, Direction d) {
+	public SQLOrderBy add(SQLField<?, ?> field, Direction d) {
 		orderByFields.add(new OBField(field, d));
 		return this;
 	}
@@ -31,8 +31,8 @@ public class SQLOrderBy {
 	 * @param field le champ SQL à ordonner dans l'ordre croissant ASC
 	 * @return l'objet courant (permet de chainer les ajouts de champs)
 	 */
-	public SQLOrderBy addField(SQLField<?, ?> field) {
-		return addField(field, Direction.ASC);
+	public SQLOrderBy add(SQLField<?, ?> field) {
+		return add(field, Direction.ASC);
 	}
 
 	/* package */ String toSQL() {

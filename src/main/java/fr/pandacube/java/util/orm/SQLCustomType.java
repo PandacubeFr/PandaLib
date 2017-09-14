@@ -27,6 +27,6 @@ public class SQLCustomType<IT, JT> extends SQLType<JT> {
 	}
 	
 	
-	// tester en local
+	// TODO tester en local
 	
 }
