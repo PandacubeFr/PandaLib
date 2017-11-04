@@ -2,7 +2,6 @@ package fr.pandacube.java.util.network_api.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -47,8 +46,7 @@ public class NetworkAPIListener implements Runnable {
 		try {
 			// réception des connexion client
 			while (!serverSocket.isClosed()) {
-				Socket socketClient = serverSocket.accept();
-				nAPIExecutionHandler.handleRun(new PacketExecutor(socketClient, this));
+				nAPIExecutionHandler.handleRun(new PacketExecutor(serverSocket.accept(), this));
 			}
 		} catch (IOException e) {}
 

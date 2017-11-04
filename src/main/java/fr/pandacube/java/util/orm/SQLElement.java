@@ -1,6 +1,5 @@
 package fr.pandacube.java.util.orm;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -211,8 +210,6 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 		String toStringStatement = "";
 		try {
 
-			Connection conn = db.getNativeConnection();
-
 			if (stored) { // mettre à jour les valeurs dans la base
 
 				// restaurer l'ID au cas il aurait été changé à la main dans
@@ -234,9 +231,8 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 
 				if (sql.length() > 0) sql = sql.substring(0, sql.length() - 1);
 
-				PreparedStatement ps = conn.prepareStatement("UPDATE " + tableName + " SET " + sql + " WHERE id=" + id);
-
-				try {
+				try (PreparedStatement ps = db.getNativeConnection()
+						.prepareStatement("UPDATE " + tableName + " SET " + sql + " WHERE id=" + id)) {
 
 					int i = 1;
 					for (Object val : psValues)
@@ -244,8 +240,6 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 
 					toStringStatement = ps.toString();
 					ps.executeUpdate();
-				} finally {
-					ps.close();
 				}
 			}
 			else { // ajouter dans la base
@@ -270,10 +264,9 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 					addValueToSQLObjectList(psValues, entry.getKey(), entry.getValue());
 				}
 
-				PreparedStatement ps = conn.prepareStatement(
+				try (PreparedStatement ps = db.getNativeConnection().prepareStatement(
 						"INSERT INTO " + tableName + "  (" + concat_fields + ") VALUES (" + concat_vals + ")",
-						Statement.RETURN_GENERATED_KEYS);
-				try {
+						Statement.RETURN_GENERATED_KEYS)) {
 
 					int i = 1;
 					for (Object val : psValues)
@@ -282,16 +275,10 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 					toStringStatement = ps.toString();
 					ps.executeUpdate();
 
-					ResultSet rs = ps.getGeneratedKeys();
-					try {
+					try (ResultSet rs = ps.getGeneratedKeys()) {
 						if (rs.next()) id = rs.getInt(1);
-
 						stored = true;
-					} finally {
-						rs.close();
 					}
-				} finally {
-					ps.close();
 				}
 
 			}
@@ -332,20 +319,15 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 
 	public void delete() throws ORMException {
 
-		try {
-			if (stored) { // supprimer la ligne de la base
-				PreparedStatement st = db.getNativeConnection()
-						.prepareStatement("DELETE FROM " + tableName + " WHERE id=" + id);
-				try {
-					Log.debug(st.toString());
-					st.executeUpdate();
-					markAsNotStored();
-				} finally {
-					st.close();
-				}
+		if (stored) { // supprimer la ligne de la base
+			try (PreparedStatement st = db.getNativeConnection()
+					.prepareStatement("DELETE FROM " + tableName + " WHERE id=" + id)) {
+				Log.debug(st.toString());
+				st.executeUpdate();
+				markAsNotStored();
+			} catch (SQLException e) {
+				throw new ORMException(e);
 			}
-		} catch (SQLException e) {
-			throw new ORMException(e);
 		}
 
 	}

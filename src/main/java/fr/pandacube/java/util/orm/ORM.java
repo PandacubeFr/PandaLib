@@ -67,26 +67,20 @@ public final class ORM {
 		}
 
 		sql += ", PRIMARY KEY id(id))";
-		PreparedStatement ps = connection.getNativeConnection().prepareStatement(sql);
-		int i = 1;
-		for (Object val : params)
-			ps.setObject(i++, val);
-		try {
+		
+		try (PreparedStatement ps = connection.getNativeConnection().prepareStatement(sql)) {
+			int i = 1;
+			for (Object val : params)
+				ps.setObject(i++, val);
 			Log.info("Creating table " + elem.tableName() + ":\n" + ps.toString());
 			ps.executeUpdate();
-		} finally {
-			ps.close();
 		}
 	}
 
 	private static boolean tableExist(String tableName) throws SQLException {
-		ResultSet set = null;
 		boolean exist = false;
-		try {
-			set = connection.getNativeConnection().getMetaData().getTables(null, null, tableName, null);
+		try (ResultSet set = connection.getNativeConnection().getMetaData().getTables(null, null, tableName, null)) {
 			exist = set.next();
-		} finally {
-			if (set != null) set.close();
 		}
 		return exist;
 	}
@@ -146,9 +140,7 @@ public final class ORM {
 
 			SQLElementList<E> elmts = new SQLElementList<>();
 
-			PreparedStatement ps = connection.getNativeConnection().prepareStatement(sql);
-
-			try {
+			try (PreparedStatement ps = connection.getNativeConnection().prepareStatement(sql)) {
 
 				int i = 1;
 				for (Object val : params) {
@@ -156,16 +148,11 @@ public final class ORM {
 					ps.setObject(i++, val);
 				}
 				Log.debug(ps.toString());
-				ResultSet set = ps.executeQuery();
-
-				try {
+				
+				try (ResultSet set = ps.executeQuery()) {
 					while (set.next())
 						elmts.add(getElementInstance(set, elemClass));
-				} finally {
-					set.close();
 				}
-			} finally {
-				ps.close();
 			}
 
 			return elmts;

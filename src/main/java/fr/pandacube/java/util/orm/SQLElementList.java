@@ -107,9 +107,8 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 		}
 
 		try(PreparedStatement ps = ORM.getConnection().getNativeConnection()
-					.prepareStatement("UPDATE " + storedEl.get(0).tableName() + " SET " + sqlSet + " WHERE " + sqlWhere);) {
+					.prepareStatement("UPDATE " + storedEl.get(0).tableName() + " SET " + sqlSet + " WHERE " + sqlWhere)) {
 			
-
 			int i = 1;
 			for (Object val : psValues)
 				ps.setObject(i++, val);
@@ -150,17 +149,14 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 				sqlWhere += "id = " + el.getId();
 			}
 
-			PreparedStatement st = ORM.getConnection().getNativeConnection()
-					.prepareStatement("DELETE FROM " + storedEl.get(0).tableName() + " WHERE " + sqlWhere);
-			try {
+			try (PreparedStatement st = ORM.getConnection().getNativeConnection()
+					.prepareStatement("DELETE FROM " + storedEl.get(0).tableName() + " WHERE " + sqlWhere)) {
 				Log.debug(st.toString());
 				st.executeUpdate();
 
 				for (E el : storedEl)
 					el.markAsNotStored();
 
-			} finally {
-				st.close();
 			}
 
 		} catch (SQLException e) {

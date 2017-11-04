@@ -6,10 +6,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DBConnection {
-	Connection conn;
-	String url;
-	String login;
-	String pass;
+	private Connection conn;
+	private String url;
+	private String login;
+	private String pass;
+	
+	private long timeOfLastCheck = 0;
 
 	public DBConnection(String host, int port, String dbname, String l, String p)
 			throws ClassNotFoundException, SQLException {
@@ -27,31 +29,34 @@ public class DBConnection {
 	}
 
 	public void reconnectIfNecessary() throws SQLException {
-		try {
-			Statement stmt = conn.createStatement();
-			stmt.close();
+		try(Statement stmt = conn.createStatement()) {
 		} catch (SQLException e) {
-			try {
-				close();
-			} catch (Exception ex) {}
+			close();
 			connect();
 		}
 	}
 
 	public Connection getNativeConnection() throws SQLException {
-		if (!conn.isValid(1)) reconnectIfNecessary();
+		if (conn.isClosed())
+			connect();
+		long now = System.currentTimeMillis();
+		if (timeOfLastCheck + 5000 > now) {
+			timeOfLastCheck = now;
+			if (!conn.isValid(1))
+				reconnectIfNecessary();
+		}
 		return conn;
 	}
 
 	private void connect() throws SQLException {
 		conn = DriverManager.getConnection(url, login, pass);
+		timeOfLastCheck = System.currentTimeMillis();
 	}
 
 	public void close() {
 		try {
 			conn.close();
 		} catch (Exception e) {}
-
 	}
 
 }
