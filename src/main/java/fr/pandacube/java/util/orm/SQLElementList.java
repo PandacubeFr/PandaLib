@@ -88,12 +88,6 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 		for (Map.Entry<SQLField<E, ?>, Object> entry : modifiedValues.entrySet()) {
 			sqlSet += entry.getKey().getName() + " = ? ,";
 			SQLElement.addValueToSQLObjectList(psValues, entry.getKey(), entry.getValue());
-			if (entry.getKey().type.getJavaType().isEnum()) {
-				// prise en charge  enum (non prise  en charge par  JDBC)
-				psValues.add(((Enum<?>) entry.getValue()).name());
-			}
-			else
-				psValues.add(entry.getValue());
 		}
 
 		if (sqlSet.length() > 0) sqlSet = sqlSet.substring(0, sqlSet.length() - 1);

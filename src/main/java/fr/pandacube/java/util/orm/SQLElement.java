@@ -291,7 +291,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 	}
 	
 	
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected static <E extends SQLElement<E>> void addValueToSQLObjectList(List<Object> list, SQLField<E, ?> field, Object jValue) throws ORMException {
 		if (jValue != null && field.type instanceof SQLCustomType) {
 			try {
