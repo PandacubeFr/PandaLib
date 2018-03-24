@@ -23,6 +23,15 @@ public interface TabProposal {
 
 	public static TabProposal empty() { return Collections::emptyList; }
 	
+	
+	public static <E extends Enum<E>> TabProposal fromEnum(Class<E> enumClass) {
+		return fromEnumValues(enumClass.getEnumConstants());
+	}
+	
+	@SafeVarargs
+	public static <E extends Enum<E>> TabProposal fromEnumValues(E... enumValues) {
+		return () -> Arrays.stream(enumValues).map(Enum::name).collect(Collectors.toList());
+	}
 
 	public static TabProposal fromCollection(Collection<String> proposals) { 
 		return () -> proposals;
