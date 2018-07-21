@@ -1,5 +1,7 @@
 package fr.pandacube.java.util;
 
+import java.util.List;
+
 public class StringUtil {
 	public static String formatDouble(double d) {
 		if (d == (long) d)
@@ -18,5 +20,13 @@ public class StringUtil {
 		for (char c : chars)
 			if (c == c_match) count++;
 		return count;
+	}
+	
+	
+	
+	
+	public static String joinGrammatically(CharSequence sep1, CharSequence sepFinal, List<String> strings) {
+	    int size = strings == null ? 0 : strings.size();
+	    return size == 0 ? "" : size == 1 ? strings.get(0) : String.join(sep1, strings.subList(0, --size)) + sepFinal + strings.get(size);
 	}
 }
