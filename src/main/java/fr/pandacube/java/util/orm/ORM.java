@@ -161,6 +161,26 @@ public final class ORM {
 		}
 
 	}
+	
+	
+	public static ResultSet getCustomResult(String sql, List<Object> params) throws ORMException {
+		try {
+			try (PreparedStatement ps = connection.getNativeConnection().prepareStatement(sql)) {
+
+				int i = 1;
+				for (Object val : params) {
+					if (val instanceof Enum<?>) val = ((Enum<?>) val).name();
+					ps.setObject(i++, val);
+				}
+				Log.debug(ps.toString());
+				
+				return ps.executeQuery();
+			}
+		} catch (SQLException e) {
+			throw new ORMException(e);
+		}
+
+	}
 
 	@SuppressWarnings("unchecked")
 	private static <E extends SQLElement<E>> E getElementInstance(ResultSet set, Class<E> elemClass) throws ORMException {
