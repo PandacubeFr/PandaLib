@@ -2,6 +2,8 @@ package fr.pandacube.java.util.measurement;
 
 public class TimeUtil {
 	public static String durationToString(long msec_time, boolean dec_seconde) {
+		boolean neg = msec_time < 0;
+		msec_time = Math.abs(msec_time);
 		int j = 0, h = 0, m = 0, s = 0;
 		long msec = msec_time;
 
@@ -25,8 +27,11 @@ public class TimeUtil {
 		}
 
 		if (result.equals("")) result = "0";
-
-		return result.trim();
+		result = result.trim();
+		if (neg)
+			result = "-" + result;
+			
+		return result;
 	}
 
 	public static String durationToString(long msec_time) {
