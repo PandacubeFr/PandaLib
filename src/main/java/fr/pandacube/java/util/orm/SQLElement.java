@@ -175,11 +175,11 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 		T fkValue = get(field);
 		if (fkValue == null) return null;
 		return ORM.getFirst(field.getForeignElementClass(),
-				new SQLWhereComp(field.getForeignField(), SQLComparator.EQ, fkValue), null);
+				new SQLWhereComp(field.getPrimaryField(), SQLComparator.EQ, fkValue), null);
 	}
 
 	public <T, S extends SQLElement<S>> SQLElementList<S> getForeignKeySources(SQLFKField<S, T, E> field, SQLOrderBy orderBy, Integer limit, Integer offset) throws ORMException {
-		T value = get(field.getForeignField());
+		T value = get(field.getPrimaryField());
 		if (value == null) return new SQLElementList<>();
 		return ORM.getAll(field.getSQLElementType(),
 				new SQLWhereComp(field, SQLComparator.EQ, value), orderBy, limit, offset);

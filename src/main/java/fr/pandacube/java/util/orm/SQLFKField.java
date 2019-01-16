@@ -4,7 +4,7 @@ import fr.pandacube.java.util.Log;
 
 public class SQLFKField<E extends SQLElement<E>, T, F extends SQLElement<F>> extends SQLField<E, T> {
 
-	private SQLField<F, T> sqlForeignKeyField;
+	private SQLField<F, T> sqlPrimaryKeyField;
 	private Class<F> sqlForeignKeyElemClass;
 
 	protected SQLFKField(SQLType<T> t, boolean nul, T deflt, Class<F> fkEl, SQLField<F, T> fkF) {
@@ -47,12 +47,12 @@ public class SQLFKField<E extends SQLElement<E>, T, F extends SQLElement<F>> ext
 			throw new IllegalArgumentException("foreignKeyField must be from supplied foreignKeyElement");
 		if (!type.equals(fkF.type))
 			throw new IllegalArgumentException("foreignKeyField and current Field must have the same SQLType");
-		sqlForeignKeyField = fkF;
+		sqlPrimaryKeyField = fkF;
 		sqlForeignKeyElemClass = fkEl;
 	}
 
-	public SQLField<F, T> getForeignField() {
-		return sqlForeignKeyField;
+	public SQLField<F, T> getPrimaryField() {
+		return sqlPrimaryKeyField;
 	}
 
 	public Class<F> getForeignElementClass() {

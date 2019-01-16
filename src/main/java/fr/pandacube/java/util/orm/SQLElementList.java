@@ -174,13 +174,13 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 		}
 		
 		SQLWhereChain where = new SQLWhereChain(SQLBoolOp.OR);
-		values.forEach(v -> where.add(new SQLWhereComp(foreignKey.getForeignField(), SQLComparator.EQ, v)));
+		values.forEach(v -> where.add(new SQLWhereComp(foreignKey.getPrimaryField(), SQLComparator.EQ, v)));
 		
 		
 		SQLElementList<F> foreignElemts = ORM.getAll(foreignKey.getForeignElementClass(), where, null, null, null);
 		
 		Map<T, F> ret = new HashMap<>();
-		foreignElemts.forEach(foreignVal -> ret.put(foreignVal.get(foreignKey.getForeignField()), foreignVal));
+		foreignElemts.forEach(foreignVal -> ret.put(foreignVal.get(foreignKey.getPrimaryField()), foreignVal));
 		return ret;
 	}
 	
