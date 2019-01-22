@@ -161,7 +161,7 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 	
 	
 	
-	public <T, F extends SQLElement<F>> Map<T, F> getAllForeign(SQLFKField<E, T, F> foreignKey) throws ORMException {
+	public <T, P extends SQLElement<P>> SQLElementList<P> getReferencedEntries(SQLFKField<E, T, P> foreignKey, SQLOrderBy orderBy) throws ORMException {
 		Set<T> values = new HashSet<>();
 		forEach(v -> {
 			T val = v.get(foreignKey);
@@ -170,18 +170,59 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 		});
 		
 		if (values.isEmpty()) {
-			return new HashMap<>();
+			return new SQLElementList<>();
 		}
 		
 		SQLWhereChain where = new SQLWhereChain(SQLBoolOp.OR);
 		values.forEach(v -> where.add(new SQLWhereComp(foreignKey.getPrimaryField(), SQLComparator.EQ, v)));
 		
 		
-		SQLElementList<F> foreignElemts = ORM.getAll(foreignKey.getForeignElementClass(), where, null, null, null);
+		return ORM.getAll(foreignKey.getForeignElementClass(), where, orderBy, null, null);
 		
-		Map<T, F> ret = new HashMap<>();
+	}
+
+	
+	public <T, P extends SQLElement<P>> Map<T, P> getReferencedEntriesInGroups(SQLFKField<E, T, P> foreignKey) throws ORMException {
+		SQLElementList<P> foreignElemts = getReferencedEntries(foreignKey, null);
+		
+		Map<T, P> ret = new HashMap<>();
 		foreignElemts.forEach(foreignVal -> ret.put(foreignVal.get(foreignKey.getPrimaryField()), foreignVal));
 		return ret;
+	}
+	
+
+	
+	public <T, F extends SQLElement<F>> SQLElementList<F> getReferencingForeignEntries(SQLFKField<F, T, E> foreignKey, SQLOrderBy orderBy, Integer limit, Integer offset) throws ORMException {
+		Set<T> values = new HashSet<>();
+		forEach(v -> {
+			T val = v.get(foreignKey.getPrimaryField());
+			if (val != null)
+				values.add(val);
+		});
+		
+		if (values.isEmpty()) {
+			return new SQLElementList<>();
+		}
+
+		SQLWhereChain where = new SQLWhereChain(SQLBoolOp.OR);
+		values.forEach(v -> where.add(new SQLWhereComp(foreignKey, SQLComparator.EQ, v)));
+		
+		return ORM.getAll(foreignKey.getSQLElementType(), where, orderBy, limit, offset);
+		
+	}
+
+	
+	public <T, F extends SQLElement<F>> Map<T, SQLElementList<F>> getReferencingForeignEntriesInGroups(SQLFKField<F, T, E> foreignKey, SQLOrderBy orderBy, Integer limit, Integer offset) throws ORMException {
+		SQLElementList<F> foreignElements = getReferencingForeignEntries(foreignKey, orderBy, limit, offset);
+		
+		Map<T, SQLElementList<F>> map = new HashMap<>();
+		foreignElements.forEach(foreignVal -> {
+			SQLElementList<F> subList = map.getOrDefault(foreignVal.get(foreignKey), new SQLElementList<>());
+			subList.add(foreignVal);
+			map.put(foreignVal.get(foreignKey), subList);
+		});
+		
+		return map;
 	}
 	
 	

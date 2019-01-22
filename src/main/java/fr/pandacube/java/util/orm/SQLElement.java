@@ -171,14 +171,24 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 				+ " does not exist or is not set");
 	}
 
-	public <T, F extends SQLElement<F>> F getForeignKeyTarget(SQLFKField<E, T, F> field) throws ORMException {
+	/**
+	 * @param <T> the type of the specified field
+	 * @param <P> the table class of the primary key targeted by the specified foreign key field
+	 * @return the element in the table P that his primary key correspond to the foreign key value of this element.
+	 */
+	public <T, P extends SQLElement<P>> P getReferencedEntry(SQLFKField<E, T, P> field) throws ORMException {
 		T fkValue = get(field);
 		if (fkValue == null) return null;
 		return ORM.getFirst(field.getForeignElementClass(),
 				new SQLWhereComp(field.getPrimaryField(), SQLComparator.EQ, fkValue), null);
 	}
 
-	public <T, S extends SQLElement<S>> SQLElementList<S> getForeignKeySources(SQLFKField<S, T, E> field, SQLOrderBy orderBy, Integer limit, Integer offset) throws ORMException {
+	/**
+	 * @param <T> the type of the specified field
+	 * @param <F> the table class of the foreign key that reference a primary key of this element.
+	 * @return all elements in the table F for which the specified foreign key value correspond to the primary key of this element.
+	 */
+	public <T, F extends SQLElement<F>> SQLElementList<F> getReferencingForeignEntries(SQLFKField<F, T, E> field, SQLOrderBy orderBy, Integer limit, Integer offset) throws ORMException {
 		T value = get(field.getPrimaryField());
 		if (value == null) return new SQLElementList<>();
 		return ORM.getAll(field.getSQLElementType(),

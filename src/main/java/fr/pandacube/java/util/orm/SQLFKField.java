@@ -2,12 +2,20 @@ package fr.pandacube.java.util.orm;
 
 import fr.pandacube.java.util.Log;
 
-public class SQLFKField<E extends SQLElement<E>, T, F extends SQLElement<F>> extends SQLField<E, T> {
+/**
+ * 
+ * @author Marc
+ *
+ * @param <F> the table class of this current foreign key field
+ * @param <T> the Java type of this field
+ * @param <P> the table class of the targeted primary key
+ */
+public class SQLFKField<F extends SQLElement<F>, T, P extends SQLElement<P>> extends SQLField<F, T> {
 
-	private SQLField<F, T> sqlPrimaryKeyField;
-	private Class<F> sqlForeignKeyElemClass;
+	private SQLField<P, T> sqlPrimaryKeyField;
+	private Class<P> sqlForeignKeyElemClass;
 
-	protected SQLFKField(SQLType<T> t, boolean nul, T deflt, Class<F> fkEl, SQLField<F, T> fkF) {
+	protected SQLFKField(SQLType<T> t, boolean nul, T deflt, Class<P> fkEl, SQLField<P, T> fkF) {
 		super(t, nul, deflt);
 		construct(fkEl, fkF);
 	}
@@ -36,7 +44,7 @@ public class SQLFKField<E extends SQLElement<E>, T, F extends SQLElement<F>> ext
 		return new SQLFKField<>(fkF.type, nul, deflt, fkEl, fkF);
 	}
 
-	private void construct(Class<F> fkEl, SQLField<F, T> fkF) {
+	private void construct(Class<P> fkEl, SQLField<P, T> fkF) {
 		if (fkF == null) throw new IllegalArgumentException("foreignKeyField can't be null");
 		try {
 			ORM.initTable(fkEl);
@@ -51,11 +59,11 @@ public class SQLFKField<E extends SQLElement<E>, T, F extends SQLElement<F>> ext
 		sqlForeignKeyElemClass = fkEl;
 	}
 
-	public SQLField<F, T> getPrimaryField() {
+	public SQLField<P, T> getPrimaryField() {
 		return sqlPrimaryKeyField;
 	}
 
-	public Class<F> getForeignElementClass() {
+	public Class<P> getForeignElementClass() {
 		return sqlForeignKeyElemClass;
 	}
 
