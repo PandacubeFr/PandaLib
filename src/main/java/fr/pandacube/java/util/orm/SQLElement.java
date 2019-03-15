@@ -98,6 +98,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 		java.lang.reflect.Field[] declaredFields = getClass().getDeclaredFields();
 		for (java.lang.reflect.Field field : declaredFields) {
 			if (!java.lang.reflect.Modifier.isStatic(field.getModifiers())) continue;
+			if (!field.isAccessible()) continue;
 
 			try {
 				Object val = field.get(null);
