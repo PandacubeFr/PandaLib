@@ -2,8 +2,8 @@ package fr.pandacube.java.util.orm;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class DBConnection {
 	private Connection conn;
@@ -28,13 +28,28 @@ public class DBConnection {
 		connect();
 	}
 
-	public void reconnectIfNecessary() throws SQLException {
-		try(Statement stmt = conn.createStatement()) {
-		} catch (SQLException e) {
+	private void checkConnection() throws SQLException {
+		if (!isConnected()) {
 			close();
 			connect();
 		}
 	}
+	
+	public boolean isConnected()
+    {
+        boolean connected = false;
+
+        try (ResultSet rs = conn.createStatement().executeQuery("SELECT 1;"))
+        {
+            if (rs == null)
+                connected = false;
+            else if (rs.next())
+                connected = true;
+        } catch (Exception e) {
+            connected = false;
+        }
+        return connected;
+    }
 
 	public Connection getNativeConnection() throws SQLException {
 		if (conn.isClosed())
@@ -43,7 +58,7 @@ public class DBConnection {
 		if (timeOfLastCheck + 5000 > now) {
 			timeOfLastCheck = now;
 			if (!conn.isValid(1))
-				reconnectIfNecessary();
+				checkConnection();
 		}
 		return conn;
 	}

@@ -3,6 +3,7 @@ package fr.pandacube.java.util.orm;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -160,6 +161,18 @@ public final class ORM {
 			throw new ORMException(e);
 		}
 
+	}
+	
+	
+	
+	public static <E extends SQLElement<E>> boolean truncateTable(Class<E> elemClass) throws ORMException {
+		boolean success;
+        try (Statement stmt = connection.getNativeConnection().createStatement()) {
+            success = stmt.execute("TRUNCATE `" + elemClass.newInstance().tableName() + "`");
+        } catch(SQLException | ReflectiveOperationException e) {
+        	throw new ORMException(e);
+        }
+        return success;
 	}
 	
 	
