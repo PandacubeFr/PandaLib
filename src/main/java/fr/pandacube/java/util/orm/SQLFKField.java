@@ -51,10 +51,9 @@ public class SQLFKField<F extends SQLElement<F>, T, P extends SQLElement<P>> ext
 		} catch (ORMInitTableException e) {
 			throw new RuntimeException(e);
 		}
-		if (!fkEl.equals(fkF.getSQLElementType()))
-			throw new IllegalArgumentException("foreignKeyField (" + fkF.getSQLElementType().getName() + ") must be from supplied foreignKeyElement (" + fkEl.getName() + ")");
-		if (!type.equals(fkF.type))
-			throw new IllegalArgumentException("foreignKeyField (" + fkF.type.sqlDeclaration + ") and current Field (" + type.sqlDeclaration + ") must have the same SQLType");
+		
+		if (fkF.getSQLElementType() == null)
+			throw new RuntimeException("Can't initialize foreign key. The primary key in the table " + fkEl.getName() + " is not properly initialized and can't be targetted by a forein key");
 		sqlPrimaryKeyField = fkF;
 		sqlForeignKeyElemClass = fkEl;
 	}

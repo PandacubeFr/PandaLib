@@ -1,5 +1,6 @@
 package fr.pandacube.java.util.orm;
 
+import java.lang.reflect.Modifier;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -97,14 +98,23 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 
 		java.lang.reflect.Field[] declaredFields = getClass().getDeclaredFields();
 		for (java.lang.reflect.Field field : declaredFields) {
-			if (!java.lang.reflect.Modifier.isStatic(field.getModifiers())) continue;
-			if (!field.isAccessible()) continue;
-
+			if (!field.getType().isAssignableFrom(SQLField.class))
+				continue;
+			if (!Modifier.isStatic(field.getModifiers())) {
+				Log.severe("[ORM] The field " + field.getDeclaringClass().getName() + "." + field.getName() + " can't be initialized because it is not static.");
+				continue;
+			}
+			field.setAccessible(true);
 			try {
 				Object val = field.get(null);
-				if (val == null || !(val instanceof SQLField)) continue;
+				if (val == null || !(val instanceof SQLField)) {
+					Log.severe("[ORM] The field " + field.getDeclaringClass().getName() + "." + field.getName() + " can't be initialized because its value is null.");
+					continue;
+				}
 				SQLField<E, ?> checkedF = (SQLField<E, ?>) val;
 				checkedF.setName(field.getName());
+				if (!Modifier.isPublic(field.getModifiers()))
+					Log.warning("[ORM] The field " + field.getDeclaringClass().getName() + "." + field.getName() + " should be public !");
 				if (listToFill.containsKey(checkedF.getName())) throw new IllegalArgumentException(
 						"SQLField " + checkedF.getName() + " already exist in " + getClass().getName());
 				checkedF.setSQLElementType((Class<E>) getClass());
