@@ -41,11 +41,11 @@ public final class ORM {
 		if (tables.contains(elemClass)) return;
 		try {
 			tables.add(elemClass);
-			//Log.info("Start Init SQL table "+elemClass.getSimpleName());
+			Log.info("[ORM] Start Init SQL table "+elemClass.getSimpleName());
 			E instance = elemClass.newInstance();
 			String tableName = instance.tableName();
 			if (!tableExist(tableName)) createTable(instance);
-			//Log.info("End init SQL table "+elemClass.getSimpleName());
+			Log.info("[ORM] End init SQL table "+elemClass.getSimpleName());
 		} catch (Exception|ExceptionInInitializerError e) {
 			throw new ORMInitTableException(elemClass, e);
 		}

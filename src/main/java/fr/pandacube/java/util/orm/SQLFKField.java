@@ -52,9 +52,9 @@ public class SQLFKField<F extends SQLElement<F>, T, P extends SQLElement<P>> ext
 			throw new RuntimeException(e);
 		}
 		if (!fkEl.equals(fkF.getSQLElementType()))
-			throw new IllegalArgumentException("foreignKeyField must be from supplied foreignKeyElement");
+			throw new IllegalArgumentException("foreignKeyField (" + fkF.getSQLElementType().getName() + ") must be from supplied foreignKeyElement (" + fkEl.getName() + ")");
 		if (!type.equals(fkF.type))
-			throw new IllegalArgumentException("foreignKeyField and current Field must have the same SQLType");
+			throw new IllegalArgumentException("foreignKeyField (" + fkF.type.sqlDeclaration + ") and current Field (" + type.sqlDeclaration + ") must have the same SQLType");
 		sqlPrimaryKeyField = fkF;
 		sqlForeignKeyElemClass = fkEl;
 	}
