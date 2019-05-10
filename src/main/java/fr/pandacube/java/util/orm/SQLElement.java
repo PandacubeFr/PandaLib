@@ -98,8 +98,10 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 
 		java.lang.reflect.Field[] declaredFields = getClass().getDeclaredFields();
 		for (java.lang.reflect.Field field : declaredFields) {
-			if (!field.getType().isAssignableFrom(SQLField.class))
+			if (!SQLField.class.isAssignableFrom(field.getType())) {
+				Log.debug("[ORM] The field " + field.getDeclaringClass().getName() + "." + field.getName() + " is of type " + field.getType().getName() + " so it will be ignored.");
 				continue;
+			}
 			if (!Modifier.isStatic(field.getModifiers())) {
 				Log.severe("[ORM] The field " + field.getDeclaringClass().getName() + "." + field.getName() + " can't be initialized because it is not static.");
 				continue;
@@ -140,8 +142,8 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 
 	/* package */ <T> void set(SQLField<E, T> sqlField, T value, boolean setModified) {
 		if (sqlField == null) throw new IllegalArgumentException("sqlField can't be null");
-		if (!fields.containsValue(sqlField))
-			throw new IllegalArgumentException(sqlField.getSQLElementType().getName()+sqlField.getName() + " is not a SQLField of " + getClass().getName());
+		if (!fields.containsValue(sqlField)) // should not append at runtime because of generic type check at compilation
+			throw new IllegalStateException("In the table "+getClass().getName()+ ": the field asked for modification is not initialized properly.");
 
 		boolean modify = false;
 		if (value == null) {
