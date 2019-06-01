@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.net.Socket;
 
 import fr.pandacube.java.util.Log;
+import fr.pandacube.java.util.network_api.server.RequestAnalyser.BadRequestException;
 
 /**
  * Prends en charge un socket client et le transmet au gestionnaire de paquet
@@ -43,7 +44,15 @@ public class PacketExecutor implements Runnable {
 				rep.sendPacket(new PrintStream(socket.getOutputStream()));
 			} catch (IOException e1) {}
 			if (e instanceof IOException)
-				Log.warning("Impossible de lire le packet reçu sur le socket " + socket + " : " + e.toString());
+				Log.warning("Unable to read packet from socket " + socket + ": " + e.toString());
+			else if(e instanceof BadRequestException) {
+				if (e.getMessage().equals("wrong_password"))
+					Log.warning("Wrong password received from socket " + socket);
+				else if (e.getMessage().equals("command_not_exists"))
+					Log.severe("The command requested from the socket " + socket + " does not exist");
+				else
+					Log.severe(e);
+			}
 			else
 				Log.severe(e);
 		}
