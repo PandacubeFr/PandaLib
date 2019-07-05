@@ -1,9 +1,6 @@
 package fr.pandacube.java.util.commands;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class AbstractCommand {
 	
@@ -37,21 +34,6 @@ public class AbstractCommand {
 	public static String getLastParams(String[] args, int index) {
 		if (index < 0 || index >= args.length) return null;
 		return String.join(" ", Arrays.copyOfRange(args, index, args.length));
-	}
-
-	/**
-	 * <i>Prends en charge les tokens avec des espaces, mais retourne les
-	 * propositions complètes</i>
-	 * 
-	 * @param token
-	 * @param allProposal
-	 * @return
-	 */
-	public static List<String> getTabProposalFromToken(String token, Collection<String> allProposal) {
-		return allProposal.stream()
-				.filter(s -> s != null && s.toLowerCase().startsWith(token.toLowerCase()))
-				.sorted()
-				.collect(Collectors.toList());
 	}
 	
 	
