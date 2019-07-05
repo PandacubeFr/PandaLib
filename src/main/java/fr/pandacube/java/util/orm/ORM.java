@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.javatuples.Pair;
 
@@ -107,12 +108,22 @@ public final class ORM {
 	}
 
 	public static <E extends SQLElement<E>> E getById(Class<E> elemClass, int id) throws ORMException {
-		return getFirst(elemClass, new SQLWhereComp(getSQLIdField(elemClass), SQLComparator.EQ, id), null);
+		return getFirst(elemClass, new SQLWhereComp(getSQLIdField(elemClass), SQLComparator.EQ, id));
+	}
+
+	public static <E extends SQLElement<E>> E getFirst(Class<E> elemClass, SQLWhere where)
+			throws ORMException {
+		return getFirst(elemClass, where, null, null);
 	}
 
 	public static <E extends SQLElement<E>> E getFirst(Class<E> elemClass, SQLWhere where, SQLOrderBy orderBy)
 			throws ORMException {
-		SQLElementList<E> elts = getAll(elemClass, where, orderBy, 1, null);
+		return getFirst(elemClass, where, orderBy, null);
+	}
+
+	public static <E extends SQLElement<E>> E getFirst(Class<E> elemClass, SQLWhere where, SQLOrderBy orderBy, Integer offset)
+			throws ORMException {
+		SQLElementList<E> elts = getAll(elemClass, where, orderBy, 1, offset);
 		return (elts.size() == 0) ? null : elts.get(0);
 	}
 
@@ -120,8 +131,48 @@ public final class ORM {
 		return getAll(elemClass, null, null, null, null);
 	}
 
+	public static <E extends SQLElement<E>> SQLElementList<E> getAll(Class<E> elemClass, SQLWhere where) throws ORMException {
+		return getAll(elemClass, where, null, null, null);
+	}
+
+	public static <E extends SQLElement<E>> SQLElementList<E> getAll(Class<E> elemClass, SQLWhere where,
+			SQLOrderBy orderBy) throws ORMException {
+		return getAll(elemClass, where, orderBy, null, null);
+	}
+
+	public static <E extends SQLElement<E>> SQLElementList<E> getAll(Class<E> elemClass, SQLWhere where,
+			SQLOrderBy orderBy, Integer limit) throws ORMException {
+		return getAll(elemClass, where, orderBy, limit, null);
+	}
+
 	public static <E extends SQLElement<E>> SQLElementList<E> getAll(Class<E> elemClass, SQLWhere where,
 			SQLOrderBy orderBy, Integer limit, Integer offset) throws ORMException {
+			SQLElementList<E> elmts = new SQLElementList<>();
+			forEach(elemClass, where, orderBy, limit, offset, elmts::add);
+			return elmts;
+	}
+	
+	public static <E extends SQLElement<E>> void forEach(Class<E> elemClass, Consumer<E> action) throws ORMException {
+		forEach(elemClass, null, null, null, null, action);
+	}
+	
+	public static <E extends SQLElement<E>> void forEach(Class<E> elemClass, SQLWhere where,
+			Consumer<E> action) throws ORMException {
+		forEach(elemClass, where, null, null, null, action);
+	}
+	
+	public static <E extends SQLElement<E>> void forEach(Class<E> elemClass, SQLWhere where,
+			SQLOrderBy orderBy, Consumer<E> action) throws ORMException {
+		forEach(elemClass, where, orderBy, null, null, action);
+	}
+	
+	public static <E extends SQLElement<E>> void forEach(Class<E> elemClass, SQLWhere where,
+			SQLOrderBy orderBy, Integer limit, Consumer<E> action) throws ORMException {
+		forEach(elemClass, where, orderBy, limit, null, action);
+	}
+	
+	public static <E extends SQLElement<E>> void forEach(Class<E> elemClass, SQLWhere where,
+			SQLOrderBy orderBy, Integer limit, Integer offset, Consumer<E> action) throws ORMException {
 		initTable(elemClass);
 
 		try {
@@ -139,7 +190,46 @@ public final class ORM {
 			if (offset != null) sql += " OFFSET " + offset;
 			sql += ";";
 
-			SQLElementList<E> elmts = new SQLElementList<>();
+			try (PreparedStatement ps = connection.getNativeConnection().prepareStatement(sql)) {
+
+				int i = 1;
+				for (Object val : params) {
+					if (val instanceof Enum<?>) val = ((Enum<?>) val).name();
+					ps.setObject(i++, val);
+				}
+				Log.debug(ps.toString());
+				
+				try (ResultSet set = ps.executeQuery()) {
+					while (set.next()) {
+						E elm = getElementInstance(set, elemClass);
+						action.accept(elm);
+					}
+				}
+			}
+		} catch (ReflectiveOperationException | SQLException e) {
+			throw new ORMException(e);
+		}
+
+	}
+	
+	public static <E extends SQLElement<E>> long count(Class<E> elemClass) throws ORMException {
+		return count(elemClass, null);
+	}
+	
+	public static <E extends SQLElement<E>> long count(Class<E> elemClass, SQLWhere where) throws ORMException {
+		initTable(elemClass);
+
+		try {
+			String sql = "SELECT COUNT(*) as count FROM " + elemClass.newInstance().tableName();
+
+			List<Object> params = new ArrayList<>();
+
+			if (where != null) {
+				Pair<String, List<Object>> ret = where.toSQL();
+				sql += " WHERE " + ret.getValue0();
+				params.addAll(ret.getValue1());
+			}
+			sql += ";";
 
 			try (PreparedStatement ps = connection.getNativeConnection().prepareStatement(sql)) {
 
@@ -151,15 +241,16 @@ public final class ORM {
 				Log.debug(ps.toString());
 				
 				try (ResultSet set = ps.executeQuery()) {
-					while (set.next())
-						elmts.add(getElementInstance(set, elemClass));
+					while (set.next()) {
+						return set.getLong(1);
+					}
 				}
 			}
-
-			return elmts;
 		} catch (ReflectiveOperationException | SQLException e) {
 			throw new ORMException(e);
 		}
+		
+		throw new ORMException("Can’t retrieve element count from database (The ResultSet may be empty)");
 
 	}
 	
