@@ -30,7 +30,7 @@ public class SQLWhereComp extends SQLWhere {
 	public Pair<String, List<Object>> toSQL() throws ORMException {
 		List<Object> params = new ArrayList<>();
 		SQLElement.addValueToSQLObjectList(params, left, right);
-		return new Pair<>(left.getName() + " " + comp.sql + " ? ", params);
+		return new Pair<>("`" + left.getName() + "` " + comp.sql + " ? ", params);
 	}
 
 	public enum SQLComparator {

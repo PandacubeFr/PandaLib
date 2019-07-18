@@ -30,7 +30,7 @@ public class SQLWhereNull extends SQLWhere {
 
 	@Override
 	public Pair<String, List<Object>> toSQL() {
-		return new Pair<>(fild.getName() + ((nulll) ? " IS NULL" : " IS NOT NULL"), new ArrayList<>());
+		return new Pair<>("`" + fild.getName() + "` IS " + ((nulll) ? "NULL" : "NOT NULL"), new ArrayList<>());
 	}
 
 }

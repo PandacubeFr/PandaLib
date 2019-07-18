@@ -41,7 +41,7 @@ public class SQLOrderBy {
 		for (OBField f : orderByFields) {
 			if (!first) ret += ", ";
 			first = false;
-			ret += f.field.getName() + " " + f.direction.name();
+			ret += "`" + f.field.getName() + "` " + f.direction.name();
 		}
 		return ret;
 	}
