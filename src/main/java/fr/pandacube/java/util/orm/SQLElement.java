@@ -248,7 +248,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 				List<Object> psValues = new ArrayList<>();
 
 				for (Map.Entry<SQLField<E, ?>, Object> entry : modifiedValues.entrySet()) {
-					sql += entry.getKey().getName() + " = ? ,";
+					sql += "`" + entry.getKey().getName() + "` = ? ,";
 					addValueToSQLObjectList(psValues, entry.getKey(), entry.getValue());
 				}
 

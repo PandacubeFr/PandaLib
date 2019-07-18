@@ -36,7 +36,7 @@ public class SQLField<E extends SQLElement<E>, T> {
 	/* package */ Pair<String, List<Object>> forSQLPreparedStatement() {
 		List<Object> params = new ArrayList<>(1);
 		if (defaultValue != null && !autoIncrement) params.add(defaultValue);
-		return new Pair<>(getName() + " " + type.toString() + (canBeNull ? " NULL" : " NOT NULL")
+		return new Pair<>("`" + getName() + "` " + type.toString() + (canBeNull ? " NULL" : " NOT NULL")
 				+ (autoIncrement ? " AUTO_INCREMENT" : "")
 				+ ((defaultValue == null || autoIncrement) ? "" : " DEFAULT ?"), params);
 	}
