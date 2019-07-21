@@ -86,7 +86,7 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 		List<Object> psValues = new ArrayList<>();
 
 		for (Map.Entry<SQLField<E, ?>, Object> entry : modifiedValues.entrySet()) {
-			sqlSet += entry.getKey().getName() + " = ? ,";
+			sqlSet += "`" + entry.getKey().getName() + "` = ? ,";
 			SQLElement.addValueToSQLObjectList(psValues, entry.getKey(), entry.getValue());
 		}
 

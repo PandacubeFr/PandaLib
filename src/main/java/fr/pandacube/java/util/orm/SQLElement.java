@@ -283,7 +283,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 					}
 					first = false;
 					concat_vals += " ? ";
-					concat_fields += entry.getKey().getName();
+					concat_fields += "`" + entry.getKey().getName() + "`";
 					addValueToSQLObjectList(psValues, entry.getKey(), entry.getValue());
 				}
 
