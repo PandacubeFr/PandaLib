@@ -30,7 +30,8 @@ public enum MinecraftVersion {
 	v1_14(477, "1.14"),
 	v1_14_1(480, "1.14.1"),
 	v1_14_2(485, "1.14.2"),
-	v1_14_3(490, "1.14.3");
+	v1_14_3(490, "1.14.3"),
+	v1_14_4(498, "1.14.4");
 	// IMPORTANT: don't forget to update the versionMergeDisplay value when adding a new version;
 	
 	private static Map<EnumSet<MinecraftVersion>, List<String>> versionMergeDisplay;
@@ -71,18 +72,26 @@ public enum MinecraftVersion {
 		versionMergeDisplay.put(EnumSet.of(v1_13_1, v1_13_2),
 				ImmutableList.of("1.13.1", "1.13.2"));
 
-		versionMergeDisplay.put(EnumSet.of(v1_14, v1_14_1, v1_14_2, v1_14_3),
+		versionMergeDisplay.put(EnumSet.of(v1_14, v1_14_1, v1_14_2, v1_14_3, v1_14_4),
 				ImmutableList.of("1.14.x"));
+		versionMergeDisplay.put(EnumSet.of(v1_14, v1_14_1, v1_14_2, v1_14_3),
+				ImmutableList.of("1.14-1.14.3"));
+		versionMergeDisplay.put(EnumSet.of(v1_14_1, v1_14_2, v1_14_3, v1_14_4),
+				ImmutableList.of("1.14.1-1.14.4"));
 		versionMergeDisplay.put(EnumSet.of(v1_14, v1_14_1, v1_14_2),
 				ImmutableList.of("1.14-1.14.2"));
-		versionMergeDisplay.put(EnumSet.of(v1_14, v1_14_1),
-				ImmutableList.of("1.14", "1.14.1"));
 		versionMergeDisplay.put(EnumSet.of(v1_14_1, v1_14_2, v1_14_3),
 				ImmutableList.of("1.14.1-1.14.3"));
+		versionMergeDisplay.put(EnumSet.of(v1_14_2, v1_14_3, v1_14_4),
+				ImmutableList.of("1.14.2-1.14.4"));
+		versionMergeDisplay.put(EnumSet.of(v1_14, v1_14_1),
+				ImmutableList.of("1.14", "1.14.1"));
 		versionMergeDisplay.put(EnumSet.of(v1_14_1, v1_14_2),
 				ImmutableList.of("1.14.1", "1.14.2"));
 		versionMergeDisplay.put(EnumSet.of(v1_14_2, v1_14_3),
 				ImmutableList.of("1.14.2", "1.14.3"));
+		versionMergeDisplay.put(EnumSet.of(v1_14_3, v1_14_4),
+				ImmutableList.of("1.14.3", "1.14.4"));
 		
 		
 	}
