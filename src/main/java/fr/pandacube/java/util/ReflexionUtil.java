@@ -96,7 +96,7 @@ public class ReflexionUtil {
 	}
 	
 	public static Object invokeMethod(Class<?> clazz, Object instance, String methodName, Class<?>[] parameterTypes, Object... args) throws ReflectiveOperationException {
-		Method m = clazz.getMethod(methodName);
+		Method m = clazz.getMethod(methodName, parameterTypes);
 		m.setAccessible(true);
 		return m.invoke(instance, args);
 	}
@@ -143,7 +143,7 @@ public class ReflexionUtil {
 	}
 	
 	public static Object invokeDeclaredMethod(Class<?> clazz, Object instance, String methodName, Class<?>[] parameterTypes, Object... args) throws ReflectiveOperationException {
-		Method m = clazz.getDeclaredMethod(methodName);
+		Method m = clazz.getDeclaredMethod(methodName, parameterTypes);
 		m.setAccessible(true);
 		return m.invoke(instance, args);
 	}
