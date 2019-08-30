@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 public class ServerPropertyFile {
 
@@ -18,6 +19,7 @@ public class ServerPropertyFile {
 	private String javaArgs = "";
 	private String MinecraftArgs = "";
 	private String jarFile = "";
+	private boolean run = true;
 
 	public ServerPropertyFile(File f) {
 		if (f == null) throw new IllegalArgumentException("f ne doit pas être null");
@@ -40,8 +42,12 @@ public class ServerPropertyFile {
 			javaArgs = dataFile.javaArgs;
 			MinecraftArgs = dataFile.MinecraftArgs;
 			jarFile = dataFile.jarFile;
+			run = dataFile.run;
 			
 			return true;
+		} catch(JsonSyntaxException e) {
+			Log.severe("Error in config file " + file + ": backed up and creating a new one from previous or default values.", e);
+			return save();
 		} catch (IOException e) {
 			Log.severe(e);
 			return false;
@@ -81,6 +87,10 @@ public class ServerPropertyFile {
 	public String getJarFile() {
 		return jarFile;
 	}
+	
+	public boolean isRun() {
+		return run;
+	}
 
 	public void setName(String n) {
 		if (n == null || !n.matches("^[a-zA-Z]$")) throw new IllegalArgumentException();
@@ -105,6 +115,10 @@ public class ServerPropertyFile {
 	public void setJarFile(String j) {
 		if (j == null) throw new IllegalArgumentException();
 		jarFile = j;
+	}
+	
+	public void setRun(boolean r) {
+		run = r;
 	}
 
 }
