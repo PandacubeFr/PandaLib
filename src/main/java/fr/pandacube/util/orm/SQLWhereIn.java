@@ -21,6 +21,10 @@ public class SQLWhereIn extends SQLWhere {
 	@Override
 	public Pair<String, List<Object>> toSQL() throws ORMException {
 		List<Object> params = new ArrayList<>();
+		
+		if (values.isEmpty())
+			return new Pair<>(" 1=0 ", params);
+		
 		for (Object v : values)
 			SQLElement.addValueToSQLObjectList(params, field, v);
 		
