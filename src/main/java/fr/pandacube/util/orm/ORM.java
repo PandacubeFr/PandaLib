@@ -212,6 +212,45 @@ public final class ORM {
 
 	}
 	
+	/**
+	 * Delete the elements of the table represented by {@code elemClass} which meet the condition {@code where}.
+	 * @param elemClass the SQLElement representing the table.
+	 * @param where the condition to meet for an element to be deleted from the table. If null, the table is truncated using {@link #truncateTable(Class)}.
+	 * @return The return value of {@link PreparedStatement#executeUpdate()}, for an SQL query {@code DELETE}.
+	 * @throws ORMException
+	 */
+	public static <E extends SQLElement<E>> int delete(Class<E> elemClass, SQLWhere where) throws ORMException {
+		initTable(elemClass);
+		
+		if (where == null) {
+			return truncateTable(elemClass);
+		}
+
+		try {
+			Pair<String, List<Object>> whereData = where.toSQL();
+			
+			String sql = "DELETE FROM " + elemClass.newInstance().tableName()
+					+ " WHERE " + whereData.getValue0()
+					+ ";";
+			List<Object> params = new ArrayList<>(whereData.getValue1());
+			
+			try (PreparedStatement ps = connection.getNativeConnection().prepareStatement(sql)) {
+
+				int i = 1;
+				for (Object val : params) {
+					if (val instanceof Enum<?>) val = ((Enum<?>) val).name();
+					ps.setObject(i++, val);
+				}
+				Log.debug(ps.toString());
+				
+				return ps.executeUpdate();
+			}
+		} catch (ReflectiveOperationException | SQLException e) {
+			throw new ORMException(e);
+		}
+
+	}
+	
 	public static <E extends SQLElement<E>> long count(Class<E> elemClass) throws ORMException {
 		return count(elemClass, null);
 	}
@@ -256,14 +295,12 @@ public final class ORM {
 	
 	
 	
-	public static <E extends SQLElement<E>> boolean truncateTable(Class<E> elemClass) throws ORMException {
-		boolean success;
+	public static <E extends SQLElement<E>> int truncateTable(Class<E> elemClass) throws ORMException {
         try (Statement stmt = connection.getNativeConnection().createStatement()) {
-            success = stmt.execute("TRUNCATE `" + elemClass.newInstance().tableName() + "`");
+            return stmt.executeUpdate("TRUNCATE `" + elemClass.newInstance().tableName() + "`");
         } catch(SQLException | ReflectiveOperationException e) {
         	throw new ORMException(e);
         }
-        return success;
 	}
 	
 	
