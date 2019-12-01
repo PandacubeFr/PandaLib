@@ -23,6 +23,10 @@ public class SQLWhereChain extends SQLWhere {
 
 	@Override
 	public Pair<String, List<Object>> toSQL() throws ORMException {
+		if (conditions.isEmpty()) {
+			throw new ORMException("SQLWhereChain needs at least one element inside !");
+		}
+		
 		String sql = "";
 		List<Object> params = new ArrayList<>();
 		boolean first = true;
