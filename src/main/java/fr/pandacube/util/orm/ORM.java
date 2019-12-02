@@ -6,7 +6,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import org.javatuples.Pair;
@@ -24,6 +26,7 @@ import fr.pandacube.util.orm.SQLWhereComp.SQLComparator;
 public final class ORM {
 
 	private static List<Class<? extends SQLElement<?>>> tables = new ArrayList<>();
+	private static Map<Class<? extends SQLElement<?>>, String> tableNames = new HashMap<>();
 
 	private static DBConnection connection;
 
@@ -45,7 +48,8 @@ public final class ORM {
 			Log.debug("[ORM] Start Init SQL table "+elemClass.getSimpleName());
 			E instance = elemClass.newInstance();
 			String tableName = instance.tableName();
-			if (!tableExist(tableName)) createTable(instance);
+			tableNames.put(elemClass, tableName);
+			if (!tableExistInDB(tableName)) createTable(instance);
 			Log.debug("[ORM] End init SQL table "+elemClass.getSimpleName());
 		} catch (Exception|ExceptionInInitializerError e) {
 			throw new ORMInitTableException(elemClass, e);
@@ -78,8 +82,13 @@ public final class ORM {
 			ps.executeUpdate();
 		}
 	}
+	
+	public static <E extends SQLElement<E>> String getTableName(Class<E> elemClass) throws ORMException {
+		initTable(elemClass);
+		return tableNames.get(elemClass);
+	}
 
-	private static boolean tableExist(String tableName) throws SQLException {
+	private static boolean tableExistInDB(String tableName) throws SQLException {
 		boolean exist = false;
 		try (ResultSet set = connection.getNativeConnection().getMetaData().getTables(null, null, tableName, null)) {
 			exist = set.next();
@@ -176,7 +185,7 @@ public final class ORM {
 		initTable(elemClass);
 
 		try {
-			String sql = "SELECT * FROM " + elemClass.newInstance().tableName();
+			String sql = "SELECT * FROM " + getTableName(elemClass);
 
 			List<Object> params = new ArrayList<>();
 
@@ -189,67 +198,20 @@ public final class ORM {
 			if (limit != null) sql += " LIMIT " + limit;
 			if (offset != null) sql += " OFFSET " + offset;
 			sql += ";";
-
-			try (PreparedStatement ps = connection.getNativeConnection().prepareStatement(sql)) {
-
-				int i = 1;
-				for (Object val : params) {
-					if (val instanceof Enum<?>) val = ((Enum<?>) val).name();
-					ps.setObject(i++, val);
-				}
-				Log.debug(ps.toString());
-				
-				try (ResultSet set = ps.executeQuery()) {
-					while (set.next()) {
-						E elm = getElementInstance(set, elemClass);
-						action.accept(elm);
-					}
+			
+			try (ResultSet set = customQueryStatement(sql, params)) {
+				while (set.next()) {
+					E elm = getElementInstance(set, elemClass);
+					action.accept(elm);
 				}
 			}
-		} catch (ReflectiveOperationException | SQLException e) {
+		} catch (SQLException e) {
 			throw new ORMException(e);
 		}
 
 	}
 	
-	/**
-	 * Delete the elements of the table represented by {@code elemClass} which meet the condition {@code where}.
-	 * @param elemClass the SQLElement representing the table.
-	 * @param where the condition to meet for an element to be deleted from the table. If null, the table is truncated using {@link #truncateTable(Class)}.
-	 * @return The return value of {@link PreparedStatement#executeUpdate()}, for an SQL query {@code DELETE}.
-	 * @throws ORMException
-	 */
-	public static <E extends SQLElement<E>> int delete(Class<E> elemClass, SQLWhere where) throws ORMException {
-		initTable(elemClass);
-		
-		if (where == null) {
-			return truncateTable(elemClass);
-		}
-
-		try {
-			Pair<String, List<Object>> whereData = where.toSQL();
-			
-			String sql = "DELETE FROM " + elemClass.newInstance().tableName()
-					+ " WHERE " + whereData.getValue0()
-					+ ";";
-			List<Object> params = new ArrayList<>(whereData.getValue1());
-			
-			try (PreparedStatement ps = connection.getNativeConnection().prepareStatement(sql)) {
-
-				int i = 1;
-				for (Object val : params) {
-					if (val instanceof Enum<?>) val = ((Enum<?>) val).name();
-					ps.setObject(i++, val);
-				}
-				Log.debug(ps.toString());
-				
-				return ps.executeUpdate();
-			}
-		} catch (ReflectiveOperationException | SQLException e) {
-			throw new ORMException(e);
-		}
-
-	}
+	
 	
 	public static <E extends SQLElement<E>> long count(Class<E> elemClass) throws ORMException {
 		return count(elemClass, null);
@@ -259,7 +221,7 @@ public final class ORM {
 		initTable(elemClass);
 
 		try {
-			String sql = "SELECT COUNT(*) as count FROM " + elemClass.newInstance().tableName();
+			String sql = "SELECT COUNT(*) as count FROM " + getTableName(elemClass);
 
 			List<Object> params = new ArrayList<>();
 
@@ -269,23 +231,13 @@ public final class ORM {
 				params.addAll(ret.getValue1());
 			}
 			sql += ";";
-
-			try (PreparedStatement ps = connection.getNativeConnection().prepareStatement(sql)) {
-
-				int i = 1;
-				for (Object val : params) {
-					if (val instanceof Enum<?>) val = ((Enum<?>) val).name();
-					ps.setObject(i++, val);
-				}
-				Log.debug(ps.toString());
-				
-				try (ResultSet set = ps.executeQuery()) {
-					while (set.next()) {
-						return set.getLong(1);
-					}
+			
+			try (ResultSet set = customQueryStatement(sql, params)) {
+				if (set.next()) {
+					return set.getLong(1);
 				}
 			}
-		} catch (ReflectiveOperationException | SQLException e) {
+		} catch (SQLException e) {
 			throw new ORMException(e);
 		}
 		
@@ -295,16 +247,8 @@ public final class ORM {
 	
 	
 	
-	public static <E extends SQLElement<E>> int truncateTable(Class<E> elemClass) throws ORMException {
-        try (Statement stmt = connection.getNativeConnection().createStatement()) {
-            return stmt.executeUpdate("TRUNCATE `" + elemClass.newInstance().tableName() + "`");
-        } catch(SQLException | ReflectiveOperationException e) {
-        	throw new ORMException(e);
-        }
-	}
 	
-	
-	public static ResultSet getCustomResult(String sql, List<Object> params) throws ORMException {
+	public static ResultSet customQueryStatement(String sql, List<Object> params) throws ORMException {
 		try {
 			PreparedStatement ps = connection.getNativeConnection().prepareStatement(sql);
 			int i = 1;
@@ -323,6 +267,71 @@ public final class ORM {
 			throw new ORMException(e);
 		}
 
+	}
+
+	
+
+	
+	public static <E extends SQLElement<E>> SQLUpdate<E> update(Class<E> elemClass, SQLWhere where) throws ORMException {
+		return new SQLUpdate<>(elemClass, where);
+	}
+	
+	/* package */ static <E extends SQLElement<E>> int update(Class<E> elemClass, SQLWhere where, Map<SQLField<E, ?>, Object> values) throws ORMException {
+		return new SQLUpdate<>(elemClass, where, values).execute();
+	}
+
+	
+	/**
+	 * Delete the elements of the table represented by {@code elemClass} which meet the condition {@code where}.
+	 * @param elemClass the SQLElement representing the table.
+	 * @param where the condition to meet for an element to be deleted from the table. If null, the table is truncated using {@link #truncateTable(Class)}.
+	 * @return The return value of {@link PreparedStatement#executeUpdate()}, for an SQL query {@code DELETE}.
+	 * @throws ORMException
+	 */
+	public static <E extends SQLElement<E>> int delete(Class<E> elemClass, SQLWhere where) throws ORMException {
+		initTable(elemClass);
+		
+		if (where == null) {
+			return truncateTable(elemClass);
+		}
+		
+		Pair<String, List<Object>> whereData = where.toSQL();
+		
+		String sql = "DELETE FROM " + getTableName(elemClass)
+				+ " WHERE " + whereData.getValue0()
+				+ ";";
+		List<Object> params = new ArrayList<>(whereData.getValue1());
+		
+		return customUpdateStatement(sql, params);
+
+	}
+	
+	
+	
+	public static int customUpdateStatement(String sql, List<Object> params) throws ORMException {
+		try (PreparedStatement ps = connection.getNativeConnection().prepareStatement(sql)) {
+
+			int i = 1;
+			for (Object val : params) {
+				if (val instanceof Enum<?>) val = ((Enum<?>) val).name();
+				ps.setObject(i++, val);
+			}
+			Log.debug(ps.toString());
+			
+			return ps.executeUpdate();
+		} catch (SQLException e) {
+			throw new ORMException(e);
+		}
+	}
+	
+	
+	
+	public static <E extends SQLElement<E>> int truncateTable(Class<E> elemClass) throws ORMException {
+        try (Statement stmt = connection.getNativeConnection().createStatement()) {
+            return stmt.executeUpdate("TRUNCATE `" + getTableName(elemClass) + "`");
+        } catch(SQLException e) {
+        	throw new ORMException(e);
+        }
 	}
 
 	@SuppressWarnings("unchecked")
@@ -378,24 +387,5 @@ public final class ORM {
 	}
 
 	private ORM() {} // rend la classe non instanciable
-
-	/*
-	 * public static void main(String[] args) throws Throwable {
-	 * ORM.init(new DBConnection("localhost", 3306, "pandacube", "pandacube",
-	 * "pandacube"));
-	 * List<SQLPlayer> players = ORM.getAll(SQLPlayer.class,
-	 * new SQLWhereChain(SQLBoolOp.AND)
-	 * .add(new SQLWhereNull(SQLPlayer.banTimeout, true))
-	 * .add(new SQLWhereChain(SQLBoolOp.OR)
-	 * .add(new SQLWhereComp(SQLPlayer.bambou, SQLComparator.EQ, 0L))
-	 * .add(new SQLWhereComp(SQLPlayer.grade, SQLComparator.EQ, "default"))
-	 * ),
-	 * new SQLOrderBy().addField(SQLPlayer.playerDisplayName), null, null);
-	 * for(SQLPlayer p : players) {
-	 * System.out.println(p.get(SQLPlayer.playerDisplayName));
-	 * }
-	 * // TODO mise à jour relative d'un champ (incrément / décrément)
-	 * }
-	 */
 
 }

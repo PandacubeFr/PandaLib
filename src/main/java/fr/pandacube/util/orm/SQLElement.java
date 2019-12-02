@@ -32,7 +32,6 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 	private boolean stored = false;
 	private int id;
 
-	private final String tableName;
 	private final SQLFieldMap<E> fields;
 
 	private final Map<SQLField<E, ?>, Object> values;
@@ -40,7 +39,6 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 
 	@SuppressWarnings("unchecked")
 	public SQLElement() {
-		tableName = tableName();
 		
 		try {
 			ORM.initTable((Class<E>)getClass());
@@ -230,7 +228,6 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 			throw new IllegalStateException(toString() + " has at least one undefined value and can't be saved.");
 
 		ORM.initTable((Class<E>)getClass());
-		String toStringStatement = "";
 		try {
 
 			if (stored) { // mettre à jour les valeurs dans la base
@@ -243,27 +240,8 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 				Map<SQLField<E, ?>, Object> modifiedValues = getOnlyModifiedValues();
 
 				if (modifiedValues.isEmpty()) return;
-
-				String sql = "";
-				List<Object> psValues = new ArrayList<>();
-
-				for (Map.Entry<SQLField<E, ?>, Object> entry : modifiedValues.entrySet()) {
-					sql += "`" + entry.getKey().getName() + "` = ? ,";
-					addValueToSQLObjectList(psValues, entry.getKey(), entry.getValue());
-				}
-
-				if (sql.length() > 0) sql = sql.substring(0, sql.length() - 1);
-
-				try (PreparedStatement ps = db.getNativeConnection()
-						.prepareStatement("UPDATE " + tableName + " SET " + sql + " WHERE id=" + id)) {
-
-					int i = 1;
-					for (Object val : psValues)
-						ps.setObject(i++, val);
-
-					toStringStatement = ps.toString();
-					ps.executeUpdate();
-				}
+				
+				ORM.update((Class<E>)getClass(), new SQLWhereComp(getFieldId(), SQLComparator.EQ, getId()), modifiedValues);
 			}
 			else { // ajouter dans la base
 
@@ -286,16 +264,15 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 					concat_fields += "`" + entry.getKey().getName() + "`";
 					addValueToSQLObjectList(psValues, entry.getKey(), entry.getValue());
 				}
-
+				
 				try (PreparedStatement ps = db.getNativeConnection().prepareStatement(
-						"INSERT INTO " + tableName + "  (" + concat_fields + ") VALUES (" + concat_vals + ")",
+						"INSERT INTO " + tableName() + "  (" + concat_fields + ") VALUES (" + concat_vals + ")",
 						Statement.RETURN_GENERATED_KEYS)) {
 
 					int i = 1;
 					for (Object val : psValues)
 						ps.setObject(i++, val);
 
-					toStringStatement = ps.toString();
 					ps.executeUpdate();
 
 					try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -308,9 +285,8 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 
 			modifiedSinceLastSave.clear();
 		} catch (SQLException e) {
-			throw new ORMException("Error while executing SQL statement " + toStringStatement, e);
+			throw new ORMException("Error while saving data", e);
 		}
-		Log.debug(toStringStatement);
 	}
 	
 	
@@ -344,7 +320,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 
 		if (stored) { // supprimer la ligne de la base
 			try (PreparedStatement st = db.getNativeConnection()
-					.prepareStatement("DELETE FROM " + tableName + " WHERE id=" + id)) {
+					.prepareStatement("DELETE FROM " + tableName() + " WHERE id=" + id)) {
 				Log.debug(st.toString());
 				st.executeUpdate();
 				markAsNotStored();

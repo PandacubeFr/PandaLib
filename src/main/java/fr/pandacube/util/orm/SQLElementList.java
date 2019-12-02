@@ -78,42 +78,22 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 	 *
 	 * @throws SQLException
 	 */
-	public synchronized void saveCommon() throws ORMException {
+	public synchronized int saveCommon() throws ORMException {
 		List<E> storedEl = getStoredEl();
-		if (storedEl.isEmpty()) return;
+		if (storedEl.isEmpty()) return 0;
+		
+		@SuppressWarnings("unchecked")
+		Class<E> classEl = (Class<E>)storedEl.get(0).getClass();
+		
+		int ret = ORM.update(classEl,
+				new SQLWhereIn(storedEl.get(0).getFieldId(),
+						storedEl.stream().map(SQLElement::getId).collect(Collectors.toList())
+						),
+				modifiedValues);
 
-		String sqlSet = "";
-		List<Object> psValues = new ArrayList<>();
-
-		for (Map.Entry<SQLField<E, ?>, Object> entry : modifiedValues.entrySet()) {
-			sqlSet += "`" + entry.getKey().getName() + "` = ? ,";
-			SQLElement.addValueToSQLObjectList(psValues, entry.getKey(), entry.getValue());
-		}
-
-		if (sqlSet.length() > 0) sqlSet = sqlSet.substring(0, sqlSet.length() - 1);
-
-		String sqlWhere = "";
-		boolean first = true;
-		for (E el : storedEl) {
-			if (!first) sqlWhere += " OR ";
-			first = false;
-			sqlWhere += "id = " + el.getId();
-		}
-
-		try(PreparedStatement ps = ORM.getConnection().getNativeConnection()
-					.prepareStatement("UPDATE " + storedEl.get(0).tableName() + " SET " + sqlSet + " WHERE " + sqlWhere)) {
-			
-			int i = 1;
-			for (Object val : psValues)
-				ps.setObject(i++, val);
-
-			Log.debug(ps.toString());
-			ps.executeUpdate();
-
-			applyNewValuesToElements(storedEl);
-		} catch (SQLException e) {
-			throw new ORMException(e);
-		}
+		applyNewValuesToElements(storedEl);
+		
+		return ret;
 	}
 
 	@SuppressWarnings("unchecked")
