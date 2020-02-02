@@ -5,7 +5,11 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import fr.pandacube.util.Log;
+
 public class DBConnection {
+	private static final long CONNECTION_CHECK_TIMEOUT = 30000; // in ms
+	
 	private Connection conn;
 	private String url;
 	private String login;
@@ -30,6 +34,7 @@ public class DBConnection {
 
 	private void checkConnection() throws SQLException {
 		if (!isConnected()) {
+			Log.info("Connection to the database lost. Trying to reconnect...");
 			close();
 			connect();
 		}
@@ -37,29 +42,30 @@ public class DBConnection {
 	
 	public boolean isConnected()
     {
-        boolean connected = false;
+        try {
+    		if (conn.isClosed())
+    			return false;
 
-        try (ResultSet rs = conn.createStatement().executeQuery("SELECT 1;"))
-        {
-            if (rs == null)
-                connected = false;
-            else if (rs.next())
-                connected = true;
+    		// avoid checking the connection everytime we want to do a db request
+    		long now = System.currentTimeMillis();
+    		if (timeOfLastCheck + CONNECTION_CHECK_TIMEOUT > now)
+    			return true;
+    		
+			timeOfLastCheck = now;
+    		
+    		if (conn.isValid(1))
+    			return true;
+    		
+        	try (ResultSet rs = conn.createStatement().executeQuery("SELECT 1;")) {
+	            return rs == null ? false : rs.next();
+            }
         } catch (Exception e) {
-            connected = false;
+            return false;
         }
-        return connected;
     }
 
 	public Connection getNativeConnection() throws SQLException {
-		if (conn.isClosed())
-			connect();
-		long now = System.currentTimeMillis();
-		if (timeOfLastCheck + 5000 > now) {
-			timeOfLastCheck = now;
-			if (!conn.isValid(1))
-				checkConnection();
-		}
+		checkConnection();
 		return conn;
 	}
 
