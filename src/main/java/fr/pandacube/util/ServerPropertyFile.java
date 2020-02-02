@@ -19,6 +19,7 @@ public class ServerPropertyFile {
 	private String javaArgs = "";
 	private String MinecraftArgs = "";
 	private String jarFile = "";
+	private long startupDelay = 0;
 	private boolean run = true;
 
 	public ServerPropertyFile(File f) {
@@ -43,6 +44,7 @@ public class ServerPropertyFile {
 			MinecraftArgs = dataFile.MinecraftArgs;
 			jarFile = dataFile.jarFile;
 			run = dataFile.run;
+			startupDelay = dataFile.startupDelay;
 			
 			return true;
 		} catch(JsonSyntaxException e) {
@@ -90,6 +92,10 @@ public class ServerPropertyFile {
 	
 	public boolean isRun() {
 		return run;
+	}
+	
+	public long getStartupDelay() {
+		return startupDelay;
 	}
 
 	public void setName(String n) {
