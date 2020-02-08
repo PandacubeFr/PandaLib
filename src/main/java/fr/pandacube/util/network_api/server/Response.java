@@ -2,6 +2,7 @@ package fr.pandacube.util.network_api.server;
 
 import java.io.PrintStream;
 
+@Deprecated
 public class Response {
 	public boolean good = true;
 	public String data = "";

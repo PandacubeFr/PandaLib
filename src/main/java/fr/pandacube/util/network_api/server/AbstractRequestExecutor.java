@@ -7,6 +7,7 @@ import java.net.Socket;
 
 import fr.pandacube.util.Log;
 
+@Deprecated
 public abstract class AbstractRequestExecutor {
 
 	public final String command;

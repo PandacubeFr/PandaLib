@@ -1,27 +1,32 @@
-package fr.pandacube.util.network.packet.bytebuffer;
+package fr.pandacube.util.net;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ByteBuffer implements Cloneable {
+import fr.pandacube.Pandacube;
+
+public final class ByteBuffer implements Cloneable {
 
 	private java.nio.ByteBuffer buff;
-	private Charset charset;
 
-	public ByteBuffer(Charset c) {
-		this(16, c);
+	public ByteBuffer() {
+		this(16);
 	}
 
-	public ByteBuffer(int initSize, Charset c) {
+	public ByteBuffer(int initSize) {
 		buff = java.nio.ByteBuffer.allocate(initSize);
-		charset = c;
 	}
 
-	public ByteBuffer(byte[] data, Charset c) {
-		buff = java.nio.ByteBuffer.wrap(Arrays.copyOf(data, data.length));
-		charset = c;
+	/**
+	 * Create a ByteBuffer that is initially <b>backed</b> by the provided byte array.
+	 * The position of this buffer will be 0.
+	 * If this ByteBuffer needs a biffer array, the provided array is replaced by a new one,
+	 * making the provided array not related to this ByteBuffer anymore.
+	 * @param data array of byte that serve as a backend for this ByteBuffer.
+	 */
+	public ByteBuffer(byte[] data) {
+		buff = java.nio.ByteBuffer.wrap(data);
 	}
 
 	private void askForBufferExtension(int needed) {
@@ -32,9 +37,12 @@ public class ByteBuffer implements Cloneable {
 		}
 	}
 
+	/**
+	 * This clone method also clone the underlying array.
+	 */
 	@Override
 	public ByteBuffer clone() {
-		return new ByteBuffer(Arrays.copyOf(buff.array(), buff.array().length), charset);
+		return new ByteBuffer(Arrays.copyOf(buff.array(), buff.array().length));
 	}
 
 	/**
@@ -215,7 +223,7 @@ public class ByteBuffer implements Cloneable {
 		if (s == null) {
 			return putInt(-1);
 		}
-		return putSizedByteArray(s.getBytes(charset));
+		return putSizedByteArray(s.getBytes(Pandacube.NETWORK_CHARSET));
 	}
 
 	/**
@@ -224,51 +232,7 @@ public class ByteBuffer implements Cloneable {
 	 */
 	public String getString() {
 		byte[] binaryString = getSizedByteArray();
-		return (binaryString == null) ? null : new String(binaryString, charset);
-	}
-
-	/**
-	 * The objet will be serialized and the data put in the current buffer
-	 *
-	 * @param obj the object to serialize. Can't be null.
-	 * @return the current buffer
-	 */
-	public ByteBuffer putObject(ByteSerializable obj) {
-		obj.serializeToByteBuffer(this);
-		return this;
-	}
-
-	/**
-	 * Ask to object passed as argument to deserialize data in buffer and fill
-	 * the object content. ByteSerializable object are never null.
-	 *
-	 * @param <T>
-	 * @param clazz the class wich will be instanciated with his no-argument Constructor
-	 * 	before filled by using {@link ByteSerializable#deserializeFromByteBuffer(ByteBuffer)}
-	 * @return obj a reference to the filled object
-	 */
-	public <T extends ByteSerializable> T getObject(Class<T> clazz) {
-		try {
-			T obj = clazz.newInstance();
-			obj.deserializeFromByteBuffer(this);
-			return obj;
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new RuntimeException("A ByteSerializable must have a no-argument Constructor", e);
-		}
-	}
-
-	/**
-	 * 
-	 * @param list The list itself can be null, but not the values.
-	 * @return
-	 */
-	public ByteBuffer putListObject(List<ByteSerializable> list) {
-		if (list.stream().anyMatch(e -> e == null))
-			throw new IllegalArgumentException("List of object can't contains any null value");
-		putInt(list.size());
-		for (ByteSerializable obj : list)
-			putObject(obj);
-		return this;
+		return (binaryString == null) ? null : new String(binaryString, Pandacube.NETWORK_CHARSET);
 	}
 
 	/**
@@ -287,24 +251,9 @@ public class ByteBuffer implements Cloneable {
 	}
 
 	/**
-	 * 
-	 * @param clazz
-	 * @return Can be null. If not, there is no null element inside.
-	 */
-	public <T extends ByteSerializable> List<T> getListObject(Class<T> clazz) {
-		int size = getInt();
-		if (size < 0)
-			return null;
-		List<T> list = new ArrayList<>();
-		for (int i = 0; i < size; i++)
-			list.add(getObject(clazz));
-		return list;
-	}
-
-	/**
 	 * @return a List of String. The list can be null, and any element can be null too.
 	 */
-	public <T extends ByteSerializable> List<String> getListOfString() {
+	public List<String> getListOfString() {
 		int size = getInt();
 		if (size < 0)
 			return null;

@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+@Deprecated
 public class NetworkAPISender {
 
 	public static ResponseAnalyser sendRequest(InetSocketAddress cible, AbstractRequest request) throws IOException {

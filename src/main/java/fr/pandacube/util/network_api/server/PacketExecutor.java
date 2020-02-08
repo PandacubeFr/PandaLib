@@ -16,6 +16,7 @@ import fr.pandacube.util.network_api.server.RequestAnalyser.BadRequestException;
  * @author Marc Baloup
  *
  */
+@Deprecated
 public class PacketExecutor implements Runnable {
 	private Socket socket;
 	private NetworkAPIListener networkAPIListener;

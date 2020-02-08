@@ -1,8 +1,8 @@
-package fr.pandacube.util.network.packet.bytebuffer;
+package fr.pandacube.util.net;
 
 import java.util.Arrays;
 
-public class Array8Bit implements ByteSerializable {
+public class Array8Bit {
 	
 	public static final int BIT_COUNT = Byte.SIZE;
 	
@@ -61,17 +61,6 @@ public class Array8Bit implements ByteSerializable {
 	}
 	
 	
-	
-	
-	@Override
-	public void deserializeFromByteBuffer(ByteBuffer buffer) {
-		fromByte(buffer.getByte());
-	}
-	
-	@Override
-	public void serializeToByteBuffer(ByteBuffer buffer) {
-		buffer.putByte(toByte());
-	}
 	
 	
 }

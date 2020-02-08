@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
+@Deprecated
 public class RequestAnalyser {
 
 	private NetworkAPIListener networkAPIListener;

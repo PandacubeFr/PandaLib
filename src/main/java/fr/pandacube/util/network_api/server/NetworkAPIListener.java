@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.util.Arrays;
 import java.util.HashMap;
 
+@Deprecated
 public class NetworkAPIListener implements Runnable {
 
 	private int port = 0;
@@ -12,7 +13,6 @@ public class NetworkAPIListener implements Runnable {
 	private ServerSocket serverSocket;
 	private HashMap<String, AbstractRequestExecutor> requestExecutors = new HashMap<>();
 	private String name;
-	private NAPIExecutionHandler nAPIExecutionHandler;
 
 	/**
 	 * Instencie le côté serveur du NetworkAPI
@@ -23,11 +23,10 @@ public class NetworkAPIListener implements Runnable {
 	 * @param peh PacketExecutionHandler permettant de prendre en charge
 	 *        l'exécution asynchrone d'une requête reçu pas un client
 	 */
-	public NetworkAPIListener(String n, int p, String pa, NAPIExecutionHandler peh) {
+	public NetworkAPIListener(String n, int p, String pa) {
 		port = p;
 		pass = pa;
 		name = n;
-		nAPIExecutionHandler = peh;
 	}
 
 	@Override
@@ -46,7 +45,9 @@ public class NetworkAPIListener implements Runnable {
 		try {
 			// réception des connexion client
 			while (!serverSocket.isClosed()) {
-				nAPIExecutionHandler.handleRun(new PacketExecutor(serverSocket.accept(), this));
+				Thread t = new Thread(new PacketExecutor(serverSocket.accept(), this));
+				t.setDaemon(true);
+				t.start();
 			}
 		} catch (IOException e) {}
 

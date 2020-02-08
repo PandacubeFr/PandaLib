@@ -2,6 +2,7 @@ package fr.pandacube.util.network_api.client;
 
 import java.io.PrintStream;
 
+@Deprecated
 public abstract class AbstractRequest {
 
 	private final String pass;

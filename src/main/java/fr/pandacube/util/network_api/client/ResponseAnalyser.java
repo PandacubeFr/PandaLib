@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
+@Deprecated
 public class ResponseAnalyser {
 	/**
 	 * Indique si la requête s'est bien exécutée (l'entête de la réponse est
