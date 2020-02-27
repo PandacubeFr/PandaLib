@@ -14,7 +14,6 @@ import java.util.function.Consumer;
 import org.javatuples.Pair;
 
 import fr.pandacube.util.Log;
-import fr.pandacube.util.orm.SQLWhereChain.SQLBoolOp;
 import fr.pandacube.util.orm.SQLWhereComp.SQLComparator;
 
 /**
@@ -110,10 +109,10 @@ public final class ORM {
 
 	public static <E extends SQLElement<E>> SQLElementList<E> getByIds(Class<E> elemClass, Integer... ids) throws ORMException {
 		SQLField<E, Integer> idField = getSQLIdField(elemClass);
-		SQLWhereChain where = new SQLWhereChain(SQLBoolOp.OR);
+		SQLWhereChain where = new SQLWhereOr();
 		for (Integer id : ids)
-			if (id != null) where.add(new SQLWhereComp(idField, SQLComparator.EQ, id));
-		return getAll(elemClass, where, new SQLOrderBy().add(idField), 1, null);
+			if (id != null) where.or(new SQLWhereComp(idField, SQLComparator.EQ, id));
+		return getAll(elemClass, where, SQLOrderBy.asc(idField), 1, null);
 	}
 
 	public static <E extends SQLElement<E>> E getById(Class<E> elemClass, int id) throws ORMException {
@@ -123,6 +122,11 @@ public final class ORM {
 	public static <E extends SQLElement<E>> E getFirst(Class<E> elemClass, SQLWhere where)
 			throws ORMException {
 		return getFirst(elemClass, where, null, null);
+	}
+
+	public static <E extends SQLElement<E>> E getFirst(Class<E> elemClass, SQLOrderBy orderBy)
+			throws ORMException {
+		return getFirst(elemClass, null, orderBy, null);
 	}
 
 	public static <E extends SQLElement<E>> E getFirst(Class<E> elemClass, SQLWhere where, SQLOrderBy orderBy)

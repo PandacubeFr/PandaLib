@@ -5,22 +5,22 @@ import java.util.List;
 
 import org.javatuples.Pair;
 
-public class SQLWhereChain extends SQLWhere {
+public abstract class SQLWhereChain extends SQLWhere {
 
 	private SQLBoolOp operator;
-	private List<SQLWhere> conditions = new ArrayList<>();
+	protected List<SQLWhere> conditions = new ArrayList<>();
 
-	public SQLWhereChain(SQLBoolOp op) {
+	/* package */ SQLWhereChain(SQLBoolOp op) {
 		if (op == null) throw new IllegalArgumentException("op can't be null");
 		operator = op;
 	}
 
-	public SQLWhereChain add(SQLWhere sqlWhere) {
+	protected SQLWhereChain add(SQLWhere sqlWhere) {
 		if (sqlWhere == null) throw new IllegalArgumentException("sqlWhere can't be null");
 		conditions.add(sqlWhere);
 		return this;
 	}
-
+	
 	@Override
 	public Pair<String, List<Object>> toSQL() throws ORMException {
 		if (conditions.isEmpty()) {
@@ -43,12 +43,12 @@ public class SQLWhereChain extends SQLWhere {
 		return new Pair<>(sql, params);
 	}
 
-	public enum SQLBoolOp {
+	/* package */ enum SQLBoolOp {
 		/** Equivalent to SQL "<code>AND</code>" */
 		AND("AND"),
 		/** Equivalent to SQL "<code>OR</code>" */
 		OR("OR");
-		public final String sql;
+		/* package */ final String sql;
 
 		private SQLBoolOp(String s) {
 			sql = s;

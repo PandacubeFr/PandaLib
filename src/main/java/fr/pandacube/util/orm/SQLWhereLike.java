@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.javatuples.Pair;
 
-public class SQLWhereLike extends SQLWhere {
+/* package */ class SQLWhereLike extends SQLWhere {
 
 	private SQLField<?, String> field;
 	private String likeExpr;
@@ -16,7 +16,7 @@ public class SQLWhereLike extends SQLWhere {
 	 * @param f the field at left of the LIKE keyword. Can't be null
 	 * @param like the like expression.
 	 */
-	public SQLWhereLike(SQLField<?, String> f, String like) {
+	/* package */ SQLWhereLike(SQLField<?, String> f, String like) {
 		if (f == null || like == null)
 			throw new IllegalArgumentException("All arguments for SQLWhereLike constructor can't be null");
 		field = f;

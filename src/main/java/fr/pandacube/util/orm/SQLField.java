@@ -1,9 +1,12 @@
 package fr.pandacube.util.orm;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.javatuples.Pair;
+
+import fr.pandacube.util.orm.SQLWhereComp.SQLComparator;
 
 public class SQLField<E extends SQLElement<E>, T> {
 
@@ -82,6 +85,50 @@ public class SQLField<E extends SQLElement<E>, T> {
 	@Override
 	public int hashCode() {
 		return getName().hashCode() + sqlElemClass.hashCode();
+	}
+	
+	
+
+
+	
+	
+	public SQLWhere eq(T r) {
+		return comp(SQLComparator.EQ, r);
+	}
+	public SQLWhere geq(T r) {
+		return comp(SQLComparator.GEQ, r);
+	}
+	public SQLWhere gt(T r) {
+		return comp(SQLComparator.GT, r);
+	}
+	public SQLWhere leq(T r) {
+		return comp(SQLComparator.LEQ, r);
+	}
+	public SQLWhere lt(T r) {
+		return comp(SQLComparator.LT, r);
+	}
+	public SQLWhere neq(T r) {
+		return comp(SQLComparator.NEQ, r);
+	}
+	
+	private SQLWhere comp(SQLComparator c, T r) {
+		return new SQLWhereComp(this, c, r);
+	}
+	
+	
+	
+	public SQLWhere in(Collection<T> v) {
+		return new SQLWhereIn(this, v);
+	}
+	
+	
+
+	public SQLWhere isNull() {
+		return new SQLWhereNull(this, true);
+	}
+	
+	public SQLWhere isNotNull() {
+		return new SQLWhereNull(this, false);
 	}
 
 }

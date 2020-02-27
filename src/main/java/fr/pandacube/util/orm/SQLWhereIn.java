@@ -6,12 +6,12 @@ import java.util.List;
 
 import org.javatuples.Pair;
 
-public class SQLWhereIn extends SQLWhere {
+/* package */ class SQLWhereIn extends SQLWhere {
 
 	private SQLField<?, ?> field;
 	private Collection<?> values;
 
-	public <T> SQLWhereIn(SQLField<?, T> f, Collection<T> v) {
+	/* package */ <T> SQLWhereIn(SQLField<?, T> f, Collection<T> v) {
 		if (f == null || v == null)
 			throw new IllegalArgumentException("All arguments for SQLWhereIn constructor can't be null");
 		field = f;

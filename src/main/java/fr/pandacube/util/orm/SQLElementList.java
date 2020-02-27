@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import com.google.gson.JsonArray;
 
 import fr.pandacube.util.Log;
-import fr.pandacube.util.orm.SQLWhereChain.SQLBoolOp;
 import fr.pandacube.util.orm.SQLWhereComp.SQLComparator;
 
 /**
@@ -153,8 +152,8 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 			return new SQLElementList<>();
 		}
 		
-		SQLWhereChain where = new SQLWhereChain(SQLBoolOp.OR);
-		values.forEach(v -> where.add(new SQLWhereComp(foreignKey.getPrimaryField(), SQLComparator.EQ, v)));
+		SQLWhereChain where = SQLWhereChain.or();
+		values.forEach(v -> where.or(new SQLWhereComp(foreignKey.getPrimaryField(), SQLComparator.EQ, v)));
 		
 		
 		return ORM.getAll(foreignKey.getForeignElementClass(), where, orderBy, null, null);
@@ -184,8 +183,8 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 			return new SQLElementList<>();
 		}
 
-		SQLWhereChain where = new SQLWhereChain(SQLBoolOp.OR);
-		values.forEach(v -> where.add(new SQLWhereComp(foreignKey, SQLComparator.EQ, v)));
+		SQLWhereChain where = SQLWhere.or();
+		values.forEach(v -> where.or(new SQLWhereComp(foreignKey, SQLComparator.EQ, v)));
 		
 		return ORM.getAll(foreignKey.getSQLElementType(), where, orderBy, limit, offset);
 		
