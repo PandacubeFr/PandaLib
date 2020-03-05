@@ -12,16 +12,16 @@ import fr.pandacube.util.Log;
 public class SQLUpdate<E extends SQLElement<E>> {
 	
 	private final Class<E> elemClass;
-	private final SQLWhere where;
+	private final SQLWhere<E> where;
 	private final Map<SQLField<E, ?>, Object> values;
 	
-	/* package */ SQLUpdate(Class<E> el, SQLWhere w) {
+	/* package */ SQLUpdate(Class<E> el, SQLWhere<E> w) {
 		elemClass = el;
 		where = w;
 		values = new HashMap<>();
 	}
 	
-	/* package */ SQLUpdate(Class<E> el, SQLWhere w, Map<SQLField<E, ?>, Object> v) {
+	/* package */ SQLUpdate(Class<E> el, SQLWhere<E> w, Map<SQLField<E, ?>, Object> v) {
 		elemClass = el;
 		where = w;
 		values = v;

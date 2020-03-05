@@ -5,20 +5,19 @@ import java.util.List;
 
 import org.javatuples.Pair;
 
-public abstract class SQLWhereChain extends SQLWhere {
+public abstract class SQLWhereChain<E extends SQLElement<E>> extends SQLWhere<E> {
 
 	private SQLBoolOp operator;
-	protected List<SQLWhere> conditions = new ArrayList<>();
+	protected List<SQLWhere<E>> conditions = new ArrayList<>();
 
 	/* package */ SQLWhereChain(SQLBoolOp op) {
 		if (op == null) throw new IllegalArgumentException("op can't be null");
 		operator = op;
 	}
 
-	protected SQLWhereChain add(SQLWhere sqlWhere) {
+	protected void add(SQLWhere<E> sqlWhere) {
 		if (sqlWhere == null) throw new IllegalArgumentException("sqlWhere can't be null");
 		conditions.add(sqlWhere);
-		return this;
 	}
 	
 	@Override
@@ -31,7 +30,7 @@ public abstract class SQLWhereChain extends SQLWhere {
 		List<Object> params = new ArrayList<>();
 		boolean first = true;
 
-		for (SQLWhere w : conditions) {
+		for (SQLWhere<E> w : conditions) {
 			if (!first) sql += " " + operator.sql + " ";
 			first = false;
 

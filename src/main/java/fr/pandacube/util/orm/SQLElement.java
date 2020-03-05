@@ -21,7 +21,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import fr.pandacube.util.Log;
-import fr.pandacube.util.orm.SQLWhereComp.SQLComparator;
 
 public abstract class SQLElement<E extends SQLElement<E>> {
 	/** cache for fields for each subclass of SQLElement */
@@ -190,8 +189,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 	public <T, P extends SQLElement<P>> P getReferencedEntry(SQLFKField<E, T, P> field) throws ORMException {
 		T fkValue = get(field);
 		if (fkValue == null) return null;
-		return ORM.getFirst(field.getForeignElementClass(),
-				new SQLWhereComp(field.getPrimaryField(), SQLComparator.EQ, fkValue), null);
+		return ORM.getFirst(field.getForeignElementClass(), field.getPrimaryField().eq(fkValue), null);
 	}
 
 	/**
@@ -199,11 +197,10 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 	 * @param <F> the table class of the foreign key that reference a primary key of this element.
 	 * @return all elements in the table F for which the specified foreign key value correspond to the primary key of this element.
 	 */
-	public <T, F extends SQLElement<F>> SQLElementList<F> getReferencingForeignEntries(SQLFKField<F, T, E> field, SQLOrderBy orderBy, Integer limit, Integer offset) throws ORMException {
+	public <T, F extends SQLElement<F>> SQLElementList<F> getReferencingForeignEntries(SQLFKField<F, T, E> field, SQLOrderBy<F> orderBy, Integer limit, Integer offset) throws ORMException {
 		T value = get(field.getPrimaryField());
 		if (value == null) return new SQLElementList<>();
-		return ORM.getAll(field.getSQLElementType(),
-				new SQLWhereComp(field, SQLComparator.EQ, value), orderBy, limit, offset);
+		return ORM.getAll(field.getSQLElementType(), field.eq(value), orderBy, limit, offset);
 	}
 
 	public boolean isValidForSave() {
@@ -241,7 +238,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 
 				if (modifiedValues.isEmpty()) return;
 				
-				ORM.update((Class<E>)getClass(), new SQLWhereComp(getFieldId(), SQLComparator.EQ, getId()), modifiedValues);
+				ORM.update((Class<E>)getClass(), getFieldId().eq(getId()), modifiedValues);
 			}
 			else { // ajouter dans la base
 

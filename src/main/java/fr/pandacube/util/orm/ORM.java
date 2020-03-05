@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +15,6 @@ import java.util.function.Consumer;
 import org.javatuples.Pair;
 
 import fr.pandacube.util.Log;
-import fr.pandacube.util.orm.SQLWhereComp.SQLComparator;
 
 /**
  * <b>ORM = Object-Relational Mapping</b>
@@ -102,39 +102,35 @@ public final class ORM {
 		return (SQLField<E, Integer>) SQLElement.fieldsCache.get(elemClass).get("id");
 	}
 
-	public static <E extends SQLElement<E>> SQLElementList<E> getByIds(Class<E> elemClass, Collection<Integer> ids)
-			throws ORMException {
-		return getByIds(elemClass, ids.toArray(new Integer[ids.size()]));
+	public static <E extends SQLElement<E>> SQLElementList<E> getByIds(Class<E> elemClass, Integer... ids) throws ORMException {
+		return getByIds(elemClass, Arrays.asList(ids));
 	}
 
-	public static <E extends SQLElement<E>> SQLElementList<E> getByIds(Class<E> elemClass, Integer... ids) throws ORMException {
-		SQLField<E, Integer> idField = getSQLIdField(elemClass);
-		SQLWhereChain where = new SQLWhereOr();
-		for (Integer id : ids)
-			if (id != null) where.or(new SQLWhereComp(idField, SQLComparator.EQ, id));
-		return getAll(elemClass, where, SQLOrderBy.asc(idField), 1, null);
+	public static <E extends SQLElement<E>> SQLElementList<E> getByIds(Class<E> elemClass, Collection<Integer> ids)
+			throws ORMException {
+		return getAll(elemClass, getSQLIdField(elemClass).in(ids), SQLOrderBy.asc(getSQLIdField(elemClass)), 1, null);
 	}
 
 	public static <E extends SQLElement<E>> E getById(Class<E> elemClass, int id) throws ORMException {
-		return getFirst(elemClass, new SQLWhereComp(getSQLIdField(elemClass), SQLComparator.EQ, id));
+		return getFirst(elemClass, getSQLIdField(elemClass).eq(id));
 	}
 
-	public static <E extends SQLElement<E>> E getFirst(Class<E> elemClass, SQLWhere where)
+	public static <E extends SQLElement<E>> E getFirst(Class<E> elemClass, SQLWhere<E> where)
 			throws ORMException {
 		return getFirst(elemClass, where, null, null);
 	}
 
-	public static <E extends SQLElement<E>> E getFirst(Class<E> elemClass, SQLOrderBy orderBy)
+	public static <E extends SQLElement<E>> E getFirst(Class<E> elemClass, SQLOrderBy<E> orderBy)
 			throws ORMException {
 		return getFirst(elemClass, null, orderBy, null);
 	}
 
-	public static <E extends SQLElement<E>> E getFirst(Class<E> elemClass, SQLWhere where, SQLOrderBy orderBy)
+	public static <E extends SQLElement<E>> E getFirst(Class<E> elemClass, SQLWhere<E> where, SQLOrderBy<E> orderBy)
 			throws ORMException {
 		return getFirst(elemClass, where, orderBy, null);
 	}
 
-	public static <E extends SQLElement<E>> E getFirst(Class<E> elemClass, SQLWhere where, SQLOrderBy orderBy, Integer offset)
+	public static <E extends SQLElement<E>> E getFirst(Class<E> elemClass, SQLWhere<E> where, SQLOrderBy<E> orderBy, Integer offset)
 			throws ORMException {
 		SQLElementList<E> elts = getAll(elemClass, where, orderBy, 1, offset);
 		return (elts.size() == 0) ? null : elts.get(0);
@@ -144,22 +140,22 @@ public final class ORM {
 		return getAll(elemClass, null, null, null, null);
 	}
 
-	public static <E extends SQLElement<E>> SQLElementList<E> getAll(Class<E> elemClass, SQLWhere where) throws ORMException {
+	public static <E extends SQLElement<E>> SQLElementList<E> getAll(Class<E> elemClass, SQLWhere<E> where) throws ORMException {
 		return getAll(elemClass, where, null, null, null);
 	}
 
-	public static <E extends SQLElement<E>> SQLElementList<E> getAll(Class<E> elemClass, SQLWhere where,
-			SQLOrderBy orderBy) throws ORMException {
+	public static <E extends SQLElement<E>> SQLElementList<E> getAll(Class<E> elemClass, SQLWhere<E> where,
+			SQLOrderBy<E> orderBy) throws ORMException {
 		return getAll(elemClass, where, orderBy, null, null);
 	}
 
-	public static <E extends SQLElement<E>> SQLElementList<E> getAll(Class<E> elemClass, SQLWhere where,
-			SQLOrderBy orderBy, Integer limit) throws ORMException {
+	public static <E extends SQLElement<E>> SQLElementList<E> getAll(Class<E> elemClass, SQLWhere<E> where,
+			SQLOrderBy<E> orderBy, Integer limit) throws ORMException {
 		return getAll(elemClass, where, orderBy, limit, null);
 	}
 
-	public static <E extends SQLElement<E>> SQLElementList<E> getAll(Class<E> elemClass, SQLWhere where,
-			SQLOrderBy orderBy, Integer limit, Integer offset) throws ORMException {
+	public static <E extends SQLElement<E>> SQLElementList<E> getAll(Class<E> elemClass, SQLWhere<E> where,
+			SQLOrderBy<E> orderBy, Integer limit, Integer offset) throws ORMException {
 			SQLElementList<E> elmts = new SQLElementList<>();
 			forEach(elemClass, where, orderBy, limit, offset, elmts::add);
 			return elmts;
@@ -169,23 +165,23 @@ public final class ORM {
 		forEach(elemClass, null, null, null, null, action);
 	}
 	
-	public static <E extends SQLElement<E>> void forEach(Class<E> elemClass, SQLWhere where,
+	public static <E extends SQLElement<E>> void forEach(Class<E> elemClass, SQLWhere<E> where,
 			Consumer<E> action) throws ORMException {
 		forEach(elemClass, where, null, null, null, action);
 	}
 	
-	public static <E extends SQLElement<E>> void forEach(Class<E> elemClass, SQLWhere where,
-			SQLOrderBy orderBy, Consumer<E> action) throws ORMException {
+	public static <E extends SQLElement<E>> void forEach(Class<E> elemClass, SQLWhere<E> where,
+			SQLOrderBy<E> orderBy, Consumer<E> action) throws ORMException {
 		forEach(elemClass, where, orderBy, null, null, action);
 	}
 	
-	public static <E extends SQLElement<E>> void forEach(Class<E> elemClass, SQLWhere where,
-			SQLOrderBy orderBy, Integer limit, Consumer<E> action) throws ORMException {
+	public static <E extends SQLElement<E>> void forEach(Class<E> elemClass, SQLWhere<E> where,
+			SQLOrderBy<E> orderBy, Integer limit, Consumer<E> action) throws ORMException {
 		forEach(elemClass, where, orderBy, limit, null, action);
 	}
 	
-	public static <E extends SQLElement<E>> void forEach(Class<E> elemClass, SQLWhere where,
-			SQLOrderBy orderBy, Integer limit, Integer offset, Consumer<E> action) throws ORMException {
+	public static <E extends SQLElement<E>> void forEach(Class<E> elemClass, SQLWhere<E> where,
+			SQLOrderBy<E> orderBy, Integer limit, Integer offset, Consumer<E> action) throws ORMException {
 		initTable(elemClass);
 
 		try {
@@ -221,7 +217,7 @@ public final class ORM {
 		return count(elemClass, null);
 	}
 	
-	public static <E extends SQLElement<E>> long count(Class<E> elemClass, SQLWhere where) throws ORMException {
+	public static <E extends SQLElement<E>> long count(Class<E> elemClass, SQLWhere<E> where) throws ORMException {
 		initTable(elemClass);
 
 		try {
@@ -276,11 +272,11 @@ public final class ORM {
 	
 
 	
-	public static <E extends SQLElement<E>> SQLUpdate<E> update(Class<E> elemClass, SQLWhere where) throws ORMException {
+	public static <E extends SQLElement<E>> SQLUpdate<E> update(Class<E> elemClass, SQLWhere<E> where) throws ORMException {
 		return new SQLUpdate<>(elemClass, where);
 	}
 	
-	/* package */ static <E extends SQLElement<E>> int update(Class<E> elemClass, SQLWhere where, Map<SQLField<E, ?>, Object> values) throws ORMException {
+	/* package */ static <E extends SQLElement<E>> int update(Class<E> elemClass, SQLWhere<E> where, Map<SQLField<E, ?>, Object> values) throws ORMException {
 		return new SQLUpdate<>(elemClass, where, values).execute();
 	}
 
@@ -292,7 +288,7 @@ public final class ORM {
 	 * @return The return value of {@link PreparedStatement#executeUpdate()}, for an SQL query {@code DELETE}.
 	 * @throws ORMException
 	 */
-	public static <E extends SQLElement<E>> int delete(Class<E> elemClass, SQLWhere where) throws ORMException {
+	public static <E extends SQLElement<E>> int delete(Class<E> elemClass, SQLWhere<E> where) throws ORMException {
 		initTable(elemClass);
 		
 		if (where == null) {

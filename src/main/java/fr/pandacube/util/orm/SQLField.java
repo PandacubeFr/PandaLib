@@ -92,43 +92,43 @@ public class SQLField<E extends SQLElement<E>, T> {
 
 	
 	
-	public SQLWhere eq(T r) {
+	public SQLWhere<E> eq(T r) {
 		return comp(SQLComparator.EQ, r);
 	}
-	public SQLWhere geq(T r) {
+	public SQLWhere<E> geq(T r) {
 		return comp(SQLComparator.GEQ, r);
 	}
-	public SQLWhere gt(T r) {
+	public SQLWhere<E> gt(T r) {
 		return comp(SQLComparator.GT, r);
 	}
-	public SQLWhere leq(T r) {
+	public SQLWhere<E> leq(T r) {
 		return comp(SQLComparator.LEQ, r);
 	}
-	public SQLWhere lt(T r) {
+	public SQLWhere<E> lt(T r) {
 		return comp(SQLComparator.LT, r);
 	}
-	public SQLWhere neq(T r) {
+	public SQLWhere<E> neq(T r) {
 		return comp(SQLComparator.NEQ, r);
 	}
 	
-	private SQLWhere comp(SQLComparator c, T r) {
-		return new SQLWhereComp(this, c, r);
+	private SQLWhere<E> comp(SQLComparator c, T r) {
+		return new SQLWhereComp<>(this, c, r);
 	}
 	
 	
 	
-	public SQLWhere in(Collection<T> v) {
-		return new SQLWhereIn(this, v);
+	public SQLWhere<E> in(Collection<T> v) {
+		return new SQLWhereIn<>(this, v);
 	}
 	
 	
 
-	public SQLWhere isNull() {
-		return new SQLWhereNull(this, true);
+	public SQLWhere<E> isNull() {
+		return new SQLWhereNull<>(this, true);
 	}
 	
-	public SQLWhere isNotNull() {
-		return new SQLWhereNull(this, false);
+	public SQLWhere<E> isNotNull() {
+		return new SQLWhereNull<>(this, false);
 	}
 
 }

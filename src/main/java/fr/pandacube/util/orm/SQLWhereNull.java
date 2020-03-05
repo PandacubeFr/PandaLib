@@ -8,9 +8,9 @@ import org.javatuples.Pair;
 
 import fr.pandacube.util.Log;
 
-/* package */ class SQLWhereNull extends SQLWhere {
+/* package */ class SQLWhereNull<E extends SQLElement<E>> extends SQLWhere<E> {
 
-	private SQLField<?, ?> fild;
+	private SQLField<E, ?> fild;
 	private boolean nulll;
 
 	/**
@@ -20,7 +20,7 @@ import fr.pandacube.util.Log;
 	 * @param isNull true if we want to ckeck if "IS NULL", or false to check if
 	 *        "IS NOT NULL"
 	 */
-	/* package */ SQLWhereNull(SQLField<?, ?> field, boolean isNull) {
+	/* package */ SQLWhereNull(SQLField<E, ?> field, boolean isNull) {
 		if (field == null) throw new IllegalArgumentException("field can't be null");
 		if (!field.canBeNull) Log.getLogger().log(Level.WARNING,
 				"Useless : Trying to check IS [NOT] NULL on the field " + field.getSQLElementType().getName() + "#"

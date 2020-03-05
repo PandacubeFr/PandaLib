@@ -1,14 +1,15 @@
 package fr.pandacube.util.orm;
 
-public class SQLWhereOr extends SQLWhereChain {
+public class SQLWhereOr<E extends SQLElement<E>> extends SQLWhereChain<E> {
 
 	/* package */ SQLWhereOr() {
 		super(SQLBoolOp.OR);
 	}
 	
 	@Override
-	public SQLWhereOr or(SQLWhere other) {
-		return (SQLWhereOr) add(other);
+	public SQLWhereOr<E> or(SQLWhere<E> other) {
+		add(other);
+		return this;
 	}
 
 }

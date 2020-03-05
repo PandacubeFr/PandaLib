@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import com.google.gson.JsonArray;
 
 import fr.pandacube.util.Log;
-import fr.pandacube.util.orm.SQLWhereComp.SQLComparator;
 
 /**
  *
@@ -85,8 +84,7 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 		Class<E> classEl = (Class<E>)storedEl.get(0).getClass();
 		
 		int ret = ORM.update(classEl,
-				new SQLWhereIn(storedEl.get(0).getFieldId(),
-						storedEl.stream().map(SQLElement::getId).collect(Collectors.toList())
+				storedEl.get(0).getFieldId().in(storedEl.stream().map(SQLElement::getId).collect(Collectors.toList())
 						),
 				modifiedValues);
 
@@ -140,7 +138,7 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 	
 	
 	
-	public <T, P extends SQLElement<P>> SQLElementList<P> getReferencedEntries(SQLFKField<E, T, P> foreignKey, SQLOrderBy orderBy) throws ORMException {
+	public <T, P extends SQLElement<P>> SQLElementList<P> getReferencedEntries(SQLFKField<E, T, P> foreignKey, SQLOrderBy<P> orderBy) throws ORMException {
 		Set<T> values = new HashSet<>();
 		forEach(v -> {
 			T val = v.get(foreignKey);
@@ -152,8 +150,8 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 			return new SQLElementList<>();
 		}
 		
-		SQLWhereChain where = SQLWhereChain.or();
-		values.forEach(v -> where.or(new SQLWhereComp(foreignKey.getPrimaryField(), SQLComparator.EQ, v)));
+		SQLWhereOr<P> where = SQLWhere.or();
+		values.forEach(v -> where.or(foreignKey.getPrimaryField().eq(v)));
 		
 		
 		return ORM.getAll(foreignKey.getForeignElementClass(), where, orderBy, null, null);
@@ -171,7 +169,7 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 	
 
 	
-	public <T, F extends SQLElement<F>> SQLElementList<F> getReferencingForeignEntries(SQLFKField<F, T, E> foreignKey, SQLOrderBy orderBy, Integer limit, Integer offset) throws ORMException {
+	public <T, F extends SQLElement<F>> SQLElementList<F> getReferencingForeignEntries(SQLFKField<F, T, E> foreignKey, SQLOrderBy<F> orderBy, Integer limit, Integer offset) throws ORMException {
 		Set<T> values = new HashSet<>();
 		forEach(v -> {
 			T val = v.get(foreignKey.getPrimaryField());
@@ -183,15 +181,15 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 			return new SQLElementList<>();
 		}
 
-		SQLWhereChain where = SQLWhere.or();
-		values.forEach(v -> where.or(new SQLWhereComp(foreignKey, SQLComparator.EQ, v)));
+		SQLWhereOr<F> where = SQLWhere.or();
+		values.forEach(v -> where.or(foreignKey.eq(v)));
 		
 		return ORM.getAll(foreignKey.getSQLElementType(), where, orderBy, limit, offset);
 		
 	}
 
 	
-	public <T, F extends SQLElement<F>> Map<T, SQLElementList<F>> getReferencingForeignEntriesInGroups(SQLFKField<F, T, E> foreignKey, SQLOrderBy orderBy, Integer limit, Integer offset) throws ORMException {
+	public <T, F extends SQLElement<F>> Map<T, SQLElementList<F>> getReferencingForeignEntriesInGroups(SQLFKField<F, T, E> foreignKey, SQLOrderBy<F> orderBy, Integer limit, Integer offset) throws ORMException {
 		SQLElementList<F> foreignElements = getReferencingForeignEntries(foreignKey, orderBy, limit, offset);
 		
 		Map<T, SQLElementList<F>> map = new HashMap<>();

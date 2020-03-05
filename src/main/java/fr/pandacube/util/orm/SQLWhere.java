@@ -6,7 +6,7 @@ import org.javatuples.Pair;
 
 import fr.pandacube.util.Log;
 
-public abstract class SQLWhere {
+public abstract class SQLWhere<E extends SQLElement<E>> {
 
 	public abstract Pair<String, List<Object>> toSQL() throws ORMException;
 
@@ -20,26 +20,26 @@ public abstract class SQLWhere {
 		}
 	}
 	
-	public SQLWhereAnd and(SQLWhere other) {
-		return and().and(this).and(other);
+	public SQLWhereAnd<E> and(SQLWhere<E> other) {
+		return new SQLWhereAnd<E>().and(this).and(other);
 	}
 	
-	public SQLWhereOr or(SQLWhere other) {
-		return or().or(this).or(other);
+	public SQLWhereOr<E> or(SQLWhere<E> other) {
+		return new SQLWhereOr<E>().or(this).or(other);
 	}
 	
-	public static SQLWhereAnd and() {
-		return new SQLWhereAnd();
+	public static <E extends SQLElement<E>> SQLWhereAnd<E> and() {
+		return new SQLWhereAnd<>();
 	}
 	
-	public static SQLWhereOr or() {
-		return new SQLWhereOr();
+	public static <E extends SQLElement<E>> SQLWhereOr<E> or() {
+		return new SQLWhereOr<>();
 	}
 	
 	
 	
-	public static SQLWhere like(SQLField<?, String> f, String like) {
-		return new SQLWhereLike(f, like);
+	public static <E extends SQLElement<E>> SQLWhere<E> like(SQLField<E, String> f, String like) {
+		return new SQLWhereLike<E>(f, like);
 	}
 
 }

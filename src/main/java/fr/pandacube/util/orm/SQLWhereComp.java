@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.javatuples.Pair;
 
-/* package */ class SQLWhereComp extends SQLWhere {
+/* package */ class SQLWhereComp<E extends SQLElement<E>> extends SQLWhere<E> {
 
 	private SQLField<?, ?> left;
 	private SQLComparator comp;

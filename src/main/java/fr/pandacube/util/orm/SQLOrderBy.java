@@ -3,7 +3,7 @@ package fr.pandacube.util.orm;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SQLOrderBy {
+public class SQLOrderBy<E extends SQLElement<E>> {
 
 	private List<OBField> orderByFields = new ArrayList<>();
 
@@ -19,7 +19,7 @@ public class SQLOrderBy {
 	 * @param d le sens de tri (croissant ASC ou décroissant DESC)
 	 * @return l'objet courant (permet de chainer les ajouts de champs)
 	 */
-	private SQLOrderBy add(SQLField<?, ?> field, Direction d) {
+	private SQLOrderBy<E> add(SQLField<E, ?> field, Direction d) {
 		orderByFields.add(new OBField(field, d));
 		return this;
 	}
@@ -30,7 +30,7 @@ public class SQLOrderBy {
 	 * @param field le champ SQL à ordonner
 	 * @return l'objet courant (permet de chainer les ajouts de champs)
 	 */
-	public SQLOrderBy thenAsc(SQLField<?, ?> field) {
+	public SQLOrderBy<E> thenAsc(SQLField<E, ?> field) {
 		return add(field, Direction.ASC);
 	}
 
@@ -40,7 +40,7 @@ public class SQLOrderBy {
 	 * @param field le champ SQL à ordonner
 	 * @return l'objet courant (permet de chainer les ajouts de champs)
 	 */
-	public SQLOrderBy thenDesc(SQLField<?, ?> field) {
+	public SQLOrderBy<E> thenDesc(SQLField<E, ?> field) {
 		return add(field, Direction.DESC);
 	}
 
@@ -61,10 +61,10 @@ public class SQLOrderBy {
 	}
 
 	private class OBField {
-		public final SQLField<?, ?> field;
+		public final SQLField<E, ?> field;
 		public final Direction direction;
 
-		public OBField(SQLField<?, ?> f, Direction d) {
+		public OBField(SQLField<E, ?> f, Direction d) {
 			field = f;
 			direction = d;
 		}
@@ -83,12 +83,12 @@ public class SQLOrderBy {
 	
 
 	
-	public static SQLOrderBy asc(SQLField<?, ?> field) {
-		return new SQLOrderBy().thenAsc(field);
+	public static <E extends SQLElement<E>> SQLOrderBy<E> asc(SQLField<E, ?> field) {
+		return new SQLOrderBy<E>().thenAsc(field);
 	}
 	
-	public static SQLOrderBy desc(SQLField<?, ?> field) {
-		return new SQLOrderBy().thenDesc(field);
+	public static <E extends SQLElement<E>> SQLOrderBy<E> desc(SQLField<E, ?> field) {
+		return new SQLOrderBy<E>().thenDesc(field);
 	}
 	
 	
