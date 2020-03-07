@@ -5,11 +5,11 @@
 
     <parent>
         <groupId>fr.pandacube.pandacube</groupId>
-        <artifactId>pandacube-parent-public</artifactId>
-        <version>1.0</version>
+        <artifactId>pandacubeParentPublic</artifactId>
+        <version>dev</version>
     </parent>
 
-    <artifactId>pandacube-util</artifactId>
+    <artifactId>PandacubeUtil</artifactId>
     <packaging>jar</packaging>
 
     <name>PandacubeUtil</name>
