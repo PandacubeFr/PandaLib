@@ -24,7 +24,7 @@ public class MinecraftWebUtil {
 			if (c == code_prefix && (i<ligne.length()-1)) {
 				i++;
 				c = ligne.charAt(i);
-				if (color_char.contains(new Character(c).toString().toLowerCase())) {
+				if (color_char.contains(new String(new char[] {Character.toLowerCase(c)}))) {
 					if (bold) {
 						builder += "</span>";
 						bold = false;
