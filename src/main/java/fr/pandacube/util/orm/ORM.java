@@ -45,7 +45,7 @@ public final class ORM {
 		try {
 			tables.add(elemClass);
 			Log.debug("[ORM] Start Init SQL table "+elemClass.getSimpleName());
-			E instance = elemClass.newInstance();
+			E instance = elemClass.getConstructor().newInstance();
 			String tableName = instance.tableName();
 			tableNames.put(elemClass, tableName);
 			if (!tableExistInDB(tableName)) createTable(instance);

@@ -51,7 +51,7 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 		
 		Class<E> elemClass = field.getSQLElementType();
 		try {
-			E emptyElement = elemClass.newInstance();
+			E emptyElement = elemClass.getConstructor().newInstance();
 			emptyElement.set(field, value, false);
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Illegal field or value or can't instanciante an empty instance of "
