@@ -29,4 +29,12 @@ public class StringUtil {
 	    int size = strings == null ? 0 : strings.size();
 	    return size == 0 ? "" : size == 1 ? strings.get(0) : String.join(sep1, strings.subList(0, --size)) + sepFinal + strings.get(size);
 	}
+	
+	
+	
+	
+	
+	public static String repeat(String base, int count) {
+		return new String(new char[count]).replace("\0", base);
+	}
 }
