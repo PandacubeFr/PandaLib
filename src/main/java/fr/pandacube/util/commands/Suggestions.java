@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @FunctionalInterface
@@ -70,6 +71,12 @@ public interface Suggestions<S> {
 			if (lowerCase)
 				st = st.map(String::toLowerCase);
 			return collectFilteredStream(st, token);
+		};
+	}
+	
+	public static <S> Suggestions<S> fromIntRange(int min, int max) {
+		return (s, ti, token, a) -> {
+			return collectFilteredStream(IntStream.range(min, max + 1).mapToObj(Integer::toString), token);
 		};
 	}
 	
