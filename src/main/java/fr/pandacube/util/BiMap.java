@@ -1,8 +1,10 @@
 package fr.pandacube.util;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 public class BiMap<K, V> implements Iterable<Entry<K, V>> {
@@ -49,7 +51,15 @@ public class BiMap<K, V> implements Iterable<Entry<K, V>> {
     
     @Override
     public Iterator<Entry<K, V>> iterator() {
-    	return map.entrySet().iterator();
+    	return Collections.unmodifiableSet(map.entrySet()).iterator();
+    }
+    
+    public Set<K> keySet() {
+    	return Collections.unmodifiableSet(map.keySet());
+    }
+    
+    public Set<V> valuesSet() {
+    	return Collections.unmodifiableSet(inversedMap.keySet());
     }
     
     public synchronized void forEach(BiConsumer<K, V> c) {
@@ -60,6 +70,11 @@ public class BiMap<K, V> implements Iterable<Entry<K, V>> {
     
     public int size() {
     	return map.size();
+    }
+    
+    public synchronized void clear() {
+    	map.clear();
+    	inversedMap.clear();
     }
 
 }

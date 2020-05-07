@@ -7,11 +7,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import fr.pandacube.util.ListUtil;
 
 @FunctionalInterface
 public interface Suggestions<S> {
+	
+	/**
+	 * Number of suggestion visible at once without having to scrolleeeeeeeeeeeeeeee
+	 */
+	public static int VISIBLE_SUGGESTION_COUNT = 10;
 	
 	
 	public abstract List<String> getSuggestions(S sender, int tokenIndex, String token, String[] args);
@@ -74,13 +80,92 @@ public interface Suggestions<S> {
 		};
 	}
 	
+
+	/**
+	 * Create a {@link Suggestions} that suggest numbers according to the provided range.
+	 * 
+	 * The current implementation only support range that include either -1 or 1.
+	 * @param min
+	 * @param max
+	 * @return
+	 */
 	public static <S> Suggestions<S> fromIntRange(int min, int max) {
-		return (s, ti, token, a) -> {
-			return collectFilteredStream(IntStream.range(min, max + 1).mapToObj(Integer::toString), token);
-		};
+		return fromLongRange(min, max);
 	}
 	
 	
+	
+	
+	/**
+	 * Create a {@link Suggestions} that suggest numbers according to the provided range.
+	 * 
+	 * The current implementation only support range that include either -1 or 1.
+	 * @param min
+	 * @param max
+	 * @return
+	 */
+	public static <S> Suggestions<S> fromLongRange(long min, long max) {
+		if (max < min) {
+			throw new IllegalArgumentException("min should be less or equals than max");
+		}
+		return (s, ti, token, a) -> {
+			try {
+				List<Long> proposedValues = new ArrayList<>();
+				if (token.length() == 0) {
+					long start = Math.max(Math.max(Math.min(-4, max - 9), min), -9);
+					long end = Math.min(Math.min(start + 9, max), 9);
+					ListUtil.addLongRangeToList(proposedValues, start, end);
+				}
+				else if (token.length() == 1) {
+					if (token.charAt(0) == '0') {
+						if (min > 0 || max < 0) {
+							return Collections.emptyList();
+						}
+						else
+							return Collections.singletonList(token);
+					}
+					else if (token.charAt(0) == '-') {
+						ListUtil.addLongRangeToList(proposedValues, Math.max(-9, min), -1);
+					}
+					else {
+						long lToken = Long.parseLong(token);
+						if (lToken > max) {
+							return Collections.emptyList();
+						}
+						
+						lToken *= 10;
+						if (lToken > max) {
+							return Collections.singletonList(token);
+						}
+						
+						ListUtil.addLongRangeToList(proposedValues, lToken, Math.min(lToken + 9, max));
+					}
+				}
+				else {
+					long lToken = Long.parseLong(token);
+					if (lToken < min || lToken > max) {
+						return Collections.emptyList();
+					}
+					
+					lToken *= 10;
+					if (lToken < min || lToken > max) {
+						return Collections.singletonList(token);
+					}
+					
+					if (lToken < 0) {
+						ListUtil.addLongRangeToList(proposedValues, Math.max(lToken - 9, min), lToken);
+					}
+					else {
+						ListUtil.addLongRangeToList(proposedValues, lToken, Math.min(lToken + 9, max));
+					}
+				}
+				
+				return collectFilteredStream(proposedValues.stream().map(i -> i.toString()), token);
+			} catch (NumberFormatException e) {
+				return Collections.emptyList();
+			}
+		};
+	}
 	
 	/**
 	 * Create a {@link Suggestions} that support greedy strings argument using the suggestion from this {@link Suggestions}.
@@ -119,6 +204,13 @@ public interface Suggestions<S> {
 		};
 	}
 	
+	
+	
+	public default Suggestions<S> requires(Predicate<S> check) {
+		return (s, ti, to, a) -> {
+			return check.test(s) ? getSuggestions(s, ti, to, a) : Collections.emptyList();
+		};
+	}
 	
 	
 }
