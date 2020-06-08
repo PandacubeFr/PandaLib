@@ -108,6 +108,9 @@ public class Display {
 	 * @return this
 	 */
 	public Display next(BaseComponent[] components) {
+		if (components != null && components.length == 1)
+			return next(components[0]);
+		
 		BaseComponent bc = new TextComponent();
 		for (BaseComponent c : components)
 			bc.addExtra(c);
@@ -257,6 +260,16 @@ public class Display {
 	}
 
 	/**
+	 * Allow the player to click on the current component to copy content to the clipboard.
+	 * @param str the string to copy to clipboard
+	 * @return this
+	 */
+	public Display clickClipboard(String str) {
+		current.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, str));
+		return this;
+	}
+
+	/**
 	 * Allow the player to click on the current component to run the specified command.
 	 * This method is only relevant if this Display is intended to be displayed in the chat, in a book or on a sign.
 	 * On the sign, all the commands are executed in a row when the player click on the sign.
@@ -301,6 +314,8 @@ public class Display {
 	 */
 	public BaseComponent get() {
 		finalizeCurrentComponent();
+		if (!root.hasFormatting() && root.getExtra() != null && root.getExtra().size() == 1)
+			return root.getExtra().get(0);
 		return root;
 	}
 

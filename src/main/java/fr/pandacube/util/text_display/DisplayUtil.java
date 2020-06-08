@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -17,11 +19,12 @@ public class DisplayUtil {
 	public static final int DEFAULT_CHAR_SIZE = 6;
 	public static final Map<Integer, String> CHARS_SIZE = new ImmutableMap.Builder<Integer, String>()
 			.put(-6, "§")
-			.put(2, "!.,:;i|¡")
-			.put(3, "'`lìí")
+			.put(2, "!.,:;i|¡'")
+			.put(3, "`lìí’‘")
 			.put(4, " I[]tï×")
 			.put(5, "\"()*<>fk{}")
-			.put(7, "@~®")
+			.put(7, "@~®©«»")
+			.put(9, "├└")
 			.build();
 	
 	
@@ -109,6 +112,63 @@ public class DisplayUtil {
 	}
 
 
+	
+	
+	
+	
+	
+	
+	/**
+	 * @param cmdFormat the command with %d inside to be replaced with the page number (must start with slash)
+	 */
+	public static BaseComponent createPagination(String prefix, String cmdFormat, int currentPage, int nbPages, int nbPagesToDisplay) {
+		Set<Integer> pagesToDisplay = new TreeSet<>();
+		
+		for (int i = 0; i < nbPagesToDisplay && i < nbPages && nbPages - i > 0; i++) {
+			pagesToDisplay.add(i + 1);
+			pagesToDisplay.add(nbPages - i);
+		}
+		
+		for (int i = currentPage - nbPagesToDisplay + 1; i < currentPage + nbPagesToDisplay; i++) {
+			if (i > 0 && i <= nbPages)
+				pagesToDisplay.add(i);
+		}
+		
+		Display d = new Display(prefix);
+		boolean first = true;
+		int previous = 0;
+		
+		for (int page : pagesToDisplay) {
+			if (!first) {
+				if (page == previous + 1) {
+					d.next(" ");
+				}
+				else {
+					if (cmdFormat.endsWith("%d")) {
+						d.next(" ");
+						d.next(createCommandSuggest("...", cmdFormat.substring(0, cmdFormat.length() - 2), "Choisir la page"));
+						d.next(" ");
+					}
+					else
+						d.next(" ... ");
+				}
+			}
+			else
+				first = false;
+			
+			d.next(createCommandLink(Integer.toString(page), String.format(cmdFormat, page), "Aller à la page " + page));
+			if (page == currentPage) {
+				d.color(ChatColor.WHITE);
+			}
+			
+			previous = page;
+		}
+		
+		
+		return d.get();
+	}
+	
+	
 	
 	
 	
@@ -416,5 +476,152 @@ public class DisplayUtil {
 	
 	
 	
+	
+	
+	
 
+	/**
+	 * Force a text to be italic, while keeping other formatting and colors.
+	 * The text is prefixed with the ITALIC tag, but is not reset at the end.
+	 * @param legacyText the original text
+	 * @return the text fully italic
+	 */
+	public static String forceItalic(String legacyText) {
+		return forceFormat(legacyText, ChatColor.ITALIC);
+	}
+	
+	/**
+	 * Force a text to be bold, while keeping other formatting and colors.
+	 * The text is prefixed with the BOLD tag, but is not reset at the end.
+	 * @param legacyText the original text
+	 * @return the text fully bold
+	 */
+	public static String forceBold(String legacyText) {
+		return forceFormat(legacyText, ChatColor.BOLD);
+	}
+	
+	/**
+	 * Force a text to be underlined, while keeping other formatting and colors.
+	 * The text is prefixed with the UNDERLINE tag, but is not reset at the end.
+	 * @param legacyText the original text
+	 * @return the text fully underlined
+	 */
+	public static String forceUnderline(String legacyText) {
+		return forceFormat(legacyText, ChatColor.UNDERLINE);
+	}
+	
+	/**
+	 * Force a text to be stroked through, while keeping other formatting and colors.
+	 * The text is prefixed with the STRIKETHROUGH tag, but is not reset at the end.
+	 * @param legacyText the original text
+	 * @return the text fully stroked through
+	 */
+	public static String forceStrikethrough(String legacyText) {
+		return forceFormat(legacyText, ChatColor.STRIKETHROUGH);
+	}
+	
+	/**
+	 * Force a text to be obfuscated, while keeping other formatting and colors.
+	 * The text is prefixed with the MAGIC tag, but is not reset at the end.
+	 * @param legacyText the original text
+	 * @return the text fully obfuscated
+	 */
+	public static String forceObfuscated(String legacyText) {
+		return forceFormat(legacyText, ChatColor.MAGIC);
+	}
+	
+	
+	
+	private static String forceFormat(String legacyText, ChatColor format) {
+		return format + legacyText
+				.replace(format.toString(), "") // remove previous tag to make the result cleaner
+				.replaceAll("§([a-frA-FR0-9])", "§$1" + format);
+	}
+	
+	
+	
+	
+	
+	/**
+	 * Replace the RESET tag of the input string to the specified color tag.
+	 * @param legacyText the original text
+	 * @param color the color to used to replace the RESET tag
+	 * 			(can be a combination of a color tag followed by multiple format tag)
+	 * @return the resulting text
+	 */
+	public static String resetToColor(String legacyText, String color) {
+		return legacyText.replace(ChatColor.RESET.toString(), color);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * Generate a tree view based on the tree structure {@code node}.
+	 * 
+	 * Each element in the returned array represent 1 line of the tree view.
+	 * Thus, the caller may send each line separately or at once depending of the quantity of data.
+	 * @param node
+	 * @return A array of component, each element being a single line.
+	 */
+	public static BaseComponent[] treeView(DisplayTreeNode node, boolean console) {
+		List<TextComponent> ret = treeView_(node, console);
+		return ret.toArray(new BaseComponent[ret.size()]);
+	}
+
+	private static final String TREE_MIDDLE_CONNECTED = "├";
+	private static final String TREE_END_CONNECTED = "└";
+	private static final String TREE_MIDDLE_OPEN = "│§0`§r";
+	private static final String TREE_END_OPEN = "§0```§r";
+	private static final String TREE_MIDDLE_OPEN_CONSOLE = "│";
+	private static final String TREE_END_OPEN_CONSOLE = " "; // nbsp
+	
+	private static List<TextComponent> treeView_(DisplayTreeNode node, boolean console) {
+		List<TextComponent> ret = new ArrayList<>();
+		
+		TextComponent curr = new TextComponent();
+		curr.addExtra(node.component);
+		curr.setText("");
+		
+		ret.add(curr);
+		
+		for (int i = 0; i < node.children.size(); i++) {
+			List<TextComponent> childComponents = treeView_(node.children.get(i), console);
+			boolean last = i == node.children.size() - 1;
+			for (int j = 0; j < childComponents.size(); j++) {
+				TextComponent cComp = childComponents.get(j);
+				String prefix = last ? (j == 0 ? TREE_END_CONNECTED : (console ? TREE_END_OPEN_CONSOLE : TREE_END_OPEN))
+						: (j == 0 ? TREE_MIDDLE_CONNECTED : (console ? TREE_MIDDLE_OPEN_CONSOLE : TREE_MIDDLE_OPEN));
+				cComp.setText(prefix + cComp.getText());
+				ret.add(cComp);
+			}
+		}
+		
+		
+		return ret;
+	}
+	
+	
+	
+	
+	
+	public static class DisplayTreeNode {
+		public final BaseComponent component;
+		public final List<DisplayTreeNode> children = new ArrayList<>();
+		
+		public DisplayTreeNode(BaseComponent cmp) {
+			component = cmp;
+		}
+		
+		public DisplayTreeNode addChild(DisplayTreeNode child) {
+			children.add(child);
+			return this;
+		}
+	}
 }

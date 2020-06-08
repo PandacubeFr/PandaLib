@@ -12,10 +12,10 @@ import java.util.stream.Stream;
 import fr.pandacube.util.ListUtil;
 
 @FunctionalInterface
-public interface Suggestions<S> {
+public interface SuggestionsSupplier<S> {
 	
 	/**
-	 * Number of suggestion visible at once without having to scrolleeeeeeeeeeeeeeee
+	 * Number of suggestion visible at once without having to scroll
 	 */
 	public static int VISIBLE_SUGGESTION_COUNT = 10;
 	
@@ -45,33 +45,33 @@ public interface Suggestions<S> {
 	
 	
 	
-	public static <S> Suggestions<S> empty() { return (s, ti, t, a) -> Collections.emptyList(); }
+	public static <S> SuggestionsSupplier<S> empty() { return (s, ti, t, a) -> Collections.emptyList(); }
 	
 	
-	public static <S> Suggestions<S> fromCollection(Collection<String> suggestions) {
+	public static <S> SuggestionsSupplier<S> fromCollection(Collection<String> suggestions) {
 		return (s, ti, token, a) -> collectFilteredStream(suggestions.stream(), token);
 	}
 	
-	public static <S> Suggestions<S> fromArray(String... suggestions) {
+	public static <S> SuggestionsSupplier<S> fromArray(String... suggestions) {
 		return (s, ti, token, a) -> collectFilteredStream(Arrays.stream(suggestions), token);
 	}
 	
 	
-	public static <E extends Enum<E>, S> Suggestions<S> fromEnum(Class<E> enumClass) {
+	public static <E extends Enum<E>, S> SuggestionsSupplier<S> fromEnum(Class<E> enumClass) {
 		return fromEnumValues(enumClass.getEnumConstants());
 	}
 	
-	public static <E extends Enum<E>, S> Suggestions<S> fromEnum(Class<E> enumClass, boolean lowerCase) {
+	public static <E extends Enum<E>, S> SuggestionsSupplier<S> fromEnum(Class<E> enumClass, boolean lowerCase) {
 		return fromEnumValues(lowerCase, enumClass.getEnumConstants());
 	}
 	
 	@SafeVarargs
-	public static <E extends Enum<E>, S> Suggestions<S> fromEnumValues(E... enumValues) {
+	public static <E extends Enum<E>, S> SuggestionsSupplier<S> fromEnumValues(E... enumValues) {
 		return fromEnumValues(false, enumValues);
 	}
 	
 	@SafeVarargs
-	public static <E extends Enum<E>, S> Suggestions<S> fromEnumValues(boolean lowerCase, E... enumValues) {
+	public static <E extends Enum<E>, S> SuggestionsSupplier<S> fromEnumValues(boolean lowerCase, E... enumValues) {
 		return (s, ti, token, a) -> {
 			Stream<String> st = Arrays.stream(enumValues).map(Enum::name);
 			if (lowerCase)
@@ -82,14 +82,14 @@ public interface Suggestions<S> {
 	
 
 	/**
-	 * Create a {@link Suggestions} that suggest numbers according to the provided range.
+	 * Create a {@link SuggestionsSupplier} that suggest numbers according to the provided range.
 	 * 
 	 * The current implementation only support range that include either -1 or 1.
 	 * @param min
 	 * @param max
 	 * @return
 	 */
-	public static <S> Suggestions<S> fromIntRange(int min, int max) {
+	public static <S> SuggestionsSupplier<S> fromIntRange(int min, int max) {
 		return fromLongRange(min, max);
 	}
 	
@@ -97,14 +97,14 @@ public interface Suggestions<S> {
 	
 	
 	/**
-	 * Create a {@link Suggestions} that suggest numbers according to the provided range.
+	 * Create a {@link SuggestionsSupplier} that suggest numbers according to the provided range.
 	 * 
 	 * The current implementation only support range that include either -1 or 1.
 	 * @param min
 	 * @param max
 	 * @return
 	 */
-	public static <S> Suggestions<S> fromLongRange(long min, long max) {
+	public static <S> SuggestionsSupplier<S> fromLongRange(long min, long max) {
 		if (max < min) {
 			throw new IllegalArgumentException("min should be less or equals than max");
 		}
@@ -168,12 +168,12 @@ public interface Suggestions<S> {
 	}
 	
 	/**
-	 * Create a {@link Suggestions} that support greedy strings argument using the suggestion from this {@link Suggestions}.
+	 * Create a {@link SuggestionsSupplier} that support greedy strings argument using the suggestion from this {@link SuggestionsSupplier}.
 	 * @param args all the arguments currently in the buffer
 	 * @param index the index of the first argument of the greedy string argument
 	 * @return
 	 */
-	public default Suggestions<S> greedyString(int index) { 
+	public default SuggestionsSupplier<S> greedyString(int index) { 
 		
 		return (s, ti, token, args) -> {
 			
@@ -206,7 +206,7 @@ public interface Suggestions<S> {
 	
 	
 	
-	public default Suggestions<S> requires(Predicate<S> check) {
+	public default SuggestionsSupplier<S> requires(Predicate<S> check) {
 		return (s, ti, to, a) -> {
 			return check.test(s) ? getSuggestions(s, ti, to, a) : Collections.emptyList();
 		};
