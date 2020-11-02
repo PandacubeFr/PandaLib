@@ -33,8 +33,23 @@ public class StringUtil {
 	
 	
 	
-	
+
 	public static String repeat(String base, int count) {
-		return new String(new char[count]).replace("\0", base);
+		int baseLength = base.length();
+		char[] baseChars = base.toCharArray();
+		char[] chars = new char[baseLength * count];
+		for (int i = 0; i < count; i++) {
+			System.arraycopy(baseChars, 0, chars, i * baseLength, baseLength);
+		}
+		return new String(chars);
+	}
+	
+	
+	public static String repeat(char base, int count) {
+		char[] chars = new char[count];
+		for (int i = 0; i < count; i++) {
+			chars[i] = base;
+		}
+		return new String(chars);
 	}
 }

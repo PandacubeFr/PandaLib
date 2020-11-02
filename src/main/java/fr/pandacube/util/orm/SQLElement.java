@@ -1,6 +1,7 @@
 package fr.pandacube.util.orm;
 
 import java.lang.reflect.Modifier;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,12 +15,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import fr.pandacube.util.EnumUtil;
 import fr.pandacube.util.Log;
 
 public abstract class SQLElement<E extends SQLElement<E>> {
@@ -49,7 +52,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 			fields = new SQLFieldMap<>((Class<E>)getClass());
 
 			// le champ id commun à toutes les tables
-			SQLField<E, Integer> idF = new SQLField<>(SQLType.INT, false, true, 0);
+			SQLField<E, Integer> idF = new SQLField<>(INT, false, true, 0);
 			idF.setName("id");
 			fields.addField(idF);
 
@@ -133,8 +136,10 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 		return Collections.unmodifiableMap(values);
 	}
 
-	public <T> void set(SQLField<E, T> field, T value) {
+	@SuppressWarnings("unchecked")
+	public <T> E set(SQLField<E, T> field, T value) {
 		set(field, value, true);
+		return (E) this;
 	}
 
 	/* package */ <T> void set(SQLField<E, T> sqlField, T value, boolean setModified) {
@@ -220,7 +225,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void save() throws ORMException {
+	public E save() throws ORMException {
 		if (!isValidForSave())
 			throw new IllegalStateException(toString() + " has at least one undefined value and can't be saved.");
 
@@ -236,7 +241,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 				modifiedSinceLastSave.remove("id");
 				Map<SQLField<E, ?>, Object> modifiedValues = getOnlyModifiedValues();
 
-				if (modifiedValues.isEmpty()) return;
+				if (modifiedValues.isEmpty()) return (E) this;
 				
 				ORM.update((Class<E>)getClass(), getFieldId().eq(getId()), modifiedValues);
 			}
@@ -284,6 +289,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 		} catch (SQLException e) {
 			throw new ORMException("Error while saving data", e);
 		}
+		return (E) this;
 	}
 	
 	
@@ -396,5 +402,100 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 		}
 		return json;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	protected static <E extends SQLElement<E>, T> SQLField<E, T> field(SQLType<T> t, boolean nul, boolean autoIncr, T deflt) {
+		return new SQLField<>(t, nul, autoIncr, deflt);
+	}
+
+	protected static <E extends SQLElement<E>, T> SQLField<E, T> field(SQLType<T> t, boolean nul) {
+		return new SQLField<>(t, nul);
+	}
+
+	protected static <E extends SQLElement<E>, T> SQLField<E, T> field(SQLType<T> t, boolean nul, boolean autoIncr) {
+		return new SQLField<>(t, nul, autoIncr);
+	}
+
+	protected static <E extends SQLElement<E>, T> SQLField<E, T> field(SQLType<T> t, boolean nul, T deflt) {
+		return new SQLField<>(t, nul, deflt);
+	}
+	
+	
+	protected static <E extends SQLElement<E>, F extends SQLElement<F>> SQLFKField<E, Integer, F> foreignKeyId(boolean nul, Class<F> fkEl) {
+		return SQLFKField.idFK(nul, fkEl);
+	}
+
+	protected static <E extends SQLElement<E>, F extends SQLElement<F>> SQLFKField<E, Integer, F> foreignKeyId(boolean nul, Integer deflt, Class<F> fkEl) {
+		return SQLFKField.idFK(nul, deflt, fkEl);
+	}
+
+	protected static <E extends SQLElement<E>, T, F extends SQLElement<F>> SQLFKField<E, T, F> foreignKey(boolean nul, Class<F> fkEl, SQLField<F, T> fkF) {
+		return SQLFKField.customFK(nul, fkEl, fkF);
+	}
+
+	protected static <E extends SQLElement<E>, T, F extends SQLElement<F>> SQLFKField<E, T, F> foreignKey(boolean nul, T deflt, Class<F> fkEl, SQLField<F, T> fkF) {
+		return SQLFKField.customFK(nul, deflt, fkEl, fkF);
+	}
+	
+	
+	public static final SQLType<Boolean> BOOLEAN = new SQLType<>("BOOLEAN", Boolean.class);
+
+	public static final SQLType<Integer> TINYINT = new SQLType<>("TINYINT", Integer.class); // can’t be Byte due to MYSQL JDBC Connector limitations
+	public static final SQLType<Integer> BYTE = TINYINT;
+
+	public static final SQLType<Integer> SMALLINT = new SQLType<>("SMALLINT", Integer.class); // can’t be Short due to MYSQL JDBC Connector limitations
+	public static final SQLType<Integer> SHORT = SMALLINT;
+
+	public static final SQLType<Integer> INT = new SQLType<>("INT", Integer.class);
+	public static final SQLType<Integer> INTEGER = INT;
+
+	public static final SQLType<Long> BIGINT = new SQLType<>("BIGINT", Long.class);
+	public static final SQLType<Long> LONG = BIGINT;
+
+	public static final SQLType<Date> DATE = new SQLType<>("DATE", Date.class);
+
+	public static final SQLType<Float> FLOAT = new SQLType<>("FLOAT", Float.class);
+
+	public static final SQLType<Double> DOUBLE = new SQLType<>("DOUBLE", Double.class);
+	
+	@Deprecated
+	public static final SQLType<String> CHAR(int charCount) {
+		if (charCount <= 0) throw new IllegalArgumentException("charCount must be positive.");
+		return new SQLType<>("CHAR(" + charCount + ")", String.class);
+	}
+
+	public static final SQLType<String> VARCHAR(int charCount) {
+		if (charCount <= 0) throw new IllegalArgumentException("charCount must be positive.");
+		return new SQLType<>("VARCHAR(" + charCount + ")", String.class);
+	}
+
+	public static final SQLType<String> TEXT = new SQLType<>("TEXT", String.class);
+	public static final SQLType<String> STRING = TEXT;
+
+	public static final <T extends Enum<T>> SQLType<T> ENUM(Class<T> enumType) {
+		if (enumType == null) throw new IllegalArgumentException("enumType can't be null.");
+		String enumStr = "'";
+		boolean first = true;
+		for (T el : enumType.getEnumConstants()) {
+			if (!first) enumStr += "', '";
+			first = false;
+			enumStr += el.name();
+
+		}
+		enumStr += "'";
+
+		return new SQLCustomType<>("VARCHAR(" + enumStr + ")", String.class, enumType, s -> EnumUtil.searchEnum(enumType, s), Enum::name);
+	}
+	
+	public static final SQLType<UUID> CHAR36_UUID = new SQLCustomType<>(CHAR(36), UUID.class, UUID::fromString, UUID::toString);
+
 
 }

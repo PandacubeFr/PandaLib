@@ -36,10 +36,8 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 		return new SQLWhereOr<>();
 	}
 	
-	
-	
-	public static <E extends SQLElement<E>> SQLWhere<E> like(SQLField<E, String> f, String like) {
-		return new SQLWhereLike<E>(f, like);
+	public static String escapeLike(String str) {
+		return str.replace("\\", "\\\\").replace("_", "\\_").replace("%", "\\%");
 	}
 
 }

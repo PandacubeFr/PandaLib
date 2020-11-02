@@ -20,11 +20,11 @@ public class SQLFKField<F extends SQLElement<F>, T, P extends SQLElement<P>> ext
 		construct(fkEl, fkF);
 	}
 
-	public static <E extends SQLElement<E>, F extends SQLElement<F>> SQLFKField<E, Integer, F> idFK(boolean nul, Class<F> fkEl) {
+	/* package */ static <E extends SQLElement<E>, F extends SQLElement<F>> SQLFKField<E, Integer, F> idFK(boolean nul, Class<F> fkEl) {
 		return idFK(nul, null, fkEl);
 	}
 
-	public static <E extends SQLElement<E>, F extends SQLElement<F>> SQLFKField<E, Integer, F> idFK(boolean nul, Integer deflt, Class<F> fkEl) {
+	/* package */ static <E extends SQLElement<E>, F extends SQLElement<F>> SQLFKField<E, Integer, F> idFK(boolean nul, Integer deflt, Class<F> fkEl) {
 		if (fkEl == null) throw new IllegalArgumentException("foreignKeyElement can't be null");
 		try {
 			SQLField<F, Integer> f = ORM.getSQLIdField(fkEl);
@@ -35,11 +35,11 @@ public class SQLFKField<F extends SQLElement<F>, T, P extends SQLElement<P>> ext
 		}
 	}
 
-	public static <E extends SQLElement<E>, T, F extends SQLElement<F>> SQLFKField<E, T, F> customFK(boolean nul, Class<F> fkEl, SQLField<F, T> fkF) {
+	/* package */ static <E extends SQLElement<E>, T, F extends SQLElement<F>> SQLFKField<E, T, F> customFK(boolean nul, Class<F> fkEl, SQLField<F, T> fkF) {
 		return customFK(nul, null, fkEl, fkF);
 	}
 
-	public static <E extends SQLElement<E>, T, F extends SQLElement<F>> SQLFKField<E, T, F> customFK(boolean nul, T deflt, Class<F> fkEl, SQLField<F, T> fkF) {
+	/* package */ static <E extends SQLElement<E>, T, F extends SQLElement<F>> SQLFKField<E, T, F> customFK(boolean nul, T deflt, Class<F> fkEl, SQLField<F, T> fkF) {
 		if (fkEl == null) throw new IllegalArgumentException("foreignKeyElement can't be null");
 		return new SQLFKField<>(fkF.type, nul, deflt, fkEl, fkF);
 	}

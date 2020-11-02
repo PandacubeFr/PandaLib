@@ -17,22 +17,22 @@ public class SQLField<E extends SQLElement<E>, T> {
 	public final boolean autoIncrement;
 	/* package */ final T defaultValue;
 
-	public SQLField(SQLType<T> t, boolean nul, boolean autoIncr, T deflt) {
+	/* package */ SQLField(SQLType<T> t, boolean nul, boolean autoIncr, T deflt) {
 		type = t;
 		canBeNull = nul;
 		autoIncrement = autoIncr;
 		defaultValue = deflt;
 	}
 
-	public SQLField(SQLType<T> t, boolean nul) {
+	/* package */ SQLField(SQLType<T> t, boolean nul) {
 		this(t, nul, false, null);
 	}
 
-	public SQLField(SQLType<T> t, boolean nul, boolean autoIncr) {
+	/* package */ SQLField(SQLType<T> t, boolean nul, boolean autoIncr) {
 		this(t, nul, autoIncr, null);
 	}
 
-	public SQLField(SQLType<T> t, boolean nul, T deflt) {
+	/* package */ SQLField(SQLType<T> t, boolean nul, T deflt) {
 		this(t, nul, false, deflt);
 	}
 
@@ -112,7 +112,14 @@ public class SQLField<E extends SQLElement<E>, T> {
 	}
 	
 	private SQLWhere<E> comp(SQLComparator c, T r) {
+		if (r == null)
+			throw new IllegalArgumentException("The value cannot be null. Use SQLField#isNull(value) or SQLField#isNotNull(value) to check for null values");
 		return new SQLWhereComp<>(this, c, r);
+	}
+	
+	
+	public SQLWhere<E> like(String like) {
+		return new SQLWhereLike<>(this, like);
 	}
 	
 	

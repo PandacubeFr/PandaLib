@@ -7,7 +7,7 @@ import org.javatuples.Pair;
 
 /* package */ class SQLWhereComp<E extends SQLElement<E>> extends SQLWhere<E> {
 
-	private SQLField<?, ?> left;
+	private SQLField<E, ?> left;
 	private SQLComparator comp;
 	private Object right;
 
@@ -18,7 +18,7 @@ import org.javatuples.Pair;
 	 * @param c the comparison operator, can't be null
 	 * @param r the value at right of the comparison operator. Can't be null
 	 */
-	/* package */ <T> SQLWhereComp(SQLField<?, T> l, SQLComparator c, T r) {
+	/* package */ <T> SQLWhereComp(SQLField<E, T> l, SQLComparator c, T r) {
 		if (l == null || r == null || c == null)
 			throw new IllegalArgumentException("All arguments for SQLWhereComp constructor can't be null");
 		left = l;

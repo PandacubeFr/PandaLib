@@ -6,7 +6,6 @@ public class TextProgressBar {
 	private static String pattern_start = "[";
 	private static String pattern_end = "]";
 	private static ChatColor color_empty = ChatColor.DARK_GRAY;
-	private static ChatColor color_decoration = ChatColor.GOLD;
 	private static ChatColor color_default = ChatColor.RESET;
 	private static String pattern_empty = ".";
 	private static String pattern_full = "|";
@@ -35,7 +34,7 @@ public class TextProgressBar {
 		}
 		int sum_sizes = 0;
 
-		String bar = color_decoration + pattern_start;
+		String bar = pattern_start;
 		for (int i = 0; i < sizes.length; i++) {
 			sum_sizes += sizes[i];
 
@@ -52,7 +51,7 @@ public class TextProgressBar {
 		for (int j = 0; j < (max_size - sum_sizes); j++)
 			bar = bar + pattern_empty;
 
-		bar = bar + color_decoration + pattern_end;
+		bar = bar + ChatColor.RESET + pattern_end;
 		return bar;
 	}
 

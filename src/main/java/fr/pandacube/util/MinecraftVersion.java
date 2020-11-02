@@ -34,7 +34,12 @@ public enum MinecraftVersion {
 	v1_14_4(498, "1.14.4"),
 	v1_15(573, "1.15"),
 	v1_15_1(575, "1.15.1"),
-	v1_15_2(578, "1.15.2");
+	v1_15_2(578, "1.15.2"),
+	v1_16(735, "1.16"),
+	v1_16_1(736, "1.16.1"),
+	v1_16_2(751, "1.16.2"),
+	v1_16_3(753, "1.16.3"),
+	v1_16_4(754, "1.16.4");
 	// IMPORTANT: don't forget to update the versionMergeDisplay value when adding a new version;
 	
 	private static Map<EnumSet<MinecraftVersion>, List<String>> versionMergeDisplay;
@@ -102,14 +107,35 @@ public enum MinecraftVersion {
 				ImmutableList.of("1.15", "1.15.1"));
 		versionMergeDisplay.put(EnumSet.of(v1_15_1, v1_15_2),
 				ImmutableList.of("1.15.1", "1.15.2"));
+
+		versionMergeDisplay.put(EnumSet.of(v1_16, v1_16_1, v1_16_2, v1_16_3, v1_16_4),
+				ImmutableList.of("1.16.x"));
+		versionMergeDisplay.put(EnumSet.of(v1_16, v1_16_1, v1_16_2, v1_16_3),
+				ImmutableList.of("1.16-1.16.3"));
+		versionMergeDisplay.put(EnumSet.of(v1_16_1, v1_16_2, v1_16_3, v1_16_4),
+				ImmutableList.of("1.16.1-1.16.4"));
+		versionMergeDisplay.put(EnumSet.of(v1_16, v1_16_1, v1_16_2),
+				ImmutableList.of("1.16-1.16.2"));
+		versionMergeDisplay.put(EnumSet.of(v1_16_1, v1_16_2, v1_16_3),
+				ImmutableList.of("1.16.1-1.16.3"));
+		versionMergeDisplay.put(EnumSet.of(v1_16_2, v1_16_3, v1_16_4),
+				ImmutableList.of("1.16.2-1.16.4"));
+		versionMergeDisplay.put(EnumSet.of(v1_16, v1_16_1),
+				ImmutableList.of("1.16", "1.16.1"));
+		versionMergeDisplay.put(EnumSet.of(v1_16_1, v1_16_2),
+				ImmutableList.of("1.16.1", "1.16.2"));
+		versionMergeDisplay.put(EnumSet.of(v1_16_2, v1_16_3),
+				ImmutableList.of("1.16.2", "1.16.3"));
+		versionMergeDisplay.put(EnumSet.of(v1_16_3, v1_16_4),
+				ImmutableList.of("1.16.3", "1.16.4"));
 	}
 	
 
-	public final int versionNumber;
+	public final int id;
 	public final List<String> versionDisplay;
 
 	private MinecraftVersion(int v, String... d) {
-		versionNumber = v;
+		id = v;
 		versionDisplay = Arrays.asList(d);
 	}
 
@@ -120,19 +146,25 @@ public enum MinecraftVersion {
 
 	public static MinecraftVersion getVersion(int v) {
 		for (MinecraftVersion mcV : values())
-			if (mcV.versionNumber == v) return mcV;
+			if (mcV.id == v) return mcV;
 
 		return null;
 	}
 	
 
 
-	public static String displayOptimizedListOfVersions(List<MinecraftVersion> versions) {
+	public static String displayOptimizedListOfVersionsAnd(List<MinecraftVersion> versions) {
+		return StringUtil.joinGrammatically(", ", " et ", getVersionsDisplayList(versions));
+	}
+
+	public static String displayOptimizedListOfVersionsOr(List<MinecraftVersion> versions) {
 		return StringUtil.joinGrammatically(", ", " et ", getVersionsDisplayList(versions));
 	}
 	
 	
 	public static final List<String> getVersionsDisplayList(List<MinecraftVersion> vList) {
+		if (vList == null)
+			return new ArrayList<>();
 		Set<MinecraftVersion> vSet = EnumSet.copyOf(vList);
 		
 		List<String> ret = new ArrayList<>();

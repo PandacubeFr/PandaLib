@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 import fr.pandacube.util.Log;
-import net.md_5.bungee.api.ChatColor;
+import fr.pandacube.util.text_display.ChatColorUtil;
 /**
  * Classe chargeant en mémoire un fichier de configuration ou un dossier donné
  * @author Marc Baloup
@@ -125,7 +125,7 @@ public abstract class AbstractConfig {
 
 
 	public static String getTranslatedColorCode(String string) {
-		return ChatColor.translateAlternateColorCodes('&', string);
+		return ChatColorUtil.translateAlternateColorCodes('&', string);
 	}
 	
 	

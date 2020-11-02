@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -47,13 +48,20 @@ public interface SuggestionsSupplier<S> {
 	
 	public static <S> SuggestionsSupplier<S> empty() { return (s, ti, t, a) -> Collections.emptyList(); }
 	
+	public static <S> SuggestionsSupplier<S> fromCollectionsSupplier(Supplier<Collection<String>> streamSupplier) {
+		return (s, ti, token, a) -> collectFilteredStream(streamSupplier.get().stream(), token);
+	}
+	
+	public static <S> SuggestionsSupplier<S> fromStreamSupplier(Supplier<Stream<String>> streamSupplier) {
+		return (s, ti, token, a) -> collectFilteredStream(streamSupplier.get(), token);
+	}
 	
 	public static <S> SuggestionsSupplier<S> fromCollection(Collection<String> suggestions) {
-		return (s, ti, token, a) -> collectFilteredStream(suggestions.stream(), token);
+		return fromStreamSupplier(suggestions::stream);
 	}
 	
 	public static <S> SuggestionsSupplier<S> fromArray(String... suggestions) {
-		return (s, ti, token, a) -> collectFilteredStream(Arrays.stream(suggestions), token);
+		return fromStreamSupplier(() -> Arrays.stream(suggestions));
 	}
 	
 	
@@ -79,6 +87,15 @@ public interface SuggestionsSupplier<S> {
 			return collectFilteredStream(st, token);
 		};
 	}
+	
+	
+	
+	public static <S> SuggestionsSupplier<S> booleanValues() {
+		return fromCollection(Arrays.asList("true", "false"));
+	}
+	
+	
+	
 	
 
 	/**
@@ -167,9 +184,11 @@ public interface SuggestionsSupplier<S> {
 		};
 	}
 	
+	
+	
+	
 	/**
 	 * Create a {@link SuggestionsSupplier} that support greedy strings argument using the suggestion from this {@link SuggestionsSupplier}.
-	 * @param args all the arguments currently in the buffer
 	 * @param index the index of the first argument of the greedy string argument
 	 * @return
 	 */
@@ -206,9 +225,119 @@ public interface SuggestionsSupplier<S> {
 	
 	
 	
+
+	
+	public default SuggestionsSupplier<S> quotableString() {
+		return (s, ti, token, a) -> {
+			boolean startWithQuote = token.length() > 0 && (token.charAt(0) == '"' || token.charAt(0) == '\'');
+			String realToken = startWithQuote ? unescapeBrigadierQuotable(token.substring(1), token.charAt(0)) : token;
+			String[] argsCopy = Arrays.copyOf(a, a.length);
+			argsCopy[a.length - 1] = realToken;
+			List<String> rawResults = getSuggestions(s, ti, realToken, argsCopy);
+			
+			boolean needsQuotes = false;
+			for (String res : rawResults) {
+				if (!isAllowedInBrigadierUnquotedString(res)) {
+					needsQuotes = true;
+					break;
+				}
+			}
+			
+			return needsQuotes
+					? rawResults.stream().map(SuggestionsSupplier::escapeBrigadierQuotable).collect(Collectors.toList())
+					: rawResults;
+		};
+	}
+	
+	// inspired from com.mojang.brigadier.StringReader#readQuotedString()
+	static String unescapeBrigadierQuotable(String input, char quote) {
+		StringBuilder builder = new StringBuilder(input.length());
+        boolean escaped = false;
+		for (char c : input.toCharArray()) {
+            if (escaped) {
+                if (c == quote || c == '\\') {
+                    escaped = false;
+                } else {
+                	builder.append('\\');
+                }
+                builder.append(c);
+            } else if (c == '\\') {
+                escaped = true;
+            } else if (c == quote) {
+                return builder.toString();
+            } else {
+                builder.append(c);
+            }
+		}
+		return builder.toString();
+	}
+	
+	// from com.mojang.brigadier.StringReader#isAllowedInUnquotedString(char)
+	static boolean isAllowedInBrigadierUnquotedString(char c) {
+        return c >= '0' && c <= '9' || c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z'
+            || c == '_' || c == '-' || c == '.' || c == '+';
+    }
+	static boolean isAllowedInBrigadierUnquotedString(String s) {
+		for (char c : s.toCharArray())
+			if (!isAllowedInBrigadierUnquotedString(c))
+				return false;
+		return true;
+	}
+
+    static String escapeBrigadierQuotable(final String input) {
+        final StringBuilder result = new StringBuilder("\"");
+
+        for (int i = 0; i < input.length(); i++) {
+            final char c = input.charAt(i);
+            if (c == '\\' || c == '"') {
+                result.append('\\');
+            }
+            result.append(c);
+        }
+
+        result.append("\"");
+        return result.toString();
+    }
+	
+	
+	
+	
+	
 	public default SuggestionsSupplier<S> requires(Predicate<S> check) {
 		return (s, ti, to, a) -> {
 			return check.test(s) ? getSuggestions(s, ti, to, a) : Collections.emptyList();
+		};
+	}
+	
+
+	
+	/**
+	 * Returns a new {@link SuggestionsSupplier} containing all the element of this instance then the element of the provided one,
+	 * with all duplicated values removed using {@link Stream#distinct()}.
+	 * @param other
+	 * @return
+	 */
+	public default SuggestionsSupplier<S> merge(SuggestionsSupplier<S> other) {
+		return (s, ti, to, a) -> {
+			List<String> l1 = getSuggestions(s, ti, to, a);
+			List<String> l2 = other.getSuggestions(s, ti, to, a);
+			return Stream.concat(l1.stream(), l2.stream())
+					.distinct()
+					.collect(Collectors.toList());
+		};
+	}
+
+	
+	/**
+	 * Returns a new {@link SuggestionsSupplier} containing all the suggestions of this instance,
+	 * but if this list is still empty, returns the suggestions from the provided one.
+	 * @param other
+	 * @return
+	 */
+	public default SuggestionsSupplier<S> orIfEmpty(SuggestionsSupplier<S> other) {
+		return (s, ti, to, a) -> {
+			List<String> l1 = getSuggestions(s, ti, to, a);
+			return !l1.isEmpty() ? l1 : other.getSuggestions(s, ti, to, a);
 		};
 	}
 	

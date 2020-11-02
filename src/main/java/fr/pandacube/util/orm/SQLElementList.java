@@ -1,6 +1,5 @@
 package fr.pandacube.util.orm;
 
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -106,31 +105,25 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 		return stream().filter(SQLElement::isStored).collect(Collectors.toCollection(() -> new ArrayList<>()));
 	}
 
+	/**
+	 * @deprecated please use {@link ORM#delete(Class, SQLWhere)} instead,
+	 * except if you really want to fetch the data before removing them from database.
+	 */
+	@Deprecated
 	public synchronized void removeFromDB() {
 		List<E> storedEl = getStoredEl();
 		if (storedEl.isEmpty()) return;
 
 		try {
-
-			String sqlWhere = "";
-			boolean first = true;
-			for (E el : storedEl) {
-				if (!first) sqlWhere += " OR ";
-				first = false;
-				sqlWhere += "id = " + el.getId();
-			}
-
-			try (PreparedStatement st = ORM.getConnection().getNativeConnection()
-					.prepareStatement("DELETE FROM " + storedEl.get(0).tableName() + " WHERE " + sqlWhere)) {
-				Log.debug(st.toString());
-				st.executeUpdate();
-
-				for (E el : storedEl)
-					el.markAsNotStored();
-
-			}
-
-		} catch (SQLException e) {
+			@SuppressWarnings("unchecked")
+			Class<E> classEl = (Class<E>)storedEl.get(0).getClass();
+			
+			ORM.delete(classEl, 
+					storedEl.get(0).getFieldId().in(storedEl.stream().map(SQLElement::getId).collect(Collectors.toList()))
+			);
+			for (E el : storedEl)
+				el.markAsNotStored();
+		} catch (ORMException e) {
 			Log.severe(e);
 		}
 
@@ -150,11 +143,7 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 			return new SQLElementList<>();
 		}
 		
-		SQLWhereOr<P> where = SQLWhere.or();
-		values.forEach(v -> where.or(foreignKey.getPrimaryField().eq(v)));
-		
-		
-		return ORM.getAll(foreignKey.getForeignElementClass(), where, orderBy, null, null);
+		return ORM.getAll(foreignKey.getForeignElementClass(), foreignKey.getPrimaryField().in(values), orderBy, null, null);
 		
 	}
 
@@ -180,11 +169,8 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 		if (values.isEmpty()) {
 			return new SQLElementList<>();
 		}
-
-		SQLWhereOr<F> where = SQLWhere.or();
-		values.forEach(v -> where.or(foreignKey.eq(v)));
 		
-		return ORM.getAll(foreignKey.getSQLElementType(), where, orderBy, limit, offset);
+		return ORM.getAll(foreignKey.getSQLElementType(), foreignKey.in(values), orderBy, limit, offset);
 		
 	}
 

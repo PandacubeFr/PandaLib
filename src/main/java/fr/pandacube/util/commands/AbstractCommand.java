@@ -2,7 +2,9 @@ package fr.pandacube.util.commands;
 
 import java.util.Arrays;
 
-public class AbstractCommand {
+import fr.pandacube.util.text_display.ChatStatic;
+
+public class AbstractCommand extends ChatStatic {
 	
 	public final String commandName;
 	

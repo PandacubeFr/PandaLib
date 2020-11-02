@@ -17,11 +17,11 @@ public class RandomUtil {
 	}
 	
 	public static <T> T arrayElement(T[] arr) {
-		return arr[rand.nextInt(arr.length)];
+		return (arr == null || arr.length == 0) ? null : arr[rand.nextInt(arr.length)];
 	}
 	
 	public static <T> T listElement(List<T> arr) {
-		return arr.get(rand.nextInt(arr.size()));
+		return (arr == null || arr.isEmpty()) ? null : arr.get(rand.nextInt(arr.size()));
 	}
 	
 	/**
