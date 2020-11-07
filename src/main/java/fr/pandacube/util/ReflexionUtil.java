@@ -2,6 +2,15 @@ package fr.pandacube.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ScanResult;
 
 public class ReflexionUtil {
 
@@ -148,6 +157,27 @@ public class ReflexionUtil {
 		return m.invoke(instance, args);
 	}
 	
+	
+	
+	private static Cache<Class<?>, List<Class<?>>> subClassesLists = CacheBuilder.newBuilder()
+			.expireAfterAccess(10, TimeUnit.MINUTES)
+			.build();
+	
+	public static <E> List<Class<? extends E>> getAllSubclasses(Class<E> clazz) {
+		try {
+			@SuppressWarnings("unchecked")
+			List<Class<? extends E>> classes = (List<Class<? extends E>>) (List<?>) subClassesLists.get(clazz, () -> {
+				try (ScanResult scanResult = new ClassGraph().enableClassInfo().ignoreClassVisibility().scan()) {
+					return scanResult.getSubclasses(clazz.getName()).loadClasses();
+				}
+			});
+			return classes;
+		} catch(ExecutionException e) {
+			Log.severe(e);
+			return null;
+		}
+		
+	}
 	
 	
 	
