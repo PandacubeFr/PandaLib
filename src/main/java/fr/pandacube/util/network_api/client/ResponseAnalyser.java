@@ -26,10 +26,14 @@ public class ResponseAnalyser {
 
 		// lecture de la première ligne
 		line = in.readLine();
+		if (line == null)
+			throw new IOException("Not enough data to read first line of response.");
 		good = line.equalsIgnoreCase("OK");
 
 		// lecture de la deuxième ligne
 		line = in.readLine();
+		if (line == null)
+			throw new IOException("Not enough data to read second line of response.");
 
 		int data_size = 0;
 		try {
