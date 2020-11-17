@@ -58,6 +58,17 @@ public class SearchEngine<R extends SearchResult> {
 			return;
 		}
 		
+		Set<String> suggestsKw;
+		try {
+			suggestsKw = result.getSuggestionKeywords();
+			Preconditions.checkNotNull(suggestsKw, "SearchResult instance must provide a non null set of suggestions keywords");
+			suggestsKw = new HashSet<>(suggestsKw);
+			suggestsKw.removeIf(e -> e == null);
+		} catch (Exception e) {
+			Log.severe(e);
+			return;
+		}
+		
 		resultSet.add(result);
 		
 		for (String skw : searchKw) {
@@ -66,17 +77,7 @@ public class SearchEngine<R extends SearchResult> {
 		
 		resultsSearchKeywordsMap.put(result, searchKw);
 		
-		Set<String> suggestsKw;
-		try {
-			suggestsKw = result.getSuggestionKeywords();
-			Preconditions.checkNotNull(suggestsKw, "SearchResult instance must provide a non null set of suggestions keywords");
-			suggestsKw.removeIf(e -> e == null);
-		} catch (Exception e) {
-			Log.severe(e);
-			return;
-		}
-		
-		resultsSuggestionsKeywordsMap.put(result, new HashSet<>(suggestsKw));
+		resultsSuggestionsKeywordsMap.put(result, suggestsKw);
 		
 		for (String skw : suggestsKw) {
 			suggestionsKeywordsResultMap.computeIfAbsent(skw, s -> new HashSet<>()).add(result);
@@ -92,19 +93,27 @@ public class SearchEngine<R extends SearchResult> {
 		resultSet.remove(result);
 		
 		Set<String> searchKw = resultsSearchKeywordsMap.remove(result);
-		for (String skw : searchKw) {
-			Set<R> set = searchKeywordsResultMap.get(skw);
-			set.remove(result);
-			if (set.isEmpty())
-				searchKeywordsResultMap.remove(skw);
+		if (searchKw != null) {
+			for (String skw : searchKw) {
+				Set<R> set = searchKeywordsResultMap.get(skw);
+				if (set == null)
+					continue;
+				set.remove(result);
+				if (set.isEmpty())
+					searchKeywordsResultMap.remove(skw);
+			}
 		}
 		
 		Set<String> suggestsKw = resultsSearchKeywordsMap.remove(result);
-		for (String skw : suggestsKw) {
-			Set<R> set = suggestionsKeywordsResultMap.get(skw);
-			set.remove(result);
-			if (set.isEmpty())
-				suggestionsKeywordsResultMap.remove(skw);
+		if (suggestsKw != null) {
+			for (String skw : suggestsKw) {
+				Set<R> set = suggestionsKeywordsResultMap.get(skw);
+				if (set == null)
+					continue;
+				set.remove(result);
+				if (set.isEmpty())
+					suggestionsKeywordsResultMap.remove(skw);
+			}
 		}
 		
 		resultsSuggestionsKeywordsMap.remove(result);
