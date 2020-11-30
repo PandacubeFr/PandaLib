@@ -29,7 +29,7 @@ public interface SuggestionsSupplier<S> {
 	
 	
 	public static Predicate<String> filter(String token) {
-		return suggestion -> suggestion.toLowerCase().startsWith(token.toLowerCase());
+		return suggestion -> suggestion != null && suggestion.toLowerCase().startsWith(token.toLowerCase());
 	}
 	
 	/**
