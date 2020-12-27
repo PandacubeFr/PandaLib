@@ -23,6 +23,7 @@ public class DBConnection {
 		url = "jdbc:mysql://" + host + ":" + port + "/" + dbname
 				+ "?autoReconnect=true"
 				+ "&useUnicode=true"
+				+ "&useSSL=false"
 				+ "&characterEncoding=utf8"
 				+ "&characterSetResults=utf8"
 				+ "&character_set_server=utf8mb4"
