@@ -141,7 +141,15 @@ public enum MinecraftVersion {
 
 	@Override
 	public String toString() {
+		return toStringAnd();
+	}
+
+	public String toStringAnd() {
 		return StringUtil.joinGrammatically(", ", " et ", versionDisplay);
+	}
+
+	public String toStringOr() {
+		return StringUtil.joinGrammatically(", ", " ou ", versionDisplay);
 	}
 
 	public static MinecraftVersion getVersion(int v) {
