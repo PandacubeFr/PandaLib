@@ -4,15 +4,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>fr.pandacube.pandacube</groupId>
-        <artifactId>PandacubeParentPublic</artifactId>
-        <version>dev</version>
+        <groupId>fr.pandacube.lib</groupId>
+        <artifactId>pandalib-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>PandacubeUtil</artifactId>
+    <artifactId>pandalib-core</artifactId>
     <packaging>jar</packaging>
 
-    <name>PandacubeUtil</name>
+    <name>PandaLib-Core</name>
 	
     <dependencies>
 		<dependency>
