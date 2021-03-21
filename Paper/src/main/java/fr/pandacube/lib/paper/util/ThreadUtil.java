@@ -1,0 +1,35 @@
+package fr.pandacube.lib.paper.util;
+
+import java.util.concurrent.Callable;
+
+import org.bukkit.Bukkit;
+
+import fr.pandacube.lib.paper.PandaLibPaper;
+
+public class ThreadUtil {
+	
+	public static void runOnServerThread(Runnable task) {
+		if (Bukkit.isPrimaryThread())
+			task.run();
+		
+		Bukkit.getScheduler().runTask(PandaLibPaper.getPlugin(), task);
+	}
+	
+	public static <T> T runOnServerThreadAndWait(Callable<T> task) throws Exception {
+		if (Bukkit.isPrimaryThread())
+			return task.call();
+		
+		return Bukkit.getScheduler().callSyncMethod(PandaLibPaper.getPlugin(), task).get();
+	}
+	
+	public static void runOnServerThreadAndWait(Runnable task) throws Exception {
+		runOnServerThreadAndWait((Callable<Void>)() -> {
+			task.run();
+			return null;
+		});
+	}
+	
+	
+	
+
+}
