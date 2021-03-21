@@ -21,7 +21,7 @@ public class SQLPlayerNameHistory extends SQLElement<SQLPlayerNameHistory> {
 
 	@Override
 	protected String tableName() {
-		return "pandacube_player_name_history";
+		return "player_name_history";
 	}
 	
 	public static final SQLFKField<SQLPlayerNameHistory, UUID, SQLPlayer> playerId = foreignKey(false, SQLPlayer.class, SQLPlayer.playerId);

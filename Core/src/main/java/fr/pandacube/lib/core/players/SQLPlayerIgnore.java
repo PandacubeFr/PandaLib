@@ -20,7 +20,7 @@ public class SQLPlayerIgnore extends SQLElement<SQLPlayerIgnore> {
 
 	@Override
 	protected String tableName() {
-		return "pandacube_player_ignore";
+		return "player_ignore";
 	}
 
 	public static final SQLFKField<SQLPlayerIgnore, UUID, SQLPlayer> ignorer = foreignKey(false, SQLPlayer.class, SQLPlayer.playerId);

@@ -25,7 +25,7 @@ public class SQLPlayer extends SQLElement<SQLPlayer> {
 	 */
 	@Override
 	protected String tableName() {
-		return "pandacube_player";
+		return "player";
 	}
 
 	/*

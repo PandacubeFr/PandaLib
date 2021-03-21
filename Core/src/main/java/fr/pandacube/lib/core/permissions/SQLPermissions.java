@@ -15,7 +15,7 @@ public class SQLPermissions extends SQLElement<SQLPermissions> {
 
 	@Override
 	protected String tableName() {
-		return "pandacube_permissions";
+		return "permissions";
 	}
 
 	public static final SQLField<SQLPermissions, String> name = field(VARCHAR(64), false);
