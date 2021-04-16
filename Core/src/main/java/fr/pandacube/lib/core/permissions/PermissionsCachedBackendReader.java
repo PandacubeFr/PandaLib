@@ -89,7 +89,7 @@ import fr.pandacube.lib.core.util.Log;
 			playerSelfPerms = playerRawData.get("permissions").stream()
 					.peek(e -> {
 						String value = e.get(SQLPermissions.value);
-						fullPermissionsList.add(value.substring(value.startsWith("-") ? 1 : 0));
+						fullPermissionsList.add(value.substring(value.startsWith("-") ? 1 : 0).toLowerCase());
 					})
 					.collect(Collectors.groupingBy(e -> new ServerWorldKey(e.get(SQLPermissions.server), e.get(SQLPermissions.world)),
 									LinkedHashMap::new,

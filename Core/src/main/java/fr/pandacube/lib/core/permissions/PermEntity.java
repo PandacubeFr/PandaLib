@@ -1,6 +1,7 @@
 package fr.pandacube.lib.core.permissions;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -73,6 +74,19 @@ public abstract class PermEntity {
 	
 	public void setSelfSuffix(String suffix) {
 		Permissions.backendWriter.setSelfSuffix(name, type, suffix);
+	}
+	
+	
+	public Map<String, Boolean> listEffectivePermissions() {
+		return Permissions.resolver.getEffectivePermissionList(name, type, null, null);
+	}
+	
+	public Map<String, Boolean> listEffectivePermissions(String server) {
+		return Permissions.resolver.getEffectivePermissionList(name, type, server, null);
+	}
+	
+	public Map<String, Boolean> listEffectivePermissions(String server, String world) {
+		return Permissions.resolver.getEffectivePermissionList(name, type, server, world);
 	}
 	
 	

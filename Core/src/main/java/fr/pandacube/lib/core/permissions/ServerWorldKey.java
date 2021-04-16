@@ -20,11 +20,12 @@ public class ServerWorldKey implements Comparable<ServerWorldKey> {
 	public int hashCode() {
 		return Objects.hash(world, server);
 	}
+	
+	private static final Comparator<String> STR_NULL_FIRST_COMPARATOR = Comparator.nullsFirst(String::compareToIgnoreCase);
 	@Override
 	public int compareTo(ServerWorldKey o) {
-		Comparator<String> compStrNullFirst = Comparator.nullsFirst(String::compareToIgnoreCase);
-		return Comparator.comparing((ServerWorldKey k) -> k.server, compStrNullFirst)
-				.thenComparing(k -> k.world, compStrNullFirst)
+		return Comparator.comparing((ServerWorldKey k) -> k.server, STR_NULL_FIRST_COMPARATOR)
+				.thenComparing(k -> k.world, STR_NULL_FIRST_COMPARATOR)
 				.compare(this, o);
 	}
 }

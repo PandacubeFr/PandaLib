@@ -2,7 +2,9 @@ package fr.pandacube.lib.core.permissions;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -39,6 +41,9 @@ public class PermissionsResolver {
 		synchronized (effectivePermissionsCache) {
 			effectivePermissionsCache.asMap().keySet().removeIf(k -> k.type == EntityType.User && playerId.equals(k.name));
 		}
+		synchronized (effectivePermissionsListCache) {
+			effectivePermissionsListCache.asMap().keySet().removeIf(k -> k.type == EntityType.User && playerId.equals(k.name));
+		}
 		synchronized (effectiveDataCache) {
 			effectiveDataCache.asMap().keySet().removeIf(k -> k.type == EntityType.User && playerId.equals(k.name));
 		}
@@ -46,6 +51,7 @@ public class PermissionsResolver {
 	
 	/* package */ void clearCache() {
 		effectivePermissionsCache.invalidateAll();
+		effectivePermissionsListCache.invalidateAll();
 		effectiveDataCache.invalidateAll();
 	}
 	
@@ -70,7 +76,7 @@ public class PermissionsResolver {
 	}
 
 	private Cache<DataCacheKey, String> effectiveDataCache = CacheBuilder.newBuilder()
-			.expireAfterWrite(5, TimeUnit.MINUTES)
+			.expireAfterAccess(10, TimeUnit.MINUTES)
 			.build();
 	
 	private String getEffectiveData(String name, EntityType type, DataType dataType) {
@@ -220,9 +226,48 @@ public class PermissionsResolver {
 	
 	
 	
+	
+	
+	
+	
+	
+	
+
+	
+	private Cache<PermCacheKey, Map<String, Boolean>> effectivePermissionsListCache = CacheBuilder.newBuilder()
+			.expireAfterAccess(10, TimeUnit.MINUTES)
+			.build();
+	
+	/* package */ Map<String, Boolean> getEffectivePermissionList(String name, EntityType type, String server, String world) {
+		Preconditions.checkNotNull(name, "name can’t be null");
+		Preconditions.checkNotNull(type, "type can’t be null");
+		Preconditions.checkArgument(world == null || server != null, "world not null but server is null");
+		
+		String fServer = server == null ? null : server.toLowerCase();
+		String fWorld = world == null ? null : world.toLowerCase();
+		
+		try {
+			return effectivePermissionsListCache.get(new PermCacheKey(name, type, null, fServer, fWorld), () -> {
+				Map<String, Boolean> permList = new LinkedHashMap<>();
+				
+				for (String perm : backendReader.getFullPermissionsList()) {
+					Boolean has = getEffectivePermission(name, type, perm, fServer, fWorld);
+					if (has == null)
+						continue;
+					permList.put(perm.toLowerCase(), has);
+				}
+				
+				return permList;
+			});
+		} catch (ExecutionException e) {
+			Log.severe(e);
+			return null;
+		}
+		
+	}
 
 	private Cache<PermCacheKey, PermState> effectivePermissionsCache = CacheBuilder.newBuilder()
-			.expireAfterWrite(5, TimeUnit.MINUTES)
+			.expireAfterAccess(10, TimeUnit.MINUTES)
 			.build();
 	
 	/* package */ Boolean getEffectivePermission(String name, EntityType type, String permission, String server, String world) {
