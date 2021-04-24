@@ -27,6 +27,10 @@ public class AABBBlock implements Iterable<BlockVector> {
 		this(l1.getBlockX(), l1.getBlockY(), l1.getBlockZ(), l2.getBlockX(), l2.getBlockY(), l2.getBlockZ());
 	}
 	
+	public AABBBlock(BlockVector l1, BlockVector l2) {
+		this(l1.getBlockX(), l1.getBlockY(), l1.getBlockZ(), l2.getBlockX(), l2.getBlockY(), l2.getBlockZ());
+	}
+	
 	public AABBBlock(int p1x, int p1y, int p1z, int p2x, int p2y, int p2z) {
 		/*
 		 * Prends les points extérieurs permettant de former un bouding box englobant
