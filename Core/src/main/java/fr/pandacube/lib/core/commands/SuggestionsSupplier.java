@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import fr.pandacube.lib.core.util.ListUtil;
@@ -106,8 +107,8 @@ public interface SuggestionsSupplier<S> {
 	 * @param max
 	 * @return
 	 */
-	public static <S> SuggestionsSupplier<S> fromIntRange(int min, int max) {
-		return fromLongRange(min, max);
+	public static <S> SuggestionsSupplier<S> fromIntRange(int min, int max, boolean compact) {
+		return fromLongRange(min, max, compact);
 	}
 	
 	
@@ -121,67 +122,72 @@ public interface SuggestionsSupplier<S> {
 	 * @param max
 	 * @return
 	 */
-	public static <S> SuggestionsSupplier<S> fromLongRange(long min, long max) {
+	public static <S> SuggestionsSupplier<S> fromLongRange(long min, long max, boolean compact) {
 		if (max < min) {
 			throw new IllegalArgumentException("min should be less or equals than max");
 		}
-		return (s, ti, token, a) -> {
-			try {
-				List<Long> proposedValues = new ArrayList<>();
-				if (token.length() == 0) {
-					long start = Math.max(Math.max(Math.min(-4, max - 9), min), -9);
-					long end = Math.min(Math.min(start + 9, max), 9);
-					ListUtil.addLongRangeToList(proposedValues, start, end);
-				}
-				else if (token.length() == 1) {
-					if (token.charAt(0) == '0') {
-						if (min > 0 || max < 0) {
-							return Collections.emptyList();
-						}
-						else
-							return Collections.singletonList(token);
+		if (compact) {
+			return (s, ti, token, a) -> {
+				try {
+					List<Long> proposedValues = new ArrayList<>();
+					if (token.length() == 0) {
+						long start = Math.max(Math.max(Math.min(-4, max - 9), min), -9);
+						long end = Math.min(Math.min(start + 9, max), 9);
+						ListUtil.addLongRangeToList(proposedValues, start, end);
 					}
-					else if (token.charAt(0) == '-') {
-						ListUtil.addLongRangeToList(proposedValues, Math.max(-9, min), -1);
+					else if (token.length() == 1) {
+						if (token.charAt(0) == '0') {
+							if (min > 0 || max < 0) {
+								return Collections.emptyList();
+							}
+							else
+								return Collections.singletonList(token);
+						}
+						else if (token.charAt(0) == '-') {
+							ListUtil.addLongRangeToList(proposedValues, Math.max(-9, min), -1);
+						}
+						else {
+							long lToken = Long.parseLong(token);
+							if (lToken > max) {
+								return Collections.emptyList();
+							}
+							
+							lToken *= 10;
+							if (lToken > max) {
+								return Collections.singletonList(token);
+							}
+							
+							ListUtil.addLongRangeToList(proposedValues, lToken, Math.min(lToken + 9, max));
+						}
 					}
 					else {
 						long lToken = Long.parseLong(token);
-						if (lToken > max) {
+						if (lToken < min || lToken > max) {
 							return Collections.emptyList();
 						}
 						
 						lToken *= 10;
-						if (lToken > max) {
+						if (lToken < min || lToken > max) {
 							return Collections.singletonList(token);
 						}
 						
-						ListUtil.addLongRangeToList(proposedValues, lToken, Math.min(lToken + 9, max));
-					}
-				}
-				else {
-					long lToken = Long.parseLong(token);
-					if (lToken < min || lToken > max) {
-						return Collections.emptyList();
-					}
-					
-					lToken *= 10;
-					if (lToken < min || lToken > max) {
-						return Collections.singletonList(token);
+						if (lToken < 0) {
+							ListUtil.addLongRangeToList(proposedValues, Math.max(lToken - 9, min), lToken);
+						}
+						else {
+							ListUtil.addLongRangeToList(proposedValues, lToken, Math.min(lToken + 9, max));
+						}
 					}
 					
-					if (lToken < 0) {
-						ListUtil.addLongRangeToList(proposedValues, Math.max(lToken - 9, min), lToken);
-					}
-					else {
-						ListUtil.addLongRangeToList(proposedValues, lToken, Math.min(lToken + 9, max));
-					}
+					return collectFilteredStream(proposedValues.stream().map(i -> i.toString()), token);
+				} catch (NumberFormatException e) {
+					return Collections.emptyList();
 				}
-				
-				return collectFilteredStream(proposedValues.stream().map(i -> i.toString()), token);
-			} catch (NumberFormatException e) {
-				return Collections.emptyList();
-			}
-		};
+			};
+		}
+		else {
+			return (s, ti, token, a) -> collectFilteredStream(LongStream.rangeClosed(min, max).mapToObj(Long::toString), token);
+		}
 	}
 	
 	
