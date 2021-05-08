@@ -1,5 +1,7 @@
 package fr.pandacube.lib.core.permissions;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import fr.pandacube.lib.core.db.DB;
@@ -10,9 +12,9 @@ import fr.pandacube.lib.core.permissions.SQLPermissions.EntityType;
 	
 	
 	/* package */ void addSelfPermission(String name, EntityType type, String permission, String server, String world) {
-		Preconditions.checkNotNull(name, "name cannot be null");
-		Preconditions.checkNotNull(type, "type cannot be null");
-		Preconditions.checkNotNull(permission, "permission cannot be null");
+		Objects.requireNonNull(name, "name cannot be null");
+		Objects.requireNonNull(type, "type cannot be null");
+		Objects.requireNonNull(permission, "permission cannot be null");
 		Preconditions.checkArgument(world == null || server != null, "world not null but server is null");
 		name = name.toLowerCase();
 		permission = permission.toLowerCase();
@@ -25,9 +27,9 @@ import fr.pandacube.lib.core.permissions.SQLPermissions.EntityType;
 	}
 	
 	/* package */ void removeSelfPermission(String name, EntityType type, String permission, String server, String world) {
-		Preconditions.checkNotNull(name, "name cannot be null");
-		Preconditions.checkNotNull(type, "type cannot be null");
-		Preconditions.checkNotNull(permission, "permission cannot be null");
+		Objects.requireNonNull(name, "name cannot be null");
+		Objects.requireNonNull(type, "type cannot be null");
+		Objects.requireNonNull(permission, "permission cannot be null");
 		Preconditions.checkArgument(world == null || server != null, "world not null but server is null");
 		name = name.toLowerCase();
 		permission = permission.toLowerCase();
@@ -47,7 +49,7 @@ import fr.pandacube.lib.core.permissions.SQLPermissions.EntityType;
 	
 	
 	/* package */ void setGroupDefault(String name, boolean deflt) {
-		Preconditions.checkNotNull(name, "name cannot be null");
+		Objects.requireNonNull(name, "name cannot be null");
 		name = name.toLowerCase();
 		try {
 			SQLPermissions entry = DB.getFirst(SQLPermissions.class,
@@ -85,8 +87,8 @@ import fr.pandacube.lib.core.permissions.SQLPermissions.EntityType;
 	
 	
 	/* package */ void setSelfPrefix(String name, EntityType type, String prefix) {
-		Preconditions.checkNotNull(name, "name cannot be null");
-		Preconditions.checkNotNull(type, "type cannot be null");
+		Objects.requireNonNull(name, "name cannot be null");
+		Objects.requireNonNull(type, "type cannot be null");
 		name = name.toLowerCase();
 		
 		try {
@@ -118,8 +120,8 @@ import fr.pandacube.lib.core.permissions.SQLPermissions.EntityType;
 	}
 	
 	/* package */ void setSelfSuffix(String name, EntityType type, String suffix) {
-		Preconditions.checkNotNull(name, "name cannot be null");
-		Preconditions.checkNotNull(type, "type cannot be null");
+		Objects.requireNonNull(name, "name cannot be null");
+		Objects.requireNonNull(type, "type cannot be null");
 		name = name.toLowerCase();
 		
 		try {
@@ -155,9 +157,9 @@ import fr.pandacube.lib.core.permissions.SQLPermissions.EntityType;
 
 	
 	/* package */ void addInheritance(String name, EntityType type, String inheritance) {
-		Preconditions.checkNotNull(name, "name cannot be null");
-		Preconditions.checkNotNull(type, "type cannot be null");
-		Preconditions.checkNotNull(inheritance, "inheritance cannot be null");
+		Objects.requireNonNull(name, "name cannot be null");
+		Objects.requireNonNull(type, "type cannot be null");
+		Objects.requireNonNull(inheritance, "inheritance cannot be null");
 		name = name.toLowerCase();
 		inheritance = inheritance.toLowerCase();
 		String key = type == EntityType.Group ? "inheritances" : "groups";
@@ -179,9 +181,9 @@ import fr.pandacube.lib.core.permissions.SQLPermissions.EntityType;
 	}
 	
 	/* package */ void removeInheritance(String name, EntityType type, String inheritance) {
-		Preconditions.checkNotNull(name, "name cannot be null");
-		Preconditions.checkNotNull(type, "type cannot be null");
-		Preconditions.checkNotNull(inheritance, "inheritance cannot be null");
+		Objects.requireNonNull(name, "name cannot be null");
+		Objects.requireNonNull(type, "type cannot be null");
+		Objects.requireNonNull(inheritance, "inheritance cannot be null");
 		name = name.toLowerCase();
 		inheritance = inheritance.toLowerCase();
 		String key = type == EntityType.Group ? "inheritances" : "groups";
@@ -201,9 +203,9 @@ import fr.pandacube.lib.core.permissions.SQLPermissions.EntityType;
 	}
 	
 	/* package */ void setInheritance(String name, EntityType type, String inheritance) {
-		Preconditions.checkNotNull(name, "name cannot be null");
-		Preconditions.checkNotNull(type, "type cannot be null");
-		Preconditions.checkNotNull(inheritance, "inheritance cannot be null");
+		Objects.requireNonNull(name, "name cannot be null");
+		Objects.requireNonNull(type, "type cannot be null");
+		Objects.requireNonNull(inheritance, "inheritance cannot be null");
 		name = name.toLowerCase();
 		inheritance = inheritance.toLowerCase();
 		String key = type == EntityType.Group ? "inheritances" : "groups";

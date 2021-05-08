@@ -5,12 +5,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Preconditions;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
@@ -48,7 +48,7 @@ public class SearchEngine<R extends SearchResult> {
 		Set<String> searchKw;
 		try {
 			searchKw = result.getSearchKeywords();
-			Preconditions.checkNotNull(searchKw, "SearchResult instance must provide a non null set of search keywords");
+			Objects.requireNonNull(searchKw, "SearchResult instance must provide a non null set of search keywords");
 			searchKw = searchKw.stream()
 					.filter(e -> e != null)
 					.map(String::toLowerCase)
@@ -61,7 +61,7 @@ public class SearchEngine<R extends SearchResult> {
 		Set<String> suggestsKw;
 		try {
 			suggestsKw = result.getSuggestionKeywords();
-			Preconditions.checkNotNull(suggestsKw, "SearchResult instance must provide a non null set of suggestions keywords");
+			Objects.requireNonNull(suggestsKw, "SearchResult instance must provide a non null set of suggestions keywords");
 			suggestsKw = new HashSet<>(suggestsKw);
 			suggestsKw.removeIf(e -> e == null);
 		} catch (Exception e) {

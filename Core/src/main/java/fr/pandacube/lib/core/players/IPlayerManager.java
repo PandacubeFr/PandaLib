@@ -5,10 +5,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -151,7 +151,7 @@ public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPl
 	 * @throws IllegalArgumentException if message is null.
 	 */
 	public static void broadcast(BaseComponent message, boolean prefix, boolean console, String permission, UUID sourcePlayer) {
-		Preconditions.checkNotNull(message, "message cannot be null");
+		Objects.requireNonNull(message, "message cannot be null");
 		
 		IOffPlayer oSourcePlayer = getInstance().getOffline(sourcePlayer);
 		
@@ -310,7 +310,7 @@ public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPl
 	 * @throws IllegalArgumentException if message is null.
 	 */
 	public static void broadcast(Chat message, boolean prefix, boolean console, String permission, UUID sourcePlayer) {
-		Preconditions.checkNotNull(message, "message cannot be null");
+		Objects.requireNonNull(message, "message cannot be null");
 		broadcast(message.get(), prefix, console, permission, sourcePlayer);
 	}
 

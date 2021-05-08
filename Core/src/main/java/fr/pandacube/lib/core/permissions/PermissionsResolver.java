@@ -80,8 +80,8 @@ public class PermissionsResolver {
 			.build();
 	
 	private String getEffectiveData(String name, EntityType type, DataType dataType) {
-		Preconditions.checkNotNull(name, "name can’t be null");
-		Preconditions.checkNotNull(type, "type can’t be null");
+		Objects.requireNonNull(name, "name can’t be null");
+		Objects.requireNonNull(type, "type can’t be null");
 		
 		try {
 			return effectiveDataCache.get(new DataCacheKey(name, type, dataType), () -> {
@@ -239,8 +239,8 @@ public class PermissionsResolver {
 			.build();
 	
 	/* package */ Map<String, Boolean> getEffectivePermissionList(String name, EntityType type, String server, String world) {
-		Preconditions.checkNotNull(name, "name can’t be null");
-		Preconditions.checkNotNull(type, "type can’t be null");
+		Objects.requireNonNull(name, "name can’t be null");
+		Objects.requireNonNull(type, "type can’t be null");
 		Preconditions.checkArgument(world == null || server != null, "world not null but server is null");
 		
 		String fServer = server == null ? null : server.toLowerCase();
@@ -271,9 +271,9 @@ public class PermissionsResolver {
 			.build();
 	
 	/* package */ Boolean getEffectivePermission(String name, EntityType type, String permission, String server, String world) {
-		Preconditions.checkNotNull(name, "name can’t be null");
-		Preconditions.checkNotNull(type, "type can’t be null");
-		Preconditions.checkNotNull(permission, "permission can’t be null");
+		Objects.requireNonNull(name, "name can’t be null");
+		Objects.requireNonNull(type, "type can’t be null");
+		Objects.requireNonNull(permission, "permission can’t be null");
 		Preconditions.checkArgument(world == null || server != null, "world not null but server is null");
 		
 		boolean reversed = false;
