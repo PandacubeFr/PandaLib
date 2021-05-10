@@ -42,8 +42,16 @@ public abstract class BrigadierCommand extends ChatStatic {
 		}
 		dispatcher = BrigadierDispatcher.getInstance();
 		
-		LiteralArgumentBuilder<CommandSender> builder = buildCommand();
-		String[] aliases = getAliases();
+		LiteralArgumentBuilder<CommandSender> builder;
+		String[] aliases;
+		
+		try {
+			builder = buildCommand();
+			aliases = getAliases();
+		} catch (Exception e) {
+			Log.severe("Exception encountered when building Brigadier command " + getClass().getName(), e);
+			return;
+		}
 		if (aliases == null)
 			aliases = new String[0];
 		
