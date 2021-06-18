@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.javatuples.Pair;
-
 import net.md_5.bungee.api.ChatColor;
 
 public class ChatColorUtil {
@@ -257,10 +255,12 @@ public class ChatColorUtil {
 	
 	
 	public static class ChatValueGradient {
-		List<Pair<Float, ChatColor>> colors = new ArrayList<>();
+		private record GradientValueColor(float value, ChatColor color) { }
+		
+		List<GradientValueColor> colors = new ArrayList<>();
 		
 		public synchronized ChatValueGradient add(float v, ChatColor col) {
-			colors.add(Pair.with(v, col));
+			colors.add(new GradientValueColor(v, col));
 			return this;
 		}
 		
@@ -268,23 +268,23 @@ public class ChatColorUtil {
 			if (colors.isEmpty())
 				throw new IllegalStateException("Must define at least one color in this ChatValueGradient instance.");
 			if (colors.size() == 1)
-				return colors.get(0).getValue1();
+				return colors.get(0).color();
 			
-			colors.sort((p1, p2) -> Float.compare(p1.getValue0(), p2.getValue0()));
+			colors.sort((p1, p2) -> Float.compare(p1.value(), p2.value()));
 			
-			if (v <= colors.get(0).getValue0())
-				return colors.get(0).getValue1();
-			if (v >= colors.get(colors.size() - 1).getValue0())
-				return colors.get(colors.size() - 1).getValue1();
+			if (v <= colors.get(0).value())
+				return colors.get(0).color();
+			if (v >= colors.get(colors.size() - 1).value())
+				return colors.get(colors.size() - 1).color();
 			
 			int p1 = 1;
 			for (; p1 < colors.size(); p1++) {
-				if (colors.get(p1).getValue0() >= v)
+				if (colors.get(p1).value() >= v)
 					break;
 			}
 			int p0 = p1 - 1;
-			float v0 = colors.get(p0).getValue0(), v1 = colors.get(p1).getValue0();
-			ChatColor cc0 = colors.get(p0).getValue1(), cc1 = colors.get(p1).getValue1();
+			float v0 = colors.get(p0).value(), v1 = colors.get(p1).value();
+			ChatColor cc0 = colors.get(p0).color(), cc1 = colors.get(p1).color();
 			
 			return interpolateColor(v0, v1, v, cc0, cc1);
 		}

@@ -13,8 +13,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import org.javatuples.Pair;
-
 import fr.pandacube.lib.core.util.Log;
 
 /**
@@ -70,12 +68,12 @@ public final class DB {
 		Collection<SQLField<E, ?>> tableFields = elem.getFields().values();
 		boolean first = true;
 		for (SQLField<E, ?> f : tableFields) {
-			Pair<String, List<Object>> statementPart = f.forSQLPreparedStatement();
-			params.addAll(statementPart.getValue1());
+			ParameterizedSQLString statementPart = f.forSQLPreparedStatement();
+			params.addAll(statementPart.parameters());
 
 			if (!first) sql += ", ";
 			first = false;
-			sql += statementPart.getValue0();
+			sql += statementPart.sqlString();
 		}
 
 		sql += ", PRIMARY KEY id(id))";
@@ -197,9 +195,9 @@ public final class DB {
 			List<Object> params = new ArrayList<>();
 
 			if (where != null) {
-				Pair<String, List<Object>> ret = where.toSQL();
-				sql += " WHERE " + ret.getValue0();
-				params.addAll(ret.getValue1());
+				ParameterizedSQLString ret = where.toSQL();
+				sql += " WHERE " + ret.sqlString();
+				params.addAll(ret.parameters());
 			}
 			if (orderBy != null) sql += " ORDER BY " + orderBy.toSQL();
 			if (limit != null) sql += " LIMIT " + limit;
@@ -233,9 +231,9 @@ public final class DB {
 			List<Object> params = new ArrayList<>();
 
 			if (where != null) {
-				Pair<String, List<Object>> ret = where.toSQL();
-				sql += " WHERE " + ret.getValue0();
-				params.addAll(ret.getValue1());
+				ParameterizedSQLString ret = where.toSQL();
+				sql += " WHERE " + ret.sqlString();
+				params.addAll(ret.parameters());
 			}
 			sql += ";";
 			
@@ -302,12 +300,12 @@ public final class DB {
 			return truncateTable(elemClass);
 		}
 		
-		Pair<String, List<Object>> whereData = where.toSQL();
+		ParameterizedSQLString whereData = where.toSQL();
 		
 		String sql = "DELETE FROM " + getTableName(elemClass)
-				+ " WHERE " + whereData.getValue0()
+				+ " WHERE " + whereData.sqlString()
 				+ ";";
-		List<Object> params = new ArrayList<>(whereData.getValue1());
+		List<Object> params = new ArrayList<>(whereData.parameters());
 		
 		return customUpdateStatement(sql, params);
 

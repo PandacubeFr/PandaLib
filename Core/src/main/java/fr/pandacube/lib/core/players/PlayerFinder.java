@@ -11,8 +11,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.ToIntBiFunction;
 import java.util.stream.Collectors;
 
-import org.javatuples.Pair;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -38,16 +36,17 @@ public class PlayerFinder {
 			.expireAfterWrite(2, TimeUnit.MINUTES)
 			.maximumSize(1000)
 			.build();
-
-	private static Cache<Pair<String, Boolean>, UUID> playerId = CacheBuilder.newBuilder()
+	
+	record PlayerIdCacheKey(String pName, boolean old) { }
+	private static Cache<PlayerIdCacheKey, UUID> playerId = CacheBuilder.newBuilder()
 			.expireAfterWrite(2, TimeUnit.MINUTES)
 			.maximumSize(1000)
 			.build();
 	
 	public static void clearCacheEntry(UUID pId, String pName) {
 		playerLastKnownName.invalidate(pId);
-		playerId.invalidate(Pair.with(pName.toLowerCase(), true));
-		playerId.invalidate(Pair.with(pName.toLowerCase(), false));
+		playerId.invalidate(new PlayerIdCacheKey(pName.toLowerCase(), true));
+		playerId.invalidate(new PlayerIdCacheKey(pName.toLowerCase(), false));
 	}
 
 	public static String getLastKnownName(UUID id) {
@@ -88,7 +87,7 @@ public class PlayerFinder {
 			return null; // évite une recherche inutile dans la base de donnée
 
 		try {
-			return playerId.get(Pair.with(exactName.toLowerCase(), old), () -> {
+			return playerId.get(new PlayerIdCacheKey(exactName.toLowerCase(), old), () -> {
 				try {
 					SQLPlayer el = DB.getFirst(SQLPlayer.class,
 							SQLPlayer.playerName.like(exactName.replace("_", "\\_")),
@@ -204,14 +203,15 @@ public class PlayerFinder {
 		return DIFF_CHAR_DISTANCE;
 	};
 	
-	private static LoadingCache<String, List<Pair<String, UUID>>> namesCache = CacheBuilder.newBuilder()
+	record NamesCacheResult(String name, UUID id) { }
+	private static LoadingCache<String, List<NamesCacheResult>> namesCache = CacheBuilder.newBuilder()
 			.expireAfterWrite(2, TimeUnit.MINUTES)
 			.maximumSize(1)
 			.build(CacheLoader.from((String k) -> {
-				List<Pair<String, UUID>> cached = new ArrayList<>();
+				List<NamesCacheResult> cached = new ArrayList<>();
 				try {
 					DB.forEach(SQLPlayerNameHistory.class, el -> {
-						cached.add(Pair.with(el.get(SQLPlayerNameHistory.playerName), el.get(SQLPlayerNameHistory.playerId)));
+						cached.add(new NamesCacheResult(el.get(SQLPlayerNameHistory.playerName), el.get(SQLPlayerNameHistory.playerId)));
 					});
 				} catch (DBException e) {
 					throw new RuntimeException(e);
@@ -226,12 +226,12 @@ public class PlayerFinder {
 				List<FoundName> foundNames = new ArrayList<>();
 				try {
 					namesCache.get("").forEach(el -> {
-						String name = el.getValue0();
+						String name = el.name();
 						int dist = new LevenshteinDistance(name.toLowerCase(), query, SURPLUS_CHAR_DISTANCE, MISSING_CHAR_DISTANCE, CHAR_DISTANCE).getCurrentDistance();
 						if (dist <= SEARCH_MAX_DISTANCE) {
 							FoundName n = new FoundName();
 							n.dist = dist;
-							n.id = el.getValue1();
+							n.id = el.id();
 							n.name = name;
 							foundNames.add(n);
 						}

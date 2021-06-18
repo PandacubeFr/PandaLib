@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.javatuples.Pair;
-
 import fr.pandacube.lib.core.util.Log;
 
 public class SQLUpdate<E extends SQLElement<E>> {
@@ -57,9 +55,9 @@ public class SQLUpdate<E extends SQLElement<E>> {
 		}
 
 		if (where != null) {
-			Pair<String, List<Object>> ret = where.toSQL();
-			sql += " WHERE " + ret.getValue0();
-			params.addAll(ret.getValue1());
+			ParameterizedSQLString ret = where.toSQL();
+			sql += " WHERE " + ret.sqlString();
+			params.addAll(ret.parameters());
 		}
 		
 		sql += ";";

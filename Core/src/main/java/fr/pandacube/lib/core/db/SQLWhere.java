@@ -5,18 +5,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.javatuples.Pair;
-
 import fr.pandacube.lib.core.util.Log;
 
 public abstract class SQLWhere<E extends SQLElement<E>> {
 
-	public abstract Pair<String, List<Object>> toSQL() throws DBException;
+	public abstract ParameterizedSQLString toSQL() throws DBException;
 
 	@Override
 	public String toString() {
 		try {
-			return toSQL().getValue0();
+			return toSQL().sqlString();
 		} catch (DBException e) {
 			Log.warning(e);
 			return "[SQLWhere.toString() error (see logs)]";
@@ -66,7 +64,7 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 		}
 		
 		@Override
-		public Pair<String, List<Object>> toSQL() throws DBException {
+		public ParameterizedSQLString toSQL() throws DBException {
 			if (conditions.isEmpty()) {
 				throw new DBException("SQLWhereChain needs at least one element inside !");
 			}
@@ -79,12 +77,12 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 				if (!first) sql += " " + operator.sql + " ";
 				first = false;
 
-				Pair<String, List<Object>> ret = w.toSQL();
-				sql += "(" + ret.getValue0() + ")";
-				params.addAll(ret.getValue1());
+				ParameterizedSQLString ret = w.toSQL();
+				sql += "(" + ret.sqlString() + ")";
+				params.addAll(ret.parameters());
 			}
 
-			return new Pair<>(sql, params);
+			return new ParameterizedSQLString(sql, params);
 		}
 
 		protected enum SQLBoolOp {
@@ -169,10 +167,10 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 		}
 
 		@Override
-		public Pair<String, List<Object>> toSQL() throws DBException {
+		public ParameterizedSQLString toSQL() throws DBException {
 			List<Object> params = new ArrayList<>();
 			SQLElement.addValueToSQLObjectList(params, left, right);
-			return new Pair<>("`" + left.getName() + "` " + comp.sql + " ? ", params);
+			return new ParameterizedSQLString("`" + left.getName() + "` " + comp.sql + " ? ", params);
 		}
 
 		/* package */ enum SQLComparator {
@@ -217,11 +215,11 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 		}
 
 		@Override
-		public Pair<String, List<Object>> toSQL() throws DBException {
+		public ParameterizedSQLString toSQL() throws DBException {
 			List<Object> params = new ArrayList<>();
 			
 			if (values.isEmpty())
-				return new Pair<>(" 1=0 ", params);
+				return new ParameterizedSQLString(" 1=0 ", params);
 			
 			for (Object v : values)
 				SQLElement.addValueToSQLObjectList(params, field, v);
@@ -230,7 +228,7 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 			for (int i = 0; i < questions.length; i++)
 				questions[i] = i % 2 == 0 ? '?' : ',';
 			
-			return new Pair<>("`" + field.getName() + "` IN (" + new String(questions) + ") ", params);
+			return new ParameterizedSQLString("`" + field.getName() + "` IN (" + new String(questions) + ") ", params);
 		}
 
 	}
@@ -261,10 +259,10 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 		}
 
 		@Override
-		public Pair<String, List<Object>> toSQL() {
+		public ParameterizedSQLString toSQL() {
 			ArrayList<Object> params = new ArrayList<>();
 			params.add(likeExpr);
-			return new Pair<>("`" + field.getName() + "` LIKE ? ", params);
+			return new ParameterizedSQLString("`" + field.getName() + "` LIKE ? ", params);
 		}
 
 	}
@@ -297,8 +295,8 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 		}
 
 		@Override
-		public Pair<String, List<Object>> toSQL() {
-			return new Pair<>("`" + fild.getName() + "` IS " + ((nulll) ? "NULL" : "NOT NULL"), new ArrayList<>());
+		public ParameterizedSQLString toSQL() {
+			return new ParameterizedSQLString("`" + fild.getName() + "` IS " + ((nulll) ? "NULL" : "NOT NULL"), new ArrayList<>());
 		}
 
 	}

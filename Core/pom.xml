@@ -27,16 +27,16 @@
             <version>${bungeecord.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
+        <!-- <dependency>
             <groupId>org.javatuples</groupId>
             <artifactId>javatuples</artifactId>
             <version>1.2</version>
             <scope>compile</scope>
-        </dependency>
+        </dependency> -->
         <dependency>
 		    <groupId>io.github.classgraph</groupId>
 		    <artifactId>classgraph</artifactId>
-		    <version>4.8.90</version>
+		    <version>4.8.108</version>
             <scope>compile</scope>
 		</dependency>
     </dependencies>

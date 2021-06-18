@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.javatuples.Pair;
-
 import fr.pandacube.lib.core.db.SQLWhere.SQLWhereComp;
+import fr.pandacube.lib.core.db.SQLWhere.SQLWhereComp.SQLComparator;
 import fr.pandacube.lib.core.db.SQLWhere.SQLWhereIn;
 import fr.pandacube.lib.core.db.SQLWhere.SQLWhereLike;
 import fr.pandacube.lib.core.db.SQLWhere.SQLWhereNull;
-import fr.pandacube.lib.core.db.SQLWhere.SQLWhereComp.SQLComparator;
 
 public class SQLField<E extends SQLElement<E>, T> {
 
@@ -40,10 +38,10 @@ public class SQLField<E extends SQLElement<E>, T> {
 		this(t, nul, false, deflt);
 	}
 
-	/* package */ Pair<String, List<Object>> forSQLPreparedStatement() {
+	/* package */ ParameterizedSQLString forSQLPreparedStatement() {
 		List<Object> params = new ArrayList<>(1);
 		if (defaultValue != null && !autoIncrement) params.add(defaultValue);
-		return new Pair<>("`" + getName() + "` " + type.toString() + (canBeNull ? " NULL" : " NOT NULL")
+		return new ParameterizedSQLString("`" + getName() + "` " + type.toString() + (canBeNull ? " NULL" : " NOT NULL")
 				+ (autoIncrement ? " AUTO_INCREMENT" : "")
 				+ ((defaultValue == null || autoIncrement) ? "" : " DEFAULT ?"), params);
 	}
@@ -72,7 +70,7 @@ public class SQLField<E extends SQLElement<E>, T> {
 	 */
 	@Override
 	public String toString() {
-		return forSQLPreparedStatement().getValue0().replaceFirst("\\?",
+		return forSQLPreparedStatement().sqlString().replaceFirst("\\?",
 				(defaultValue != null && !autoIncrement) ? defaultValue.toString() : "");
 	}
 
