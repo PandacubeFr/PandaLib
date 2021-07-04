@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import com.google.common.base.MoreObjects;
 
 import fr.pandacube.lib.core.util.Log;
 
@@ -156,9 +156,10 @@ public class PServer extends Thread implements Closeable {
 	
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this)
-				.append("thread", getName())
-				.append("socket", socket).toString();
+		return MoreObjects.toStringHelper(this)
+				.add("thread", getName())
+				.add("socket", socket)
+				.toString();
 	}
 
 }

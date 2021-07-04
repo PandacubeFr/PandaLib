@@ -17,8 +17,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -368,13 +368,13 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 
 	@Override
 	public String toString() {
-		ToStringBuilder b = new ToStringBuilder(this);
+		ToStringHelper b = MoreObjects.toStringHelper(this);
 
 		for (SQLField<E, ?> f : fields.values())
 			try {
-				b.append(f.getName(), get(f));
+				b.add(f.getName(), get(f));
 			} catch (IllegalArgumentException e) {
-				b.append(f.getName(), "(Undefined)");
+				b.add(f.getName(), "(Undefined)");
 			}
 
 		return b.toString();

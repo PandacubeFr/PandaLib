@@ -15,24 +15,12 @@
     <name>PandaLib-Core</name>
 	
     <dependencies>
-		<dependency>
-			<groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
-            <scope>compile</scope>
-		</dependency>
         <dependency>
             <groupId>fr.pandacube.bungeecord</groupId>
             <artifactId>bungeecord-chat</artifactId>
             <version>${bungeecord.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- <dependency>
-            <groupId>org.javatuples</groupId>
-            <artifactId>javatuples</artifactId>
-            <version>1.2</version>
-            <scope>compile</scope>
-        </dependency> -->
         <dependency>
 		    <groupId>io.github.classgraph</groupId>
 		    <artifactId>classgraph</artifactId>
