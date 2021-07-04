@@ -255,7 +255,16 @@ public class ChatColorUtil {
 	
 	
 	public static class ChatValueGradient {
-		private record GradientValueColor(float value, ChatColor color) { }
+		//private record GradientValueColor(float value, ChatColor color) { } // Java 16
+		private static class GradientValueColor {
+			private final float value;
+			private final ChatColor color;
+			public GradientValueColor(float value, ChatColor color) {
+				this.value = value; this.color = color;
+			}
+			public float value() { return value; }
+			public ChatColor color() { return color; }
+		}
 		
 		List<GradientValueColor> colors = new ArrayList<>();
 		

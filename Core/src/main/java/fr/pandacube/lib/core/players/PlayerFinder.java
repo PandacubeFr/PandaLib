@@ -37,7 +37,16 @@ public class PlayerFinder {
 			.maximumSize(1000)
 			.build();
 	
-	record PlayerIdCacheKey(String pName, boolean old) { }
+	//record PlayerIdCacheKey(String pName, boolean old) { } // Java 16
+	static class PlayerIdCacheKey {
+		private final String pName;
+		private final boolean old;
+		public PlayerIdCacheKey(String pName, boolean old) {
+			this.pName = pName; this.old = old;
+		}
+		public String pName() { return pName; }
+		public boolean old() { return old; }
+	}
 	private static Cache<PlayerIdCacheKey, UUID> playerId = CacheBuilder.newBuilder()
 			.expireAfterWrite(2, TimeUnit.MINUTES)
 			.maximumSize(1000)
@@ -203,7 +212,17 @@ public class PlayerFinder {
 		return DIFF_CHAR_DISTANCE;
 	};
 	
-	record NamesCacheResult(String name, UUID id) { }
+	// record NamesCacheResult(String name, UUID id) { } // Java 16
+	static class NamesCacheResult {
+		private final String name;
+		private final UUID id;
+		public NamesCacheResult(String name, UUID id) {
+			this.name = name; this.id = id;
+		}
+		public String name() { return name; }
+		public UUID id() { return id; }
+	}
+	
 	private static LoadingCache<String, List<NamesCacheResult>> namesCache = CacheBuilder.newBuilder()
 			.expireAfterWrite(2, TimeUnit.MINUTES)
 			.maximumSize(1)
