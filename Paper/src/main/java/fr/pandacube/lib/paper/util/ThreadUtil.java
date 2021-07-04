@@ -1,9 +1,11 @@
 package fr.pandacube.lib.paper.util;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 import org.bukkit.Bukkit;
 
+import fr.pandacube.lib.core.util.Log;
 import fr.pandacube.lib.paper.PandaLibPaper;
 
 public class ThreadUtil {
@@ -19,7 +21,13 @@ public class ThreadUtil {
 		if (Bukkit.isPrimaryThread())
 			return task.call();
 		
-		return Bukkit.getScheduler().callSyncMethod(PandaLibPaper.getPlugin(), task).get();
+		try {
+			return Bukkit.getScheduler().callSyncMethod(PandaLibPaper.getPlugin(), task).get();
+		} catch (ExecutionException e) {
+			Log.severe("Execution Exception while running code on server Thread. The source exception is:",
+					e.getCause());
+			throw e;
+		}
 	}
 	
 	public static void runOnServerThreadAndWait(Runnable task) throws Exception {

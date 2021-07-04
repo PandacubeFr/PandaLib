@@ -5,6 +5,8 @@ import java.net.ServerSocket;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import fr.pandacube.lib.core.util.Log;
+
 @Deprecated
 public class NetworkAPIListener implements Runnable {
 
@@ -40,7 +42,7 @@ public class NetworkAPIListener implements Runnable {
 			}
 		}
 
-		System.out.println("NetworkAPI '" + name + "' à l'écoute sur le port " + port);
+		Log.info("NetworkAPI '" + name + "' à l'écoute sur le port " + port);
 
 		try {
 			// réception des connexion client
@@ -57,7 +59,7 @@ public class NetworkAPIListener implements Runnable {
 			} catch (IOException e) {}
 		}
 
-		System.out.println("NetworkAPI '" + name + "' ferme le port " + port);
+		Log.info("NetworkAPI '" + name + "' ferme le port " + port);
 
 	}
 
