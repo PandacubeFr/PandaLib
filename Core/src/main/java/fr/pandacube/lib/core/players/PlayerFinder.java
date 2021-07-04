@@ -316,7 +316,7 @@ public class PlayerFinder {
 				
 				searchResponseList.removeIf(p -> {
 					if (p.name == null) { // if the current name was not found in the database
-						Log.warning("Cannot find current name for player " + p.id, new Throwable());
+						Log.warning("[PlayerFinder] Name found in history table for id " + p.id + " but the current name was not found in the player table.");
 						return true;
 					}
 					return false;
