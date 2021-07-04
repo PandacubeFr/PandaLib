@@ -1,7 +1,6 @@
 package fr.pandacube.lib.paper.util;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 
 import org.bukkit.Bukkit;
 
@@ -21,13 +20,14 @@ public class ThreadUtil {
 		if (Bukkit.isPrimaryThread())
 			return task.call();
 		
-		try {
-			return Bukkit.getScheduler().callSyncMethod(PandaLibPaper.getPlugin(), task).get();
-		} catch (ExecutionException e) {
-			Log.severe("Execution Exception while running code on server Thread. The source exception is:",
-					e.getCause());
-			throw e;
-		}
+		return Bukkit.getScheduler().callSyncMethod(PandaLibPaper.getPlugin(), () -> {
+			try {
+				return task.call();
+			} catch (Exception e) {
+				Log.severe("Exception while running callback code on server Thread. The source exception is:", e);
+				throw e;
+			}
+		}).get();
 	}
 	
 	public static void runOnServerThreadAndWait(Runnable task) throws Exception {
