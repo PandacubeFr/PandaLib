@@ -20,6 +20,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import fr.pandacube.lib.core.util.Log;
 import fr.pandacube.lib.paper.PandaLibPaper;
+import net.kyori.adventure.text.Component;
 
 public class AutoUpdatedBossBar implements Listener {
 	
@@ -100,7 +101,7 @@ public class AutoUpdatedBossBar implements Listener {
 		followPlayerList = true;
 		BukkitEvent.register(this);
 		Bukkit.getServer().getOnlinePlayers().forEach(p -> {
-			onPlayerJoin(new PlayerJoinEvent(p, ""));
+			onPlayerJoin(new PlayerJoinEvent(p, Component.text("")));
 		});
 	}
 	

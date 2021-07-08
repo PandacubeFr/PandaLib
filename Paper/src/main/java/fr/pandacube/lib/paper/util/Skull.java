@@ -99,10 +99,10 @@ public enum Skull {
         boolean b = meta.setOwner(name);
         
         if (dispName != null)
-        	meta.setDisplayNameComponent(dispName.getAsArray());
+        	meta.displayName(dispName.getAdv());
         
         if (lore != null)
-        	meta.setLoreComponents(lore.stream().map(c -> c.getAsArray()).collect(Collectors.toList()));
+        	meta.lore(lore.stream().map(c -> c.getAdv()).collect(Collectors.toList()));
         
         itemStack.setItemMeta(meta);
         return itemStack;
@@ -172,10 +172,10 @@ public enum Skull {
         headMeta.setPlayerProfile(profile);
         
         if (dispName != null)
-        	headMeta.setDisplayNameComponent(dispName.getAsArray());
+        	headMeta.displayName(dispName.getAdv());
         
         if (lore != null)
-        	headMeta.setLoreComponents(lore.stream().map(c -> c.getAsArray()).collect(Collectors.toList()));
+        	headMeta.lore(lore.stream().map(c -> c.getAdv()).collect(Collectors.toList()));
         
         head.setItemMeta(headMeta);
         

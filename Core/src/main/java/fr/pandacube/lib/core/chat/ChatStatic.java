@@ -3,31 +3,32 @@ package fr.pandacube.lib.core.chat;
 import java.util.Objects;
 
 import fr.pandacube.lib.core.chat.Chat.FormatableChat;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.KeybindComponent;
-import net.md_5.bungee.api.chat.Keybinds;
-import net.md_5.bungee.api.chat.ScoreComponent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.TranslatableComponent;
 
 public abstract class ChatStatic {
 
-	
+
+
+	public static FormatableChat chatComponent(Component c) {
+		return new FormatableChat(c);
+	}
 
 	public static FormatableChat chatComponent(BaseComponent c) {
-		return new FormatableChat(c);
+		return new FormatableChat(Chat.toAdventure(c));
 	}
 	
 	public static FormatableChat chat() {
-		return chatComponent(new TextComponent());
+		return chatComponent(Component.empty());
 	}
 	
 	public static FormatableChat chatComponent(BaseComponent[] c) {
-		return chatComponent(new TextComponent(c));
+		return chatComponent(Chat.toAdventure(c));
 	}
 
 	public static FormatableChat text(Object plainText) {
-		return chatComponent(new TextComponent(Objects.toString(plainText)));
+		return chatComponent(Component.text(Objects.toString(plainText)));
 	}
 
 	public static FormatableChat legacyText(Object legacyText) {
@@ -59,15 +60,15 @@ public abstract class ChatStatic {
 	}
 
 	public static FormatableChat translation(String key, Object... with) {
-		return chatComponent(new TranslatableComponent(key, Chat.filterChatToBaseComponent(with)));
+		return chatComponent(Component.translatable(key, Chat.filterObjToComponentLike(with)));
 	}
 
-	/** @param key one of the values in {@link Keybinds}. */
+	/** @param key one of the values in {@link net.md_5.bungee.api.chat.Keybinds} */
 	public static FormatableChat keybind(String key) {
-		return chatComponent(new KeybindComponent(key));
+		return chatComponent(Component.keybind(key));
 	}
 
-	public static FormatableChat score(String name, String objective, String value) {
-		return chatComponent(new ScoreComponent(name, objective, value));
+	public static FormatableChat score(String name, String objective) {
+		return chatComponent(Component.score(name, objective));
 	}
 }

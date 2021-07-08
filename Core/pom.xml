@@ -13,6 +13,13 @@
     <packaging>jar</packaging>
 
     <name>PandaLib-Core</name>
+    
+    <repositories>
+    	<repository>
+	      <id>sonatype-oss-snapshots</id>
+	      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+	    </repository>
+    </repositories>
 	
     <dependencies>
         <dependency>
@@ -21,6 +28,19 @@
             <version>${bungeecord.version}</version>
             <scope>compile</scope>
         </dependency>
+        
+        <dependency>
+		    <groupId>net.kyori</groupId>
+		    <artifactId>adventure-api</artifactId>
+		    <version>4.7.0</version>
+		 </dependency>
+		 <dependency>
+			<groupId>net.kyori</groupId>
+			<artifactId>adventure-platform-bungeecord</artifactId>
+			<version>4.0.0-SNAPSHOT</version>
+		</dependency>
+		 
+		 
         <dependency>
 		    <groupId>io.github.classgraph</groupId>
 		    <artifactId>classgraph</artifactId>

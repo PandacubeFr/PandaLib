@@ -9,11 +9,11 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 
+import fr.pandacube.lib.core.chat.Chat;
 import fr.pandacube.lib.core.chat.ChatUtil;
 import net.md_5.bungee.api.ChatColor;
 
 public class ScoreBoardUtil {
-
 	/**
 	 * Met à jour la Sidebar d'un Scoreboard donné
 	 *
@@ -23,7 +23,21 @@ public class ScoreBoardUtil {
 	 *        tableau est null, il sera compté comme une chaine vide. Toutes les
 	 *        lignes seront rognés aux 40 premiers caractères
 	 */
+	@Deprecated
 	public static void updateScoreboardSidebar(Scoreboard scBrd, String title, String[] lines) {
+		updateScoreboardSidebar(scBrd, Chat.legacyText(title), lines);
+	}
+
+	/**
+	 * Met à jour la Sidebar d'un Scoreboard donné
+	 *
+	 * @param scBrd Le Scoreboard à mettre à jour (ne doit pas être null)
+	 * @param title Le titre de la Sidebar
+	 * @param lines Les lignes qui doivent être affichés. Si un éléments du
+	 *        tableau est null, il sera compté comme une chaine vide. Toutes les
+	 *        lignes seront rognés aux 40 premiers caractères
+	 */
+	public static void updateScoreboardSidebar(Scoreboard scBrd, Chat title, String[] lines) {
 		if (scBrd == null) throw new IllegalArgumentException("scBrd doit être non null");
 		if (lines == null) lines = new String[0];
 		
@@ -33,15 +47,15 @@ public class ScoreBoardUtil {
 			obj = null;
 		}
 		
-		title = title == null ? "" : ChatUtil.truncateAtLengthWithoutReset(title, 32);
-		
 		if (obj == null)
-			obj = scBrd.registerNewObjective("sidebar_autogen", "dummy", title);
+			obj = scBrd.registerNewObjective("sidebar_autogen", "dummy", title.getAdv());
+		else {
+			if (!title.getAdv().equals(obj.displayName()))
+				obj.displayName(title.getAdv());
+			if (!DisplaySlot.SIDEBAR.equals(obj.getDisplaySlot()))
+				obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+		}
 		
-		if (!title.equals(obj.getDisplayName()))
-			obj.setDisplayName(title);
-		if (!DisplaySlot.SIDEBAR.equals(obj.getDisplaySlot()))
-			obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 		
 		filterLines(lines);
 		

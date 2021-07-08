@@ -60,7 +60,7 @@ public class ChatUtil {
 		return chat()
 				.clickURL(url)
 				.color(Chat.getConfig().urlColor)
-				.hoverText(
+				.hover(
 						hover != null ? hover : Chat.text(dispURL)
 				)
 				.then(element)
@@ -86,7 +86,7 @@ public class ChatUtil {
 				.clickCommand(commandWithSlash)
 				.color(Chat.getConfig().commandColor);
 		if (hoverText != null)
-			c.hoverText(hoverText);
+			c.hover(hoverText);
 		return c.then(d).get();
 	}
 
@@ -111,7 +111,7 @@ public class ChatUtil {
 				.clickSuggest(commandWithSlash)
 				.color(Chat.getConfig().commandColor);
 		if (hoverText != null)
-			c.hoverText(hoverText);
+			c.hover(hoverText);
 		return c.then(d).get();
 	}
 

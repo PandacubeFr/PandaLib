@@ -34,9 +34,17 @@ public class GUIInventory implements Listener {
 	private boolean isOpened = false;
 	private Map<Integer, Callback<InventoryClickEvent>> onClickEvents;
 
+	@Deprecated
 	public GUIInventory(Player p, int nbLines, String title, Callback<InventoryCloseEvent> closeEventAction,
 			Plugin pl) {
-		inv = Bukkit.createInventory(null, nbLines * 9, title);
+		this(p, nbLines, title == null ? null : Chat.legacyText(title), closeEventAction, pl);
+	}
+	public GUIInventory(Player p, int nbLines, Chat title, Callback<InventoryCloseEvent> closeEventAction,
+			Plugin pl) {
+		if (title == null)
+			inv = Bukkit.createInventory(null, nbLines * 9);
+		else
+			inv = Bukkit.createInventory(null, nbLines * 9, title.getAdv());
 
 		setCloseEvent(closeEventAction);
 

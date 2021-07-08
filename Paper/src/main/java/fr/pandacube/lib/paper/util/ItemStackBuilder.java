@@ -15,7 +15,9 @@ import com.google.common.collect.Streams;
 
 import fr.pandacube.lib.core.chat.Chat;
 import fr.pandacube.lib.core.chat.Chat.FormatableChat;
-import net.md_5.bungee.api.chat.BaseComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.format.TextDecoration.State;
 
 public class ItemStackBuilder {
 
@@ -57,28 +59,28 @@ public class ItemStackBuilder {
 		stack.setAmount(a);
 		return this;
 	}
-	
-	public ItemStackBuilder rawDisplayName(BaseComponent[] displayName) {
+
+	public ItemStackBuilder rawDisplayName(Component displayName) {
 		if (displayName != null)
-			getOrInitMeta().setDisplayNameComponent(displayName);
+			getOrInitMeta().displayName(displayName);
 		else
-			getOrInitMeta().setDisplayName(null);
+			getOrInitMeta().displayName(null);
 		updateMeta();
 		return this;
 	}
 	
 	public ItemStackBuilder displayName(Chat displayName) {
 		if (displayName != null) {
-			if (displayName.get().isItalicRaw() == null)
+			if (displayName.getAdv().style().decoration(TextDecoration.ITALIC) == State.NOT_SET)
 				((FormatableChat)displayName).italic(false);
-			return rawDisplayName(displayName.getAsArray());
+			return rawDisplayName(displayName.getAdv());
 		}
 		else
-			return rawDisplayName(null);
+			return rawDisplayName((Component) null);
 	}
 	
-	public ItemStackBuilder rawLore(List<BaseComponent[]> lore) {
-		getOrInitMeta().setLoreComponents(lore);
+	public ItemStackBuilder rawLore(List<Component> lore) {
+		getOrInitMeta().lore(lore);
 		updateMeta();
 		return this;
 	}
@@ -86,11 +88,7 @@ public class ItemStackBuilder {
 	public ItemStackBuilder lore(List<Chat> lore) {
 		if (lore != null) {
 			return rawLore(lore.stream()
-					.map(line -> {
-						if (line.get().isItalicRaw() == null)
-							((FormatableChat)line).italic(false);
-						return line.getAsArray();
-					})
+					.map(line -> Chat.italicFalseIfNotSet(line).getAdv())
 					.collect(Collectors.toList()));
 		}
 		else
@@ -99,17 +97,13 @@ public class ItemStackBuilder {
 	
 	public ItemStackBuilder addLoreAfter(List<Chat> lore) {
 		if (lore != null) {
-			List<BaseComponent[]> baseLore = getOrInitMeta().getLoreComponents();
+			List<Component> baseLore = getOrInitMeta().lore();
 			if (baseLore == null) baseLore = Collections.emptyList();
 			return rawLore(
 					Streams.concat(
 							baseLore.stream(),
 							lore.stream()
-							.map(line -> {
-								if (line.get().isItalicRaw() == null)
-									((FormatableChat)line).italic(false);
-								return line.getAsArray();
-							})
+							.map(line -> Chat.italicFalseIfNotSet(line).getAdv())
 					)
 					.collect(Collectors.toList()));
 		}
