@@ -1,7 +1,6 @@
 package fr.pandacube.lib.core.chat;
 
 import static fr.pandacube.lib.core.chat.ChatStatic.chat;
-import static fr.pandacube.lib.core.chat.ChatStatic.chatComponent;
 import static fr.pandacube.lib.core.chat.ChatStatic.legacyText;
 import static fr.pandacube.lib.core.chat.ChatStatic.text;
 
@@ -11,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -47,24 +47,23 @@ public class ChatUtil {
 	
 	
 
-	public static BaseComponent createURLLink(String text, String url) {
+	public static FormatableChat createURLLink(String text, String url) {
 		return createURLLink(legacyText(text), url, null);
 	}
 	
-	public static BaseComponent createURLLink(String text, String url, String hoverText) {
+	public static FormatableChat createURLLink(String text, String url, String hoverText) {
 		return createURLLink(legacyText(text), url, hoverText != null ? legacyText(hoverText) : null);
 	}
 	
-	/* package */ static BaseComponent createURLLink(Chat element, String url, Chat hover) {
+	/* package */ static FormatableChat createURLLink(Chat element, String url, Chat hover) {
 		String dispURL = (url.length() > 50) ? (url.substring(0, 48) + "...") : url;
-		return chat()
+		return (FormatableChat) chat()
 				.clickURL(url)
 				.color(Chat.getConfig().urlColor)
 				.hover(
 						hover != null ? hover : Chat.text(dispURL)
 				)
-				.then(element)
-				.get();
+				.then(element);
 	}
 	
 	
@@ -74,20 +73,20 @@ public class ChatUtil {
 	
 	
 	
-	public static BaseComponent createCommandLink(String text, String commandWithSlash, String hoverText) {
+	public static FormatableChat createCommandLink(String text, String commandWithSlash, String hoverText) {
 		return createCommandLink(text, commandWithSlash, hoverText == null ? null : legacyText(hoverText));
 	}
-	public static BaseComponent createCommandLink(String text, String commandWithSlash, Chat hoverText) {
+	public static FormatableChat createCommandLink(String text, String commandWithSlash, Chat hoverText) {
 		return createCommandLink(legacyText(text), commandWithSlash, hoverText);
 	}
 	
-	/* package */ static BaseComponent createCommandLink(Chat d, String commandWithSlash, Chat hoverText) {
+	/* package */ static FormatableChat createCommandLink(Chat d, String commandWithSlash, Chat hoverText) {
 		FormatableChat c = chat()
 				.clickCommand(commandWithSlash)
 				.color(Chat.getConfig().commandColor);
 		if (hoverText != null)
 			c.hover(hoverText);
-		return c.then(d).get();
+		return (FormatableChat) c.then(d);
 	}
 
 	
@@ -99,20 +98,20 @@ public class ChatUtil {
 	
 	
 
-	public static BaseComponent createCommandSuggest(String text, String commandWithSlash, String hoverText) {
+	public static FormatableChat createCommandSuggest(String text, String commandWithSlash, String hoverText) {
 		return createCommandSuggest(text, commandWithSlash, hoverText == null ? null : legacyText(hoverText));
 	}
-	public static BaseComponent createCommandSuggest(String text, String commandWithSlash, Chat hoverText) {
+	public static FormatableChat createCommandSuggest(String text, String commandWithSlash, Chat hoverText) {
 		return createCommandSuggest(legacyText(text), commandWithSlash, hoverText);
 	}
 	
-	/* package */ static BaseComponent createCommandSuggest(Chat d, String commandWithSlash, Chat hoverText) {
+	/* package */ static FormatableChat createCommandSuggest(Chat d, String commandWithSlash, Chat hoverText) {
 		FormatableChat c = chat()
 				.clickSuggest(commandWithSlash)
 				.color(Chat.getConfig().commandColor);
 		if (hoverText != null)
 			c.hover(hoverText);
-		return c.then(d).get();
+		return (FormatableChat) c.then(d);
 	}
 
 
@@ -125,7 +124,7 @@ public class ChatUtil {
 	/**
 	 * @param cmdFormat the command with %d inside to be replaced with the page number (must start with slash)
 	 */
-	public static BaseComponent createPagination(String prefix, String cmdFormat, int currentPage, int nbPages, int nbPagesToDisplay) {
+	public static Chat createPagination(String prefix, String cmdFormat, int currentPage, int nbPages, int nbPagesToDisplay) {
 		Set<Integer> pagesToDisplay = new TreeSet<>();
 		
 		for (int i = 0; i < nbPagesToDisplay && i < nbPages && nbPages - i > 0; i++) {
@@ -160,7 +159,7 @@ public class ChatUtil {
 			else
 				first = false;
 			
-			FormatableChat pDisp = chatComponent(createCommandLink(Integer.toString(page), String.format(cmdFormat, page), "Aller à la page " + page));
+			FormatableChat pDisp = (FormatableChat) createCommandLink(Integer.toString(page), String.format(cmdFormat, page), "Aller à la page " + page);
 			if (page == currentPage) {
 				pDisp.color(Chat.getConfig().highlightedCommandColor);
 			}
@@ -170,7 +169,7 @@ public class ChatUtil {
 		}
 		
 		
-		return d.get();
+		return d;
 	}
 	
 	
@@ -182,10 +181,10 @@ public class ChatUtil {
 	
 	
 	
-	public static BaseComponent centerText(BaseComponent text, char repeatedChar, ChatColor decorationColor,
+	public static Chat centerText(Chat text, char repeatedChar, ChatColor decorationColor,
 			boolean console) {
 
-		int textWidth = componentWidth(text, console);
+		int textWidth = componentWidth(text.get(), console);
 		int maxWidth = (console) ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH;
 		
 		if (textWidth > maxWidth)
@@ -206,14 +205,14 @@ public class ChatUtil {
 		if (repeatedChar != ' ')
 			d.then(text(sideChars).color(decorationColor));
 
-		return d.get();
+		return d;
 
 	}
 
-	public static BaseComponent leftText(BaseComponent text, char repeatedChar, ChatColor decorationColor, int nbLeft,
+	public static Chat leftText(Chat text, char repeatedChar, ChatColor decorationColor, int nbLeft,
 			boolean console) {
 		
-		int textWidth = componentWidth(text, console);
+		int textWidth = componentWidth(text.get(), console);
 		int maxWidth = (console) ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH;
 		int repeatedCharWidth = charW(repeatedChar, console, false);
 		int leftWidth = nbLeft * repeatedCharWidth;
@@ -229,14 +228,14 @@ public class ChatUtil {
 		if (repeatedChar != ' ') {
 			d.then(text(repeatedChar(repeatedChar, rightNbChar)).color(decorationColor));
 		}
-		return d.get();
+		return d;
 		
 	}
 
-	public static BaseComponent rightText(BaseComponent text, char repeatedChar, ChatColor decorationColor, int nbRight,
+	public static Chat rightText(Chat text, char repeatedChar, ChatColor decorationColor, int nbRight,
 			boolean console) {
 		
-		int textWidth = componentWidth(text, console);
+		int textWidth = componentWidth(text.get(), console);
 		int maxWidth = (console) ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH;
 		int repeatedCharWidth = charW(repeatedChar, console, false);
 		int rightWidth = nbRight * repeatedCharWidth;
@@ -252,13 +251,13 @@ public class ChatUtil {
 		if (repeatedChar != ' ') {
 			d.then(text(repeatedChar(repeatedChar, nbRight)).color(decorationColor));
 		}
-		return d.get();
+		return d;
 
 	}
 
-	public static BaseComponent emptyLine(char repeatedChar, ChatColor decorationColor, boolean console) {
+	public static Chat emptyLine(char repeatedChar, ChatColor decorationColor, boolean console) {
 		int count = ((console) ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH) / charW(repeatedChar, console, false);
-		return text(repeatedChar(repeatedChar, count)).color(decorationColor).get();
+		return text(repeatedChar(repeatedChar, count)).color(decorationColor);
 	}
 
 	private static String repeatedChar(char repeatedChar, int count) {
@@ -329,6 +328,12 @@ public class ChatUtil {
 	
 	
 	
+	public static List<Chat> wrapInLimitedPixelsToChat(String legacyText, int pixelWidth) {
+		return wrapInLimitedPixels(legacyText, pixelWidth).stream()
+				.map(t -> legacyText(t))
+				.collect(Collectors.toList());
+	}
+	
 	public static List<String> wrapInLimitedPixels(String legacyText, int pixelWidth) {
 		List<String> lines = new ArrayList<>();
 		
@@ -341,7 +346,7 @@ public class ChatUtil {
 		String currentWord = "";
 		int currentWordSize = 0;
 		boolean bold = false;
-		boolean firstCharCurrentWorldBold = false;
+		boolean firstCharCurrentWordBold = false;
 		
 		do {
 			char c = legacyText.charAt(index);
@@ -366,7 +371,7 @@ public class ChatUtil {
 					String lastStyle = ChatColorUtil.getLastColors(currentLine);
 					if (currentWord.charAt(0) == ' ') {
 						currentWord = currentWord.substring(1);
-						currentWordSize -= charW(' ', false, firstCharCurrentWorldBold);
+						currentWordSize -= charW(' ', false, firstCharCurrentWordBold);
 					}
 					currentLine = (lastStyle.equals("§r") ? "" : lastStyle) + currentWord;
 					currentLineSize = currentWordSize;
@@ -377,7 +382,7 @@ public class ChatUtil {
 				}
 				currentWord = ""+c;
 				currentWordSize = charW(c, false, bold);
-				firstCharCurrentWorldBold = bold;
+				firstCharCurrentWordBold = bold;
 			}
 			else if (c == '\n') {
 				if (currentLineSize + currentWordSize > pixelWidth && currentLineSize > 0) { // wrap before word
@@ -385,7 +390,7 @@ public class ChatUtil {
 					String lastStyle = ChatColorUtil.getLastColors(currentLine);
 					if (currentWord.charAt(0) == ' ') {
 						currentWord = currentWord.substring(1);
-						currentWordSize -= charW(' ', false, firstCharCurrentWorldBold);
+						currentWordSize -= charW(' ', false, firstCharCurrentWordBold);
 					}
 					currentLine = (lastStyle.equals("§r") ? "" : lastStyle) + currentWord;
 					currentLineSize = currentWordSize;
@@ -402,7 +407,7 @@ public class ChatUtil {
 				currentLineSize = 0;
 				currentWord = "";
 				currentWordSize = 0;
-				firstCharCurrentWorldBold = bold;
+				firstCharCurrentWordBold = bold;
 			}
 			else {
 				currentWord += c;

@@ -1,5 +1,6 @@
 package fr.pandacube.lib.paper.util;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,12 +22,41 @@ import net.kyori.adventure.text.format.TextDecoration.State;
 
 public class ItemStackBuilder {
 
+	/**
+	 * Create a builder with a clone of the provided ItemStack.
+	 * 
+	 * The returned builder will not alter the provided ItemStack.
+	 * IF you want to modify the ItemStack with the builder, please use {@link #wrap(ItemStack)}.
+	 * 
+	 * @param base the original ItemStack.
+	 * @return the builder
+	 */
 	public static ItemStackBuilder of(ItemStack base) {
-		return new ItemStackBuilder(base.clone());
+		return wrap(base.clone());
 	}
-	
+
+	/**
+	 * Create a builder of a new ItemStack with the specified Material.
+	 * 
+	 * @param mat the material of the new builded ItemStack
+	 * @return the builder
+	 */
 	public static ItemStackBuilder of(Material mat) {
-		return new ItemStackBuilder(new ItemStack(mat));
+		return wrap(new ItemStack(mat));
+	}
+
+	/**
+	 * Create a builder that will alter the data of the provided ItemStack.
+	 * 
+	 * The {@link #build()} method of thez returned builder will return the same instance
+	 * of ItemStack as the parameter of this method.
+	 * 
+	 * To create a builder that doesn’t modify the provided ItemStack, use {@link #of(ItemStack)}.
+	 * @param stack
+	 * @return the builder
+	 */
+	public static ItemStackBuilder wrap(ItemStack stack) {
+		return new ItemStackBuilder(stack);
 	}
 	
 	
@@ -95,20 +125,26 @@ public class ItemStackBuilder {
 			return rawLore(Collections.emptyList());
 	}
 	
-	public ItemStackBuilder addLoreAfter(List<Chat> lore) {
-		if (lore != null) {
+	public ItemStackBuilder addLoreAfter(List<Chat> lores) {
+		if (lores != null) {
 			List<Component> baseLore = getOrInitMeta().lore();
 			if (baseLore == null) baseLore = Collections.emptyList();
 			return rawLore(
 					Streams.concat(
 							baseLore.stream(),
-							lore.stream()
+							lores.stream()
 							.map(line -> Chat.italicFalseIfNotSet(line).getAdv())
 					)
 					.collect(Collectors.toList()));
 		}
 		else
 			return this;
+	}
+	
+	public ItemStackBuilder addLoreAfter(Chat... lores) {
+		if (lores == null || lores.length == 0)
+			return this;
+		return addLoreAfter(Arrays.asList(lores));
 	}
 	
 	public ItemStackBuilder enchant(Enchantment ench, int level) {

@@ -34,6 +34,10 @@
 		          <groupId>net.kyori</groupId>
 		          <artifactId>adventure-api</artifactId>
 		        </exclusion>
+            	<exclusion>
+		          <groupId>net.kyori</groupId>
+		          <artifactId>adventure-text-serializer-plain</artifactId>
+		        </exclusion>
             </exclusions>
         </dependency>
         

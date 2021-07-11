@@ -20,6 +20,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.format.TextDecoration.State;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 
@@ -28,7 +29,7 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 	protected Component component;
 	protected boolean console = false;
 	
-	public Chat(Component c) {
+	protected Chat(Component c) {
 		Objects.requireNonNull(c, "Provided component must not be null");
 		component = c;
 	}
@@ -48,6 +49,10 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 	
 	public String getLegacyText() {
 		return LegacyComponentSerializer.legacySection().serializeOr(component, "");
+	}
+	
+	public String getPlainText() {
+		return PlainComponentSerializer.plain().serializeOr(component, "");
 	}
 	
 	
@@ -142,7 +147,7 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 	 * @return this, for method chaining
 	 */
 	public Chat thenLeftTextCharLine(Chat leftText) {
-		return then(ChatUtil.leftText(chat().decorationColor().thenText(" ").then(leftText).thenText(" ").get(), config.decorationChar,
+		return then(ChatUtil.leftText(chat().decorationColor().thenText(" ").then(leftText).thenText(" "), config.decorationChar,
 				config.decorationColor, config.nbCharMargin, console));
 	}
 	/**
@@ -161,7 +166,7 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 	 * @return this, for method chaining
 	 */
 	public Chat thenRightTextCharLine(Chat rightText) {
-		return then(ChatUtil.rightText(chat().decorationColor().thenText(" ").then(rightText).thenText(" ").get(), config.decorationChar,
+		return then(ChatUtil.rightText(chat().decorationColor().thenText(" ").then(rightText).thenText(" "), config.decorationChar,
 				config.decorationColor, config.nbCharMargin, console));
 	}
 	/**
@@ -180,7 +185,7 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 	 * @return this, for method chaining
 	 */
 	public Chat thenCenterTextCharLine(Chat centerText) {
-		return then(ChatUtil.centerText(chat().decorationColor().thenText(" ").then(centerText).thenText(" ").get(), config.decorationChar,
+		return then(ChatUtil.centerText(chat().decorationColor().thenText(" ").then(centerText).thenText(" "), config.decorationChar,
 				config.decorationColor, console));
 	}
 	/**
@@ -205,7 +210,7 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 	
 	
 	public static class FormatableChat extends Chat {
-		public FormatableChat(Component c) {
+		/* package */ FormatableChat(Component c) {
 			super(c);
 		}
 		
@@ -213,7 +218,7 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 
 		public FormatableChat color(TextColor c) { component.color(c); return this; }
 		public FormatableChat color(ChatColor c) { return color(TextColor.color(c.getColor().getRGB())); }
-		public FormatableChat color(Color c) { return color(ChatColor.of(c)); }
+		public FormatableChat color(Color c) { return color(TextColor.color(c.getRGB())); }
 		public FormatableChat color(String c) { return color(ChatColor.of(c)); }
 		
 		public FormatableChat black() { return color(ChatColor.BLACK); }
@@ -279,13 +284,6 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 		public FormatableChat hover(BaseComponent[] v) { return hover(toAdventure(v)); }
 		public FormatableChat hover(String legacyText) { return hover(legacyText(legacyText)); }
 		
-		@Deprecated
-		public FormatableChat hoverText(BaseComponent v) { return hover(v); }
-		@Deprecated
-		public FormatableChat hoverText(Chat v) { return hover(v); }
-		@Deprecated
-		public FormatableChat hoverText(String legacyText) { return hover(legacyText); }
-		
 	}
 	
 	
@@ -341,17 +339,17 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 	}
 	
 
-	/* package */ static Component toAdventure(BaseComponent[] components) {
+	public static Component toAdventure(BaseComponent[] components) {
 		return BungeeComponentSerializer.get().deserialize(components);
 	}
-	/* package */ static Component toAdventure(BaseComponent component) {
+	public static Component toAdventure(BaseComponent component) {
 		return toAdventure(new BaseComponent[] { component });
 	}
 	
-	/* package */ static BaseComponent[] toBungeeArray(Component component) {
+	public static BaseComponent[] toBungeeArray(Component component) {
 		return BungeeComponentSerializer.get().serialize(component);
 	}
-	/* package */ static BaseComponent toBungee(Component component) {
+	public static BaseComponent toBungee(Component component) {
 		BaseComponent[] arr = toBungeeArray(component);
 		return arr.length == 1 ? arr[0] : new net.md_5.bungee.api.chat.TextComponent(arr);
 	}
