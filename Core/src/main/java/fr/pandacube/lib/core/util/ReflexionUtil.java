@@ -64,50 +64,53 @@ public class ReflexionUtil {
 	}
 
 	
-	public static Object invokeMethod(Object instance, String methodName) throws ReflectiveOperationException {
+	public static void setDeclaredFieldValue(Object instance, String fieldName, Object value) throws ReflectiveOperationException {
 		if (instance == null)
 			throw new IllegalArgumentException("instance can't be null");
-		return invokeMethod(instance, methodName, new Class<?>[0]);
+		setDeclaredFieldValue(instance.getClass(), instance, fieldName, value);
 	}
 	
-	public static Object invokeMethod(Object instance, String methodName, Class<?>[] parameterTypes, Object... args) throws ReflectiveOperationException {
+	public static void setDeclaredFieldValue(String className, String fieldName, Object value) throws ReflectiveOperationException {
+		setDeclaredFieldValue(Class.forName(className), null, fieldName, value);
+	}
+	
+	public static void setDeclaredFieldValue(String className, Object instance, String fieldName, Object value) throws ReflectiveOperationException {
+		setDeclaredFieldValue(Class.forName(className), null, fieldName, value);
+	}
+	
+	public static void setDeclaredFieldValue(Class<?> clazz, String fieldName, Object value) throws ReflectiveOperationException {
+		setDeclaredFieldValue(clazz, null, fieldName, value);
+	}
+	
+	public static void setDeclaredFieldValue(Class<?> clazz, Object instance, String fieldName, Object value) throws ReflectiveOperationException {
+		Field f = clazz.getDeclaredField(fieldName);
+		f.setAccessible(true);
+		f.set(instance, value);
+	}
+
+	
+	public static void setFieldValue(Object instance, String fieldName, Object value) throws ReflectiveOperationException {
 		if (instance == null)
 			throw new IllegalArgumentException("instance can't be null");
-		return invokeMethod(instance.getClass(), instance, methodName, parameterTypes, args);
+		setFieldValue(instance.getClass(), instance, fieldName, value);
 	}
 	
-	public static Object invokeMethod(String className, String methodName) throws ReflectiveOperationException {
-		return invokeMethod(Class.forName(className), null, methodName, new Class<?>[0]);
+	public static void setFieldValue(String className, String fieldName, Object value) throws ReflectiveOperationException {
+		setFieldValue(Class.forName(className), null, fieldName, value);
 	}
 	
-	public static Object invokeMethod(String className, String methodName, Class<?>[] parameterTypes, Object... args) throws ReflectiveOperationException {
-		return invokeMethod(Class.forName(className), null, methodName, parameterTypes, args);
+	public static void setFieldValue(String className, Object instance, String fieldName, Object value) throws ReflectiveOperationException {
+		setFieldValue(Class.forName(className), null, fieldName, value);
 	}
 	
-	public static Object invokeMethod(String className, Object instance, String methodName) throws ReflectiveOperationException {
-		return invokeMethod(Class.forName(className), instance, methodName, new Class<?>[0]);
+	public static void setFieldValue(Class<?> clazz, String fieldName, Object value) throws ReflectiveOperationException {
+		setFieldValue(clazz, null, fieldName, value);
 	}
 	
-	public static Object invokeMethod(String className, Object instance, String methodName, Class<?>[] parameterTypes, Object... args) throws ReflectiveOperationException {
-		return invokeMethod(Class.forName(className), instance, methodName, parameterTypes, args);
-	}
-	
-	public static Object invokeMethod(Class<?> clazz, String methodName) throws ReflectiveOperationException {
-		return invokeMethod(clazz, null, methodName, new Class<?>[0]);
-	}
-	
-	public static Object invokeMethod(Class<?> clazz, String methodName, Class<?>[] parameterTypes, Object... args) throws ReflectiveOperationException {
-		return invokeMethod(clazz, null, methodName, parameterTypes, args);
-	}
-	
-	public static Object invokeMethod(Class<?> clazz, Object instance, String methodName) throws ReflectiveOperationException {
-		return invokeMethod(clazz, instance, methodName, new Class<?>[0]);
-	}
-	
-	public static Object invokeMethod(Class<?> clazz, Object instance, String methodName, Class<?>[] parameterTypes, Object... args) throws ReflectiveOperationException {
-		Method m = clazz.getMethod(methodName, parameterTypes);
-		m.setAccessible(true);
-		return m.invoke(instance, args);
+	public static void setFieldValue(Class<?> clazz, Object instance, String fieldName, Object value) throws ReflectiveOperationException {
+		Field f = clazz.getField(fieldName);
+		f.setAccessible(true);
+		f.set(instance, value);
 	}
 
 
@@ -153,6 +156,53 @@ public class ReflexionUtil {
 	
 	public static Object invokeDeclaredMethod(Class<?> clazz, Object instance, String methodName, Class<?>[] parameterTypes, Object... args) throws ReflectiveOperationException {
 		Method m = clazz.getDeclaredMethod(methodName, parameterTypes);
+		m.setAccessible(true);
+		return m.invoke(instance, args);
+	}
+
+	
+	public static Object invokeMethod(Object instance, String methodName) throws ReflectiveOperationException {
+		if (instance == null)
+			throw new IllegalArgumentException("instance can't be null");
+		return invokeMethod(instance, methodName, new Class<?>[0]);
+	}
+	
+	public static Object invokeMethod(Object instance, String methodName, Class<?>[] parameterTypes, Object... args) throws ReflectiveOperationException {
+		if (instance == null)
+			throw new IllegalArgumentException("instance can't be null");
+		return invokeMethod(instance.getClass(), instance, methodName, parameterTypes, args);
+	}
+	
+	public static Object invokeMethod(String className, String methodName) throws ReflectiveOperationException {
+		return invokeMethod(Class.forName(className), null, methodName, new Class<?>[0]);
+	}
+	
+	public static Object invokeMethod(String className, String methodName, Class<?>[] parameterTypes, Object... args) throws ReflectiveOperationException {
+		return invokeMethod(Class.forName(className), null, methodName, parameterTypes, args);
+	}
+	
+	public static Object invokeMethod(String className, Object instance, String methodName) throws ReflectiveOperationException {
+		return invokeMethod(Class.forName(className), instance, methodName, new Class<?>[0]);
+	}
+	
+	public static Object invokeMethod(String className, Object instance, String methodName, Class<?>[] parameterTypes, Object... args) throws ReflectiveOperationException {
+		return invokeMethod(Class.forName(className), instance, methodName, parameterTypes, args);
+	}
+	
+	public static Object invokeMethod(Class<?> clazz, String methodName) throws ReflectiveOperationException {
+		return invokeMethod(clazz, null, methodName, new Class<?>[0]);
+	}
+	
+	public static Object invokeMethod(Class<?> clazz, String methodName, Class<?>[] parameterTypes, Object... args) throws ReflectiveOperationException {
+		return invokeMethod(clazz, null, methodName, parameterTypes, args);
+	}
+	
+	public static Object invokeMethod(Class<?> clazz, Object instance, String methodName) throws ReflectiveOperationException {
+		return invokeMethod(clazz, instance, methodName, new Class<?>[0]);
+	}
+	
+	public static Object invokeMethod(Class<?> clazz, Object instance, String methodName, Class<?>[] parameterTypes, Object... args) throws ReflectiveOperationException {
+		Method m = clazz.getMethod(methodName, parameterTypes);
 		m.setAccessible(true);
 		return m.invoke(instance, args);
 	}
