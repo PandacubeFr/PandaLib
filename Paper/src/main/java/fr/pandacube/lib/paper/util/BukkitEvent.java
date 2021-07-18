@@ -2,6 +2,7 @@ package fr.pandacube.lib.paper.util;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
@@ -11,6 +12,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.IllegalPluginAccessException;
+import org.bukkit.plugin.RegisteredListener;
+import org.bukkit.scheduler.BukkitTask;
 
 import fr.pandacube.lib.core.util.ReflexionUtil;
 import fr.pandacube.lib.paper.PandaLibPaper;
@@ -90,6 +93,52 @@ public class BukkitEvent {
 		@Override
 		default void execute(Listener var1, Event var2) throws EventException {
 			onEvent((E)var2);
+		}
+	}
+	
+	/**
+	 * Abstract implementation of {@link EventListener} that ensure as best as it can,
+	 * that it is the last listener called to handle the event.
+	 *
+	 * @param <E> the type of the event
+	 */
+	public static abstract class EnforcedLastListener<E extends Event> implements EventListener<E> {
+		private final Class<E> eventClass;
+		private final boolean ignoreCancelled;
+		
+		public EnforcedLastListener(Class<E> eventClass, boolean ignoreCancelled) {
+			this.eventClass = eventClass;
+			this.ignoreCancelled = ignoreCancelled;
+			register();
+		}
+		
+		private void register() {
+			BukkitEvent.register(eventClass, this, EventPriority.MONITOR, ignoreCancelled);
+		}
+		
+		@Override
+		public void execute(Listener var1, Event var2) throws EventException {
+			EventListener.super.execute(var1, var2);
+			checkIfListenerIsLast();
+		}
+		
+		
+		private AtomicReference<BukkitTask> listenerCheckTask = new AtomicReference<>();
+		
+		private void checkIfListenerIsLast() {
+			synchronized (listenerCheckTask) {
+				if (listenerCheckTask.get() != null)
+					return;
+				RegisteredListener[] listeners = BukkitEvent.getHandlerList(eventClass).getRegisteredListeners();
+				if (listeners[listeners.length - 1].getListener() != this) {
+					listenerCheckTask.set(Bukkit.getScheduler().runTask(PandaLibPaper.getPlugin(), () -> {
+						// need to re-register the event so we are last
+						BukkitEvent.unregister(this);
+						register();
+						listenerCheckTask.set(null);
+					}));
+				}
+			}
 		}
 	}
 	
