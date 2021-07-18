@@ -2,6 +2,8 @@ package fr.pandacube.lib.paper.util;
 
 import org.bukkit.DyeColor;
 
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.md_5.bungee.api.ChatColor;
 
 public class BukkitChatColorUtil {
@@ -59,12 +61,22 @@ public class BukkitChatColorUtil {
 		throw new IllegalArgumentException("Unknown DyeColor: " + dye);
 	}
 	
+
 	
-	
-	public static org.bukkit.ChatColor fromBungeeToBukkit(ChatColor color) {
+	public static org.bukkit.ChatColor toBukkit(ChatColor color) {
 		return org.bukkit.ChatColor.valueOf(color.getName().toUpperCase());
 	}
 	
+	public static org.bukkit.ChatColor toBukkit(TextColor color) {
+		return toBukkit(NamedTextColor.nearestTo(color));
+	}
 	
+	public static org.bukkit.ChatColor toBukkit(NamedTextColor color) {
+		return org.bukkit.ChatColor.valueOf(color.toString());
+	}
+	
+	public static NamedTextColor toAdventure(org.bukkit.ChatColor color) {
+		return NamedTextColor.NAMES.value(color.name());
+	}
 	
 }
