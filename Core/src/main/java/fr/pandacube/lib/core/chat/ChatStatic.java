@@ -59,6 +59,13 @@ public abstract class ChatStatic {
 		return legacyText(legacyText).white();
 	}
 
+	public static FormatableChat playerNameComponent(Component c) {
+		FormatableChat fc = chatComponent(c);
+		if (c.color() == null)
+			fc.white();
+		return fc;
+	}
+
 	public static FormatableChat translation(String key, Object... with) {
 		return chatComponent(Component.translatable(key, Chat.filterObjToComponentLike(with)));
 	}

@@ -101,6 +101,8 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 	
 	public Chat thenPlayerName(String legacyText) { return then(playerNameText(legacyText)); }
 	
+	public Chat thenPlayerName(Component comp) { return then(playerNameComponent(comp)); }
+	
 	public Chat thenNewLine() { return then(Component.newline()); }
 	
 	public Chat thenLegacyText(Object legacyText) { return then(legacyText(legacyText)); }
