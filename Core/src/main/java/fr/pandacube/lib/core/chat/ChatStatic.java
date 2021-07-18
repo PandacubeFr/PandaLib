@@ -12,11 +12,11 @@ public abstract class ChatStatic {
 
 
 	public static FormatableChat chatComponent(Component c) {
-		return new FormatableChat(c);
+		return new FormatableChat(Chat.componentToBuilder(c));
 	}
 
 	public static FormatableChat chatComponent(BaseComponent c) {
-		return new FormatableChat(Chat.toAdventure(c));
+		return new FormatableChat(Chat.componentToBuilder(Chat.toAdventure(c)));
 	}
 	
 	public static FormatableChat chat() {

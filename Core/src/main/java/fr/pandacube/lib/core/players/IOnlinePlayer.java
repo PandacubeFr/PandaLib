@@ -9,7 +9,6 @@ import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
-import net.md_5.bungee.api.chat.BaseComponent;
 
 public interface IOnlinePlayer extends IOffPlayer {
 	
@@ -117,14 +116,6 @@ public interface IOnlinePlayer extends IOffPlayer {
 	 * the chat is activated.
 	 * @param message the message to display.
 	 */
-	@Deprecated
-	public abstract void sendMessage(BaseComponent message);
-	
-	/**
-	 * Display the provided message in the player’s chat, if
-	 * the chat is activated.
-	 * @param message the message to display.
-	 */
 	public abstract void sendMessage(Component message);
 	
 	/**
@@ -144,19 +135,6 @@ public interface IOnlinePlayer extends IOffPlayer {
 	public default void sendMessage(Chat message) {
 		sendMessage(message.getAdv());
 	}
-
-	/**
-	 * Display the provided message in the player’s chat, if
-	 * they allows to display CHAT messages
-	 * @param message the message to display.
-	 * @param sender the player causing the send of this message. Client side filtering may occur.
-	 * May be null if we don’t want client filtering, but still consider the message as CHAT message.
-	 * @implNote implementation of this method should not filter the send of the message, based on
-	 * the sender. This parameter is only there to be transmitted to the client, so client side filtering can
-	 * be processed.
-	 */
-	@Deprecated
-	public abstract void sendMessage(BaseComponent message, UUID sender);
 
 	/**
 	 * Display the provided message in the player’s chat, if
@@ -220,30 +198,9 @@ public interface IOnlinePlayer extends IOffPlayer {
 	 * activated, prepended with the server prefix.
 	 * @param message the message to display
 	 */
-	@Deprecated
-	public default void sendPrefixedMessage(BaseComponent message) {
-		sendMessage(IPlayerManager.prefixedAndColored(message));
-	}
-	
-	/**
-	 * Display the provided message in the player’s chat, if the chat is
-	 * activated, prepended with the server prefix.
-	 * @param message the message to display
-	 */
 	public default void sendPrefixedMessage(Chat message) {
 		sendPrefixedMessage(message.getAdv());
 	}
-	
-	/**
-	 * Display a title in the middle of the screen.
-	 * @param title The big text
-	 * @param subtitle The less big text
-	 * @param fadeIn Fade in time in tick 
-	 * @param stay Stay time in tick
-	 * @param fadeOut Fade out time in tick
-	 */
-	@Deprecated
-    public abstract void sendTitle(BaseComponent title, BaseComponent subtitle, int fadeIn, int stay, int fadeOut);
 	
 	/**
 	 * Display a title in the middle of the screen.
