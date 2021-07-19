@@ -55,8 +55,12 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 		return toBungeeArray(getAdv());
 	}
 	
+	private static final LegacyComponentSerializer LEGACY_SERIALIZER_BUNGEE_FIENDLY = LegacyComponentSerializer.builder()
+			.hexColors()
+			.useUnusualXRepeatedCharacterHexFormat()
+			.build();
 	public String getLegacyText() {
-		return LegacyComponentSerializer.legacySection().serialize(getAdv());
+		return LEGACY_SERIALIZER_BUNGEE_FIENDLY.serialize(getAdv());
 	}
 	
 	@SuppressWarnings("deprecation")
