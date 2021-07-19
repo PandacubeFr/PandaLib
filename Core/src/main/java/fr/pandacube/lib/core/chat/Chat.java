@@ -57,7 +57,7 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 	}
 	
 	public String getLegacyText() {
-		return LegacyComponentSerializer.legacySection().serializeOr(getAdv(), "");
+		return LegacyComponentSerializer.legacySection().serialize(getAdv());
 	}
 	
 	public String getPlainText() {

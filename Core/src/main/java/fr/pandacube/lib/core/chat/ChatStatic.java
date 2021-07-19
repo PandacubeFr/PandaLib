@@ -4,8 +4,8 @@ import java.util.Objects;
 
 import fr.pandacube.lib.core.chat.Chat.FormatableChat;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 
 public abstract class ChatStatic {
 
@@ -32,7 +32,7 @@ public abstract class ChatStatic {
 	}
 
 	public static FormatableChat legacyText(Object legacyText) {
-		return chatComponent(TextComponent.fromLegacyText(Objects.toString(legacyText), null));
+		return chatComponent(LegacyComponentSerializer.legacySection().deserialize(Objects.toString(legacyText)));
 	}
 
 	public static FormatableChat infoText(Object plainText) {
