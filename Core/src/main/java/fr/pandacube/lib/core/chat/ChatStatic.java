@@ -4,6 +4,8 @@ import java.util.Objects;
 
 import fr.pandacube.lib.core.chat.Chat.FormatableChat;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 
@@ -78,4 +80,18 @@ public abstract class ChatStatic {
 	public static FormatableChat score(String name, String objective) {
 		return chatComponent(Component.score(name, objective));
 	}
+	
+	
+	
+	
+	
+//	public static void main(String[] args) {
+//		for (Chat c : new Chat[] {
+//				chat(),
+//				text("toto").color(NamedTextColor.GRAY),
+//				legacyText("tot§9o").color(NamedTextColor.GRAY),
+//		}) {
+//			System.out.println(GsonComponentSerializer.gson().serialize(c.getAdv()));
+//		}
+//	}
 }

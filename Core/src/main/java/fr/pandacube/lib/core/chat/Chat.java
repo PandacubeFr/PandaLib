@@ -396,7 +396,7 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 		else {
 			throw new IllegalArgumentException("Unknows component type " + c.getClass());
 		}
-		return builder.style(c.style());
+		return builder.style(c.style()).append(c.children());
 	}
 	
 	
