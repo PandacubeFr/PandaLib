@@ -26,7 +26,6 @@ import fr.pandacube.lib.core.permissions.SQLPermissions.EntityType;
 import fr.pandacube.lib.core.players.PlayerFinder;
 import fr.pandacube.lib.core.util.Log;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
 
 public class PermissionsResolver {
 
@@ -108,9 +107,8 @@ public class PermissionsResolver {
 		
 		if (resolutionResult.conflict) {
 			Log.warning("For data " + dataType + ":");
-			BaseComponent[] cmps = ChatUtil.treeView(resolutionResult.toDisplayTreeNode(), true);
-			for (BaseComponent cmp : cmps)
-				Log.warning(cmp.toLegacyText());
+			for (Chat cmp : ChatUtil.treeView(resolutionResult.toDisplayTreeNode(), true))
+				Log.warning(cmp.getLegacyText());
 		}
 		
 		return resolutionResult.result != null ? resolutionResult.result : "";
@@ -175,11 +173,11 @@ public class PermissionsResolver {
 				c.thenLegacyText(" \"" + ChatColor.RESET + result + ChatColor.RESET + "\"");
 			if (conflictMessage != null)
 				c.thenFailure(" " + conflictMessage);
-			DisplayTreeNode node = new DisplayTreeNode(c.get());
+			DisplayTreeNode node = new DisplayTreeNode(c);
 			
 			if (result == null && conflict == false && !inheritances.isEmpty()) {
 				// there is nothing interesting to show on current or subnode
-				node.children.add(new DisplayTreeNode(Chat.text("(Inheritances hidden for brevety)").darkGray().italic().get()));
+				node.children.add(new DisplayTreeNode(Chat.text("(Inheritances hidden for brevety)").darkGray().italic()));
 				return node;
 			}
 			
@@ -312,9 +310,8 @@ public class PermissionsResolver {
 		
 		if (resolutionResult.conflict) {
 			Log.warning("For permission " + permission + ":");
-			BaseComponent[] cmps = ChatUtil.treeView(resolutionResult.toDisplayTreeNode(), true);
-			for (BaseComponent cmp : cmps)
-				Log.warning(cmp.toLegacyText());
+			for (Chat cmp : ChatUtil.treeView(resolutionResult.toDisplayTreeNode(), true))
+				Log.warning(cmp.getLegacyText());
 		}
 		
 		return resolutionResult.result;
@@ -519,13 +516,13 @@ public class PermissionsResolver {
 				c.thenData(" w=" + world);
 			if (conflictMessage != null)
 				c.then(Chat.failureText(" " + conflictMessage));
-			DisplayTreeNode node = new DisplayTreeNode(c.get());
+			DisplayTreeNode node = new DisplayTreeNode(c);
 			
 			selfPermissions.forEach(p -> node.children.add(p.toDisplayTreeNode()));
 			
 			if (result == PermState.UNDEFINED && conflict == false && !inheritances.isEmpty()) {
 				// there is nothing interesting to show on current or subnode
-				node.children.add(new DisplayTreeNode(Chat.text("(Inheritances hidden for brevety)").darkGray().italic().get()));
+				node.children.add(new DisplayTreeNode(Chat.text("(Inheritances hidden for brevety)").darkGray().italic()));
 				return node;
 			}
 			
@@ -547,8 +544,7 @@ public class PermissionsResolver {
 		public DisplayTreeNode toDisplayTreeNode() {
 			return new DisplayTreeNode(Chat.chat()
 					.then(result ? Chat.successText("✔") : Chat.failureText("✘"))
-					.then(Chat.text(permission).color(type == PermType.WILDCARD ? ChatColor.YELLOW : type == PermType.SPECIAL ? ChatColor.LIGHT_PURPLE : ChatColor.WHITE))
-					.get());
+					.then(Chat.text(permission).color(type == PermType.WILDCARD ? ChatColor.YELLOW : type == PermType.SPECIAL ? ChatColor.LIGHT_PURPLE : ChatColor.WHITE)));
 		}
 	}
 	
