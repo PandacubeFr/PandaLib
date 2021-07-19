@@ -29,7 +29,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.format.TextDecoration.State;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 
@@ -60,8 +59,9 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 		return LegacyComponentSerializer.legacySection().serialize(getAdv());
 	}
 	
+	@SuppressWarnings("deprecation")
 	public String getPlainText() {
-		return PlainComponentSerializer.plain().serializeOr(getAdv(), "");
+		return net.kyori.adventure.text.serializer.plain.PlainComponentSerializer.plain().serializeOr(getAdv(), "");
 	}
 	
 	

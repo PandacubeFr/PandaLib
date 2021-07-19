@@ -15,10 +15,12 @@ import java.util.stream.Collectors;
 import com.google.common.collect.ImmutableMap;
 
 import fr.pandacube.lib.core.chat.Chat.FormatableChat;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.format.TextDecoration.State;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.TranslatableComponent;
 
 public class ChatUtil {
 
@@ -184,7 +186,7 @@ public class ChatUtil {
 	public static Chat centerText(Chat text, char repeatedChar, ChatColor decorationColor,
 			boolean console) {
 
-		int textWidth = componentWidth(text.get(), console);
+		int textWidth = componentWidth(text.getAdv(), console);
 		int maxWidth = (console) ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH;
 		
 		if (textWidth > maxWidth)
@@ -212,7 +214,7 @@ public class ChatUtil {
 	public static Chat leftText(Chat text, char repeatedChar, ChatColor decorationColor, int nbLeft,
 			boolean console) {
 		
-		int textWidth = componentWidth(text.get(), console);
+		int textWidth = componentWidth(text.getAdv(), console);
 		int maxWidth = (console) ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH;
 		int repeatedCharWidth = charW(repeatedChar, console, false);
 		int leftWidth = nbLeft * repeatedCharWidth;
@@ -235,7 +237,7 @@ public class ChatUtil {
 	public static Chat rightText(Chat text, char repeatedChar, ChatColor decorationColor, int nbRight,
 			boolean console) {
 		
-		int textWidth = componentWidth(text.get(), console);
+		int textWidth = componentWidth(text.getAdv(), console);
 		int maxWidth = (console) ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH;
 		int repeatedCharWidth = charW(repeatedChar, console, false);
 		int rightWidth = nbRight * repeatedCharWidth;
@@ -271,40 +273,40 @@ public class ChatUtil {
 	
 	
 	
+
+
 	
-	
-	
-	public static int componentWidth(BaseComponent[] components, boolean console) {
-		if (components == null)
-			return 0;
-		
-		int count = 0;
-		
-		for (BaseComponent c : components)
-			count += componentWidth(c, console);
-		
-		return count;
+	public static int componentWidth(Component component, boolean console) {
+		return componentWidth(component, console, false);
 	}
 	
-	public static int componentWidth(BaseComponent component, boolean console) {
+	public static int componentWidth(Component component, boolean console, boolean parentBold) {
 		if (component == null)
 			return 0;
 		
 		int count = 0;
 		
+		State currentBold = component.style().decoration(TextDecoration.BOLD);
+		boolean actuallyBold = childBold(parentBold, currentBold);
+		
 		if (component instanceof TextComponent) {
-			count += strWidth(((TextComponent)component).getText(), console, component.isBold());
+			count += strWidth(((TextComponent)component).content(), console, actuallyBold);
 		}
 		else if (component instanceof TranslatableComponent) {
-			for (BaseComponent c : ((TranslatableComponent)component).getWith())
-				count += componentWidth(c, console);
+			for (Component c : ((TranslatableComponent)component).args())
+				count += componentWidth(c, console, actuallyBold);
 		}
 		
-		if (component.getExtra() != null) {
-			for (BaseComponent c : component.getExtra())
-				count += componentWidth(c, console);
+		if (component.children() != null) {
+			for (Component c : component.children())
+				count += componentWidth(c, console, actuallyBold);
 		}
+		
 		return count;
+	}
+	
+	private static boolean childBold(boolean parent, TextDecoration.State child) {
+		return (parent && child != State.FALSE) || (!parent && child == State.TRUE);
 	}
 
 	public static int strWidth(String str, boolean console, boolean bold) {
@@ -462,14 +464,6 @@ public class ChatUtil {
 	
 	
 
-
-	public static BaseComponent toUniqueBaseComponent(BaseComponent... baseComponents) {
-		if (baseComponents == null || baseComponents.length == 0)
-			return new TextComponent();
-		if (baseComponents.length == 1)
-			return baseComponents[0];
-		return new TextComponent(baseComponents);
-	}
 	
 	
 	
@@ -478,18 +472,6 @@ public class ChatUtil {
 	
 	
 	
-	/**
-	 * Generate a tree view based on the tree structure {@code node}.
-	 * 
-	 * Each element in the returned array represent 1 line of the tree view.
-	 * Thus, the caller may send each line separately or at once depending of the quantity of data.
-	 * @param node
-	 * @return A array of component, each element being a single line.
-	 */
-	public static BaseComponent[] treeView(DisplayTreeNode node, boolean console) {
-		List<TextComponent> ret = treeView_(node, console);
-		return ret.toArray(new BaseComponent[ret.size()]);
-	}
 
 	private static final String TREE_MIDDLE_CONNECTED = "├";
 	private static final String TREE_END_CONNECTED = "└";
@@ -498,24 +480,30 @@ public class ChatUtil {
 	private static final String TREE_MIDDLE_OPEN_CONSOLE = "│";
 	private static final String TREE_END_OPEN_CONSOLE = " "; // nbsp
 	
-	private static List<TextComponent> treeView_(DisplayTreeNode node, boolean console) {
-		List<TextComponent> ret = new ArrayList<>();
+	/**
+	 * Generate a tree view based on the tree structure {@code node}.
+	 * 
+	 * Each element in the returned list represent 1 line of the tree view.
+	 * Thus, the caller may send each line separately or at once depending of the quantity of data.
+	 * @param node
+	 * @return A array of component, each element being a single line.
+	 */
+	public static List<Chat> treeView(DisplayTreeNode node, boolean console) {
+		List<Chat> ret = new ArrayList<>();
 		
-		TextComponent curr = new TextComponent();
-		curr.addExtra(node.component);
-		curr.setText("");
-		
-		ret.add(curr);
+		ret.add(chat()
+				.then(node.component));
 		
 		for (int i = 0; i < node.children.size(); i++) {
-			List<TextComponent> childComponents = treeView_(node.children.get(i), console);
+			List<Chat> childComponents = treeView(node.children.get(i), console);
 			boolean last = i == node.children.size() - 1;
 			for (int j = 0; j < childComponents.size(); j++) {
-				TextComponent cComp = childComponents.get(j);
+				
 				String prefix = last ? (j == 0 ? TREE_END_CONNECTED : (console ? TREE_END_OPEN_CONSOLE : TREE_END_OPEN))
 						: (j == 0 ? TREE_MIDDLE_CONNECTED : (console ? TREE_MIDDLE_OPEN_CONSOLE : TREE_MIDDLE_OPEN));
-				cComp.setText(prefix + cComp.getText());
-				ret.add(cComp);
+				
+				ret.add(text(prefix)
+						.then(childComponents.get(j)));
 			}
 		}
 		
@@ -528,10 +516,10 @@ public class ChatUtil {
 	
 	
 	public static class DisplayTreeNode {
-		public final BaseComponent component;
+		public final Chat component;
 		public final List<DisplayTreeNode> children = new ArrayList<>();
 		
-		public DisplayTreeNode(BaseComponent cmp) {
+		public DisplayTreeNode(Chat cmp) {
 			component = cmp;
 		}
 		
