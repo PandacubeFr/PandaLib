@@ -304,6 +304,20 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 	
 	
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof Chat))
+			return false;
+		return getAdv().equals(((Chat)obj).getAdv());
+	}
+	
+	@Override
+	public int hashCode() {
+		return getAdv().hashCode();
+	}
+	
+	
+	
 	
 	
 

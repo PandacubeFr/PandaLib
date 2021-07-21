@@ -1,14 +1,10 @@
 package fr.pandacube.lib.paper.util;
 
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Predicate;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,8 +14,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
+import fr.pandacube.lib.core.chat.Chat;
 import fr.pandacube.lib.core.util.Log;
 import fr.pandacube.lib.paper.PandaLibPaper;
+import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.bossbar.BossBar.Color;
 import net.kyori.adventure.text.Component;
 
 public class AutoUpdatedBossBar implements Listener {
@@ -53,7 +52,7 @@ public class AutoUpdatedBossBar implements Listener {
 			throw new IllegalStateException("Can't schedule an already scheduled bossbar update");
 		
 		scheduled = true;
-		timer = new Timer("Panda BossBarUpdater - " + ChatColor.stripColor(bar.getTitle()));
+		timer = new Timer("Panda BossBarUpdater - " + Chat.chatComponent(bar.name()).getPlainText());
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
@@ -121,7 +120,7 @@ public class AutoUpdatedBossBar implements Listener {
 		if (playerCondition != null && !playerCondition.test(event.getPlayer()))
 			return;
 		synchronized (bar) {
-			bar.addPlayer(event.getPlayer());
+			event.getPlayer().showBossBar(bar);
 		}
 	}
 	
@@ -130,7 +129,18 @@ public class AutoUpdatedBossBar implements Listener {
 		if (followPlayerList == false)
 			return;
 		synchronized (bar) {
-			bar.removePlayer(event.getPlayer());
+			event.getPlayer().hideBossBar(bar);
+		}
+	}
+	
+	/**
+	 * Utility method to update the progress of the bossbar without unnecessary packet.
+	 * @param title
+	 */
+	public void removeAll() {
+		synchronized (bar) {
+			for (Player p : Bukkit.getOnlinePlayers())
+				p.hideBossBar(bar);
 		}
 	}
 	
@@ -163,21 +173,24 @@ public class AutoUpdatedBossBar implements Listener {
 	 * Utility method to update the title of the bossbar without unnecessary packet.
 	 * @param title
 	 */
-	public void setTitle(String title) {
+	public void setTitle(Chat title) {
 		synchronized (bar) {
-			if (!Objects.equals(title, bar.getTitle()))
-				bar.setTitle(title);
+			bar.name(title); // already check if the title is the same
 		}
+	}
+	
+	@Deprecated
+	public void setTitle(String title) {
+		setTitle(Chat.legacyText(title));
 	}
 	
 	/**
 	 * Utility method to update the color of the bossbar without unnecessary packet.
 	 * @param title
 	 */
-	public void setColor(BarColor color) {
+	public void setColor(Color color) {
 		synchronized (bar) {
-			if (color != bar.getColor())
-				bar.setColor(color);
+			bar.color(color);
 		}
 	}
 	
@@ -187,8 +200,7 @@ public class AutoUpdatedBossBar implements Listener {
 	 */
 	public void setProgress(double progress) {
 		synchronized (bar) {
-			if (progress != bar.getProgress())
-				bar.setProgress(progress);
+			bar.progress((float) progress);
 		}
 	}
 	
