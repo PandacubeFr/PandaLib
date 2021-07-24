@@ -1,10 +1,11 @@
 package fr.pandacube.lib.core.chat;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.md_5.bungee.api.ChatColor;
 
 public class ChatColorUtil {
@@ -235,17 +236,29 @@ public class ChatColorUtil {
 	
 	
 	
+	public static TextColor toAdventure(ChatColor bungee) {
+		if (bungee == null)
+			return null;
+		if (bungee.getColor() == null)
+			throw new IllegalArgumentException("The provided Bungee ChatColor must be an actual color (not format nor reset).");
+		return TextColor.color(bungee.getColor().getRGB());
+	}
+	
+	public static ChatColor toBungee(TextColor col) {
+		if (col == null)
+			return null;
+		if (col instanceof NamedTextColor) {
+			return ChatColor.of(((NamedTextColor) col).toString());
+		}
+		return ChatColor.of(col.asHexString());
+	}
 	
 	
-	public static ChatColor interpolateColor(float v0, float v1, float v, ChatColor cc0, ChatColor cc1) {
-		Color c0 = cc0.getColor(), c1 = cc1.getColor();
-		int r0 = c0.getRed(), g0 = c0.getGreen(), b0 = c0.getBlue(),
-			r1 = c1.getRed(), g1 = c1.getGreen(), b1 = c1.getBlue();
+	
+	
+	public static TextColor interpolateColor(float v0, float v1, float v, TextColor cc0, TextColor cc1) {
 		float normV = (v - v0) / (v1 - v0);
-		return ChatColor.of(new Color(
-				(int) (r0 + (r1 - r0) * normV),
-				(int) (g0 + (g1 - g0) * normV),
-				(int) (b0 + (b1 - b0) * normV)));
+		return TextColor.lerp(normV, cc0, cc1);
 	}
 	
 	
@@ -258,22 +271,22 @@ public class ChatColorUtil {
 		//private record GradientValueColor(float value, ChatColor color) { } // Java 16
 		private static class GradientValueColor {
 			private final float value;
-			private final ChatColor color;
-			public GradientValueColor(float value, ChatColor color) {
+			private final TextColor color;
+			public GradientValueColor(float value, TextColor color) {
 				this.value = value; this.color = color;
 			}
 			public float value() { return value; }
-			public ChatColor color() { return color; }
+			public TextColor color() { return color; }
 		}
 		
 		List<GradientValueColor> colors = new ArrayList<>();
 		
-		public synchronized ChatValueGradient add(float v, ChatColor col) {
+		public synchronized ChatValueGradient add(float v, TextColor col) {
 			colors.add(new GradientValueColor(v, col));
 			return this;
 		}
 		
-		public synchronized ChatColor pickColorAt(float v) {
+		public synchronized TextColor pickColorAt(float v) {
 			if (colors.isEmpty())
 				throw new IllegalStateException("Must define at least one color in this ChatValueGradient instance.");
 			if (colors.size() == 1)
@@ -293,8 +306,7 @@ public class ChatColorUtil {
 			}
 			int p0 = p1 - 1;
 			float v0 = colors.get(p0).value(), v1 = colors.get(p1).value();
-			ChatColor cc0 = colors.get(p0).color(), cc1 = colors.get(p1).color();
-			
+			TextColor cc0 = colors.get(p0).color(), cc1 = colors.get(p1).color();
 			return interpolateColor(v0, v1, v, cc0, cc1);
 		}
 	}

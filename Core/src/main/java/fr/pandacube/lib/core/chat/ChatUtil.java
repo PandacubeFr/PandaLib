@@ -18,6 +18,8 @@ import fr.pandacube.lib.core.chat.Chat.FormatableChat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.format.TextDecoration.State;
 import net.md_5.bungee.api.ChatColor;
@@ -183,7 +185,7 @@ public class ChatUtil {
 	
 	
 	
-	public static Chat centerText(Chat text, char repeatedChar, ChatColor decorationColor,
+	public static Chat centerText(Chat text, char repeatedChar, TextColor decorationColor,
 			boolean console) {
 
 		int textWidth = componentWidth(text.getAdv(), console);
@@ -211,7 +213,7 @@ public class ChatUtil {
 
 	}
 
-	public static Chat leftText(Chat text, char repeatedChar, ChatColor decorationColor, int nbLeft,
+	public static Chat leftText(Chat text, char repeatedChar, TextColor decorationColor, int nbLeft,
 			boolean console) {
 		
 		int textWidth = componentWidth(text.getAdv(), console);
@@ -234,7 +236,7 @@ public class ChatUtil {
 		
 	}
 
-	public static Chat rightText(Chat text, char repeatedChar, ChatColor decorationColor, int nbRight,
+	public static Chat rightText(Chat text, char repeatedChar, TextColor decorationColor, int nbRight,
 			boolean console) {
 		
 		int textWidth = componentWidth(text.getAdv(), console);
@@ -257,7 +259,7 @@ public class ChatUtil {
 
 	}
 
-	public static Chat emptyLine(char repeatedChar, ChatColor decorationColor, boolean console) {
+	public static Chat emptyLine(char repeatedChar, TextColor decorationColor, boolean console) {
 		int count = ((console) ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH) / charW(repeatedChar, console, false);
 		return text(repeatedChar(repeatedChar, count)).color(decorationColor);
 	}
@@ -425,6 +427,68 @@ public class ChatUtil {
 		
 		return lines;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	private static final String PROGRESS_BAR_START = "[";
+	private static final String PROGRESS_BAR_END = "]";
+	private static final TextColor PROGRESS_BAR_EMPTY_COLOR = NamedTextColor.DARK_GRAY;
+	private static final char PROGRESS_BAR_EMPTY_CHAR = '.';
+	private static final char PROGRESS_BAR_FULL_CHAR = '|';
+	
+	public static Chat progressBar(double[] values, TextColor[] colors, double total, int pixelWidth, boolean console) {
+		
+		// 1. Compute char size for each values
+		int progressPixelWidth = pixelWidth - strWidth(PROGRESS_BAR_START + PROGRESS_BAR_END, console, false);
+		int charPixelWidth = charW(PROGRESS_BAR_EMPTY_CHAR, console, false);
+		
+		assert charPixelWidth == charW(PROGRESS_BAR_FULL_CHAR, console, false) : "PROGRESS_BAR_EMPTY_CHAR and PROGRESS_BAR_FULL_CHAR should have the same pixel width according to #charW(...)";
+		
+		int progressCharWidth = progressPixelWidth / charPixelWidth;
+		
+		int[] sizes = new int[values.length];
+		double sumValuesBefore = 0;
+		int sumSizesBefore = 0;
+
+		for (int i = 0; i < values.length; i++) {
+			sumValuesBefore += values[i];
+			int charPosition = Math.min((int) Math.round(progressCharWidth * sumValuesBefore / total), progressCharWidth);
+			sizes[i] = charPosition - sumSizesBefore;
+			sumSizesBefore += sizes[i];
+		}
+		
+		// 2. Generate rendered text
+		Chat c = text(PROGRESS_BAR_START);
+		
+		int sumSizes = 0;
+		for (int i = 0; i < sizes.length; i++) {
+			sumSizes += sizes[i];
+
+			FormatableChat subC = text(repeatedChar(PROGRESS_BAR_FULL_CHAR, sizes[i]));
+
+			if (colors != null && i < colors.length && colors[i] != null)
+				subC.color(colors[i]);
+			
+			c.then(subC);
+		}
+		
+		return c
+				.then(text(repeatedChar(PROGRESS_BAR_EMPTY_CHAR, progressCharWidth - sumSizes))
+						.color(PROGRESS_BAR_EMPTY_COLOR))
+				.thenText(PROGRESS_BAR_END);
+	}
+	
+	public static Chat progressBar(double value, TextColor color, double total, int pixelWidth, boolean console) {
+		return progressBar(new double[] { value }, new TextColor[] { color }, total, pixelWidth, console);
+	}
+	
 	
 	
 	

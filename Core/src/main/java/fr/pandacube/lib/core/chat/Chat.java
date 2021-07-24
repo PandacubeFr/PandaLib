@@ -23,12 +23,14 @@ import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.event.HoverEventSource;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.format.TextDecoration.State;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 
@@ -63,9 +65,8 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 		return LEGACY_SERIALIZER_BUNGEE_FIENDLY.serialize(getAdv());
 	}
 	
-	@SuppressWarnings("deprecation")
 	public String getPlainText() {
-		return net.kyori.adventure.text.serializer.plain.PlainComponentSerializer.plain().serializeOr(getAdv(), "");
+		return PlainTextComponentSerializer.plainText().serializeOr(getAdv(), "");
 	}
 	
 	
@@ -437,17 +438,17 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 	}
 	
 	public static class Config {
-		public ChatColor decorationColor = ChatColor.YELLOW;
+		public TextColor decorationColor = NamedTextColor.YELLOW;
 		public char decorationChar = '-';
 		public int nbCharMargin = 1;
-		public ChatColor successColor = ChatColor.GREEN;
-		public ChatColor failureColor = ChatColor.RED;
-		public ChatColor infoColor = ChatColor.GOLD;
-		public ChatColor dataColor = ChatColor.GRAY;
-		public ChatColor urlColor = ChatColor.GREEN;
-		public ChatColor commandColor = ChatColor.GRAY;
-		public ChatColor highlightedCommandColor = ChatColor.WHITE;
-		public ChatColor broadcastColor = ChatColor.YELLOW;
+		public TextColor successColor = NamedTextColor.GREEN;
+		public TextColor failureColor = NamedTextColor.RED;
+		public TextColor infoColor = NamedTextColor.GOLD;
+		public TextColor dataColor = NamedTextColor.GRAY;
+		public TextColor urlColor = NamedTextColor.GREEN;
+		public TextColor commandColor = NamedTextColor.GRAY;
+		public TextColor highlightedCommandColor = NamedTextColor.WHITE;
+		public TextColor broadcastColor = NamedTextColor.YELLOW;
 		public Supplier<Chat> prefix;
 		
 	}
