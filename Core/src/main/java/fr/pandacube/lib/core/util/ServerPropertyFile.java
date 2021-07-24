@@ -8,9 +8,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 public class ServerPropertyFile {
+	
+	private static final Gson SERIALIZER = new GsonBuilder().setPrettyPrinting().create();
 
 	private transient File file;
 	
@@ -36,7 +39,7 @@ public class ServerPropertyFile {
 	public boolean loadFromFile() {
 		try (BufferedReader in = new BufferedReader(new FileReader(file))) {
 
-			ServerPropertyFile dataFile = new Gson().fromJson(in, getClass());
+			ServerPropertyFile dataFile = SERIALIZER.fromJson(in, getClass());
 			
 			name = dataFile.name;
 			memory = dataFile.memory;
@@ -58,10 +61,8 @@ public class ServerPropertyFile {
 
 	public boolean save() {
 		try (BufferedWriter out = new BufferedWriter(new FileWriter(file, false))) {
-
-			new Gson().toJson(this, out);
+			SERIALIZER.toJson(this, out);
 			out.flush();
-
 			return true;
 		} catch (IOException e) {
 			Log.severe(e);
