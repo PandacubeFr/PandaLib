@@ -3,6 +3,7 @@ package fr.pandacube.lib.core.chat;
 import java.util.Objects;
 
 import fr.pandacube.lib.core.chat.Chat.FormatableChat;
+import fr.pandacube.lib.core.util.Log;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -20,7 +21,7 @@ public abstract class ChatStatic {
 	}
 	
 	public static FormatableChat chat() {
-		return chatComponent(Component.empty());
+		return new FormatableChat(Component.text());
 	}
 	
 	public static FormatableChat chatComponent(BaseComponent[] c) {
@@ -28,10 +29,26 @@ public abstract class ChatStatic {
 	}
 
 	public static FormatableChat text(Object plainText) {
-		return chatComponent(Component.text(Objects.toString(plainText)));
+		if (plainText instanceof Chat) {
+			Log.warning("Using Chat instance as plain text. Please use proper API method. I’ll properly use your Chat instance this time...", new Throwable());
+			return (FormatableChat) plainText;
+		}
+		if (plainText instanceof Component) {
+			Log.warning("Using Component instance as plain text. Please use proper API method. I’ll properly use your Component this time...", new Throwable());
+			return chatComponent((Component) plainText);
+		}
+		return new FormatableChat(Component.text().content(Objects.toString(plainText)));
 	}
 
 	public static FormatableChat legacyText(Object legacyText) {
+		if (legacyText instanceof Chat) {
+			Log.warning("Using Chat instance as legacy text. Please use proper API method. I’ll properly use your Chat instance this time...", new Throwable());
+			return (FormatableChat) legacyText;
+		}
+		if (legacyText instanceof Component) {
+			Log.warning("Using Component instance as legacy text. Please use proper API method. I’ll properly use your Component this time...", new Throwable());
+			return chatComponent((Component) legacyText);
+		}
 		return chatComponent(LegacyComponentSerializer.legacySection().deserialize(Objects.toString(legacyText)));
 	}
 
@@ -67,16 +84,23 @@ public abstract class ChatStatic {
 	}
 
 	public static FormatableChat translation(String key, Object... with) {
-		return chatComponent(Component.translatable(key, Chat.filterObjToComponentLike(with)));
+		return new FormatableChat(Component.translatable()
+				.key(key)
+				.args(Chat.filterObjToComponentLike(with))
+				);
 	}
 
-	/** @param key one of the values in {@link net.md_5.bungee.api.chat.Keybinds} */
 	public static FormatableChat keybind(String key) {
-		return chatComponent(Component.keybind(key));
+		return new FormatableChat(Component.keybind()
+				.keybind(key)
+				);
 	}
 
 	public static FormatableChat score(String name, String objective) {
-		return chatComponent(Component.score(name, objective));
+		return new FormatableChat(Component.score()
+				.name(name)
+				.objective(objective)
+				);
 	}
 	
 	

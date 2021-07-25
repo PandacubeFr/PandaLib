@@ -317,6 +317,10 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 		return getAdv().hashCode();
 	}
 	
+	@Override
+	public String toString() {
+		return getPlainText();
+	}
 	
 	
 	
@@ -339,9 +343,7 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 		ComponentLike[] ret = new ComponentLike[values.length];
 		for (int i = 0; i < values.length; i++) {
 			Object v = values[i];
-			if (v instanceof Chat)
-				ret[i] = ((Chat) v).getAdv();
-			else if (v instanceof BaseComponent[])
+			if (v instanceof BaseComponent[])
 				ret[i] = toAdventure((BaseComponent[]) v);
 			else if (v instanceof BaseComponent)
 				ret[i] = toAdventure((BaseComponent) v);
