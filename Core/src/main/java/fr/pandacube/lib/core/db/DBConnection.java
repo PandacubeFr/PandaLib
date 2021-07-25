@@ -19,7 +19,7 @@ public class DBConnection {
 
 	public DBConnection(String host, int port, String dbname, String l, String p)
 			throws ClassNotFoundException, SQLException {
-		Class.forName("com.mysql.jdbc.Driver");
+		//Class.forName("com.mysql.jdbc.Driver"); // apparently this is deprecated now
 		url = "jdbc:mysql://" + host + ":" + port + "/" + dbname
 				+ "?autoReconnect=true"
 				+ "&useUnicode=true"
