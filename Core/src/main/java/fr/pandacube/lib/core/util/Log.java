@@ -9,11 +9,11 @@ public class Log {
 	private static Logger logger;
 	private static AtomicBoolean logDebug = new AtomicBoolean(false);
 
-	public static void setDebugState(boolean newVal) {
+	public static void setDebug(boolean newVal) {
 		logDebug.set(newVal);
 	}
 
-	public static boolean getDebugState() {
+	public static boolean isDebugEnabled() {
 		return logDebug.get();
 	}
 

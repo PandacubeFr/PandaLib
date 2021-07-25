@@ -106,9 +106,10 @@ public class PermissionsResolver {
 		DataResolutionNode resolutionResult = resolveData(entity, dataType);
 		
 		if (resolutionResult.conflict) {
-			Log.warning("For data " + dataType + ":");
-			for (Chat cmp : ChatUtil.treeView(resolutionResult.toDisplayTreeNode(), true))
-				Log.warning(cmp.getLegacyText());
+			Log.warning("For data " + dataType + ":\n"
+					+ ChatUtil.treeView(resolutionResult.toDisplayTreeNode(), true).stream()
+					.map(cmp -> cmp.getLegacyText())
+					.collect(Collectors.joining(ChatColor.RESET + "\n")));
 		}
 		
 		return resolutionResult.result != null ? resolutionResult.result : "";
@@ -309,9 +310,10 @@ public class PermissionsResolver {
 		PermResolutionNode resolutionResult = resolvePermission(entity, permission, server, world, true);
 		
 		if (resolutionResult.conflict) {
-			Log.warning("For permission " + permission + ":");
-			for (Chat cmp : ChatUtil.treeView(resolutionResult.toDisplayTreeNode(), true))
-				Log.warning(cmp.getLegacyText());
+			Log.warning("For permission " + permission + ":\n"
+					+ ChatUtil.treeView(resolutionResult.toDisplayTreeNode(), true).stream()
+					.map(cmp -> cmp.getLegacyText())
+					.collect(Collectors.joining(ChatColor.RESET + "\n")));
 		}
 		
 		return resolutionResult.result;

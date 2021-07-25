@@ -8,6 +8,7 @@ import java.util.Set;
 import fr.pandacube.lib.core.chat.ChatUtil.DisplayTreeNode;
 import fr.pandacube.lib.core.permissions.PermissionsCachedBackendReader.CachedEntity;
 import fr.pandacube.lib.core.permissions.SQLPermissions.EntityType;
+import fr.pandacube.lib.core.util.Log;
 
 public abstract class PermEntity {
 	protected final String name;
@@ -78,11 +79,11 @@ public abstract class PermEntity {
 	
 	
 	public Map<String, Boolean> listEffectivePermissions() {
-		return Permissions.resolver.getEffectivePermissionList(name, type, null, null);
+		return listEffectivePermissions(null, null);
 	}
 	
 	public Map<String, Boolean> listEffectivePermissions(String server) {
-		return Permissions.resolver.getEffectivePermissionList(name, type, server, null);
+		return listEffectivePermissions(server, null);
 	}
 	
 	public Map<String, Boolean> listEffectivePermissions(String server, String world) {
@@ -91,24 +92,28 @@ public abstract class PermEntity {
 	
 	
 	public Boolean hasPermission(String permission) {
-		return Permissions.resolver.getEffectivePermission(name, type, permission, null, null);
+		return hasPermission(permission, null, null);
 	}
 	
 	public Boolean hasPermission(String permission, String server) {
-		return Permissions.resolver.getEffectivePermission(name, type, permission, server, null);
+		return hasPermission(permission, server, null);
 	}
 	
 	public Boolean hasPermission(String permission, String server, String world) {
-		return Permissions.resolver.getEffectivePermission(name, type, permission, server, world);
+		Boolean ret = Permissions.resolver.getEffectivePermission(name, type, permission, server, world);
+		if (Log.isDebugEnabled()) {
+			Log.debug("[Perm] For " + type.toString().toLowerCase() + " " + getName() + ", '" + permission + "' is " + ret);
+		}
+		return ret;
 	}
 	
 	
 	public DisplayTreeNode debugPermission(String permission) {
-		return Permissions.resolver.debugPermission(name, type, permission, null, null);
+		return debugPermission(permission, null, null);
 	}
 	
 	public DisplayTreeNode debugPermission(String permission, String server) {
-		return Permissions.resolver.debugPermission(name, type, permission, server, null);
+		return debugPermission(permission, server, null);
 	}
 	
 	public DisplayTreeNode debugPermission(String permission, String server, String world) {
@@ -117,11 +122,11 @@ public abstract class PermEntity {
 	
 	
 	public void addSelfPermission(String permission) {
-		Permissions.backendWriter.addSelfPermission(name, type, permission, null, null);
+		addSelfPermission(permission, null, null);
 	}
 	
 	public void addSelfPermission(String permission, String server) {
-		Permissions.backendWriter.addSelfPermission(name, type, permission, server, null);
+		addSelfPermission(permission, server, null);
 	}
 	
 	public void addSelfPermission(String permission, String server, String world) {
@@ -130,11 +135,11 @@ public abstract class PermEntity {
 	
 	
 	public void removeSelfPermission(String permission) {
-		Permissions.backendWriter.removeSelfPermission(name, type, permission, null, null);
+		removeSelfPermission(permission, null, null);
 	}
 	
 	public void removeSelfPermission(String permission, String server) {
-		Permissions.backendWriter.removeSelfPermission(name, type, permission, server, null);
+		removeSelfPermission(permission, server, null);
 	}
 	
 	public void removeSelfPermission(String permission, String server, String world) {
@@ -152,11 +157,11 @@ public abstract class PermEntity {
 	}
 	
 	public List<String> getSelfPermissions() {
-		return getBackendEntity().getSelfPermissions(null, null);
+		return getSelfPermissions(null, null);
 	}
 	
 	public List<String> getSelfPermissions(String server) {
-		return getBackendEntity().getSelfPermissions(server, null);
+		return getSelfPermissions(server, null);
 	}
 	
 	public List<String> getSelfPermissions(String server, String world) {
