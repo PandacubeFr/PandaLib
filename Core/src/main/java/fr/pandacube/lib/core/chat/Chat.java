@@ -39,7 +39,7 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 	protected ComponentBuilder<?, ?> builder;
 	protected boolean console = false;
 	
-	protected Chat(ComponentBuilder<?, ?> b) {
+	/* package */ Chat(ComponentBuilder<?, ?> b) {
 		Objects.requireNonNull(b, "Provided component builder must not be null");
 		builder = b;
 	}
@@ -210,7 +210,7 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 	
 	
 	
-	public static class FormatableChat extends Chat {
+	public static final class FormatableChat extends Chat {
 		/* package */ FormatableChat(ComponentBuilder<?, ?> c) {
 			super(c);
 		}

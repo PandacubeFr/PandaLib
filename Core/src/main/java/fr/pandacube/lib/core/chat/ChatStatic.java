@@ -19,6 +19,10 @@ public abstract class ChatStatic {
 	public static FormatableChat chatComponent(BaseComponent c) {
 		return new FormatableChat(Chat.componentToBuilder(Chat.toAdventure(c)));
 	}
+
+	public static FormatableChat chatComponent(Chat c) {
+		return chatComponent(c.getAdv());
+	}
 	
 	public static FormatableChat chat() {
 		return new FormatableChat(Component.text());
