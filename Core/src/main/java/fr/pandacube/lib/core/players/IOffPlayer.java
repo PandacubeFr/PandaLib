@@ -122,6 +122,27 @@ public interface IOffPlayer {
 		Boolean res = getPermissionUser().hasPermission(permission);
 		return res != null ? res : false;
 	}
+	
+	/**
+	 * Tells if this player has the permission resulted from the provided expression.
+	 * If the player is online, this will redirect the
+	 * method call to the {@link IOnlinePlayer} instance,
+	 * that MUST override this current method to avoid recussive
+	 * loop.
+	 * If the player is offline, it just call the Pandacube
+	 * permission system.
+	 * @param permission the permission node to test
+	 * @return whether this player has the provided permission
+	 */
+	public default boolean hasPermissionExpression(String permissionExpression) {
+		IOnlinePlayer online = getOnlineInstance();
+		
+		if (online != null)
+			return online.hasPermissionExpression(permissionExpression);
+		
+		// at this point, the player is offline
+		return getPermissionUser().hasPermissionExpression(permissionExpression, null, null);
+	}
 
 	/**
 	 * Tells if the this player is part of the specified group

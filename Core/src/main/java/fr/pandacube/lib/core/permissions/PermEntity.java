@@ -101,10 +101,17 @@ public abstract class PermEntity {
 	
 	public Boolean hasPermission(String permission, String server, String world) {
 		Boolean ret = Permissions.resolver.getEffectivePermission(name, type, permission, server, world);
-		if (Log.isDebugEnabled()) {
-			Log.debug("[Perm] For " + type.toString().toLowerCase() + " " + getName() + ", '" + permission + "' is " + ret);
-		}
+		Log.debug("[Perm] For " + type.toString().toLowerCase() + " " + getName() + ", '" + permission + "' is " + ret);
 		return ret;
+	}
+	
+	public boolean hasPermissionOr(String permission, String server, String world, boolean deflt) {
+		Boolean ret = hasPermission(permission, server, world);
+		return ret != null ? ret : deflt;
+	}
+	
+	public boolean hasPermissionExpression(String permExpression, String server, String world) {
+		return PermissionExpressionParser.evaluate(permExpression, p -> hasPermissionOr(p, server, world, false));
 	}
 	
 	

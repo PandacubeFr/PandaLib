@@ -70,6 +70,14 @@ public interface IOnlinePlayer extends IOffPlayer {
 	 * or it may result in a {@link StackOverflowError}.
 	 */
 	public abstract boolean hasPermission(String permission);
+
+	/**
+	 * Tells if this online player has the permission resulted from the provided expression.
+	 * @implSpec the implementation of this method must not directly or
+	 * indirectly call the method {@link IOffPlayer#hasPermissionExpression(String)},
+	 * or it may result in a {@link StackOverflowError}.
+	 */
+	public abstract boolean hasPermissionExpression(String permission);
 	
 	
 	
