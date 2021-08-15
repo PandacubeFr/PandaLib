@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import com.fathzer.soft.javaluator.AbstractEvaluator;
 import com.fathzer.soft.javaluator.BracketPair;
+import com.fathzer.soft.javaluator.Constant;
 import com.fathzer.soft.javaluator.Operator;
 import com.fathzer.soft.javaluator.Operator.Associativity;
 import com.fathzer.soft.javaluator.Parameters;
@@ -32,6 +33,8 @@ public class PermissionExpressionParser {
 		private static final Operator NOT = new Operator("!", 1, Associativity.LEFT, 3);
 		private static final Operator AND = new Operator("&&", 2, Associativity.LEFT, 2);
 		private static final Operator OR = new Operator("||", 2, Associativity.LEFT, 1);
+		private static final Constant TRUE = new Constant("true");
+		private static final Constant FALSE = new Constant("false");
 		
 		
 		private static final Parameters PARAMETERS;
@@ -41,6 +44,8 @@ public class PermissionExpressionParser {
 			PARAMETERS.add(NOT);
 			PARAMETERS.add(AND);
 			PARAMETERS.add(OR);
+			PARAMETERS.add(TRUE);
+			PARAMETERS.add(FALSE);
 			PARAMETERS.addExpressionBracket(BracketPair.PARENTHESES);
 		}
 		
@@ -72,6 +77,15 @@ public class PermissionExpressionParser {
 			} else {
 				return super.evaluate(operator, operands, evaluationContext);
 			}
+		}
+		
+		@Override
+		protected Boolean evaluate(Constant constant, Object evaluationContext) {
+			if (constant == TRUE)
+				return true;
+			if (constant == FALSE)
+				return false;
+			return super.evaluate(constant, evaluationContext);
 		}
 	}
 	
