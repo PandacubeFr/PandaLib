@@ -1,5 +1,6 @@
 package fr.pandacube.lib.core.util;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class StringUtil {
@@ -33,23 +34,11 @@ public class StringUtil {
 	
 	
 	
-
-	public static String repeat(String base, int count) {
-		int baseLength = base.length();
-		char[] baseChars = base.toCharArray();
-		char[] chars = new char[baseLength * count];
-		for (int i = 0; i < count; i++) {
-			System.arraycopy(baseChars, 0, chars, i * baseLength, baseLength);
-		}
-		return new String(chars);
-	}
 	
 	
 	public static String repeat(char base, int count) {
 		char[] chars = new char[count];
-		for (int i = 0; i < count; i++) {
-			chars[i] = base;
-		}
+		Arrays.fill(chars, base);
 		return new String(chars);
 	}
 }

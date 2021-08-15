@@ -33,6 +33,14 @@ public class Permissions {
 			throw e;
 		}
 	}
+	
+	public static void addSpecialPermissions(SpecialPermission... specialPermissions) {
+		checkInitialized();
+		if (specialPermissions == null)
+			return;
+		for (SpecialPermission sp : specialPermissions)
+			resolver.specialPermissions.add(sp);
+	}
 
 	private static void checkInitialized() {
 		if (backendReader == null) {

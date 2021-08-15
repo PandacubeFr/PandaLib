@@ -386,6 +386,12 @@ public class PermissionsResolver {
 	
 	
 	
+	
+	
+	/* package */ List<SpecialPermission> specialPermissions = new ArrayList<>();
+	
+	
+	
 	private PermResolutionNode resolveSelfPermission(CachedEntity entity, String permission, String server, String world) {
 		// special permissions
 		PermState result = PermState.UNDEFINED;
@@ -396,38 +402,15 @@ public class PermissionsResolver {
 		 * Check for special permissions
 		 */
 		if (entity instanceof CachedPlayer) {
-			PermPlayer permP = new PermPlayer(((CachedPlayer) entity).playerId);
+			PermPlayer permP = Permissions.getPlayer(((CachedPlayer) entity).playerId);
 			ParsedSelfPermission specialPerm = null;
-			if (permission.equals("pandacube.grade.isinstaff")) {
-				boolean res = permP.inheritsFromGroup("staff-base", true);
-				specialPerm = new ParsedSelfPermission(permission, res, PermType.SPECIAL);
-				conflict = "Special permission 'pandacube.grade.isinstaff' is deprecated. Use 'pandacube.inheritsfrom.<staffBaseGroup>' instead.";
-			}
-			else if (permission.startsWith("pandacube.grade.")) {
-				String group = permission.substring("pandacube.grade.".length());
-				boolean res = permP.inheritsFromGroup(group, false);
-				specialPerm = new ParsedSelfPermission(permission, res, PermType.SPECIAL);
-				conflict = "Special permission 'pandacube.grade.<groupName>' is deprecated. Use 'pandacube.ingroup.<groupName>' instead.";
-			}
-			else if (permission.startsWith("pandacube.ingroup.")) {
-				String group = permission.substring("pandacube.ingroup.".length());
-				boolean res = permP.inheritsFromGroup(group, false);
-				specialPerm = new ParsedSelfPermission(permission, res, PermType.SPECIAL);
-			}
-			else if (permission.startsWith("pandacube.inheritsfrom.")) {
-				String group = permission.substring("pandacube.inheritsfrom.".length());
-				boolean res = permP.inheritsFromGroup(group, true);
-				specialPerm = new ParsedSelfPermission(permission, res, PermType.SPECIAL);
-			}
-			else if (permission.startsWith("pandacube.inserver.")) {
-				String testedServer = permission.substring("pandacube.inserver.".length());
-				boolean res = testedServer.equals(server);
-				specialPerm = new ParsedSelfPermission(permission, res, PermType.SPECIAL);
-			}
-			else if (permission.startsWith("pandacube.inserverworld.")) {
-				String testedServerWorld = permission.substring("pandacube.inserverworld.".length());
-				boolean res = server != null && world != null && testedServerWorld.equals(server + "." + world);
-				specialPerm = new ParsedSelfPermission(permission, res, PermType.SPECIAL);
+			
+			for (SpecialPermission spePerm : specialPermissions) {
+				if (spePerm.match().match(permission)) {
+					boolean res = spePerm.tester().test(permP, permission, server, world);
+					specialPerm = new ParsedSelfPermission(permission, res, PermType.SPECIAL);
+					break;
+				}
 			}
 			
 			if (specialPerm != null) {

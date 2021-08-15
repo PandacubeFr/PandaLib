@@ -215,7 +215,7 @@ public class TimeUtil {
 		int padding = leftPad - valueStr.length();
 		if (padding <= 0)
 			return valueStr;
-		return StringUtil.repeat("0", padding) + valueStr;
+		return "0".repeat(padding) + valueStr;
 	}
 	
 	

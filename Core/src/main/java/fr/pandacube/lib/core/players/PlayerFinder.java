@@ -33,7 +33,7 @@ import fr.pandacube.lib.core.util.Log;
 public class PlayerFinder {
 	
 	private static Cache<UUID, String> playerLastKnownName = CacheBuilder.newBuilder()
-			.expireAfterWrite(2, TimeUnit.MINUTES)
+			.expireAfterWrite(10, TimeUnit.MINUTES)
 			.maximumSize(1000)
 			.build();
 	
