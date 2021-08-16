@@ -151,7 +151,7 @@ public class PlayerFinder {
 
 	public static boolean isValidPlayerName(String name) {
 		if (name == null) return false;
-		return name.matches("[0-9a-zA-Z_]{2,16}");
+		return name.matches("[0-9a-zA-Z_.]{2,20}");
 	}
 
 	public static SQLPlayer getDBPlayer(UUID id) throws Exception {
