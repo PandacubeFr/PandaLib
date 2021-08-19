@@ -212,16 +212,7 @@ public class PlayerFinder {
 		return DIFF_CHAR_DISTANCE;
 	};
 	
-	// record NamesCacheResult(String name, UUID id) { } // Java 16
-	static class NamesCacheResult {
-		private final String name;
-		private final UUID id;
-		public NamesCacheResult(String name, UUID id) {
-			this.name = name; this.id = id;
-		}
-		public String name() { return name; }
-		public UUID id() { return id; }
-	}
+	record NamesCacheResult(String name, String lowercaseName, UUID id) { } // Java 16
 	
 	private static LoadingCache<String, List<NamesCacheResult>> namesCache = CacheBuilder.newBuilder()
 			.expireAfterWrite(2, TimeUnit.MINUTES)
@@ -230,7 +221,8 @@ public class PlayerFinder {
 				List<NamesCacheResult> cached = new ArrayList<>();
 				try {
 					DB.forEach(SQLPlayerNameHistory.class, el -> {
-						cached.add(new NamesCacheResult(el.get(SQLPlayerNameHistory.playerName), el.get(SQLPlayerNameHistory.playerId)));
+						String name = el.get(SQLPlayerNameHistory.playerName);
+						cached.add(new NamesCacheResult(name, name.toLowerCase(), el.get(SQLPlayerNameHistory.playerId)));
 					});
 				} catch (DBException e) {
 					throw new RuntimeException(e);
@@ -245,13 +237,12 @@ public class PlayerFinder {
 				List<FoundName> foundNames = new ArrayList<>();
 				try {
 					namesCache.get("").forEach(el -> {
-						String name = el.name();
-						int dist = new LevenshteinDistance(name.toLowerCase(), query, SURPLUS_CHAR_DISTANCE, MISSING_CHAR_DISTANCE, CHAR_DISTANCE).getCurrentDistance();
+						int dist = new LevenshteinDistance(el.lowercaseName(), query, SURPLUS_CHAR_DISTANCE, MISSING_CHAR_DISTANCE, CHAR_DISTANCE).getCurrentDistance();
 						if (dist <= SEARCH_MAX_DISTANCE) {
 							FoundName n = new FoundName();
 							n.dist = dist;
 							n.id = el.id();
-							n.name = name;
+							n.name = el.name();
 							foundNames.add(n);
 						}
 					});
