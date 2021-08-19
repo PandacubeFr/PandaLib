@@ -47,8 +47,9 @@
     </properties>
 	
     <modules>
-        <module>Core</module>
         <module>Bungee</module>
+        <module>CLI</module>
+        <module>Core</module>
         <module>Paper</module>
     </modules>
 
