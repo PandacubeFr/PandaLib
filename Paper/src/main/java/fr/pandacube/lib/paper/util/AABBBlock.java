@@ -18,6 +18,10 @@ import fr.pandacube.lib.core.util.RandomUtil;
 public class AABBBlock implements Iterable<BlockVector> {
 	
 	public final Vector pos1, pos2;
+
+	private final Vector center;
+	
+	private final long volume;
 	
 	public AABBBlock(Vector p1, Vector p2) {
 		this(p1.getBlockX(), p1.getBlockY(), p1.getBlockZ(), p2.getBlockX(), p2.getBlockY(), p2.getBlockZ());
@@ -36,12 +40,18 @@ public class AABBBlock implements Iterable<BlockVector> {
 		 * Prends les points extérieurs permettant de former un bouding box englobant
 		 * celui représenté par v1 et v2, et étant aligné au quadrillage des blocs.
 		 */
-		pos1 = new Vector(Math.min(p1x, p2x),
-				Math.min(p1y, p2y),
-				Math.min(p1z, p2z));
-		pos2 = new Vector(Math.max(p1x, p2x) + 1,
-				Math.max(p1y, p2y) + 1,
-				Math.max(p1z, p2z) + 1);
+		int p1x_ = Math.min(p1x, p2x);
+		int p1y_ = Math.min(p1y, p2y);
+		int p1z_ = Math.min(p1z, p2z);
+		int p2x_ = Math.max(p1x, p2x) + 1;
+		int p2y_ = Math.max(p1y, p2y) + 1;
+		int p2z_ = Math.max(p1z, p2z) + 1;
+		pos1 = new Vector(p1x_, p1y_, p1z_);
+		pos2 = new Vector(p2x_, p2y_, p2z_);
+		
+		center = new Vector((p1x_ + p2x_) / 2d, (p1y_ + p2y_) / 2d, (p1z_ + p2z_) / 2d);
+		
+		volume = Math.abs(p2x_ - p1x_) * Math.abs(p2x_ - p1x_) * Math.abs(p2x_ - p1x_);
 	}
 	
 	
@@ -56,7 +66,11 @@ public class AABBBlock implements Iterable<BlockVector> {
 	}
 	
 	public Vector getCenter() {
-		return pos1.clone().add(pos2).multiply(0.5);
+		return center.clone();
+	}
+	
+	public long getVolume() {
+		return volume;
 	}
 	
 	public BoundingBox asBukkitBoundingBox() {

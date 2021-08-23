@@ -42,5 +42,31 @@ public class RandomUtil {
 		}
 		throw new RuntimeException("Should never go to this line of code");
 	}
+	
+	/**
+	 * Return a value between 0 and the number of parameter minus 1, using the provided frequencies.
+	 * 
+	 * The probability of each value to be returned depends of the frequencies provided.
+	 * @param frequencies the frequencies of each entries
+	 * @return the index of an entry, or -1 if it is unable to pick anything (all the frequencies are 0 or there is not provided frequency)
+	 */
+	public static int randomIndexOfFrequencies(double... frequencies) {
+		if (frequencies == null)
+			return -1;
+		double sum = 0;
+		for (double f : frequencies)
+			sum += f;
+		if (sum == 0)
+			return -1;
+		double r = rand.nextDouble() * sum;
+		int i = -1;
+		double limit = frequencies[++i];
+		while (i < frequencies.length) {
+			if (r < limit)
+				return i;
+			limit += frequencies[++i];
+		}
+		return frequencies.length - 1;
+	}
 
 }
