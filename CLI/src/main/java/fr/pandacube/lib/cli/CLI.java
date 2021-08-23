@@ -1,16 +1,14 @@
 package fr.pandacube.lib.cli;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.logging.ErrorManager;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
+
+import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.AnsiConsole;
 
 import fr.pandacube.lib.core.util.Log;
 import jline.console.ConsoleReader;
-import net.md_5.bungee.log.ConciseFormatter;
 
-public class ConsoleInterface extends Handler {
+public class CLI {
 	
 	
 	public static final String ANSI_RESET = "\u001B[0m";
@@ -41,20 +39,19 @@ public class ConsoleInterface extends Handler {
 	
 	
 	private ConsoleReader reader;
-	private PrintWriter out;
+	private CLILogger logger;
 	
 	
-	
-	public ConsoleInterface() throws IOException {
+	public CLI() throws IOException {
+        AnsiConsole.systemInstall();
 		reader = new ConsoleReader();
 		reader.setBellEnabled(false);
-		reader.setPrompt("\r"+ANSI_LIGHT_PURPLE+">");
-		out = new PrintWriter(reader.getOutput());
+		reader.setPrompt("\r"+Ansi.ansi().fg(Ansi.Color.MAGENTA)+">");
 		reader.addCompleter(BrigadierDispatcher.instance);
 
 		// configuration du formatteur pour le logger
 		System.setProperty("net.md_5.bungee.log-date-format", "yyyy-MM-dd HH:mm:ss");
-		setFormatter(new ConciseFormatter(true));
+		logger = new CLILogger(this);
 	}
 	
 	
@@ -62,6 +59,11 @@ public class ConsoleInterface extends Handler {
 	
 	public ConsoleReader getConsoleReader() {
 		return reader;
+	}
+	
+	
+	public CLILogger getLogger() {
+		return logger;
 	}
 	
 	
@@ -85,59 +87,8 @@ public class ConsoleInterface extends Handler {
 			Log.severe(e);
 		}
 		
-		
-		
-		
-		
-		
-		
 	}
 	
 	
-	
-	
-	private synchronized void println(String str) {
-		try {
-			out.println('\r'+ANSI_RESET+str);
-			out.flush();
-			reader.drawLine();
-			reader.flush();
-		} catch (IOException e) {
-			Log.severe(e);
-		}
-	}
-
-
-
-
-
-	@Override
-	public void close() throws SecurityException { }
-
-	@Override
-	public void flush() { }
-
-	@Override
-	public void publish(LogRecord record) {
-		if (!isLoggable(record))
-			return;
-		
-		String formattedMessage;
-		
-		try {
-			formattedMessage = getFormatter().format(record);
-		} catch (Exception ex) {
-			reportError(null, ex, ErrorManager.FORMAT_FAILURE);
-			return;
-		}
-
-		try {
-			println(formattedMessage.trim());
-		} catch (Exception ex) {
-			reportError(null, ex, ErrorManager.WRITE_FAILURE);
-			return;
-		}
-	}
-
 	
 }
