@@ -41,11 +41,9 @@ public class IteratorIterator<T> implements Iterator<T> {
 	}
 	private void fixState() {
 		fixCurrentIterator();
-		while (currentIterator == null) {
-			if (iterators.hasNext()) {
-				currentIterator = iterators.next();
-				fixCurrentIterator();
-			}
+		while (currentIterator == null && iterators.hasNext()) {
+			currentIterator = iterators.next();
+			fixCurrentIterator();
 		}
 	}
 	
