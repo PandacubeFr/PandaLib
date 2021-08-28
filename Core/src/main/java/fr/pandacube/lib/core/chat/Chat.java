@@ -218,26 +218,26 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 		public FormatableChat console(boolean c) { console = c; return this; }
 
 		public FormatableChat color(TextColor c) { builder.color(c); return this; }
-		public FormatableChat color(ChatColor c) { return color(TextColor.color(c.getColor().getRGB())); }
-		public FormatableChat color(Color c) { return color(TextColor.color(c.getRGB())); }
-		public FormatableChat color(String c) { return color(ChatColor.of(c)); }
+		public FormatableChat color(ChatColor c) { return color(c == null ? null : TextColor.color(c.getColor().getRGB())); }
+		public FormatableChat color(Color c) { return color(c == null ? null : TextColor.color(c.getRGB())); }
+		public FormatableChat color(String c) { return color(c == null ? null : ChatColor.of(c)); }
 		
-		public FormatableChat black() { return color(ChatColor.BLACK); }
-		public FormatableChat darkBlue() { return color(ChatColor.DARK_BLUE); }
-		public FormatableChat darkGreen() { return color(ChatColor.DARK_GREEN); }
-		public FormatableChat darkAqua() { return color(ChatColor.DARK_AQUA); }
-		public FormatableChat darkRed() { return color(ChatColor.DARK_RED); }
-		public FormatableChat darkPurple() { return color(ChatColor.DARK_PURPLE); }
-		public FormatableChat gold() { return color(ChatColor.GOLD); }
-		public FormatableChat gray() { return color(ChatColor.GRAY); }
-		public FormatableChat darkGray() { return color(ChatColor.DARK_GRAY); }
-		public FormatableChat blue() { return color(ChatColor.BLUE); }
-		public FormatableChat green() { return color(ChatColor.GREEN); }
-		public FormatableChat aqua() { return color(ChatColor.AQUA); }
-		public FormatableChat red() { return color(ChatColor.RED); }
-		public FormatableChat lightPurple() { return color(ChatColor.LIGHT_PURPLE); }
-		public FormatableChat yellow() { return color(ChatColor.YELLOW); }
-		public FormatableChat white() { return color(ChatColor.WHITE); }
+		public FormatableChat black() { return color(NamedTextColor.BLACK); }
+		public FormatableChat darkBlue() { return color(NamedTextColor.DARK_BLUE); }
+		public FormatableChat darkGreen() { return color(NamedTextColor.DARK_GREEN); }
+		public FormatableChat darkAqua() { return color(NamedTextColor.DARK_AQUA); }
+		public FormatableChat darkRed() { return color(NamedTextColor.DARK_RED); }
+		public FormatableChat darkPurple() { return color(NamedTextColor.DARK_PURPLE); }
+		public FormatableChat gold() { return color(NamedTextColor.GOLD); }
+		public FormatableChat gray() { return color(NamedTextColor.GRAY); }
+		public FormatableChat darkGray() { return color(NamedTextColor.DARK_GRAY); }
+		public FormatableChat blue() { return color(NamedTextColor.BLUE); }
+		public FormatableChat green() { return color(NamedTextColor.GREEN); }
+		public FormatableChat aqua() { return color(NamedTextColor.AQUA); }
+		public FormatableChat red() { return color(NamedTextColor.RED); }
+		public FormatableChat lightPurple() { return color(NamedTextColor.LIGHT_PURPLE); }
+		public FormatableChat yellow() { return color(NamedTextColor.YELLOW); }
+		public FormatableChat white() { return color(NamedTextColor.WHITE); }
 
 		public FormatableChat successColor() { return color(config.successColor); }
 		public FormatableChat failureColor() { return color(config.failureColor); }

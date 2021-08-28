@@ -42,6 +42,7 @@ public class ChatUtil {
 	public static final int DEFAULT_CHAT_WIDTH = 320;
 	public static final int SIGN_WIDTH = 90;
 	public static final int BOOK_WIDTH = 116;
+	public static final int MOTD_WIDTH = 270;
 
 	public static final int CONSOLE_NB_CHAR_DEFAULT = 50;
 	
@@ -163,7 +164,7 @@ public class ChatUtil {
 			else
 				first = false;
 			
-			FormatableChat pDisp = (FormatableChat) createCommandLink(Integer.toString(page), String.format(cmdFormat, page), "Aller à la page " + page);
+			FormatableChat pDisp = createCommandLink(Integer.toString(page), String.format(cmdFormat, page), "Aller à la page " + page);
 			if (page == currentPage) {
 				pDisp.color(Chat.getConfig().highlightedCommandColor);
 			}
@@ -182,14 +183,25 @@ public class ChatUtil {
 	
 	
 	
-	
-	
-	
+
 	public static Chat centerText(Chat text, char repeatedChar, TextColor decorationColor,
 			boolean console) {
+		return centerText(text, repeatedChar, decorationColor, console, console ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH);
+	}
+	
+	/**
+	 * 
+	 * @param text
+	 * @param repeatedChar
+	 * @param decorationColor support null values
+	 * @param console
+	 * @param maxWidth
+	 * @return
+	 */
+	public static Chat centerText(Chat text, char repeatedChar, TextColor decorationColor,
+			boolean console, int maxWidth) {
 
 		int textWidth = componentWidth(text.getAdv(), console);
-		int maxWidth = (console) ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH;
 		
 		if (textWidth > maxWidth)
 			return text;
@@ -215,9 +227,13 @@ public class ChatUtil {
 
 	public static Chat leftText(Chat text, char repeatedChar, TextColor decorationColor, int nbLeft,
 			boolean console) {
+		return leftText(text, repeatedChar, decorationColor, nbLeft, console, console ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH);
+	}
+
+	public static Chat leftText(Chat text, char repeatedChar, TextColor decorationColor, int nbLeft,
+			boolean console, int maxWidth) {
 		
 		int textWidth = componentWidth(text.getAdv(), console);
-		int maxWidth = (console) ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH;
 		int repeatedCharWidth = charW(repeatedChar, console, false);
 		int leftWidth = nbLeft * repeatedCharWidth;
 		
@@ -238,9 +254,13 @@ public class ChatUtil {
 
 	public static Chat rightText(Chat text, char repeatedChar, TextColor decorationColor, int nbRight,
 			boolean console) {
+		return rightText(text, repeatedChar, decorationColor, nbRight, console, console ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH);
+	}
+
+	public static Chat rightText(Chat text, char repeatedChar, TextColor decorationColor, int nbRight,
+			boolean console, int maxWidth) {
 		
 		int textWidth = componentWidth(text.getAdv(), console);
-		int maxWidth = (console) ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH;
 		int repeatedCharWidth = charW(repeatedChar, console, false);
 		int rightWidth = nbRight * repeatedCharWidth;
 		
