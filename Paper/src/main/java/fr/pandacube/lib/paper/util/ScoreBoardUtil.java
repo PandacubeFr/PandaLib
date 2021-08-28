@@ -14,28 +14,24 @@ import fr.pandacube.lib.core.chat.ChatUtil;
 import net.md_5.bungee.api.ChatColor;
 
 public class ScoreBoardUtil {
-	/**
-	 * Met à jour la Sidebar d'un Scoreboard donné
-	 *
-	 * @param scBrd Le Scoreboard à mettre à jour (ne doit pas être null)
-	 * @param title Le titre de la Sidebar, limité à 32 caractères
-	 * @param lines Les lignes qui doivent être affichés. Si un éléments du
-	 *        tableau est null, il sera compté comme une chaine vide. Toutes les
-	 *        lignes seront rognés aux 40 premiers caractères
-	 */
-	@Deprecated
-	public static void updateScoreboardSidebar(Scoreboard scBrd, String title, String[] lines) {
-		updateScoreboardSidebar(scBrd, Chat.legacyText(title), lines);
-	}
 
 	/**
-	 * Met à jour la Sidebar d'un Scoreboard donné
+	 * Update the sidebar of the provided scoreboard, with the given title and lines.
 	 *
-	 * @param scBrd Le Scoreboard à mettre à jour (ne doit pas être null)
-	 * @param title Le titre de la Sidebar
-	 * @param lines Les lignes qui doivent être affichés. Si un éléments du
-	 *        tableau est null, il sera compté comme une chaine vide. Toutes les
-	 *        lignes seront rognés aux 40 premiers caractères
+	 * @param scBrd the scoreboard
+	 * @param title the title of the sidebar
+	 * @param lines the lines that have to be displayed. Null values are treated as empty lines.
+	 *              The lines support legacy formatting only, and will be truncated to 40 characters.
+	 *              Lines present multiple times will have hidden characters appended to make them different.
+	 *              Vanilla Java Edition clients only display the 15 first lines.
+	 * @implNote The implementation makes sure that the minimum amount of data is transmitted to the client,
+	 *           to reduce bandwith usage and avoid the sidebar flickering.
+	 *           <ul>
+	 *           <li>If a provided line is already present in the sidebar, and at the same line number, it will not be updated.
+	 *           <li>If a provided line is already present but at another position, only the score (i.e. the line number) is updated.
+	 *           <li>If a provided line was not present before, it is added as a new score entry in the scoreboard.
+	 *           <li>If a line that was already present is not in the provided lines, it is removed from the scoreboard.
+	 *           <li>The title is only updated if it has actually changed.
 	 */
 	public static void updateScoreboardSidebar(Scoreboard scBrd, Chat title, String[] lines) {
 		if (scBrd == null) throw new IllegalArgumentException("scBrd doit être non null");
@@ -43,16 +39,22 @@ public class ScoreBoardUtil {
 		
 		Objective obj = scBrd.getObjective("sidebar_autogen");
 		if (obj != null && !obj.getCriteria().equalsIgnoreCase("dummy")) {
+			// objective present but with wrong criteria, removing it
 			obj.unregister();
 			obj = null;
 		}
 		
-		if (obj == null)
+		
+		if (obj == null) {
 			obj = scBrd.registerNewObjective("sidebar_autogen", "dummy", title.getAdv());
+			obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+		}
 		else {
+			// only update title if needed
 			if (!title.getAdv().equals(obj.displayName()))
 				obj.displayName(title.getAdv());
-			if (!DisplaySlot.SIDEBAR.equals(obj.getDisplaySlot()))
+			// fix display slot if someone else changed it
+			if (DisplaySlot.SIDEBAR != obj.getDisplaySlot())
 				obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 		}
 		
@@ -61,18 +63,16 @@ public class ScoreBoardUtil {
 		
 		List<String> listLines = Arrays.asList(lines);
 		
-		// remove lines that are not in the array
+		// remove lines from the scoreboard that are not in the provided array
 		Objective fObj = obj;
 		scBrd.getEntries().stream()
 				.filter(e -> !listLines.contains(e))
 				.filter(e -> fObj.getScore(e).isScoreSet())
 				.forEach(scBrd::resetScores);
 
-		// add/update others lines
+		// add and update others lines
 		int boardPos = lines.length;
 		for (String line : lines) {
-			if (line == null) line = "";
-
 			Score score = obj.getScore(line);
 			
 			if (score.getScore() != boardPos)
@@ -83,15 +83,24 @@ public class ScoreBoardUtil {
 	}
 
 	/**
-	 * Met à jour la Sidebar d'un Scoreboard donné
+	 * Update the sidebar of the provided scoreboard, with the given title and lines.
 	 *
-	 * @param scBrd Le Scoreboard à mettre à jour
-	 * @param title Le titre de la Sidebar, limité à 32 caractères
-	 * @param lines Les lignes qui doivent être affichés. Si un éléments du
-	 *        tableau est null, il sera compté comme une chaine vide. Toutes les
-	 *        lignes seront rognés aux 40 premiers caractères
+	 * @param scBrd the scoreboard
+	 * @param title the title of the sidebar
+	 * @param lines the lines that have to be displayed. Null values are treated as empty lines.
+	 *              The lines support legacy formatting only, and will be truncated to 40 characters.
+	 *              Lines present multiple times will have hidden characters appended to make them different.
+	 *              Vanilla Java Edition clients only display the 15 first lines.
+	 * @implNote The implementation makes sure that the minimum amount of data is transmitted to the client,
+	 *           to reduce bandwith usage and avoid the sidebar flickering.
+	 *           <ul>
+	 *           <li>If a provided line is already present in the sidebar, and at the same line number, it will not be updated.
+	 *           <li>If a provided line is already present but at another position, only the score (i.e. the line number) is updated.
+	 *           <li>If a provided line was not present before, it is added as a new score entry in the scoreboard.
+	 *           <li>If a line that was already present is not in the provided lines, it is removed from the scoreboard.
+	 *           <li>The title is only updated if it has actually changed.
 	 */
-	public static void updateScoreboardSidebar(Scoreboard scBrd, String title, List<String> lines) {
+	public static void updateScoreboardSidebar(Scoreboard scBrd, Chat title, List<String> lines) {
 		updateScoreboardSidebar(scBrd, title, lines.toArray(new String[lines.size()]));
 	}
 	
