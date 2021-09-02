@@ -33,11 +33,18 @@ public class TimeUtil {
 
 	private static DateTimeFormatter HMSFormatter = DateTimeFormatter.ofPattern("HH:mm:ss", Locale.getDefault());
 	private static DateTimeFormatter HMFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.getDefault());
+	private static DateTimeFormatter HFormatter = DateTimeFormatter.ofPattern("H'h'", Locale.getDefault());
 	
-	
-	
-	
+
 	public static String relativeDateFr(long displayTime, boolean showSeconds, boolean compactWords) {
+		return relativeDateFr(displayTime,
+				showSeconds ? RelativePrecision.MINUTES : RelativePrecision.SECONDS,
+				showSeconds ? DisplayPrecision.MINUTES : DisplayPrecision.SECONDS,
+				compactWords);
+	}
+	
+	
+	public static String relativeDateFr(long displayTime, RelativePrecision relPrecision, DisplayPrecision dispPrecision, boolean compactWords) {
 		long currentTime = System.currentTimeMillis();
 		
 		
@@ -50,76 +57,121 @@ public class TimeUtil {
 		
 		if (timeDiffSec < -1) {
 			// in the future
-			if (timeDiffSec > -60) {
-				if (showSeconds)
-					return "dans " + (-timeDiffSec) + " secondes";
-				else
-					return "dans moins d’une minute";
+			if (relPrecision == RelativePrecision.SECONDS) {
+				if (timeDiffSec > -60)
+					return "dans " + (-timeDiffSec) + (compactWords ? "s" : " secondes"); 
 			}
-			if (timeDiffSec > -60*2) // dans 2 min
-				return "dans ̈" + (int)Math.floor((-timeDiffSec)/60) + " minute";
-			if (timeDiffSec > -3600) // dans 1h
-				return "dans " + (int)Math.floor((-timeDiffSec)/60) + " minutes";
-			if (timeDiffSec > -3600*2) // dans 2h
-				return "dans " + (int)Math.floor((-timeDiffSec)/(3600)) + " heure";
-			if (timeDiffSec > -3600*12) // dans 12h
-				return "dans " + (int)Math.floor((-timeDiffSec)/(3600)) + " heures";
+			if (relPrecision.morePreciseOrEqTo(RelativePrecision.MINUTES)) {
+				if (timeDiffSec > -60)
+					return compactWords ? "dans moins d’1min" : "dans moins d’une minute";
+				if (timeDiffSec > -60*2) // dans 2 min
+					return compactWords ? "dans 1min" : "dans une minute";
+				if (timeDiffSec > -3600) // dans moins d’1h
+					return "dans " + (int)Math.floor((-timeDiffSec)/60) + (compactWords ? "min" : " minutes");
+			}
+			if (relPrecision.morePreciseOrEqTo(RelativePrecision.HOURS)) {
+				if (timeDiffSec > -3600) // dans moins d’1h
+					return compactWords ? "dans moins d’1h" : "dans moins d’une heure";
+				if (timeDiffSec > -3600*2) // dans moins de 2h
+					return compactWords ? "dans 1h" : "dans une heure";
+				if (timeDiffSec > -3600*12) // dans moins de 12h
+					return "dans " + (int)Math.floor((-timeDiffSec)/3600) + (compactWords ? "h" : " heures");
+			}
+			if (relPrecision.morePreciseOrEqTo(RelativePrecision.DAYS)) {
+				LocalDateTime nextMidnight = LocalDateTime.of(currentDateTime.getYear(), currentDateTime.getMonth(), currentDateTime.getDayOfMonth(), 0, 0).plusDays(1);
+				if (displayDateTime.isBefore(nextMidnight)) // aujourd'hui
+					return "aujourd’hui à " + dayTimeFr(displayTime, dispPrecision);
+				if (displayDateTime.isBefore(nextMidnight.plusDays(1))) // demain
+					return "demain à " + dayTimeFr(displayTime, dispPrecision);
+				if (displayDateTime.isBefore(nextMidnight.plusDays(5))) // dans moins d'1 semaine
+					return (compactWords ? cmpDayOfWeekFormatter : dayOfWeekFormatter).format(displayDateTime) + " "
+							+ dayOfMonthFormatter.format(displayDateTime) + " à "
+							+ dayTimeFr(displayTime, dispPrecision);
+			}
 			
-			LocalDateTime nextMidnight = LocalDateTime.of(currentDateTime.getYear(), currentDateTime.getMonth(), currentDateTime.getDayOfMonth(), 0, 0).plusDays(1);
-			if (displayDateTime.isBefore(nextMidnight)) // aujourd'hui
-				return "aujourd’hui à " + (showSeconds ? HMSFormatter : HMFormatter).format(displayDateTime);
-			if (displayDateTime.isBefore(nextMidnight.plusDays(1))) // demain
-				return "demain à " + (showSeconds ? HMSFormatter : HMFormatter).format(displayDateTime);
-			if (displayDateTime.isBefore(nextMidnight.plusDays(5))) // dans moins d'1 semaine
-				return (compactWords ? cmpDayOfWeekFormatter : dayOfWeekFormatter).format(displayDateTime) + " "
-						+ dayOfMonthFormatter.format(displayDateTime) + " à "
-						+ (showSeconds ? HMSFormatter : HMFormatter).format(displayDateTime);
-			
-			return fullDateFr(displayTime, showSeconds, true, compactWords);
+			return fullDateFr(displayTime, dispPrecision, true, compactWords);
 			
 		}
 		else {
 			// present and past
 			if (timeDiffSec <= 1)
 				return "maintenant";
-			if (timeDiffSec < 60) { // ya moins d'1 min
-				if (showSeconds)
-					return "il y a " + timeDiffSec + " secondes";
-				else
-					return "il y a moins d’une minute";
+
+			if (relPrecision == RelativePrecision.SECONDS) {
+				if (timeDiffSec < 60) // ya moins d'1 min
+					return "il y a " + timeDiffSec + (compactWords ? "s" : " secondes");
 			}
-			if (timeDiffSec < 60*2) // ya moins de 2 min
-				return "il y a " + (int)Math.floor((timeDiffSec)/60) + " minute";
-			if (timeDiffSec < 3600) // ya moins d'1h
-				return "il y a " + (int)Math.floor((timeDiffSec)/60) + " minutes";
-			if (timeDiffSec < 3600*2) // ya moins de 2h
-				return "il y a " + (int)Math.floor((timeDiffSec)/(3600)) + " heure";
-			if (timeDiffSec < 3600*12) // ya moins de 12h
-				return "il y a " + (int)Math.floor((timeDiffSec)/(3600)) + " heures";
+			if (relPrecision.morePreciseOrEqTo(RelativePrecision.MINUTES)) {
+				if (timeDiffSec < 60) // ya moins d'1 min
+					return compactWords ? "il y a moins d’1min" : "il y a moins d’une minute";
+				if (timeDiffSec < 60*2) // ya moins de 2 min
+					return compactWords ? "il y a 1min" : "il y a une minute";
+				if (timeDiffSec < 3600) // ya moins d'1h
+					return "il y a " + (int)Math.floor(timeDiffSec/60) + (compactWords ? "min" : " minutes");
+			}
+			if (relPrecision.morePreciseOrEqTo(RelativePrecision.HOURS)) {
+				if (timeDiffSec < 3600) // ya moins d'1h
+					return "il y a moins d’une heure";
+				if (timeDiffSec < 3600*2) // ya moins de 2h
+					return "il y a une heure";
+				if (timeDiffSec < 3600*12) // ya moins de 12h
+					return "il y a " + (int)Math.floor(timeDiffSec/3600) + " heures";
+			}
+			if (relPrecision.morePreciseOrEqTo(RelativePrecision.DAYS)) {
+				LocalDateTime lastMidnight = LocalDateTime.of(currentDateTime.getYear(), currentDateTime.getMonth(), currentDateTime.getDayOfMonth(), 0, 0);
+				if (!displayDateTime.isBefore(lastMidnight)) // aujourd'hui
+					return "aujourd’hui à " + dayTimeFr(displayTime, dispPrecision);
+				if (!displayDateTime.isBefore(lastMidnight.minusDays(1))) // hier
+					return "hier à " + dayTimeFr(displayTime, dispPrecision);
+				if (!displayDateTime.isBefore(lastMidnight.minusDays(6))) // ya moins d'1 semaine
+					return (compactWords ? cmpDayOfWeekFormatter : dayOfWeekFormatter).format(displayDateTime) + " dernier à "
+							+ dayTimeFr(displayTime, dispPrecision);
+			}
 			
-			LocalDateTime lastMidnight = LocalDateTime.of(currentDateTime.getYear(), currentDateTime.getMonth(), currentDateTime.getDayOfMonth(), 0, 0);
-			
-			if (!displayDateTime.isBefore(lastMidnight)) // aujourd'hui
-				return "aujourd’hui à " + (showSeconds ? HMSFormatter : HMFormatter).format(displayDateTime);
-			if (!displayDateTime.isBefore(lastMidnight.minusDays(1))) // hier
-				return "hier à " + (showSeconds ? HMSFormatter : HMFormatter).format(displayDateTime);
-			if (!displayDateTime.isBefore(lastMidnight.minusDays(6))) // ya moins d'1 semaine
-				return (compactWords ? cmpDayOfWeekFormatter : dayOfWeekFormatter).format(displayDateTime) + " dernier à "
-						+ (showSeconds ? HMSFormatter : HMFormatter).format(displayDateTime);
-			
-			return fullDateFr(displayTime, showSeconds, true, compactWords);
+			return fullDateFr(displayTime, dispPrecision, true, compactWords);
 			
 		}
 		
 	}
 	
+	
+	public enum RelativePrecision {
+		NONE, DAYS, HOURS, MINUTES, SECONDS;
+
+		public boolean morePreciseThan(RelativePrecision o) { return ordinal() > o.ordinal(); }
+		public boolean lessPreciseThan(RelativePrecision o) { return ordinal() < o.ordinal(); }
+		public boolean morePreciseOrEqTo(RelativePrecision o) { return ordinal() >= o.ordinal(); }
+		public boolean lessPreciseOrEqTo(RelativePrecision o) { return ordinal() <= o.ordinal(); }
+	}
+	
+	public enum DisplayPrecision {
+		DAYS, HOURS, MINUTES, SECONDS
+	}
+	
+
 	public static String fullDateFr(long displayTime, boolean showSeconds, boolean showWeekday, boolean compactWords) {
+		return fullDateFr(displayTime, showSeconds ? DisplayPrecision.SECONDS : DisplayPrecision.MINUTES, showWeekday, compactWords);
+	}
+	
+	public static String fullDateFr(long displayTime, DisplayPrecision precision, boolean showWeekday, boolean compactWords) {
 		LocalDateTime displayDateTime = toLocalDateTime(displayTime);
-		return (showWeekday ? ((compactWords ? cmpDayOfWeekFormatter : dayOfWeekFormatter).format(displayDateTime) + " ") : "")
+		String ret = (showWeekday ? ((compactWords ? cmpDayOfWeekFormatter : dayOfWeekFormatter).format(displayDateTime) + " ") : "")
 				+ dayOfMonthFormatter.format(displayDateTime) + " "
 				+ (compactWords ? cmpMonthFormatter : monthFormatter).format(displayDateTime) + " "
-				+ yearFormatter.format(displayDateTime) + " à "
-				+ (showSeconds ? HMSFormatter : HMFormatter).format(displayDateTime);
+				+ yearFormatter.format(displayDateTime);
+		if (precision == DisplayPrecision.DAYS)
+			return ret;
+		return ret + " à " + dayTimeFr(displayTime, precision);
+	}
+	
+	public static String dayTimeFr(long displayTime, DisplayPrecision precision) {
+		DateTimeFormatter tFormatter = switch(precision) {
+		case HOURS -> HFormatter;
+		case MINUTES -> HMFormatter;
+		case SECONDS -> HMSFormatter;
+		default -> throw new IllegalArgumentException("precision");
+		};
+		return tFormatter.format(toLocalDateTime(displayTime));
 	}
 	
 	

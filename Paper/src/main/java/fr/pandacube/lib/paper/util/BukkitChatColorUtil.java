@@ -72,11 +72,11 @@ public class BukkitChatColorUtil {
 	}
 	
 	public static org.bukkit.ChatColor toBukkit(NamedTextColor color) {
-		return org.bukkit.ChatColor.valueOf(color.toString());
+		return org.bukkit.ChatColor.valueOf(color.toString().toUpperCase());
 	}
 	
 	public static NamedTextColor toAdventure(org.bukkit.ChatColor color) {
-		return NamedTextColor.NAMES.value(color.name());
+		return NamedTextColor.NAMES.value(color.name().toLowerCase());
 	}
 	
 }
