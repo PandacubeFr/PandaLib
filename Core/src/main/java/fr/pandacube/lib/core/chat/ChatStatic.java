@@ -5,6 +5,7 @@ import java.util.Objects;
 import fr.pandacube.lib.core.chat.Chat.FormatableChat;
 import fr.pandacube.lib.core.util.Log;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 
@@ -77,13 +78,14 @@ public abstract class ChatStatic {
 	}
 
 	public static FormatableChat playerNameText(String legacyText) {
-		return legacyText(legacyText).white();
+		FormatableChat fc = legacyText(legacyText);
+		fc.builder.colorIfAbsent(NamedTextColor.WHITE);
+		return fc;
 	}
 
 	public static FormatableChat playerNameComponent(Component c) {
 		FormatableChat fc = chatComponent(c);
-		if (c.color() == null)
-			fc.white();
+		fc.builder.colorIfAbsent(NamedTextColor.WHITE);
 		return fc;
 	}
 
