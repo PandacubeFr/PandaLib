@@ -3,6 +3,9 @@ package fr.pandacube.lib.core.players;
 import java.util.Locale;
 import java.util.UUID;
 
+import org.geysermc.floodgate.api.FloodgateApi;
+import org.geysermc.floodgate.api.player.FloodgatePlayer;
+
 import fr.pandacube.lib.core.chat.Chat;
 import fr.pandacube.lib.core.db.DBException;
 import net.kyori.adventure.identity.Identified;
@@ -31,7 +34,26 @@ public interface IOnlinePlayer extends IOffPlayer {
 	public abstract String getWorldName();
 	
 	
+	
+	
+	/*
+	 * Floodgate related
+	 */
+	
+	public default boolean isBedrockClient() {
+		return FloodgateApi.getInstance().isFloodgatePlayer(getUniqueId());
+	}
+	
+	public default FloodgatePlayer getBedrockClient() {
+		return FloodgateApi.getInstance().getPlayer(getUniqueId());
+	}
+	
 
+	
+	
+	/*
+	 * Related class instances
+	 */
 
 	/**
 	 * @throws IllegalStateException if the player was not found in the database (should never happen)
@@ -44,14 +66,6 @@ public interface IOnlinePlayer extends IOffPlayer {
 			throw new IllegalStateException("The player was not found in the database: " + getUniqueId());
 		return p;
 	}
-	
-	
-	
-	
-	
-	/*
-	 * Related class instances
-	 */
 	
 	
 	
