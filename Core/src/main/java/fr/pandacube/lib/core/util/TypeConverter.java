@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
 /**
@@ -128,7 +127,7 @@ public class TypeConverter {
 		}
 		
 		if (o instanceof JsonElement) {
-			o = new Gson().fromJson((JsonElement)o, Object.class);
+			o = Json.gson.fromJson((JsonElement)o, Object.class);
 		}
 		
 		if (o instanceof Map) {
@@ -175,7 +174,7 @@ public class TypeConverter {
 		}
 		
 		if (o instanceof JsonElement) {
-			o = new Gson().fromJson((JsonElement)o, Object.class);
+			o = Json.gson.fromJson((JsonElement)o, Object.class);
 		}
 		
 

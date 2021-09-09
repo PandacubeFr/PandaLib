@@ -19,10 +19,10 @@ import java.util.UUID;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import fr.pandacube.lib.core.util.EnumUtil;
+import fr.pandacube.lib.core.util.Json;
 import fr.pandacube.lib.core.util.Log;
 
 public abstract class SQLElement<E extends SQLElement<E>> {
@@ -398,7 +398,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 	public JsonObject asJsonObject() {
 		JsonObject json = new JsonObject();
 		for (SQLField<E, ?> f : getFields().values()) {
-			json.add(f.getName(), new Gson().toJsonTree(get(f)));
+			json.add(f.getName(), Json.gson.toJsonTree(get(f)));
 		}
 		return json;
 	}
