@@ -298,5 +298,38 @@ public interface IOffPlayer {
 	
 	
 	
+	
+	
+	
+	
+	/*
+	 * Player config
+	 */
+	
+	public default String getConfig(String key) throws DBException {
+		return SQLPlayerConfig.get(getUniqueId(), key);
+	}
+	
+	public default String getConfig(String key, String deflt) throws DBException {
+		return SQLPlayerConfig.get(getUniqueId(), key, deflt);
+	}
+	
+	public default void setConfig(String key, String value) throws DBException {
+		SQLPlayerConfig.set(getUniqueId(), key, value);
+	}
+	
+	public default void unsetConfig(String key) throws DBException {
+		SQLPlayerConfig.unset(getUniqueId(), key);
+	}
+	
+	public default boolean isWelcomeQuizzDone() {
+		try {
+			return Boolean.valueOf(getConfig("welcome.quizz.done", "false"));
+		} catch (DBException e) {
+			Log.severe("Error knowing if player has already done the quizz. Assuming they did for now.", e);
+			return true;
+		}
+	}
+	
 
 }
