@@ -36,10 +36,11 @@ public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPl
 		synchronized (IPlayerManager.class) {
 			instance = this;
 		}
-		
+
 		DB.initTable(SQLPlayer.class);
-		DB.initTable(SQLPlayerNameHistory.class);
+		DB.initTable(SQLPlayerConfig.class);
 		DB.initTable(SQLPlayerIgnore.class);
+		DB.initTable(SQLPlayerNameHistory.class);
 	}
 	
 	
