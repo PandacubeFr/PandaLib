@@ -453,6 +453,10 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 		public TextColor broadcastColor = NamedTextColor.YELLOW;
 		public Supplier<Chat> prefix;
 		
+		public int getPrefixWidth(boolean console) {
+			Chat c = prefix == null ? null : prefix.get();
+			return c == null ? 0 : ChatUtil.componentWidth(c.getAdv(), console);
+		}
 	}
 	
 	
