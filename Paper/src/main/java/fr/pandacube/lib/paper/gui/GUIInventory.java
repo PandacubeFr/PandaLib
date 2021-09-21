@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -21,7 +22,8 @@ import org.bukkit.plugin.Plugin;
 import com.google.common.collect.ImmutableMap;
 
 import fr.pandacube.lib.core.chat.Chat;
-import fr.pandacube.lib.core.util.Callback;
+import fr.pandacube.lib.core.players.IPlayerManager;
+import fr.pandacube.lib.core.util.Log;
 import fr.pandacube.lib.paper.util.ItemStackBuilder;
 
 public class GUIInventory implements Listener {
@@ -30,21 +32,20 @@ public class GUIInventory implements Listener {
 
 	private Player player;
 	private Inventory inv;
-	private Callback<InventoryCloseEvent> onCloseEvent;
+	private Consumer<InventoryCloseEvent> onCloseEvent;
 	private boolean isOpened = false;
-	private Map<Integer, Callback<InventoryClickEvent>> onClickEvents;
+	private Map<Integer, Consumer<InventoryClickEvent>> onClickEvents;
 
-	@Deprecated
-	public GUIInventory(Player p, int nbLines, String title, Callback<InventoryCloseEvent> closeEventAction,
-			Plugin pl) {
-		this(p, nbLines, title == null ? null : Chat.legacyText(title), closeEventAction, pl);
-	}
-	public GUIInventory(Player p, int nbLines, Chat title, Callback<InventoryCloseEvent> closeEventAction,
+	public GUIInventory(Player p, int nbLines, Chat title, Consumer<InventoryCloseEvent> closeEventAction,
 			Plugin pl) {
 		if (title == null)
 			inv = Bukkit.createInventory(null, nbLines * 9);
 		else
 			inv = Bukkit.createInventory(null, nbLines * 9, title.getAdv());
+		
+		if (IPlayerManager.getInstance().get(p.getUniqueId()).isBedrockClient()) {
+			Log.warning("Opening GUI inventory for player on Bedrock client " + p.getName() + " (" + p.getUniqueId() + "). Please use a Form instead.", new Throwable());
+		}
 
 		setCloseEvent(closeEventAction);
 
@@ -56,7 +57,7 @@ public class GUIInventory implements Listener {
 
 	}
 	
-	protected void setCloseEvent(Callback<InventoryCloseEvent> closeEventAction) {
+	protected void setCloseEvent(Consumer<InventoryCloseEvent> closeEventAction) {
 		onCloseEvent = closeEventAction;
 	}
 
@@ -65,7 +66,7 @@ public class GUIInventory implements Listener {
 	 *        été pré-annulée. Pour la rétablir, faites un
 	 *        event.setCancelled(false)).
 	 */
-	public void setButtonIfEmpty(int p, ItemStack iStack, Callback<InventoryClickEvent> clickEventActions) {
+	public void setButtonIfEmpty(int p, ItemStack iStack, Consumer<InventoryClickEvent> clickEventActions) {
 		if (inv.getItem(p) == null)
 			setButton(p, iStack, clickEventActions);
 	}
@@ -75,7 +76,7 @@ public class GUIInventory implements Listener {
 	 *        été pré-annulée. Pour la rétablir, faites un
 	 *        event.setCancelled(false)).
 	 */
-	public void setButton(int p, ItemStack iStack, Callback<InventoryClickEvent> clickEventActions) {
+	public void setButton(int p, ItemStack iStack, Consumer<InventoryClickEvent> clickEventActions) {
 		inv.setItem(p, iStack);
 		changeClickEventAction(p, clickEventActions);
 	}
@@ -85,7 +86,7 @@ public class GUIInventory implements Listener {
 	 *        été pré-annulée. Pour la rétablir, faites un
 	 *        event.setCancelled(false)).
 	 */
-	public void changeClickEventAction(int p, Callback<InventoryClickEvent> clickEventActions) {
+	public void changeClickEventAction(int p, Consumer<InventoryClickEvent> clickEventActions) {
 		onClickEvents.put(p, clickEventActions);
 	}
 
@@ -135,8 +136,9 @@ public class GUIInventory implements Listener {
 		// on ne réagit pas aux clics hors de l'inventaire du dessus.
 		if (event.getClickedInventory() != event.getView().getTopInventory()) return;
 
-		Callback<InventoryClickEvent> callback = onClickEvents.get(event.getSlot());
-		if (callback != null) callback.done(event);
+		Consumer<InventoryClickEvent> callback = onClickEvents.get(event.getSlot());
+		if (callback != null)
+			callback.accept(event);
 
 	}
 
@@ -149,7 +151,7 @@ public class GUIInventory implements Listener {
 		HandlerList.unregisterAll(this);
 
 		if (onCloseEvent != null)
-			onCloseEvent.done(event);
+			onCloseEvent.accept(event);
 		isOpened = false;
 	}
 	

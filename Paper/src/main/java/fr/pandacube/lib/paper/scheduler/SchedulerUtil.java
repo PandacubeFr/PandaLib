@@ -1,4 +1,4 @@
-package fr.pandacube.lib.paper.util;
+package fr.pandacube.lib.paper.scheduler;
 
 import java.util.concurrent.Callable;
 
@@ -7,7 +7,7 @@ import org.bukkit.Bukkit;
 import fr.pandacube.lib.core.util.Log;
 import fr.pandacube.lib.paper.PandaLibPaper;
 
-public class ThreadUtil {
+public class SchedulerUtil {
 	
 	public static void runOnServerThread(Runnable task) {
 		if (Bukkit.isPrimaryThread())

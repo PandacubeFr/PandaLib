@@ -184,29 +184,27 @@ public class ChatUtil {
 	
 	
 
-	public static Chat centerText(Chat text, char repeatedChar, TextColor decorationColor,
-			boolean console) {
+	/**
+	 * @param decorationColor support null values
+	 */
+	public static Chat centerText(Chat text, char repeatedChar, TextColor decorationColor, boolean console) {
 		return centerText(text, repeatedChar, decorationColor, console, console ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH);
+	}
+	public static Chat centerText(Chat text, char repeatedChar, TextColor decorationColor, boolean console, int maxWidth) {
+		return centerText(text, repeatedChar, decorationColor, false, console, console ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH);
 	}
 	
 	/**
-	 * 
-	 * @param text
-	 * @param repeatedChar
 	 * @param decorationColor support null values
-	 * @param console
-	 * @param maxWidth
-	 * @return
 	 */
-	public static Chat centerText(Chat text, char repeatedChar, TextColor decorationColor,
-			boolean console, int maxWidth) {
+	public static Chat centerText(Chat text, char repeatedChar, TextColor decorationColor, boolean decorationBold, boolean console, int maxWidth) {
 
 		int textWidth = componentWidth(text.getAdv(), console);
 		
 		if (textWidth > maxWidth)
 			return text;
 		
-		int repeatedCharWidth = charW(repeatedChar, console, false);
+		int repeatedCharWidth = charW(repeatedChar, console, decorationBold);
 		int sideWidth = (maxWidth - textWidth) / 2;
 		int sideNbChar = sideWidth / repeatedCharWidth;
 		
@@ -214,24 +212,25 @@ public class ChatUtil {
 			return text;
 		
 		String sideChars = repeatedChar(repeatedChar, sideNbChar);
+		FormatableChat side = text(sideChars).color(decorationColor);
+		if (decorationBold)
+			side.bold();
 
 		Chat d = Chat.chat()
-				.then(text(sideChars).color(decorationColor))
+				.then(side)
 				.then(text);
 		if (repeatedChar != ' ')
-			d.then(text(sideChars).color(decorationColor));
+			d.then(side);
 
 		return d;
 
 	}
 
-	public static Chat leftText(Chat text, char repeatedChar, TextColor decorationColor, int nbLeft,
-			boolean console) {
+	public static Chat leftText(Chat text, char repeatedChar, TextColor decorationColor, int nbLeft, boolean console) {
 		return leftText(text, repeatedChar, decorationColor, nbLeft, console, console ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH);
 	}
 
-	public static Chat leftText(Chat text, char repeatedChar, TextColor decorationColor, int nbLeft,
-			boolean console, int maxWidth) {
+	public static Chat leftText(Chat text, char repeatedChar, TextColor decorationColor, int nbLeft, boolean console, int maxWidth) {
 		
 		int textWidth = componentWidth(text.getAdv(), console);
 		int repeatedCharWidth = charW(repeatedChar, console, false);
@@ -280,8 +279,19 @@ public class ChatUtil {
 	}
 
 	public static Chat emptyLine(char repeatedChar, TextColor decorationColor, boolean console) {
-		int count = ((console) ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH) / charW(repeatedChar, console, false);
-		return text(repeatedChar(repeatedChar, count)).color(decorationColor);
+		return emptyLine(repeatedChar, decorationColor, false, console);
+	}
+
+	public static Chat emptyLine(char repeatedChar, TextColor decorationColor, boolean decorationBold, boolean console) {
+		return emptyLine(repeatedChar, decorationColor, decorationBold, console, (console) ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH);
+	}
+
+	public static Chat emptyLine(char repeatedChar, TextColor decorationColor, boolean decorationBold, boolean console, int maxWidth) {
+		int count = maxWidth / charW(repeatedChar, console, decorationBold);
+		FormatableChat line = text(repeatedChar(repeatedChar, count)).color(decorationColor);
+		if (decorationBold)
+			line.bold();
+		return line;
 	}
 
 	private static String repeatedChar(char repeatedChar, int count) {
@@ -338,7 +348,7 @@ public class ChatUtil {
 		return (count < 0) ? 0 : count;
 	}
 
-	private static int charW(char c, boolean console, boolean bold) {
+	public static int charW(char c, boolean console, boolean bold) {
 		if (console) return (c == '§') ? -1 : 1;
 		for (int px : CHARS_SIZE.keySet())
 			if (CHARS_SIZE.get(px).indexOf(c) >= 0) return px + (bold ? 1 : 0);
