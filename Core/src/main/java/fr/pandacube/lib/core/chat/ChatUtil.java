@@ -191,7 +191,7 @@ public class ChatUtil {
 		return centerText(text, repeatedChar, decorationColor, console, console ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH);
 	}
 	public static Chat centerText(Chat text, char repeatedChar, TextColor decorationColor, boolean console, int maxWidth) {
-		return centerText(text, repeatedChar, decorationColor, false, console, console ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH);
+		return centerText(text, repeatedChar, decorationColor, false, console, maxWidth);
 	}
 	
 	/**
@@ -251,8 +251,7 @@ public class ChatUtil {
 		
 	}
 
-	public static Chat rightText(Chat text, char repeatedChar, TextColor decorationColor, int nbRight,
-			boolean console) {
+	public static Chat rightText(Chat text, char repeatedChar, TextColor decorationColor, int nbRight, boolean console) {
 		return rightText(text, repeatedChar, decorationColor, nbRight, console, console ? CONSOLE_NB_CHAR_DEFAULT : DEFAULT_CHAT_WIDTH);
 	}
 
