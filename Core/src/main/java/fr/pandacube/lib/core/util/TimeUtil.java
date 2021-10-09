@@ -38,8 +38,8 @@ public class TimeUtil {
 
 	public static String relativeDateFr(long displayTime, boolean showSeconds, boolean compactWords) {
 		return relativeDateFr(displayTime,
-				showSeconds ? RelativePrecision.MINUTES : RelativePrecision.SECONDS,
-				showSeconds ? DisplayPrecision.MINUTES : DisplayPrecision.SECONDS,
+				showSeconds ? RelativePrecision.SECONDS : RelativePrecision.MINUTES,
+				showSeconds ? DisplayPrecision.SECONDS : DisplayPrecision.MINUTES,
 				compactWords);
 	}
 	
