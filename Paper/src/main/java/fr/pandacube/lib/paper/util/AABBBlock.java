@@ -3,6 +3,8 @@ package fr.pandacube.lib.paper.util;
 import java.util.Iterator;
 
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.BlockVector;
 import org.bukkit.util.BoundingBox;
@@ -114,5 +116,27 @@ public class AABBBlock implements Iterable<BlockVector> {
 			}
 		};
 	}
+	
+	
+	public Iterable<Block> asBlockIterable(World w) {
+		return new Iterable<Block>() {
+			@Override
+			public Iterator<Block> iterator() {
+				return new Iterator<Block>() {
+					Iterator<BlockVector> nested = AABBBlock.this.iterator();
+					@Override
+					public boolean hasNext() {
+						return nested.hasNext();
+					}
+					@Override
+					public Block next() {
+						BlockVector bv = nested.next();
+						return w.getBlockAt(bv.getBlockX(), bv.getBlockY(), bv.getBlockZ());
+					}
+				};
+			}
+		};
+	}
+	
 	
 }
