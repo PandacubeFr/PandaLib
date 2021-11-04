@@ -43,6 +43,7 @@ public class ChatUtil {
 	public static final int SIGN_WIDTH = 90;
 	public static final int BOOK_WIDTH = 116;
 	public static final int MOTD_WIDTH = 270;
+	public static final int BEDROCK_FORM_WIDE_BUTTON = 160;
 
 	public static final int CONSOLE_NB_CHAR_DEFAULT = 50;
 	
