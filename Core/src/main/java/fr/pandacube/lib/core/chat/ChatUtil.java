@@ -461,6 +461,101 @@ public class ChatUtil {
 	
 	
 	
+
+	public static List<Component> renderTable(List<List<Chat>> rows, String space, boolean console) {
+		List<List<Component>> compRows = new ArrayList<>(rows.size());
+		for (List<Chat> row : rows) {
+			List<Component> compRow = new ArrayList<>(row.size());
+			for (Chat c : row) {
+				compRow.add(c.getAdv());
+			}
+			compRows.add(compRow);
+		}
+		return renderTableComp(compRows, space, console);
+	}
+	
+	
+	public static List<Component> renderTableComp(List<List<Component>> rows, String space, boolean console) {
+		// determine columns width
+		List<Integer> nbPixelPerColumn = new ArrayList<>();
+		for (List<Component> row : rows) {
+			for (int i = 0; i < row.size(); i++) {
+				int w = componentWidth(row.get(i), console);
+				if (nbPixelPerColumn.size() <= i)
+					nbPixelPerColumn.add(w);
+				else if (nbPixelPerColumn.get(i) < w)
+					nbPixelPerColumn.set(i, w);
+			}
+		}
+		
+		// create the lines with appropriate spacing
+		List<Component> spacedRows = new ArrayList<>(rows.size());
+		for (List<Component> row : rows) {
+			Chat spacedRow = Chat.chat();
+			for (int i = 0; i < row.size() - 1; i++) {
+				int w = componentWidth(row.get(i), console);
+				int padding = nbPixelPerColumn.get(i) - w;
+				spacedRow.then(row.get(i));
+				spacedRow.then(customWidthSpace(padding, console));
+				spacedRow.thenText(space);
+			}
+			if (!row.isEmpty())
+				spacedRow.then(row.get(row.size() - 1));
+			spacedRows.add(spacedRow.getAdv());
+		}
+		
+		return spacedRows;
+	}
+	
+	
+	
+	
+	public static Component customWidthSpace(int width, boolean console) {
+		if (console)
+			return Chat.text(" ".repeat(width)).getAdv();
+		return switch (width) {
+			case 0, 1 -> Component.empty();
+			case 2 -> Chat.text(".").black().getAdv();
+			case 3 -> Chat.text("`").black().getAdv();
+			case 6 -> Chat.text(". ").black().getAdv();
+			case 7 -> Chat.text("` ").black().getAdv();
+			case 11 -> Chat.text("`  ").black().getAdv();
+			default -> {
+				int nbSpace = width / 4;
+				int nbBold = width % 4;
+				int nbNotBold = nbSpace - nbBold;
+				if (nbNotBold > 0) {
+					if (nbBold > 0) {
+						yield Chat.text(" ".repeat(nbNotBold)).bold(false)
+								.then(Chat.text(" ".repeat(nbBold)).bold(true))
+								.getAdv();
+					}
+					else
+						yield Chat.text(" ".repeat(nbNotBold)).bold(false).getAdv();
+				}
+				else if (nbBold > 0) {
+					yield Chat.text(" ".repeat(nbBold)).bold(true).getAdv();
+				}
+				throw new IllegalStateException("Should not be here (width=" + width + "; nbSpace=" + nbSpace + "; nbBold=" + nbBold + "; nbNotBold=" + nbNotBold + ")");
+			}
+		};
+		// "." is 2 px
+		// "`" is 3 px
+		// " " is 4 px
+		// 0  ""
+		// 1  ""
+		// 2  "."
+		// 3  "`"
+		// 4  " "
+		// 5  "§l "
+		// 6  ". "
+		// 7  "` "
+		// 8  "  "
+		// 9  " §l "
+		// 10 "§l  "
+		// 11 "`  "
+		// 12 "   "
+	}
 	
 	
 	
