@@ -22,16 +22,25 @@ import io.github.classgraph.ScanResult;
 import sun.misc.Unsafe;
 
 public class ReflectionUtil {
+    
+    private record MethodCacheKey(Class<?> clazz, String methodName, List<Class<?>> parameters) { }
+    private static final Map<MethodCacheKey, Method> methodCache;
+
+    private record FieldCacheKey(Class<?> clazz, String fieldName) { };
+    private static final Map<FieldCacheKey, Field> fieldCache;
+    
     private static final Unsafe sunMiscUnsafeInstance;
 
     static {
+    	methodCache = new HashMap<>();
+    	fieldCache = new HashMap<>();
 
         try {
             sunMiscUnsafeInstance = (Unsafe) field("theUnsafe")
             		.inClass(Unsafe.class)
             		.getStaticValue();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Cannot access to " + Unsafe.class + ".theUnsafe value.", e);
         }
     }
     
@@ -39,12 +48,6 @@ public class ReflectionUtil {
     
     
     
-    
-    private record MethodCacheKey(Class<?> clazz, String methodName, List<Class<?>> parameters) { }
-    private static final Map<MethodCacheKey, Method> methodCache = new HashMap<>();
-
-    private record FieldCacheKey(Class<?> clazz, String fieldName) { };
-    private static final Map<FieldCacheKey, Field> fieldCache = new HashMap<>();
     
     
     
