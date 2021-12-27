@@ -19,7 +19,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import fr.pandacube.lib.core.chat.ChatStatic;
 import fr.pandacube.lib.core.commands.SuggestionsSupplier;
 import fr.pandacube.lib.core.util.Log;
-import fr.pandacube.lib.core.util.ReflexionUtil;
+import fr.pandacube.lib.core.util.ReflectionUtil;
 
 public abstract class BrigadierCommand extends ChatStatic {
 	
@@ -128,7 +128,7 @@ public abstract class BrigadierCommand extends ChatStatic {
 	@SuppressWarnings("unchecked")
 	private static List<Suggestion> getSuggestionsFromSuggestionsBuilder(SuggestionsBuilder builder) {
 		try {
-			return (List<Suggestion>) ReflexionUtil.getDeclaredFieldValue(SuggestionsBuilder.class, builder, "result");
+			return (List<Suggestion>) ReflectionUtil.field("result").inClass(SuggestionsBuilder.class).getValue(builder);
 		} catch (ReflectiveOperationException e) {
 			throw new RuntimeException(e);
 		}

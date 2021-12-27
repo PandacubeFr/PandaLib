@@ -15,7 +15,7 @@ import org.bukkit.plugin.IllegalPluginAccessException;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.scheduler.BukkitTask;
 
-import fr.pandacube.lib.core.util.ReflexionUtil;
+import fr.pandacube.lib.core.util.ReflectionUtil;
 import fr.pandacube.lib.paper.PandaLibPaper;
 
 public class BukkitEvent {
@@ -50,7 +50,7 @@ public class BukkitEvent {
 	
 
 	public static List<Class<? extends Event>> getAllEventClasses() {
-		List<Class<? extends Event>> classes = ReflexionUtil.getAllSubclasses(Event.class);
+		List<Class<? extends Event>> classes = ReflectionUtil.getAllSubclasses(Event.class);
 		classes.removeIf(e -> getHandlerList(e) == null);
 		return classes;
 	}
