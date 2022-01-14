@@ -41,11 +41,19 @@ public interface IOnlinePlayer extends IOffPlayer {
 	 */
 	
 	public default boolean isBedrockClient() {
-		return FloodgateApi.getInstance().isFloodgatePlayer(getUniqueId());
+		try {
+			return FloodgateApi.getInstance().isFloodgatePlayer(getUniqueId());
+		} catch (NoClassDefFoundError e) {
+			return false;
+		}
 	}
 	
 	public default FloodgatePlayer getBedrockClient() {
 		return FloodgateApi.getInstance().getPlayer(getUniqueId());
+	}
+	
+	public default boolean isJavaClient() {
+		return !isBedrockClient();
 	}
 	
 

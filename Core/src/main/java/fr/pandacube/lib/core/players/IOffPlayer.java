@@ -70,6 +70,10 @@ public interface IOffPlayer {
 		return v == 0 || v == 8; // also 8 if one day we supports alt accounts for floodgate players
 	}
 	
+	public default boolean isJavaAccount() {
+		return !isBedrockAccount();
+	}
+	
 	
 	
 	/*
