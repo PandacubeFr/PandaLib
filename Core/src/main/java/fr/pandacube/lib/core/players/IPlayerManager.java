@@ -125,7 +125,7 @@ public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPl
 	
 	public static Chat prefixedAndColored(Chat message) {
 		return Chat.chat()
-				.color(Chat.getConfig().broadcastColor)
+				.broadcastColor()
 				.then(Chat.getConfig().prefix.get())
 				.then(message);
 	}

@@ -65,7 +65,7 @@ public class ChatUtil {
 		String dispURL = (url.length() > 50) ? (url.substring(0, 48) + "...") : url;
 		return (FormatableChat) chat()
 				.clickURL(url)
-				.color(Chat.getConfig().urlColor)
+				.urlColor()
 				.hover(
 						hover != null ? hover : Chat.text(dispURL)
 				)
@@ -89,7 +89,7 @@ public class ChatUtil {
 	/* package */ static FormatableChat createCommandLink(Chat d, String commandWithSlash, Chat hoverText) {
 		FormatableChat c = chat()
 				.clickCommand(commandWithSlash)
-				.color(Chat.getConfig().commandColor);
+				.commandColor();
 		if (hoverText != null)
 			c.hover(hoverText);
 		return (FormatableChat) c.then(d);
@@ -114,7 +114,7 @@ public class ChatUtil {
 	/* package */ static FormatableChat createCommandSuggest(Chat d, String commandWithSlash, Chat hoverText) {
 		FormatableChat c = chat()
 				.clickSuggest(commandWithSlash)
-				.color(Chat.getConfig().commandColor);
+				.commandColor();
 		if (hoverText != null)
 			c.hover(hoverText);
 		return (FormatableChat) c.then(d);
@@ -167,7 +167,7 @@ public class ChatUtil {
 			
 			FormatableChat pDisp = createCommandLink(Integer.toString(page), String.format(cmdFormat, page), "Aller à la page " + page);
 			if (page == currentPage) {
-				pDisp.color(Chat.getConfig().highlightedCommandColor);
+				pDisp.highlightedCommandColor();
 			}
 			d.then(pDisp);
 			

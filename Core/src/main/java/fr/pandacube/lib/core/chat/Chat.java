@@ -34,7 +34,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 
-public abstract class Chat extends ChatStatic implements HoverEventSource<Component>, ComponentLike {
+public abstract sealed class Chat extends ChatStatic implements HoverEventSource<Component>, ComponentLike {
 	
 	protected ComponentBuilder<?, ?> builder;
 	protected boolean console = false;
@@ -244,6 +244,10 @@ public abstract class Chat extends ChatStatic implements HoverEventSource<Compon
 		public FormatableChat infoColor() { return color(config.infoColor); }
 		public FormatableChat dataColor() { return color(config.dataColor); }
 		public FormatableChat decorationColor() { return color(config.decorationColor); }
+		public FormatableChat urlColor() { return color(config.urlColor); }
+		public FormatableChat commandColor() { return color(config.commandColor); }
+		public FormatableChat highlightedCommandColor() { return color(config.highlightedCommandColor); }
+		public FormatableChat broadcastColor() { return color(config.broadcastColor); }
 		
 		private FormatableChat setStyle(Consumer<Style.Builder> styleOp) { builder.style(styleOp); return this; }
 		
