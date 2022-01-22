@@ -22,7 +22,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import fr.pandacube.lib.core.chat.ChatStatic;
 import fr.pandacube.lib.core.commands.SuggestionsSupplier;
 import fr.pandacube.lib.core.util.Log;
-import fr.pandacube.lib.core.util.ReflectionUtil;
+import fr.pandacube.lib.core.util.Reflect;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -204,7 +204,7 @@ public abstract class BrigadierCommand extends ChatStatic {
 	@SuppressWarnings("unchecked")
 	private static List<Suggestion> getSuggestionsFromSuggestionsBuilder(SuggestionsBuilder builder) {
 		try {
-			return (List<Suggestion>) ReflectionUtil.field("result").inClass(SuggestionsBuilder.class).getValue(builder);
+			return (List<Suggestion>) Reflect.ofClass(SuggestionsBuilder.class).field("result").getValue(builder);
 		} catch (ReflectiveOperationException e) {
 			throw new RuntimeException(e);
 		}
