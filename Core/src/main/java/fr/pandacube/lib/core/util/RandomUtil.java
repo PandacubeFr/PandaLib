@@ -24,6 +24,10 @@ public class RandomUtil {
 		return (arr == null || arr.isEmpty()) ? null : arr.get(rand.nextInt(arr.size()));
 	}
 	
+	public static char stringChar(String arr) {
+		return (arr == null || arr.isEmpty()) ? '\0' : arr.charAt(rand.nextInt(arr.length()));
+	}
+	
 	/**
 	 * Returns a random value from a set.
 	 * 
@@ -68,5 +72,31 @@ public class RandomUtil {
 		}
 		return frequencies.length - 1;
 	}
+	
+	
+	
+	
+	
+
+	public static final String PASSWORD_CHARSET_LATIN_LOWERCASE = "abcdefghijklmnopqrstuvwxyz";
+	public static final String PASSWORD_CHARSET_LATIN_UPPERCASE = PASSWORD_CHARSET_LATIN_LOWERCASE.toUpperCase();
+	public static final String PASSWORD_CHARSET_DIGIT = "0123456789";
+	public static final String PASSWORD_CHARSET_SPECIAL = "@#+*/-;:,.?!='()[]{}&\"\\";
+	public static final String PASSWORD_CHARSET_NO_ANBIGUITY = "abcdefghkmnpqrstwxyzACDEFGHKLMNPQRSTWXYZ2345679";
+
+	public static String randomPassword(int length) {
+		return randomPassword(length, PASSWORD_CHARSET_NO_ANBIGUITY);
+	}
+	
+	public static String randomPassword(int length, String charset) {
+		char[] pw = new char[length];
+		for (int i = 0; i < length; i++) {
+			pw[i] = stringChar(charset);
+		}
+		return String.valueOf(pw);
+	}
+	
+	
+	
 
 }
