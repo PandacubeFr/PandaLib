@@ -466,7 +466,6 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 
 	public static final SQLType<Double> DOUBLE = new SQLType<>("DOUBLE", Double.class);
 	
-	@Deprecated
 	public static final SQLType<String> CHAR(int charCount) {
 		if (charCount <= 0) throw new IllegalArgumentException("charCount must be positive.");
 		return new SQLType<>("CHAR(" + charCount + ")", String.class);

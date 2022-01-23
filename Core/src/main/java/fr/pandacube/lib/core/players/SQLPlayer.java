@@ -33,7 +33,7 @@ public class SQLPlayer extends SQLElement<SQLPlayer> {
 	 */
 	public static final SQLField<SQLPlayer, UUID> playerId = field(CHAR36_UUID, false);
 	public static final SQLField<SQLPlayer, String> playerName = field(VARCHAR(16), false);
-	public static final SQLField<SQLPlayer, UUID> token = field(CHAR36_UUID, true);
+	public static final SQLField<SQLPlayer, String> token = field(CHAR(36), true);
 	public static final SQLField<SQLPlayer, String> mailCheck = field(VARCHAR(255), true);
 	public static final SQLField<SQLPlayer, String> password = field(VARCHAR(255), true);
 	public static final SQLField<SQLPlayer, String> mail = field(VARCHAR(255), true);
