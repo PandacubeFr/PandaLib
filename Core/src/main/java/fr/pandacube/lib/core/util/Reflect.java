@@ -1,5 +1,6 @@
 package fr.pandacube.lib.core.util;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -43,17 +44,18 @@ public class Reflect {
     
     
     
-    private static final Map<Class<?>, ReflectClass> classCache;
+    private static final Map<Class<?>, ReflectClass<?>> classCache;
     
-    public static ReflectClass ofClass(Class<?> clazz) {
-    	return classCache.computeIfAbsent(clazz, ReflectClass::new);
+    @SuppressWarnings("unchecked")
+	public static <T> ReflectClass<T> ofClass(Class<T> clazz) {
+    	return (ReflectClass<T>) classCache.computeIfAbsent(clazz, ReflectClass::new);
     }
     
-    public static ReflectClass ofClass(String className) throws ClassNotFoundException {
+    public static ReflectClass<?> ofClass(String className) throws ClassNotFoundException {
     	return ofClass(Class.forName(className));
     }
     
-    public static ReflectClass ofClassOfInstance(Object instance) {
+    public static ReflectClass<?> ofClassOfInstance(Object instance) {
 		if (instance == null)
 			throw new IllegalArgumentException("instance can't be null");
     	return ofClass(instance.getClass());
@@ -83,31 +85,55 @@ public class Reflect {
     	}
     }
     
+    private record ConstructorIdentifier(Class<?>[] parameters) {
+    	private ConstructorIdentifier {
+    		parameters = (parameters == null) ? new Class<?>[0] : parameters;
+		}
+    	@Override
+    	public boolean equals(Object other) {
+			return other != null && other instanceof ConstructorIdentifier o
+					&& Arrays.equals(o.parameters, parameters);
+		}
+    	@Override
+    	public int hashCode() {
+    		return Arrays.hashCode(parameters);
+    	}
+    }
     
     
     
     
     
-    public static class ReflectClass {
-    	private Class<?> clazz;
-        
-        private final Map<MethodIdentifier, ReflectMethod> methodCache = Collections.synchronizedMap(new HashMap<>());
-        private final Map<String, ReflectField> fieldCache = Collections.synchronizedMap(new HashMap<>());
+    
+    public static class ReflectClass<T> {
+    	private Class<T> clazz;
+
+        private final Map<MethodIdentifier, ReflectMethod<T>> methodCache = Collections.synchronizedMap(new HashMap<>());
+        private final Map<ConstructorIdentifier, ReflectConstructor<T>> constructorCache = Collections.synchronizedMap(new HashMap<>());
+        private final Map<String, ReflectField<T>> fieldCache = Collections.synchronizedMap(new HashMap<>());
     	
-    	private ReflectClass(Class<?> clazz) {
+    	private ReflectClass(Class<T> clazz) {
     		this.clazz = clazz;
 		}
     	
-    	private ReflectMethod method(MethodIdentifier key) {
-    		return methodCache.computeIfAbsent(key, k -> new ReflectMethod(this, k));
+    	private ReflectMethod<T> method(MethodIdentifier key) {
+    		return methodCache.computeIfAbsent(key, k -> new ReflectMethod<>(this, k));
     	}
     	
-    	public ReflectMethod method(String name, Class<?>... paramTypes) {
+    	public ReflectMethod<T> method(String name, Class<?>... paramTypes) {
     		return method(new MethodIdentifier(name, paramTypes));
     	}
     	
-    	public ReflectField field(String name) {
-    		return fieldCache.computeIfAbsent(name, n -> new ReflectField(this, n));
+    	private ReflectConstructor<T> constructor(ConstructorIdentifier key) {
+    		return constructorCache.computeIfAbsent(key, k -> new ReflectConstructor<>(this, k));
+    	}
+    	
+    	public ReflectConstructor<T> constructor(Class<?>... paramTypes) {
+    		return constructor(new ConstructorIdentifier(paramTypes));
+    	}
+    	
+    	public ReflectField<T> field(String name) {
+    		return fieldCache.computeIfAbsent(name, n -> new ReflectField<>(this, n));
     	}
     }
     
@@ -133,23 +159,23 @@ public class Reflect {
 	
 	
 	
-	public static abstract class ReflectClassEl {
-		ReflectClass reflectClass;
-		String elementName;
+	public static abstract class ReflectClassEl<T> {
+		ReflectClass<T> reflectClass;
 		
-		protected ReflectClassEl(ReflectClass c, String elementName) {
+		protected ReflectClassEl(ReflectClass<T> c) {
 			reflectClass = c;
-			this.elementName = elementName;
 		}
 		
 	}
 	
-	public static class ReflectField extends ReflectClassEl {
+	public static class ReflectField<T> extends ReflectClassEl<T> {
+		String elementName;
 		
 		private Field cached, cachedFiltered;
 		
-		/* package */ ReflectField(ReflectClass c, String name) {
-			super(c, name);
+		/* package */ ReflectField(ReflectClass<T> c, String name) {
+			super(c);
+			elementName = name;
 		}
 		
 		public synchronized Field get() throws NoSuchFieldException {
@@ -217,15 +243,17 @@ public class Reflect {
 		
 	}
 	
-	public static class ReflectMethod extends ReflectClassEl {
+	public static class ReflectMethod<T> extends ReflectClassEl<T> {
+		String elementName;
 		
 		private Method cached, cachedFiltered;
 		
 		MethodIdentifier methodId;
 		Class<?>[] parameterTypes;
 		
-		/* package */ ReflectMethod(ReflectClass c, MethodIdentifier methodId) {
-			super(c, methodId.methodName);
+		/* package */ ReflectMethod(ReflectClass<T> c, MethodIdentifier methodId) {
+			super(c);
+			this.elementName = methodId.methodName;
 			this.methodId = methodId;
 			parameterTypes = methodId.parameters;
 		}
@@ -261,6 +289,46 @@ public class Reflect {
 		}
 	}
 	
+	public static class ReflectConstructor<T> extends ReflectClassEl<T> {
+		
+		private Constructor<T> cached, cachedFiltered;
+		
+		ConstructorIdentifier constructorId;
+		Class<?>[] parameterTypes;
+		
+		/* package */ ReflectConstructor(ReflectClass<T> c, ConstructorIdentifier constructorId) {
+			super(c);
+			this.constructorId = constructorId;
+			parameterTypes = constructorId.parameters;
+		}
+		
+		
+		public Constructor<T> get() throws NoSuchMethodException {
+			if (cached == null) {
+				Constructor<T> el = null;
+				el = reflectClass.clazz.getDeclaredConstructor(parameterTypes);
+				el.setAccessible(true);
+				cached = el;
+			}
+			return cached;
+		}
+		
+		/* package */ Constructor<T> getFiltered() throws NoSuchMethodException {
+			if (cachedFiltered == null) {
+				cachedFiltered = Reflect.getFiltered(reflectClass.clazz,
+					c -> c.getDeclaredConstructor(parameterTypes),
+					m -> m.setAccessible(true),
+					m -> Arrays.equals(parameterTypes, m.getParameterTypes()),
+					"getDeclaredConstructors0", "copyConstructor");
+			}
+			return cachedFiltered;
+		}
+		
+		public T instanciate(Object... values) throws ReflectiveOperationException {
+			return get().newInstance(values);
+		}
+	}
+	
 	
 	
 	
@@ -272,13 +340,17 @@ public class Reflect {
 	
 
 
-    private interface GetReflectiveElement<T, E extends ReflectiveOperationException> {
+    private interface GetUncheckedClassReflectiveElement<T, E extends ReflectiveOperationException> {
     	public T get(Class<?> clazz) throws E;
     }
     
-    private static <T, E extends ReflectiveOperationException, K> T getDeclaredRecursively(
-    		Class<?> clazz, GetReflectiveElement<T, E> jlrGetter,
-    		GetReflectiveElement<T, E> parentGetter, Consumer<T> setAccessible) throws E {
+    private interface GetReflectiveElement<C, T, E extends ReflectiveOperationException> {
+    	public T get(Class<C> clazz) throws E;
+    }
+    
+    private static <C, T, E extends ReflectiveOperationException> T getDeclaredRecursively(
+    		Class<C> clazz, GetReflectiveElement<C, T, E> jlrGetter,
+    		GetUncheckedClassReflectiveElement<T, E> parentGetter, Consumer<T> setAccessible) throws E {
     	Objects.requireNonNull(clazz, "Class instance not provided");
 
     	E ex = null;
@@ -289,11 +361,9 @@ public class Reflect {
 			el = jlrGetter.get(clazz);
 	    	setAccessible.accept(el);
 		} catch (ReflectiveOperationException e) {
-			if (ex == null) {
-				@SuppressWarnings("unchecked")
-				E ee = (E) e;
-				ex = ee;
-			}
+			@SuppressWarnings("unchecked")
+			E ee = (E) e;
+			ex = ee;
 		}
     	
     	// get element in parent class (will do recursion)
@@ -318,6 +388,8 @@ public class Reflect {
     	return el;
     }
     
+    
+    
     /**
      * Get a Field or Method of a class that is not accessible using {@link Class#getDeclaredField(String)}
      * or using {@link Class#getDeclaredMethod(String, Class...)} because the implementation of {@link Class}
@@ -326,8 +398,8 @@ public class Reflect {
      * This method calls an internal method of {@link Class} to retrieve the full list of field or method, then
      * search in the list for the requested element.
      */
-    private static <T, E extends ReflectiveOperationException, K> T getFiltered(
-    		Class<?> clazz, GetReflectiveElement<T, E> jlrGetter,
+    private static <C, T, E extends ReflectiveOperationException> T getFiltered(
+    		Class<C> clazz, GetReflectiveElement<C, T, E> jlrGetter,
     		Consumer<T> setAccessible, Predicate<T> elementChecker,
     		String privateMethodName, String copyMethodName) throws E {
     	Objects.requireNonNull(clazz, "Class instance not provided");
