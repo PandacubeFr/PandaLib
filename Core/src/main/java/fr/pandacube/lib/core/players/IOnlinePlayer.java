@@ -333,6 +333,20 @@ public interface IOnlinePlayer extends IOffPlayer {
 		public boolean isRightHanded();
 		
 		
+		/**
+		 * Tells if the client has enabled the filtering of texts on sign and book titles.
+		 * Always false as of MC 1.18.
+		 */
+		public boolean isTextFilteringEnabled();
+		
+		
+		/**
+		 * Tells if the client allows the server to list their player name in the
+		 * multiplayer menu.
+		 */
+		public boolean allowsServerListing();
+		
+		
 		
 		public boolean hasSkinCapeEnabled();
 		
