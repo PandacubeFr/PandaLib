@@ -16,6 +16,10 @@
 	 <id>papermc</id>
 	 <url>https://papermc.io/repo/repository/maven-public/</url>
 	</repository>
+	<repository>
+	 <id>fabricmc</id>
+	 <url>https://maven.fabricmc.net/</url>
+	</repository>
   </repositories>
   
   <dependencies>
@@ -36,19 +40,26 @@
             </exclusions>
         </dependency>
         
-        <!-- Paper (1.16 and before) -->
-        <!-- <dependency>
-            <groupId>com.destroystokyo.paper</groupId>
-            <artifactId>paper-api</artifactId>
-            <version>${paper.version}-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency> -->
-        <!-- Paper (1.17+) -->
+        <!-- Paper -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>${paper.version}-SNAPSHOT</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-mojangapi</artifactId>
+            <version>${paper.version}-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        <!-- Needed to read obfuscation mapping file. Already included in Paper -->
+        <dependency>
+            <groupId>net.fabricmc</groupId>
+            <artifactId>mapping-io</artifactId>
+            <version>0.3.0</version>
+            <scope>provided</scope>
         </dependency>
   </dependencies>
   
