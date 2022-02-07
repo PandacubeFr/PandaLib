@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 
 public class Log {
 
-	private static Logger logger;
+	private static Logger logger = Logger.getGlobal();
 	private static AtomicBoolean logDebug = new AtomicBoolean(false);
 
 	public static void setDebug(boolean newVal) {
