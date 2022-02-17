@@ -27,11 +27,15 @@ public class ReflectRegistry {
 		public static final class SharedConstants {
 			public static final ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.SharedConstants"));
 			public static final ReflectMethod<?> getCurrentVersion = wrapEx(() -> MAPPING.mojMethod("getCurrentVersion"));
+			public static final ReflectMethod<?> getProtocolVersion = wrapEx(() -> MAPPING.mojMethod("getProtocolVersion"));
 		}
 		
 		public static final class WorldVersion {
 			public static final ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.WorldVersion"));
-			public static final ReflectMethod<?> getProtocolVersion = wrapEx(() -> MAPPING.runtimeReflect().method("getProtocolVersion"));
+		}
+		
+		public static final class DetectedVersion {
+			public static final ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.DetectedVersion"));
 		}
 		
 		public static final class DedicatedServer {
@@ -41,7 +45,7 @@ public class ReflectRegistry {
 		
 		public static final class Commands {
 			public static final ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.commands.Commands"));
-			public static final ReflectField<?> dispatcher = wrapEx(() -> MAPPING.mojField("dispatcher")); // TODO vérifier
+			public static final ReflectField<?> dispatcher = wrapEx(() -> MAPPING.mojField("dispatcher"));
 		}
 		
 		public static final class Vec3 {
@@ -102,9 +106,10 @@ public class ReflectRegistry {
 		
 		public static final class BlockPos {
 			public static final ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.core.BlockPos"));
-			public static final ReflectMethod<?> BLOCKPOS_GETX = wrapEx(() -> MAPPING.mojMethod("getX"));
-			public static final ReflectMethod<?> BLOCKPOS_GETY = wrapEx(() -> MAPPING.mojMethod("getY"));
-			public static final ReflectMethod<?> BLOCKPOS_GETZ = wrapEx(() -> MAPPING.mojMethod("getZ"));
+			public static final ClassMapping MAPPING_SUPERCLASS = wrapEx(() -> NMSReflect.mojClass("net.minecraft.core.Vec3i"));
+			public static final ReflectMethod<?> getX = wrapEx(() -> MAPPING_SUPERCLASS.mojMethod("getX")); // these 3 methods are declared in the superclass
+			public static final ReflectMethod<?> getY = wrapEx(() -> MAPPING_SUPERCLASS.mojMethod("getY")); // so the mapping is only referenced in the superclass
+			public static final ReflectMethod<?> getZ = wrapEx(() -> MAPPING_SUPERCLASS.mojMethod("getZ"));
 		}
 		
 		public static final class ResourceLocationArgument {
