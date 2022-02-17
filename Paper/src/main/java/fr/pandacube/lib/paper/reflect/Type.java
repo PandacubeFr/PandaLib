@@ -174,7 +174,7 @@ public class Type implements Comparable<Type> {
 	
 	/* package */ static List<Type> toTypeList(List<Object> paramsType) {
 		List<Type> types = new ArrayList<>(paramsType.size());
-		for (int i = 0; i < types.size(); i++) {
+		for (int i = 0; i < paramsType.size(); i++) {
 			Object param = paramsType.get(i);
 			try {
 				types.add(Type.toType(param));
