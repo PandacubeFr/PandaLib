@@ -195,13 +195,16 @@ public class Reflect {
 	
 	
 	
-	public static abstract class ReflectMember<T, EL, EX extends ReflectiveOperationException> {
+	public static abstract class ReflectMember<T, ID, EL, EX extends ReflectiveOperationException> {
 		ReflectClass<T> reflectClass;
+		protected ID identifier;
+		
 		protected EL cached;
 		
-		protected ReflectMember(ReflectClass<T> c, boolean bypassFilter) throws EX {
+		protected ReflectMember(ReflectClass<T> c, ID id, boolean bypassFilter) throws EX {
 			reflectClass = c;
-			cached = (bypassFilter) ? fetchFiltered() : get();
+			identifier = id;
+			cached = (bypassFilter) ? fetchFiltered() : fetch();
 		}
 		
 		
@@ -300,17 +303,15 @@ public class Reflect {
 	
 	
 	
-	public static class ReflectField<T> extends ReflectMember<T, Field, NoSuchFieldException> {
-		String elementName;
+	public static class ReflectField<T> extends ReflectMember<T, String, Field, NoSuchFieldException> {
 		
 		/* package */ ReflectField(ReflectClass<T> c, String name, boolean bypassFilter) throws NoSuchFieldException {
-			super(c, bypassFilter);
-			elementName = name;
+			super(c, name, bypassFilter);
 		}
 
-		@Override protected Field fetchFromClass(Class<T> clazz) throws NoSuchFieldException { return clazz.getDeclaredField(elementName); };
-		@Override protected Field fetchFromReflectClass(ReflectClass<?> rc) throws NoSuchFieldException { return rc.field(elementName).get(); };
-		@Override protected boolean isEqualOurElement(Field el) { return elementName.equals(el.getName()); };
+		@Override protected Field fetchFromClass(Class<T> clazz) throws NoSuchFieldException { return clazz.getDeclaredField(identifier); };
+		@Override protected Field fetchFromReflectClass(ReflectClass<?> rc) throws NoSuchFieldException { return rc.field(identifier).get(); };
+		@Override protected boolean isEqualOurElement(Field el) { return identifier.equals(el.getName()); };
 		@Override protected String internalMethodNameElementArray() { return "getDeclaredFields0"; };
 		@Override protected String internalMethodNameCopyElement() { return "copyField"; };
 		@Override protected void setAccessible(Field el) { el.setAccessible(true); }
@@ -367,22 +368,15 @@ public class Reflect {
 	
 	
 	
-	public static class ReflectMethod<T> extends ReflectMember<T, Method, NoSuchMethodException> {
-		String elementName;
-		
-		MethodIdentifier methodId;
-		Class<?>[] parameterTypes;
+	public static class ReflectMethod<T> extends ReflectMember<T, MethodIdentifier, Method, NoSuchMethodException> {
 		
 		/* package */ ReflectMethod(ReflectClass<T> c, MethodIdentifier methodId, boolean bypassFilter) throws NoSuchMethodException {
-			super(c, bypassFilter);
-			this.elementName = methodId.methodName;
-			this.methodId = methodId;
-			parameterTypes = methodId.parameters;
+			super(c, methodId, bypassFilter);
 		}
 
-		@Override protected Method fetchFromClass(Class<T> clazz) throws NoSuchMethodException { return clazz.getDeclaredMethod(elementName, parameterTypes); };
-		@Override protected Method fetchFromReflectClass(ReflectClass<?> rc) throws NoSuchMethodException { return rc.method(methodId, false).get(); };
-		@Override protected boolean isEqualOurElement(Method el) { return elementName.equals(el.getName()) && Arrays.equals(parameterTypes, el.getParameterTypes()); };
+		@Override protected Method fetchFromClass(Class<T> clazz) throws NoSuchMethodException { return clazz.getDeclaredMethod(identifier.methodName, identifier.parameters); };
+		@Override protected Method fetchFromReflectClass(ReflectClass<?> rc) throws NoSuchMethodException { return rc.method(identifier, false).get(); };
+		@Override protected boolean isEqualOurElement(Method el) { return identifier.methodName.equals(el.getName()) && Arrays.equals(identifier.parameters, el.getParameterTypes()); };
 		@Override protected String internalMethodNameElementArray() { return "getDeclaredMethods0"; };
 		@Override protected String internalMethodNameCopyElement() { return "copyMethod"; };
 		@Override protected void setAccessible(Method el) { el.setAccessible(true); }
@@ -401,15 +395,10 @@ public class Reflect {
 	
 	
 	
-	public static class ReflectConstructor<T> extends ReflectMember<T, Constructor<T>, NoSuchMethodException> {
-		
-		ConstructorIdentifier constructorId;
-		Class<?>[] parameterTypes;
+	public static class ReflectConstructor<T> extends ReflectMember<T, ConstructorIdentifier, Constructor<T>, NoSuchMethodException> {
 		
 		/* package */ ReflectConstructor(ReflectClass<T> c, ConstructorIdentifier constructorId, boolean bypassFilter) throws NoSuchMethodException {
-			super(c, bypassFilter);
-			this.constructorId = constructorId;
-			parameterTypes = constructorId.parameters;
+			super(c, constructorId, bypassFilter);
 		}
 
 		// Override since we don't want to recursively search for a constructor
@@ -421,9 +410,9 @@ public class Reflect {
 			return el;
 		}
 
-		@Override protected Constructor<T> fetchFromClass(Class<T> clazz) throws NoSuchMethodException { return clazz.getDeclaredConstructor(parameterTypes); };
+		@Override protected Constructor<T> fetchFromClass(Class<T> clazz) throws NoSuchMethodException { return clazz.getDeclaredConstructor(identifier.parameters); };
 		@Override protected Constructor<T> fetchFromReflectClass(ReflectClass<?> rc) throws NoSuchMethodException { throw new UnsupportedOperationException(); };
-		@Override protected boolean isEqualOurElement(Constructor<T> el) { return Arrays.equals(parameterTypes, el.getParameterTypes()); };
+		@Override protected boolean isEqualOurElement(Constructor<T> el) { return Arrays.equals(identifier.parameters, el.getParameterTypes()); };
 		@Override protected String internalMethodNameElementArray() { return "getDeclaredConstructors0"; };
 		@Override protected String internalMethodNameCopyElement() { return "copyConstructor"; };
 		@Override protected void setAccessible(Constructor<T> el) { el.setAccessible(true); }

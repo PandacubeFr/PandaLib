@@ -46,6 +46,11 @@ public class NMSReflect {
 
 			OBF_NAMESPACE = (String) PAPER_OBFHELPER_CLASS.field("SPIGOT_NAMESPACE").getStaticValue();
 			MOJ_NAMESPACE = (String) PAPER_OBFHELPER_CLASS.field("MOJANG_PLUS_YARN_NAMESPACE").getStaticValue();
+		} catch (ReflectiveOperationException e) {
+        	throw new RuntimeException("Unable to find the Paper ofbuscation mapping class or class members.", e);
+		}
+		
+		try {
 			
 			List<ClassMapping> mappings = loadMappings();
 			for (ClassMapping clazz : mappings) {
@@ -119,8 +124,7 @@ public class NMSReflect {
     private static List<ClassMapping> loadMappings() {
         try (final InputStream mappingsInputStream = PAPER_OBFHELPER_CLASS.get().getClassLoader().getResourceAsStream("META-INF/mappings/reobf.tiny")) {
             if (mappingsInputStream == null) {
-            	Log.severe("Unable to find the ofbuscation mapping file in the Paper jar.");
-                return Collections.emptyList();
+            	throw new RuntimeException("Unable to find the ofbuscation mapping file in the Paper jar.");
             }
             
             MemoryMappingTree tree = new MemoryMappingTree();
