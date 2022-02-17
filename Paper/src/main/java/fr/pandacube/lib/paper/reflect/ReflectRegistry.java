@@ -41,7 +41,7 @@ public class ReflectRegistry {
 		
 		public static final class Commands {
 			public static final ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.commands.Commands"));
-			public static final ReflectField<?> dispatcher = wrapEx(() -> DedicatedServer.MAPPING.mojField("dispatcher")); // TODO vérifier
+			public static final ReflectField<?> dispatcher = wrapEx(() -> MAPPING.mojField("dispatcher")); // TODO vérifier
 		}
 		
 		public static final class Vec3 {
