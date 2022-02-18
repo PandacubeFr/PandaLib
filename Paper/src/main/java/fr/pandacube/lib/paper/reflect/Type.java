@@ -112,10 +112,10 @@ public class Type implements Comparable<Type> {
 	    	String classSimpleName = classToPrint.substring(classToPrint.lastIndexOf('.') + 1);
 	    	String htmlTitle = classSimpleName.equals(classToPrint) ? "" : (" title='" + classToPrint + "'");
     		if (!htmlTitle.equals("")) {
-    			typeHTML = "<span" + htmlTitle + ">" + classSimpleName + "</span>";
+    			typeHTML = "<span" + htmlTitle + " class='cl'>" + classSimpleName + "</span>";
         	}
         	else {
-        		typeHTML = classSimpleName;
+        		typeHTML = "<span class='" + (isPrimitive() ? "kw" : "cl") + "'>" + classSimpleName + "</span>";
         	}
     	}
     	
@@ -128,6 +128,13 @@ public class Type implements Comparable<Type> {
 	}
 	
 	
+	public boolean isPrimitive() {
+		try {
+			return toClass().isPrimitive();
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
+	}
 	
 	
 	
