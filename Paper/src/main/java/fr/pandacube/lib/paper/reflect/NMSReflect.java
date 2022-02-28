@@ -178,9 +178,6 @@ public class NMSReflect {
 						font-size: 1.1em;
 						border-top: solid 1px white;
 					}
-					a, a:visited {
-						color: #ddd;
-					}
 					.kw {
 						color: #CC6C1D;
 					}
