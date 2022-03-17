@@ -37,16 +37,7 @@ public class PlayerFinder {
 			.maximumSize(1000)
 			.build();
 	
-	//record PlayerIdCacheKey(String pName, boolean old) { } // Java 16
-	static class PlayerIdCacheKey {
-		private final String pName;
-		private final boolean old;
-		public PlayerIdCacheKey(String pName, boolean old) {
-			this.pName = pName; this.old = old;
-		}
-		public String pName() { return pName; }
-		public boolean old() { return old; }
-	}
+	record PlayerIdCacheKey(String pName, boolean old) { }
 	private static Cache<PlayerIdCacheKey, UUID> playerId = CacheBuilder.newBuilder()
 			.expireAfterWrite(2, TimeUnit.MINUTES)
 			.maximumSize(1000)
