@@ -145,7 +145,7 @@ public class PlayerFinder {
 		return name.matches("[0-9a-zA-Z_.]{2,20}");
 	}
 
-	public static SQLPlayer getDBPlayer(UUID id) throws Exception {
+	public static SQLPlayer getDBPlayer(UUID id) throws DBException {
 		if (id == null) return null;
 		return SQLPlayer.getPlayerFromUUID(id);
 	}

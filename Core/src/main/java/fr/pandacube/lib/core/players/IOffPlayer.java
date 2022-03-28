@@ -1,5 +1,6 @@
 package fr.pandacube.lib.core.players;
 
+import java.util.Calendar;
 import java.util.UUID;
 
 import fr.pandacube.lib.core.chat.ChatColorUtil;
@@ -301,6 +302,30 @@ public interface IOffPlayer {
 	}
 	
 	
+	
+	
+	
+	/*
+	 * Birthday
+	 */
+	
+	public default void setBirthday(int day, int month, Integer year) {
+		try {
+			SQLPlayer dbPlayer = getDbPlayer();
+			dbPlayer.setBirthday(day, month, year);
+			dbPlayer.save();
+		} catch (DBException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public default Calendar getBirthday() {
+		try {
+			return getDbPlayer().getBirthday();
+		} catch (DBException e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
 	
 	

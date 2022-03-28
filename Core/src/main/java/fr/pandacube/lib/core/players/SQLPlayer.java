@@ -1,6 +1,8 @@
 package fr.pandacube.lib.core.players;
 
 import java.sql.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Set;
 import java.util.UUID;
 
@@ -9,8 +11,15 @@ import fr.pandacube.lib.core.db.DBException;
 import fr.pandacube.lib.core.db.SQLElement;
 import fr.pandacube.lib.core.db.SQLElementList;
 import fr.pandacube.lib.core.db.SQLField;
+import fr.pandacube.lib.core.util.Log;
 
 public class SQLPlayer extends SQLElement<SQLPlayer> {
+	
+	/** If the player birth year is internally 1800, it is considered as a non disclosed age.
+	 * All player with an age below 13 should have their age automatically hidden.
+	 */
+	public static final int UNDISCLOSED_AGE_YEAR = 1800;
+	
 
 	public SQLPlayer() {
 		super();
@@ -57,6 +66,38 @@ public class SQLPlayer extends SQLElement<SQLPlayer> {
 	public static final SQLField<SQLPlayer, Long> bambou = field(BIGINT, false, 0L);
 	public static final SQLField<SQLPlayer, String> grade = field(VARCHAR(36), false, "default");
 
+	
+	
+
+	
+	public Calendar getBirthday() {
+
+		try {
+			Date birthday = get(SQLPlayer.birthday);
+			if (birthday == null) // le joueur n'a pas de date d'anniversaire
+				return null;
+			GregorianCalendar cal = new GregorianCalendar();
+			cal.setTime(birthday);
+			return cal;
+		} catch (Exception e) {
+			Log.severe(e);
+			return null;
+		}
+	}
+	
+	public void setBirthday(int day, int month, Integer year) {
+		if (year == null)
+			year = UNDISCLOSED_AGE_YEAR;
+		
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.set(year, month, day, 0, 0, 0);
+		
+		set(SQLPlayer.birthday, new java.sql.Date(cal.getTimeInMillis()));
+	}
+	
+	
+	
+	
 	
 	
 	public static SQLPlayer getPlayerFromUUID(UUID pId) throws DBException {
