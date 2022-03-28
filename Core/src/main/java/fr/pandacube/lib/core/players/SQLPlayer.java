@@ -96,6 +96,11 @@ public class SQLPlayer extends SQLElement<SQLPlayer> {
 	}
 	
 	
+	public boolean isWebRegistered() {
+		return get(password) != null;
+	}
+	
+	
 	
 	
 	
