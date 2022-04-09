@@ -3,7 +3,9 @@ package fr.pandacube.lib.core.permissions;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.OptionalLong;
 import java.util.Set;
+import java.util.stream.LongStream;
 
 import fr.pandacube.lib.core.chat.ChatUtil.DisplayTreeNode;
 import fr.pandacube.lib.core.permissions.PermissionsCachedBackendReader.CachedEntity;
@@ -88,6 +90,49 @@ public abstract class PermEntity {
 	
 	public Map<String, Boolean> listEffectivePermissions(String server, String world) {
 		return Permissions.resolver.getEffectivePermissionList(name, type, server, world);
+	}
+	
+	
+	public LongStream getPermissionRangeValues(String permissionPrefix) {
+		return getPermissionRangeValues(permissionPrefix, null, null);
+	}
+	
+	public LongStream getPermissionRangeValues(String permissionPrefix, String server) {
+		return getPermissionRangeValues(permissionPrefix, server, null);
+	}
+	
+	public LongStream getPermissionRangeValues(String permissionPrefix, String server, String world) {
+		String prefixWithEndingDot = permissionPrefix.endsWith(".") ? permissionPrefix : (permissionPrefix + ".");
+		int prefixLength = prefixWithEndingDot.length();
+		return listEffectivePermissions(server, world).entrySet().stream()
+				.filter(e -> e.getValue()) // permission must be positive
+				.map(e -> e.getKey()) // keep only the permission node (key), since the value is always true
+				.filter(p -> p.startsWith(prefixWithEndingDot)) // keep only relevant permissions
+				.map(p -> p.substring(prefixLength)) // keep only what is after the prefix
+				.map(suffix -> { // convert to long
+					try {
+						return Long.parseLong(suffix);
+					}
+					catch (NumberFormatException e) {
+						return null;
+					}
+				})
+				.filter(longSuffix -> longSuffix != null)
+				.mapToLong(longSuffix -> longSuffix)
+				.sorted();
+	}
+	
+	
+	public OptionalLong getPermissionRangeMax(String permissionPrefix) {
+		return getPermissionRangeMax(permissionPrefix, null, null);
+	}
+
+	public OptionalLong getPermissionRangeMax(String permissionPrefix, String server) {
+		return getPermissionRangeMax(permissionPrefix, server, null);
+	}
+	
+	public OptionalLong getPermissionRangeMax(String permissionPrefix, String server, String world) {
+		return getPermissionRangeValues(permissionPrefix, server, world).max();
 	}
 	
 	

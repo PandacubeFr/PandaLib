@@ -1,7 +1,9 @@
 package fr.pandacube.lib.core.players;
 
 import java.util.Calendar;
+import java.util.OptionalLong;
 import java.util.UUID;
+import java.util.stream.LongStream;
 
 import fr.pandacube.lib.core.chat.ChatColorUtil;
 import fr.pandacube.lib.core.db.DBException;
@@ -158,8 +160,7 @@ public interface IOffPlayer {
 			return online.hasPermission(permission);
 		
 		// at this point, the player is offline
-		Boolean res = getPermissionUser().hasPermission(permission);
-		return res != null ? res : false;
+		return getPermissionUser().hasPermissionOr(permission, null, null, false);
 	}
 	
 	/**
@@ -181,6 +182,42 @@ public interface IOffPlayer {
 		
 		// at this point, the player is offline
 		return getPermissionUser().hasPermissionExpression(permissionExpression, null, null);
+	}
+
+	/**
+	 * Lists all the values for a set of permission indicating an integer in a range.
+	 * <p>
+	 * A permission range is used to easily attribute a number to a group or player,
+	 * like the maximum number of homes allowed. For instance, if the player has the permission
+	 * {@code essentials.home.12}, this method would return a stream containing the value 12,
+	 * if the parameter {@code permissionPrefix} is {@code "essentials.home."}.
+	 * <p>
+	 * The use of a stream allow the caller to get either the maximum, the minimum, or do any
+	 * other treatment to the values.
+	 * @param permissionPrefix the permission prefix to search for.
+	 * @return a LongStream containing all the values found for the specified permission prefix.
+	 */
+	public default LongStream getPermissionRangeValues(String permissionPrefix) {
+		IOnlinePlayer online = getOnlineInstance();
+		
+		if (online != null)
+			return online.getPermissionRangeValues(permissionPrefix);
+		
+		// at this point, the player is offline
+		return getPermissionUser().getPermissionRangeValues(permissionPrefix, null, null);
+	}
+	
+	/**
+	 * Returns the maximum value returned by {@link IOffPlayer#getPermissionRangeValues(String)}.
+	 */
+	public default OptionalLong getPermissionRangeMax(String permissionPrefix) {
+		IOnlinePlayer online = getOnlineInstance();
+		
+		if (online != null)
+			return online.getPermissionRangeMax(permissionPrefix);
+		
+		// at this point, the player is offline
+		return getPermissionUser().getPermissionRangeMax(permissionPrefix, null, null);
 	}
 
 	/**
