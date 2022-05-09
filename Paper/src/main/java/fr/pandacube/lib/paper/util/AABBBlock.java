@@ -56,6 +56,13 @@ public class AABBBlock implements Iterable<BlockVector> {
 		volume = Math.abs(p2x_ - p1x_) * Math.abs(p2x_ - p1x_) * Math.abs(p2x_ - p1x_);
 	}
 	
+	public boolean overlaps(Entity e) {
+		return overlaps(e.getBoundingBox());
+	}
+	
+	public boolean overlaps(BoundingBox bb) {
+		return asBukkitBoundingBox().overlaps(bb);
+	}
 	
 	public boolean isInside(Vector v) {
 		return v.isInAABB(pos1, pos2);
