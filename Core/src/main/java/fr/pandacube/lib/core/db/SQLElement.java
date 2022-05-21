@@ -479,6 +479,18 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 	public static final SQLType<String> TEXT = new SQLType<>("TEXT", String.class);
 	public static final SQLType<String> STRING = TEXT;
 
+	public static final SQLType<byte[]> BINARY(int byteCount) {
+		if (byteCount <= 0) throw new IllegalArgumentException("byteCount must be positive.");
+		return new SQLType<>("BINARY(" + byteCount + ")", byte[].class);
+	}
+
+	public static final SQLType<byte[]> VARBINARY(int byteCount) {
+		if (byteCount <= 0) throw new IllegalArgumentException("byteCount must be positive.");
+		return new SQLType<>("VARBINARY(" + byteCount + ")", byte[].class);
+	}
+
+	public static final SQLType<byte[]> BLOB = new SQLType<>("BLOB", byte[].class);
+
 	public static final <T extends Enum<T>> SQLType<T> ENUM(Class<T> enumType) {
 		if (enumType == null) throw new IllegalArgumentException("enumType can't be null.");
 		String enumStr = "'";
@@ -495,6 +507,4 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 	}
 	
 	public static final SQLType<UUID> CHAR36_UUID = new SQLCustomType<>(CHAR(36), UUID.class, UUID::fromString, UUID::toString);
-
-
 }
