@@ -63,6 +63,10 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 			conditions.add(sqlWhere);
 		}
 		
+		public boolean isEmpty() {
+			return conditions.isEmpty();
+		}
+		
 		@Override
 		public ParameterizedSQLString toSQL() throws DBException {
 			if (conditions.isEmpty()) {
