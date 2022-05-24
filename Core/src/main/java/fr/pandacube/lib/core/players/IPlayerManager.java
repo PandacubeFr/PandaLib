@@ -22,7 +22,26 @@ import net.md_5.bungee.api.chat.BaseComponent;
 
 public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPlayer> {
 	private static IPlayerManager<?, ?> instance;
-	public static synchronized IPlayerManager<?, ?> getInstance() { return instance; }
+	
+	public static synchronized IPlayerManager<?, ?> getInstance() {
+		if (instance == null) {
+			try {
+				new StandalonePlayerManager(); // will set the instance value itself (see IPlayerManager constructor)
+			} catch (DBInitTableException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return instance;
+	}
+	
+	private static synchronized void setInstance(IPlayerManager<?, ?> newInstance) {
+		if (instance != null && !(instance instanceof StandalonePlayerManager)) {
+			throw new IllegalStateException("only one instance of playerManager is possible");
+		}
+		instance = newInstance;
+	}
+	
+	
 	
 	
 	private Map<UUID, OP> onlinePlayers = Collections.synchronizedMap(new HashMap<>());
@@ -33,9 +52,7 @@ public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPl
 	
 	
 	public IPlayerManager() throws DBInitTableException {
-		synchronized (IPlayerManager.class) {
-			instance = this;
-		}
+		setInstance(this);
 
 		DB.initTable(SQLPlayer.class);
 		DB.initTable(SQLPlayerConfig.class);
