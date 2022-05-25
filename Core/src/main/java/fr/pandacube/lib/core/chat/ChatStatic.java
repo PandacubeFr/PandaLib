@@ -61,6 +61,10 @@ public abstract class ChatStatic {
 		return text(plainText).infoColor();
 	}
 
+	public static FormatableChat warningText(Object plainText) {
+		return text(plainText).warningColor();
+	}
+
 	public static FormatableChat dataText(Object plainText) {
 		return text(plainText).dataColor();
 	}

@@ -103,6 +103,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
 	
 	public Chat thenText(Object plainText) { return then(text(plainText)); }
 	public Chat thenInfo(Object plainText) { return then(infoText(plainText)); }
+	public Chat thenWarning(Object plainText) { return then(warningText(plainText)); }
 	public Chat thenSuccess(Object plainText) { return then(successText(plainText)); }
 	public Chat thenFailure(Object plainText) { return then(failureText(plainText)); }
 	public Chat thenData(Object plainText) { return then(dataText(plainText)); }
@@ -242,6 +243,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
 		public FormatableChat successColor() { return color(config.successColor); }
 		public FormatableChat failureColor() { return color(config.failureColor); }
 		public FormatableChat infoColor() { return color(config.infoColor); }
+		public FormatableChat warningColor() { return color(config.warningColor); }
 		public FormatableChat dataColor() { return color(config.dataColor); }
 		public FormatableChat decorationColor() { return color(config.decorationColor); }
 		public FormatableChat urlColor() { return color(config.urlColor); }
@@ -450,6 +452,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
 		public TextColor successColor = NamedTextColor.GREEN;
 		public TextColor failureColor = NamedTextColor.RED;
 		public TextColor infoColor = NamedTextColor.GOLD;
+		public TextColor warningColor = NamedTextColor.GOLD;
 		public TextColor dataColor = NamedTextColor.GRAY;
 		public TextColor urlColor = NamedTextColor.GREEN;
 		public TextColor commandColor = NamedTextColor.GRAY;

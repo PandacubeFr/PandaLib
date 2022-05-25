@@ -1,10 +1,16 @@
 package fr.pandacube.lib.core.players;
 
+import static fr.pandacube.lib.core.chat.ChatStatic.dataText;
+import static fr.pandacube.lib.core.chat.ChatStatic.successText;
+import static fr.pandacube.lib.core.chat.ChatStatic.text;
+import static fr.pandacube.lib.core.chat.ChatStatic.warningText;
+
 import java.util.Calendar;
 import java.util.OptionalLong;
 import java.util.UUID;
 import java.util.stream.LongStream;
 
+import fr.pandacube.lib.core.chat.Chat;
 import fr.pandacube.lib.core.chat.ChatColorUtil;
 import fr.pandacube.lib.core.db.DBException;
 import fr.pandacube.lib.core.permissions.PermPlayer;
@@ -12,6 +18,9 @@ import fr.pandacube.lib.core.permissions.Permissions;
 import fr.pandacube.lib.core.util.Log;
 
 public interface IOffPlayer {
+
+	/** From how long the last web activity should be before considering the user offline (in ms)? */
+	public static final long TIMEOUT_WEB_SESSION = 10000; // msec
 	
 	
 	
@@ -60,6 +69,59 @@ public interface IOffPlayer {
 	 * @return wether the player is online or not
 	 */
 	public abstract boolean isOnline();
+	
+	
+	
+
+
+	/**
+	 * Provides informations of the online status of the player:
+	 * online in game, online on the website, or offline.
+	 * If the player is online in game, it provides the current server they are
+	 * connected.
+	 */
+	public default PlayerStatusOnServer getPlayerStatus() {
+		
+		IOnlinePlayer op = getOnlineInstance();
+		if (op != null && !op.isVanished())
+			return new PlayerStatusOnServer(PlayerStatusOnServer.PlayerStatus.ONLINE_IG, op.getServerName());
+
+		try {
+			SQLPlayer webSession = getDbPlayer();
+
+			if (webSession != null) {
+				long lastWebActivity = webSession.get(SQLPlayer.lastWebActivity);
+
+				if (System.currentTimeMillis() - lastWebActivity < TIMEOUT_WEB_SESSION)
+					return new PlayerStatusOnServer(PlayerStatusOnServer.PlayerStatus.ONLINE_WEB, null);
+
+			}
+
+		} catch (Exception e) {
+			Log.severe(e);
+		}
+		return new PlayerStatusOnServer(PlayerStatusOnServer.PlayerStatus.OFFLINE, null);
+	}
+	
+	public record PlayerStatusOnServer(PlayerStatus status, String server) {
+		public Chat toComponent() {
+			if (status == PlayerStatus.ONLINE_IG)
+				return successText("En ligne, " + server);
+			if (status == PlayerStatus.ONLINE_WEB)
+				return warningText("En ligne, web");
+			if (status == PlayerStatus.OFFLINE)
+				return dataText("Hors ligne");
+			return text("N/A");
+		}
+
+		public enum PlayerStatus {
+			ONLINE_IG, ONLINE_WEB, OFFLINE
+		}
+	}
+	
+	
+	
+	
 	
 	
 	
