@@ -54,7 +54,9 @@ public enum MinecraftVersion {
 	v1_17_1(756, "1.17.1"),
 	
 	v1_18_to_1_18_1(757, "1.18", "1.18.1"),
-	v1_18_2(758, "1.18.2");
+	v1_18_2(758, "1.18.2"),
+	
+	v1_19(759, "1.19");
 	// IMPORTANT: don't forget to update the versionMergeDisplay value when adding a new version;
 	
 	private static Map<EnumSet<MinecraftVersion>, List<String>> versionMergeDisplay;

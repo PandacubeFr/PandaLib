@@ -129,10 +129,10 @@ public class BrigadierDispatcher implements Listener {
 		try {
 			return dispatcher.execute(parsed);
 		} catch (CommandSyntaxException e) {
-			sender.sendMessage(Chat.failureText("Erreur d’utilisation de la commande : " + e.getMessage()).get());
+			sender.sendMessage(Chat.failureText("Erreur d'utilisation de la commande : " + e.getMessage()).get());
 			return 0;
 		} catch (Throwable e) {
-			sender.sendMessage(Chat.failureText("Erreur lors de l’exécution de la commande : " + e.getMessage()).get());
+			sender.sendMessage(Chat.failureText("Erreur lors de l'exécution de la commande : " + e.getMessage()).get());
 			Log.severe(e);
 			return 0;
 		}
