@@ -295,6 +295,8 @@ public class Reflect {
 			return cached;
 		}
 		
+		public abstract int getModifiers();
+		
 	}
 	
 	
@@ -358,7 +360,10 @@ public class Reflect {
 			setValue(null, value);
 		}
 		
-		
+		@Override
+		public int getModifiers() {
+			return get().getModifiers();
+		}
 		
 	}
 	
@@ -388,6 +393,12 @@ public class Reflect {
 		public Object invokeStatic(Object... values) throws ReflectiveOperationException {
 			return invoke(null, values);
 		}
+		
+		@Override
+		public int getModifiers() {
+			return get().getModifiers();
+		}
+		
 	}
 	
 	
@@ -420,6 +431,12 @@ public class Reflect {
 		public T instanciate(Object... values) throws ReflectiveOperationException {
 			return get().newInstance(values);
 		}
+		
+		@Override
+		public int getModifiers() {
+			return get().getModifiers();
+		}
+		
 	}
 	
 	

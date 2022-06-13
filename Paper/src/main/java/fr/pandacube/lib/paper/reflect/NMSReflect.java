@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.StringReader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +23,7 @@ import fr.pandacube.lib.core.util.Log;
 import fr.pandacube.lib.core.util.Reflect;
 import fr.pandacube.lib.core.util.Reflect.ReflectClass;
 import fr.pandacube.lib.core.util.Reflect.ReflectField;
+import fr.pandacube.lib.core.util.Reflect.ReflectMember;
 import fr.pandacube.lib.core.util.Reflect.ReflectMethod;
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.format.MappingFormat;
@@ -152,12 +155,13 @@ public class NMSReflect {
 					html {
 						background-color: #2F2F2F;
 						color: white;
+						font-size: 14px;
 					}
 					table {
 						border-collapse: collapse;
 						width: 100%;
 						margin: auto;
-						font-family: monospace;
+						font-family: Consolas, monospace;
 					}
 					tr:nth-child(2n) {
 						background-color: #373737;
@@ -190,6 +194,12 @@ public class NMSReflect {
 					.fld {
 						color: #8DDAF8;
 					}
+					.st {
+						font-style: italic;
+					}
+					.st.fn {
+						font-weight: bold;
+					}
 				</style>
 				"""
 				+ "</head><body>\n"
@@ -216,10 +226,10 @@ public class NMSReflect {
 		/* package */ final String obfName;
 		/* package */ final String mojName;
 
-		private final Map<MethodId, MemberMapping<MethodId>> methodsByObf = new TreeMap<>();
-		private final Map<MethodId, MemberMapping<MethodId>> methodsByMoj = new TreeMap<>();
-		private final Map<String, MemberMapping<String>> fieldsByObf = new TreeMap<>();
-		private final Map<String, MemberMapping<String>> fieldsByMoj = new TreeMap<>();
+		private final Map<MethodId, MemberMapping<MethodId, ReflectMethod<?>>> methodsByObf = new TreeMap<>();
+		private final Map<MethodId, MemberMapping<MethodId, ReflectMethod<?>>> methodsByMoj = new TreeMap<>();
+		private final Map<String, MemberMapping<String, ReflectField<?>>> fieldsByObf = new TreeMap<>();
+		private final Map<String, MemberMapping<String, ReflectField<?>>> fieldsByMoj = new TreeMap<>();
 		
 		private ReflectClass<?> runtimeReflectClass = null;
 		
@@ -228,10 +238,12 @@ public class NMSReflect {
             mojName = binaryClassName(cls.getName(MOJ_NAMESPACE));
 			
 			cls.getMethods().stream().map(MemberMapping::of).forEach(method -> {
+				method.declaringClass = this;
 				methodsByObf.put(method.obfDesc.identifier, method);
 				methodsByMoj.put(method.mojDesc.identifier, method);
 			});
             cls.getFields().stream().map(MemberMapping::of).forEach(field -> {
+            	field.declaringClass = this;
 				fieldsByObf.put(field.obfDesc.identifier, field);
 				fieldsByMoj.put(field.mojDesc.identifier, field);
             });
@@ -273,11 +285,19 @@ public class NMSReflect {
 		 */
 		public ReflectMethod<?> mojMethod(String mojName, Object... mojParametersType) throws ClassNotFoundException, NoSuchMethodException {
 			MethodId mId = new MethodId(mojName, Type.toTypeList(Arrays.asList(mojParametersType)));
-			MemberMapping<MethodId> mm = methodsByMoj.get(mId);
+			MemberMapping<MethodId, ReflectMethod<?>> mm = methodsByMoj.get(mId);
 			Objects.requireNonNull(mm, "Unable to find the Mojang mapped method " + mId);
 			
-			MethodId reflectId = (IS_SERVER_OBFUSCATED ? mm.obfDesc : mm.mojDesc).identifier;
-			return runtimeReflectClass.method(reflectId.name, Type.toClassArray(reflectId.parametersType));
+			try {
+				return mm.getReflectMember();
+			} catch (ReflectiveOperationException e) {
+				if (e instanceof ClassNotFoundException cnfe)
+					throw cnfe;
+				if (e instanceof NoSuchMethodException nsme)
+					throw nsme;
+				// should not have another exception
+				throw new RuntimeException(e);
+			}
 		}
 		
 		
@@ -291,9 +311,16 @@ public class NMSReflect {
 		 * @throws NoSuchFieldException if there is no runtime method to represent the provided method.
 		 */
 		public ReflectField<?> mojField(String mojName) throws NoSuchFieldException {
-			MemberMapping<String> fm = fieldsByMoj.get(mojName);
+			MemberMapping<String, ReflectField<?>> fm = fieldsByMoj.get(mojName);
 			Objects.requireNonNull(fm, "Unable to find the Mojang mapped field '" + mojName + "'");
-			return runtimeReflectClass.field((IS_SERVER_OBFUSCATED ? fm.obfDesc : fm.mojDesc).identifier);
+			try {
+				return fm.getReflectMember();
+			} catch (ReflectiveOperationException e) {
+				if (e instanceof NoSuchFieldException nsfe)
+					throw nsfe;
+				// should not have another exception
+				throw new RuntimeException(e);
+			}
 		}
 		
 		
@@ -318,8 +345,9 @@ public class NMSReflect {
 
 
 		private void printHTML(PrintStream out) {
-			out.println("<tr id='c" + id + "'><th class='kw'>" + classKind() + "</th><th>" + nameToHTML(true) + "</th><th>" + nameToHTML(false) + "</th></tr>");
+			out.println("<tr id='c" + id + "'><th class='kw'>" + classModifiers() + "</th><th>" + nameToHTML(true) + "</th><th>" + nameToHTML(false) + "</th></tr>");
 			fieldsByObf.values().forEach(f -> f.printHTML(out));
+			printConstructorsHTML(out);
 			methodsByObf.values().forEach(m -> m.printHTML(out));
 		}
 		
@@ -370,8 +398,42 @@ public class NMSReflect {
 				return "record";
 			if (clazz.isPrimitive())
 				return "primitive";
-			return "Class";
+			return "class";
 		}
+		
+		private String classModifiers() {
+			Class<?> clazz = runtimeClass();
+			int clModifiers = clazz.getModifiers();
+			return modifiersToString(clModifiers) + " " + classKind();
+		}
+		
+	    
+	    private void printConstructorsHTML(PrintStream out) {
+	    	String classObfSimpleName = obfName.substring(obfName.lastIndexOf('.') + 1);
+	    	String classMojSimpleName = mojName.substring(mojName.lastIndexOf('.') + 1);
+			for (Constructor<?> ct : runtimeClass().getDeclaredConstructors()) {
+				List<Type> obfParams = new ArrayList<>();
+				List<Type> mojParams = new ArrayList<>();
+				for (Class<?> param : ct.getParameterTypes()) {
+					ClassMapping cm = (IS_SERVER_OBFUSCATED ? CLASSES_BY_OBF : CLASSES_BY_MOJ).get(param.getName());
+					if (cm == null) {
+						Type t = Type.of(param);
+						obfParams.add(t);
+						mojParams.add(t);
+					}
+					else {
+						obfParams.add(cm.toType(true));
+						mojParams.add(cm.toType(false));
+					}
+				}
+				out.println("<tr>"
+						+ "<td class='kw'>" + modifiersToString(ct.getModifiers()) + "</td>"
+						+ "<td><b class='mtd' title='Constructor'>" + classObfSimpleName + "</b>(" + obfParams.stream().map(t -> t.toHTML(true)).collect(Collectors.joining(", ")) + ")</td>"
+						+ "<td><b class='mtd' title='Constructor'>" + classMojSimpleName + "</b>(" + mojParams.stream().map(t -> t.toHTML(false)).collect(Collectors.joining(", ")) + ")</td>"
+						+ "</tr>");
+			}
+	    	
+	    }
     }
     
     
@@ -390,9 +452,14 @@ public class NMSReflect {
     		return toString().compareTo(o.toString());
     	}
     	
-		private String toHTML(boolean isObfClass) {
+		private String toHTML(boolean isObfClass, boolean isStatic, boolean isFinal) {
 				String paramsHTML = parametersType.stream().map(p -> p.toHTML(isObfClass)).collect(Collectors.joining(", "));
-				String identifierHTML = "<b class='mtd'>" + name + "</b>(" + paramsHTML + ")";
+				String cl = "mtd";
+				if (isStatic)
+					cl += " st";
+				if (isFinal)
+					cl += " fn";
+				String identifierHTML = "<span class='" + cl + "'>" + name + "</span>(" + paramsHTML + ")";
 			return identifierHTML;
 		}
 		
@@ -406,12 +473,18 @@ public class NMSReflect {
 
     
     private static record MemberDesc<I extends Comparable<I>>(I identifier, Type returnType) {
-		private String toHTML(boolean isObfClass) {
+		private String toHTML(boolean isObfClass, boolean isStatic, boolean isFinal) { // TODO
 			String identifierHTML = "";
 			if (identifier instanceof MethodId mId)
-				identifierHTML = mId.toHTML(isObfClass);
-			else if (identifier instanceof String n)
-				identifierHTML = "<b class='fld'>" + n + "</b>";
+				identifierHTML = mId.toHTML(isObfClass, isStatic, isFinal);
+			else if (identifier instanceof String n) {
+				String cl = "fld";
+				if (isStatic)
+					cl += " st";
+				if (isFinal)
+					cl += " fn";
+				identifierHTML = "<span class='" + cl + "'>" + n + "</span>";
+			}
 			return returnType.toHTML(isObfClass) + " " + identifierHTML;
 		}
 		
@@ -447,30 +520,57 @@ public class NMSReflect {
     
     
     
-    private static class MemberMapping<I extends Comparable<I>> {
-    	private String type;
+    private static abstract class MemberMapping<I extends Comparable<I>, R extends ReflectMember<?, ?, ?, ?>> {
     	/* package */ MemberDesc<I> obfDesc, mojDesc;
-    	private MemberMapping(String type, MemberDesc<I> obfDesc, MemberDesc<I> mojDesc) {
-    		this.type = type;
+    	/* package */ ClassMapping declaringClass;
+    	private MemberMapping(MemberDesc<I> obfDesc, MemberDesc<I> mojDesc) {
     		this.obfDesc = obfDesc;
     		this.mojDesc = mojDesc;
 		}
     	
 		/* package */ void printHTML(PrintStream out) {
-			out.println("<tr><td>" + type + "</td><td>" + obfDesc.toHTML(true) + "</td><td>" + mojDesc.toHTML(false) + "</td></tr>");
+			int mod = 0;
+			try {
+				mod = getReflectMember().getModifiers();
+			} catch (ReflectiveOperationException e) {
+				// ignore
+			}
+			boolean isStatic = Modifier.isStatic(mod);
+			boolean isFinal = Modifier.isFinal(mod);
+			out.println("<tr>"
+					+ "<td class='kw'>" + modifiersToString(mod) + "</td>"
+					+ "<td>" + obfDesc.toHTML(true, isStatic, isFinal) + "</td>"
+					+ "<td>" + mojDesc.toHTML(false, isStatic, isFinal) + "</td>"
+					+ "</tr>");
 		}
 		
-		private static MemberMapping<MethodId> of(MappingTree.MethodMapping mioMapping) {
-    		return new MemberMapping<>("Method", MemberDesc.of(mioMapping, OBF_NAMESPACE), MemberDesc.of(mioMapping, MOJ_NAMESPACE));
+		/* package */ MemberDesc<I> getReflectDesc() {
+			return (IS_SERVER_OBFUSCATED ? obfDesc : mojDesc);
 		}
 		
-		private static MemberMapping<String> of(MappingTree.FieldMapping mioMapping) {
-    		return new MemberMapping<>("Field", MemberDesc.of(mioMapping, OBF_NAMESPACE), MemberDesc.of(mioMapping, MOJ_NAMESPACE));
+		/* package */ abstract R getReflectMember() throws ReflectiveOperationException;
+		
+		private static MemberMapping<MethodId, ReflectMethod<?>> of(MappingTree.MethodMapping mioMapping) {
+    		return new MemberMapping<>(MemberDesc.of(mioMapping, OBF_NAMESPACE), MemberDesc.of(mioMapping, MOJ_NAMESPACE)) {
+				@Override
+				ReflectMethod<?> getReflectMember() throws ClassNotFoundException, NoSuchMethodException {
+					MethodId id = getReflectDesc().identifier;
+					return declaringClass.runtimeReflectClass.method(id.name, Type.toClassArray(id.parametersType));
+				}
+    		};
+		}
+		
+		private static MemberMapping<String, ReflectField<?>> of(MappingTree.FieldMapping mioMapping) {
+    		return new MemberMapping<>(MemberDesc.of(mioMapping, OBF_NAMESPACE), MemberDesc.of(mioMapping, MOJ_NAMESPACE)) {
+				@Override
+				ReflectField<?> getReflectMember() throws NoSuchFieldException {
+					String id = getReflectDesc().identifier;
+					return declaringClass.runtimeReflectClass.field(id);
+				}
+    		};
 		}
     	
     }
-    
-    
     
     
     
@@ -480,6 +580,29 @@ public class NMSReflect {
     	return cl.replace('/', '.');
     }
     
+    
+
+	
+	private static String modifiersToString(int elModifiers) {
+		List<String> modifiers = new ArrayList<>();
+		
+		if (Modifier.isPublic(elModifiers))
+			modifiers.add("public");
+		if (Modifier.isProtected(elModifiers))
+			modifiers.add("protected");
+		if (Modifier.isPrivate(elModifiers))
+			modifiers.add("private");
+		
+		if (Modifier.isStatic(elModifiers))
+			modifiers.add("static");
+		
+		if (Modifier.isAbstract(elModifiers))
+			modifiers.add("abstract");
+		if (Modifier.isFinal(elModifiers))
+			modifiers.add("final");
+		
+		return String.join(" ", modifiers);
+	}
     
     
     
