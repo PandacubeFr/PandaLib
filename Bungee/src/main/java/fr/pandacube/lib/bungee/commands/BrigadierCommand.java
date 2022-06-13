@@ -21,6 +21,8 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 
 import fr.pandacube.lib.core.chat.ChatStatic;
 import fr.pandacube.lib.core.commands.SuggestionsSupplier;
+import fr.pandacube.lib.core.players.IPlayerManager;
+import fr.pandacube.lib.core.players.PlayerFinder;
 import fr.pandacube.lib.core.util.Log;
 import fr.pandacube.lib.core.util.Reflect;
 import net.md_5.bungee.BungeeCord;
@@ -212,6 +214,19 @@ public abstract class BrigadierCommand extends ChatStatic {
 	
 	
 	
+	
+	
+
+	
+	public static final SuggestionsSupplier<CommandSender> TAB_PLAYER_CURRENT_SERVER = (sender, ti, token, a) -> SuggestionsSupplier.collectFilteredStream(
+				IPlayerManager.getInstance().getNamesOnlyVisibleFor((sender instanceof ProxiedPlayer pl) ? pl.getUniqueId() : null, sender instanceof ProxiedPlayer).stream(),
+				token);
+	
+	public static final SuggestionsSupplier<CommandSender> TAB_PLAYER_ALL_SERVERS = (sender, ti, token, a) -> SuggestionsSupplier.collectFilteredStream(
+				IPlayerManager.getInstance().getNamesOnlyVisibleFor((sender instanceof ProxiedPlayer pl) ? pl.getUniqueId() : null, false).stream(),
+				token);
+	
+	public static final SuggestionsSupplier<CommandSender> TAB_PLAYER_ALL_SERVERS_THEN_OFFLINE = TAB_PLAYER_ALL_SERVERS.orIfEmpty(PlayerFinder.TAB_PLAYER_OFFLINE());
 	
 	
 	

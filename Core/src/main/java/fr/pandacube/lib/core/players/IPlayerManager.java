@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -110,6 +111,34 @@ public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPl
 			Log.severe("Cannot cache Offline player instance", e);
 			return newOffPlayerInstance(p);
 		}
+	}
+	
+	public List<OP> getOnlyVisibleFor(OF viewer) {
+		List<OP> players = getAll();
+		players.removeIf(op -> op.isVanishedFor(viewer));
+		return players;
+	}
+	
+	public List<OP> getOnlyVisibleFor(OP viewer, boolean sameServerOnly) {
+		if (sameServerOnly && viewer.getServerName() == null)
+			return Collections.emptyList();
+		
+		@SuppressWarnings("unchecked")
+		List<OP> players = getOnlyVisibleFor((OF)viewer);
+		
+		if (sameServerOnly)
+			players.removeIf(op -> !viewer.getServerName().equals(op.getServerName()));
+		return players;
+	}
+	
+	public List<String> getNamesOnlyVisibleFor(OP viewer, boolean sameServerOnly) {
+		return getOnlyVisibleFor(viewer, sameServerOnly).stream()
+				.map(IOnlinePlayer::getName)
+				.collect(Collectors.toList());
+	}
+	
+	public List<String> getNamesOnlyVisibleFor(UUID viewer, boolean sameServerOnly) {
+		return getNamesOnlyVisibleFor(get(viewer), sameServerOnly);
 	}
 	
 	
