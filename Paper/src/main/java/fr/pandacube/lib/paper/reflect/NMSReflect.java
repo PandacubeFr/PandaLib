@@ -170,8 +170,23 @@ public class NMSReflect {
 						background-color: #555;
 					}
 					tr > *:first-child {
-						text-align: right;
 						padding-right: .5em;
+						white-space: nowrap;
+					}
+					.el-icon {
+						font-weight: bold;
+					}
+					.el-icon.publ {
+						color: #0C0;
+					}
+					.el-icon.prot {
+						color: #F80;
+					}
+					.el-icon.prvt {
+						color: #C00;
+					}
+					.el-icon.pckg {
+						color: #44F;
 					}
 					td {
 						padding-top: 0;
@@ -345,7 +360,8 @@ public class NMSReflect {
 
 
 		private void printHTML(PrintStream out) {
-			out.println("<tr id='c" + id + "'><th class='kw'>" + classModifiers() + "</th><th>" + nameToHTML(true) + "</th><th>" + nameToHTML(false) + "</th></tr>");
+			String modifiersHTML = classModifiersToHTML(runtimeClass());
+			out.println("<tr id='c" + id + "'><th>" + modifiersHTML + "</th><th>" + nameToHTML(true) + "</th><th>" + nameToHTML(false) + "</th></tr>");
 			fieldsByObf.values().forEach(f -> f.printHTML(out));
 			printConstructorsHTML(out);
 			methodsByObf.values().forEach(m -> m.printHTML(out));
@@ -386,27 +402,6 @@ public class NMSReflect {
 			return types;
 		}
 		
-		private String classKind() {
-			Class<?> clazz = runtimeClass();
-			if (clazz.isEnum())
-				return "enum";
-			if (clazz.isAnnotation())
-				return "annotation";
-			if (clazz.isInterface())
-				return "interface";
-			if (clazz.isRecord())
-				return "record";
-			if (clazz.isPrimitive())
-				return "primitive";
-			return "class";
-		}
-		
-		private String classModifiers() {
-			Class<?> clazz = runtimeClass();
-			int clModifiers = clazz.getModifiers();
-			return modifiersToString(clModifiers) + " " + classKind();
-		}
-		
 	    
 	    private void printConstructorsHTML(PrintStream out) {
 	    	String classObfSimpleName = obfName.substring(obfName.lastIndexOf('.') + 1);
@@ -427,7 +422,7 @@ public class NMSReflect {
 					}
 				}
 				out.println("<tr>"
-						+ "<td class='kw'>" + modifiersToString(ct.getModifiers()) + "</td>"
+						+ "<td>" + elementModifiersToHTML("c", ct.getModifiers()) + "</td>"
 						+ "<td><b class='mtd' title='Constructor'>" + classObfSimpleName + "</b>(" + obfParams.stream().map(t -> t.toHTML(true)).collect(Collectors.joining(", ")) + ")</td>"
 						+ "<td><b class='mtd' title='Constructor'>" + classMojSimpleName + "</b>(" + mojParams.stream().map(t -> t.toHTML(false)).collect(Collectors.joining(", ")) + ")</td>"
 						+ "</tr>");
@@ -473,7 +468,7 @@ public class NMSReflect {
 
     
     private static record MemberDesc<I extends Comparable<I>>(I identifier, Type returnType) {
-		private String toHTML(boolean isObfClass, boolean isStatic, boolean isFinal) { // TODO
+		private String toHTML(boolean isObfClass, boolean isStatic, boolean isFinal) {
 			String identifierHTML = "";
 			if (identifier instanceof MethodId mId)
 				identifierHTML = mId.toHTML(isObfClass, isStatic, isFinal);
@@ -521,9 +516,11 @@ public class NMSReflect {
     
     
     private static abstract class MemberMapping<I extends Comparable<I>, R extends ReflectMember<?, ?, ?, ?>> {
+    	private String htmlTypeChar;
     	/* package */ MemberDesc<I> obfDesc, mojDesc;
     	/* package */ ClassMapping declaringClass;
-    	private MemberMapping(MemberDesc<I> obfDesc, MemberDesc<I> mojDesc) {
+    	private MemberMapping(String htmlType, MemberDesc<I> obfDesc, MemberDesc<I> mojDesc) {
+    		htmlTypeChar = htmlType;
     		this.obfDesc = obfDesc;
     		this.mojDesc = mojDesc;
 		}
@@ -538,7 +535,7 @@ public class NMSReflect {
 			boolean isStatic = Modifier.isStatic(mod);
 			boolean isFinal = Modifier.isFinal(mod);
 			out.println("<tr>"
-					+ "<td class='kw'>" + modifiersToString(mod) + "</td>"
+					+ "<td>" + elementModifiersToHTML(htmlTypeChar, mod) + "</td>"
 					+ "<td>" + obfDesc.toHTML(true, isStatic, isFinal) + "</td>"
 					+ "<td>" + mojDesc.toHTML(false, isStatic, isFinal) + "</td>"
 					+ "</tr>");
@@ -551,7 +548,7 @@ public class NMSReflect {
 		/* package */ abstract R getReflectMember() throws ReflectiveOperationException;
 		
 		private static MemberMapping<MethodId, ReflectMethod<?>> of(MappingTree.MethodMapping mioMapping) {
-    		return new MemberMapping<>(MemberDesc.of(mioMapping, OBF_NAMESPACE), MemberDesc.of(mioMapping, MOJ_NAMESPACE)) {
+    		return new MemberMapping<>("⬤", MemberDesc.of(mioMapping, OBF_NAMESPACE), MemberDesc.of(mioMapping, MOJ_NAMESPACE)) {
 				@Override
 				ReflectMethod<?> getReflectMember() throws ClassNotFoundException, NoSuchMethodException {
 					MethodId id = getReflectDesc().identifier;
@@ -561,7 +558,7 @@ public class NMSReflect {
 		}
 		
 		private static MemberMapping<String, ReflectField<?>> of(MappingTree.FieldMapping mioMapping) {
-    		return new MemberMapping<>(MemberDesc.of(mioMapping, OBF_NAMESPACE), MemberDesc.of(mioMapping, MOJ_NAMESPACE)) {
+    		return new MemberMapping<>("●", MemberDesc.of(mioMapping, OBF_NAMESPACE), MemberDesc.of(mioMapping, MOJ_NAMESPACE)) {
 				@Override
 				ReflectField<?> getReflectMember() throws NoSuchFieldException {
 					String id = getReflectDesc().identifier;
@@ -580,30 +577,56 @@ public class NMSReflect {
     	return cl.replace('/', '.');
     }
     
-    
+	
+	
+	private static String classModifiersToHTML(Class<?> clazz) {
+		String elementHTMLType;
+
+		if (clazz.isEnum())
+			elementHTMLType = "E";
+		else if (clazz.isAnnotation())
+			elementHTMLType = "@";
+		else if (clazz.isInterface())
+			elementHTMLType = "I";
+		else if (clazz.isRecord())
+			elementHTMLType = "R";
+		else if (clazz.isPrimitive())
+			elementHTMLType = "";
+		else 
+			elementHTMLType = "C";
+		
+		return elementModifiersToHTML(elementHTMLType, clazz.getModifiers());
+	}
+	
 
 	
-	private static String modifiersToString(int elModifiers) {
-		List<String> modifiers = new ArrayList<>();
+	private static String elementModifiersToHTML(String elementHTMLType, int elModifiers) {
+		String html = "<b class='el-icon";
 		
 		if (Modifier.isPublic(elModifiers))
-			modifiers.add("public");
-		if (Modifier.isProtected(elModifiers))
-			modifiers.add("protected");
-		if (Modifier.isPrivate(elModifiers))
-			modifiers.add("private");
+			html += " publ";
+		else if (Modifier.isProtected(elModifiers))
+			html += " prot";
+		else if (Modifier.isPrivate(elModifiers))
+			html += " prvt";
+		else
+			html += " pckg";
+		
+		html += "'>" + elementHTMLType + "</b><sup>";
 		
 		if (Modifier.isStatic(elModifiers))
-			modifiers.add("static");
-		
+			html += "S";
 		if (Modifier.isAbstract(elModifiers))
-			modifiers.add("abstract");
+			html += "A";
 		if (Modifier.isFinal(elModifiers))
-			modifiers.add("final");
+			html += "F";
 		
-		return String.join(" ", modifiers);
+		html += "</sup>";
+		
+		return html;
 	}
     
-    
+    // ● (field)
+	// ⬤ (method)
     
 }
