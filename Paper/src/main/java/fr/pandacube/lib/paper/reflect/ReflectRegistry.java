@@ -55,7 +55,7 @@ public class ReflectRegistry {
 		
 		public static final class Settings {
 			public static final ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.server.dedicated.Settings"));
-			public static final ReflectField<?> properties = wrapEx(() -> MAPPING.runtimeReflect().field("properties"));
+			public static final ReflectField<?> properties = wrapEx(() -> MAPPING.mojField("properties"));
 			
 		}
 		
@@ -99,7 +99,7 @@ public class ReflectRegistry {
 		
 		public static final class Entity {
 			public static final ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.world.entity.Entity"));
-			public static final ReflectMethod<?> getBukkitEntity = wrapEx(() -> MAPPING.runtimeReflect().method("getBukkitEntity"));
+			public static final ReflectMethod<?> getBukkitEntity = wrapEx(() -> MAPPING.runtimeReflect().method("getBukkitEntity")); // spigot field
 		}
 
 		public static final class ComponentArgument {
@@ -158,7 +158,7 @@ public class ReflectRegistry {
 		public static final class Level {
 			public static final ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.world.level.Level"));
 			public static final ReflectMethod<?> getGameTime = wrapEx(() -> MAPPING.mojMethod("getGameTime"));
-			public static final ReflectField<?> paperConfig = wrapEx(() -> MAPPING.mojField("paperConfig"));
+			public static final ReflectField<?> paperConfig = wrapEx(() -> MAPPING.runtimeReflect().field("paperConfig")); // paper field
 		}
 		
 		public static final class ServerLevel {
