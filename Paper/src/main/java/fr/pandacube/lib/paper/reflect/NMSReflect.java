@@ -156,12 +156,15 @@ public class NMSReflect {
 						background-color: #2F2F2F;
 						color: white;
 						font-size: 14px;
+						font-family: Consolas, monospace;
+					}
+					a:not(.cl) {
+						color: #1290C3;
 					}
 					table {
 						border-collapse: collapse;
 						width: 100%;
 						margin: auto;
-						font-family: Consolas, monospace;
 					}
 					tr:nth-child(2n) {
 						background-color: #373737;
@@ -173,20 +176,18 @@ public class NMSReflect {
 						padding-right: .5em;
 						white-space: nowrap;
 					}
-					.el-icon {
-						font-weight: bold;
-					}
-					.el-icon.publ {
+					
+					b.pu {
 						color: #0C0;
 					}
-					.el-icon.prot {
-						color: #F80;
+					b.pt {
+						color: #FC0;
 					}
-					.el-icon.prvt {
-						color: #C00;
+					b.pv {
+						color: #F00;
 					}
-					.el-icon.pckg {
-						color: #44F;
+					b.pk {
+						color: #66F;
 					}
 					td {
 						padding-top: 0;
@@ -216,10 +217,29 @@ public class NMSReflect {
 						font-weight: bold;
 					}
 				</style>
+				</head><body>
 				"""
-				+ "</head><body>\n"
 				+ "<h1>" + title + "</h1>\n"
-				+ "<table>");
+				+ """
+				<p>
+					<b>C</b>: <span class='kw'>class</span>&nbsp;&nbsp;
+					<b>E</b>: <span class='kw'>enum</span>&nbsp;&nbsp;
+					<b>I</b>: <span class='kw'>interface</span>&nbsp;&nbsp;
+					<b>@</b>: <span class='kw'>@interface</span>&nbsp;&nbsp;
+					<b>R</b>: <span class='kw'>record</span><br>
+					<b>●</b>: field&nbsp;&nbsp;
+					<b>c</b>: constructor&nbsp;&nbsp;
+					<b>⬤</b>: method<br>
+					<b class='pu'>⬤</b>: <span class='kw'>public</span>&nbsp;&nbsp;
+					<b class='pt'>⬤</b>: <span class='kw'>protected</span>&nbsp;&nbsp;
+					<b class='pk'>⬤</b>: package&nbsp;&nbsp;
+					<b class='pv'>⬤</b>: <span class='kw'>private</span><br>
+					<sup>S</sup>: <span class='kw'>static</span>&nbsp;&nbsp;
+					<sup>A</sup>: <span class='kw'>abstract</span>&nbsp;&nbsp;
+					<sup>F</sup>: <span class='kw'>final</span>
+				</p>
+				<table>
+				""");
 		out.println("<tr><th>ns</th><th>" + OBF_NAMESPACE + "</th><th>" + MOJ_NAMESPACE + "</th></tr>");
 		for (ClassMapping clazz : CLASSES_BY_OBF.values()) {
 			clazz.printHTML(out);
@@ -362,9 +382,11 @@ public class NMSReflect {
 		private void printHTML(PrintStream out) {
 			String modifiersHTML = classModifiersToHTML(runtimeClass());
 			out.println("<tr id='c" + id + "'><th>" + modifiersHTML + "</th><th>" + nameToHTML(true) + "</th><th>" + nameToHTML(false) + "</th></tr>");
-			fieldsByObf.values().forEach(f -> f.printHTML(out));
+			fieldsByObf.values().stream().filter(mm -> mm.isStatic()).forEach(f -> f.printHTML(out));
+			methodsByObf.values().stream().filter(mm -> mm.isStatic()).forEach(m -> m.printHTML(out));
 			printConstructorsHTML(out);
-			methodsByObf.values().forEach(m -> m.printHTML(out));
+			fieldsByObf.values().stream().filter(mm -> !mm.isStatic()).forEach(f -> f.printHTML(out));
+			methodsByObf.values().stream().filter(mm -> !mm.isStatic()).forEach(m -> m.printHTML(out));
 		}
 		
 		private String nameToHTML(boolean obf) {
@@ -423,8 +445,8 @@ public class NMSReflect {
 				}
 				out.println("<tr>"
 						+ "<td>" + elementModifiersToHTML("c", ct.getModifiers()) + "</td>"
-						+ "<td><b class='mtd' title='Constructor'>" + classObfSimpleName + "</b>(" + obfParams.stream().map(t -> t.toHTML(true)).collect(Collectors.joining(", ")) + ")</td>"
-						+ "<td><b class='mtd' title='Constructor'>" + classMojSimpleName + "</b>(" + mojParams.stream().map(t -> t.toHTML(false)).collect(Collectors.joining(", ")) + ")</td>"
+						+ "<td><b class='mtd'>" + classObfSimpleName + "</b>(" + obfParams.stream().map(t -> t.toHTML(true)).collect(Collectors.joining(", ")) + ")</td>"
+						+ "<td><b class='mtd'>" + classMojSimpleName + "</b>(" + mojParams.stream().map(t -> t.toHTML(false)).collect(Collectors.joining(", ")) + ")</td>"
 						+ "</tr>");
 			}
 	    	
@@ -547,6 +569,15 @@ public class NMSReflect {
 		
 		/* package */ abstract R getReflectMember() throws ReflectiveOperationException;
 		
+		/* package */ boolean isStatic() {
+			try {
+				return Modifier.isStatic(getReflectMember().getModifiers());
+			} catch (ReflectiveOperationException e) {
+				Log.severe(e);
+				return false;
+			}
+		}
+		
 		private static MemberMapping<MethodId, ReflectMethod<?>> of(MappingTree.MethodMapping mioMapping) {
     		return new MemberMapping<>("⬤", MemberDesc.of(mioMapping, OBF_NAMESPACE), MemberDesc.of(mioMapping, MOJ_NAMESPACE)) {
 				@Override
@@ -566,6 +597,8 @@ public class NMSReflect {
 				}
     		};
 		}
+		
+		
     	
     }
     
@@ -601,27 +634,33 @@ public class NMSReflect {
 
 	
 	private static String elementModifiersToHTML(String elementHTMLType, int elModifiers) {
-		String html = "<b class='el-icon";
+		String html = "<b class='";
 		
 		if (Modifier.isPublic(elModifiers))
-			html += " publ";
+			html += "pu";
 		else if (Modifier.isProtected(elModifiers))
-			html += " prot";
+			html += "pt";
 		else if (Modifier.isPrivate(elModifiers))
-			html += " prvt";
+			html += "pv";
 		else
-			html += " pckg";
+			html += "pk";
 		
-		html += "'>" + elementHTMLType + "</b><sup>";
-		
-		if (Modifier.isStatic(elModifiers))
-			html += "S";
-		if (Modifier.isAbstract(elModifiers))
-			html += "A";
-		if (Modifier.isFinal(elModifiers))
-			html += "F";
-		
-		html += "</sup>";
+		html += "'>" + elementHTMLType + "</b>";
+
+		boolean isStatic = Modifier.isStatic(elModifiers);
+		boolean isAbstract = Modifier.isAbstract(elModifiers);
+		boolean isFinal = Modifier.isFinal(elModifiers);
+
+		if (isStatic || isAbstract || isFinal) {
+			html += "<sup>";
+			if (isStatic)
+				html += "S";
+			if (isAbstract)
+				html += "A";
+			if (isFinal)
+				html += "F";
+			html += "</sup>";
+		}
 		
 		return html;
 	}
