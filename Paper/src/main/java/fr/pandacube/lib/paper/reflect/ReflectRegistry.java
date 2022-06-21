@@ -476,7 +476,6 @@ public class ReflectRegistry {
 	
 	private static void initRecursively(Class<?> cl) {
 		try {
-			Log.info("Init reflect registry class " + cl + "...");
 			for (Field f : Reflect.ofClass(cl).get().getDeclaredFields()) {
 				if (Modifier.isStatic(f.getModifiers()))
 					f.get(null);
