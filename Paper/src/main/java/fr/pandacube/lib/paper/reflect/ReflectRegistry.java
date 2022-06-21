@@ -481,13 +481,8 @@ public class ReflectRegistry {
 				if (Modifier.isStatic(f.getModifiers()))
 					f.get(null);
 			}
-		} catch (ExceptionInInitializerError e) {
-			Log.severe("Error while initilizing a ReflectRegistry entry at " + cl.getName(), e.getCause());
-		} catch (NoClassDefFoundError e) {
-			// if a previously initialized class failed to actually initialize
-			Log.severe("Error while initilizing a ReflectRegistry entry at " + cl.getName() + " due to a previously failed initialization (" + e.getMessage() + ")");
 		} catch (Throwable t) {
-			Log.severe("Wut?", t);
+			Log.severe("Error while initilizing a ReflectRegistry entry at " + cl.getName(), t);
 		}
 		for (Class<?> declaredClass : cl.getDeclaredClasses()) {
 			initRecursively(declaredClass);

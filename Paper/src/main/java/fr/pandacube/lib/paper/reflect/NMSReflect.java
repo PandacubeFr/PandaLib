@@ -32,7 +32,6 @@ import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
 public class NMSReflect {
 	
-	private static ReflectClass<?> PAPER_OBFHELPER_CLASS;
 
 	private static String OBF_NAMESPACE;
 	private static String MOJ_NAMESPACE;
@@ -44,18 +43,20 @@ public class NMSReflect {
 	
 	
 	static {
-		try {
-			PAPER_OBFHELPER_CLASS = Reflect.ofClass("io.papermc.paper.util.ObfHelper");
-
-			OBF_NAMESPACE = (String) PAPER_OBFHELPER_CLASS.field("SPIGOT_NAMESPACE").getStaticValue();
-			MOJ_NAMESPACE = (String) PAPER_OBFHELPER_CLASS.field("MOJANG_PLUS_YARN_NAMESPACE").getStaticValue();
-		} catch (ReflectiveOperationException e) {
-        	throw new RuntimeException("Unable to find the Paper ofbuscation mapping class or class members.", e);
-		}
+		
 		
 		try {
+			ReflectClass<?> obfHelperClass;
+			try {
+				obfHelperClass = Reflect.ofClass("io.papermc.paper.util.ObfHelper");
+	
+				OBF_NAMESPACE = (String) obfHelperClass.field("SPIGOT_NAMESPACE").getStaticValue();
+				MOJ_NAMESPACE = (String) obfHelperClass.field("MOJANG_PLUS_YARN_NAMESPACE").getStaticValue();
+			} catch (ReflectiveOperationException e) {
+				throw new ReflectiveOperationException("Unable to find the Paper ofbuscation mapping class or class members.", e);
+			}
 			
-			List<ClassMapping> mappings = loadMappings();
+			List<ClassMapping> mappings = loadMappings(obfHelperClass);
 			for (ClassMapping clazz : mappings) {
 				CLASSES_BY_OBF.put(clazz.obfName, clazz);
 				CLASSES_BY_MOJ.put(clazz.mojName, clazz);
@@ -72,13 +73,13 @@ public class NMSReflect {
 				try {
 					Class.forName(clazz.obfName);
 					IS_SERVER_OBFUSCATED = true;
-					Log.info("NMS classes are obfuscated.");
+					Log.info("[NMSReflect] NMS classes are obfuscated.");
 					break;
 				} catch (ClassNotFoundException e) {
 					try {
 						Class.forName(clazz.mojName);
 						IS_SERVER_OBFUSCATED = false;
-						Log.info("NMS classes are using mojang mapping.");
+						Log.info("[NMSReflect] NMS classes are using mojang mapping.");
 						break;
 					} catch (ClassNotFoundException ee) {
 						ee.addSuppressed(e);
@@ -98,8 +99,8 @@ public class NMSReflect {
 			for (ClassMapping clazz : mappings) {
 				clazz.cacheReflectClass();
 			}
-		} catch (ReflectiveOperationException e) {
-			Log.severe(e);
+		} catch (Throwable t) {
+			Log.severe("[NMSReflect] The plugin will not be able to access NMS stuff because the obfuscation mapping couldn't be loaded.", t);
 		}
 	}
 	
@@ -124,8 +125,8 @@ public class NMSReflect {
 	
 	
 	
-    private static List<ClassMapping> loadMappings() {
-        try (final InputStream mappingsInputStream = PAPER_OBFHELPER_CLASS.get().getClassLoader().getResourceAsStream("META-INF/mappings/reobf.tiny")) {
+    private static List<ClassMapping> loadMappings(ReflectClass<?> obfHelperClass) throws IOException {
+        try (final InputStream mappingsInputStream = obfHelperClass.get().getClassLoader().getResourceAsStream("META-INF/mappings/reobf.tiny")) {
             if (mappingsInputStream == null) {
             	throw new RuntimeException("Unable to find the ofbuscation mapping file in the Paper jar.");
             }
@@ -138,9 +139,6 @@ public class NMSReflect {
                 classes.add(new ClassMapping(cls));
             }
             return classes;
-        } catch (IOException e) {
-        	Log.severe("Failed to load mappings.", e);
-            return Collections.emptyList();
         }
     }
 	
