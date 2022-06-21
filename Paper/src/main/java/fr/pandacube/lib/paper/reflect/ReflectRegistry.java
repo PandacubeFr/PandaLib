@@ -3,6 +3,8 @@ package fr.pandacube.lib.paper.reflect;
 import static fr.pandacube.lib.core.util.ThrowableUtil.wrapEx;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.UUID;
 
@@ -474,14 +476,18 @@ public class ReflectRegistry {
 	
 	private static void initRecursively(Class<?> cl) {
 		try {
-			Class.forName(cl.getName()); // force initializing the member classes
+			Log.info("Init reflect registry class " + cl + "...");
+			for (Field f : Reflect.ofClass(cl).get().getDeclaredFields()) {
+				if (Modifier.isStatic(f.getModifiers()))
+					f.get(null);
+			}
 		} catch (ExceptionInInitializerError e) {
 			Log.severe("Error while initilizing a ReflectRegistry entry at " + cl.getName(), e.getCause());
 		} catch (NoClassDefFoundError e) {
 			// if a previously initialized class failed to actually initialize
 			Log.severe("Error while initilizing a ReflectRegistry entry at " + cl.getName() + " due to a previously failed initialization (" + e.getMessage() + ")");
-		} catch (ClassNotFoundException e) {
-			Log.severe("Wut? (should not append)", e);
+		} catch (Throwable t) {
+			Log.severe("Wut?", t);
 		}
 		for (Class<?> declaredClass : cl.getDeclaredClasses()) {
 			initRecursively(declaredClass);
