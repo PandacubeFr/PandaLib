@@ -115,12 +115,13 @@ public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPl
 	
 	public List<OP> getOnlyVisibleFor(OF viewer) {
 		List<OP> players = getAll();
-		players.removeIf(op -> op.isVanishedFor(viewer));
+		if (viewer != null)
+			players.removeIf(op -> op.isVanishedFor(viewer));
 		return players;
 	}
 	
 	public List<OP> getOnlyVisibleFor(OP viewer, boolean sameServerOnly) {
-		if (sameServerOnly && viewer.getServerName() == null)
+		if (sameServerOnly && (viewer == null || viewer.getServerName() == null))
 			return Collections.emptyList();
 		
 		@SuppressWarnings("unchecked")
