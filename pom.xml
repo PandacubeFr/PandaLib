@@ -42,8 +42,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         
         <bungeecord.version>1.19-R0.1-SNAPSHOT</bungeecord.version>
-        <paper.version>1.18.2-R0.1</paper.version>
-        <mc.version>1.18.2</mc.version>
+        <paper.version>1.19-R0.1</paper.version>
+        <mc.version>1.19</mc.version>
     </properties>
 	
     <modules>
