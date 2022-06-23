@@ -81,13 +81,11 @@ public class NMSReflect {
 				try {
 					Class.forName(clazz.obfName);
 					IS_SERVER_OBFUSCATED = true;
-					Log.info("[NMSReflect] NMS classes are obfuscated.");
 					break;
 				} catch (ClassNotFoundException e) {
 					try {
 						Class.forName(clazz.mojName);
 						IS_SERVER_OBFUSCATED = false;
-						Log.info("[NMSReflect] NMS classes are using mojang mapping.");
 						break;
 					} catch (ClassNotFoundException ee) {
 						ee.addSuppressed(e);
@@ -100,27 +98,31 @@ public class NMSReflect {
 			if (IS_SERVER_OBFUSCATED == null) {
 				throw new IllegalStateException("Unable to determine if this server is obfuscated or not", exIfUnableToDetermine);
 			}
+			if (IS_SERVER_OBFUSCATED) {
+				Log.info("[NMSReflect] NMS runtime classes are obfuscated.");
+			}
+			else {
+				Log.info("[NMSReflect] NMS runtime classes are mojang mapped.");
+			}
 			
-
-			ClassNotFoundException exIfUnableToGetInstanceClass = null;
+			boolean missingRuntimeClasses = false;
 			for (ClassMapping clazz : mappings) {
 				try {
 					clazz.cacheReflectClass();
 				} catch (ClassNotFoundException e) {
-					if (exIfUnableToGetInstanceClass == null)
-						exIfUnableToGetInstanceClass = e;
-					else {
-						exIfUnableToGetInstanceClass.addSuppressed(e);
-					}
+					missingRuntimeClasses = true;
+					Log.severe("[NMSReflect] Missing runtime class " + e.getMessage() + (IS_SERVER_OBFUSCATED ? (" (moj class: " + clazz.mojName + ")") : ""));
 				}
 			}
 			
-			if (exIfUnableToGetInstanceClass != null)
-				throw exIfUnableToGetInstanceClass;
+			if (missingRuntimeClasses)
+				throw new ClassNotFoundException("Unable to find all the following runtime classes referenced by the obfuscation mapping. They are removed from the mapping data.");
 			
 			Log.info("[NMSReflect] Obfuscation mapping loaded for " + mappings.size() + " classes.");
 		} catch (Throwable t) {
-			Log.severe("[NMSReflect] The plugin will not be able to access NMS stuff because the obfuscation mapping couldn't be loaded.", t);
+			Log.severe("[NMSReflect] The plugin will hava limited access to access NMS stuff due to an error while loading the obfuscation mapping.");
+			Log.severe(t.toString());
+			Log.severe(t);
 			CLASSES_BY_MOJ.clear();
 			CLASSES_BY_OBF.clear();
 		}
