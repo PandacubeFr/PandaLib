@@ -41,9 +41,15 @@ public class NMSReflect {
 	
 	private static Boolean IS_SERVER_OBFUSCATED;
 	
+	private static boolean isInit = false;
 	
-	static {
+	static void init() {
 		
+		synchronized (NMSReflect.class) {
+			if (isInit)
+				return;
+			isInit = true;
+		}
 		
 		try {
 			ReflectClass<?> obfHelperClass;
@@ -90,8 +96,6 @@ public class NMSReflect {
 			}
 			
 			if (IS_SERVER_OBFUSCATED == null) {
-				CLASSES_BY_MOJ.clear();
-				CLASSES_BY_OBF.clear();
 				throw new IllegalStateException("Unable to determine if this server is obfuscated or not", exIfUnableToDetermine);
 			}
 			
@@ -113,6 +117,8 @@ public class NMSReflect {
 				throw exIfUnableToGetInstanceClass;
 		} catch (Throwable t) {
 			Log.severe("[NMSReflect] The plugin will not be able to access NMS stuff because the obfuscation mapping couldn't be loaded.", t);
+			CLASSES_BY_MOJ.clear();
+			CLASSES_BY_OBF.clear();
 		}
 	}
 	

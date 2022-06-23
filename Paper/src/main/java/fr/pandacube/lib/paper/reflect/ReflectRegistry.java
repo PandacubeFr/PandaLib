@@ -471,6 +471,7 @@ public class ReflectRegistry {
 	 */
 	
 	public static void init() {
+		NMSReflect.init();
 		initRecursively(ReflectRegistry.class);
 	}
 	
