@@ -40,12 +40,14 @@ public class ThrowableUtil {
 	 * Wraps a {@link SupplierException} into a try catch.
 	 * @param supp the {@link SupplierException} to run and get the value from.
 	 * @return the value returned by the provided supplier.
-	 * @throws RuntimeException if the provided {@link SupplierException} throws an exception.
+	 * @throws RuntimeException if the provided {@link SupplierException} throws a checked exception.
 	 */
 	public static <T> T wrapEx(SupplierException<T> supp) {
 		try {
 			return supp.get();
 		} catch (Exception e) {
+			if (e instanceof RuntimeException re)
+				throw re;
 			throw new RuntimeException(e);
 		}
 	}
@@ -63,12 +65,14 @@ public class ThrowableUtil {
 	/**
 	 * Wraps a {@link RunnableException} into a try catch.
 	 * @param run the {@link RunnableException} to run.
-	 * @throws RuntimeException if the provided {@link RunnableException} throws an exception.
+	 * @throws RuntimeException if the provided {@link RunnableException} throws a checked exception.
 	 */
 	public static void wrapEx(RunnableException run) {
 		try {
 			run.run();
 		} catch (Exception e) {
+			if (e instanceof RuntimeException re)
+				throw re;
 			throw new RuntimeException(e);
 		}
 	}

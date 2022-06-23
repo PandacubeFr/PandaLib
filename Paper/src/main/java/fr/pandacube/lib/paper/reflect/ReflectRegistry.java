@@ -424,7 +424,7 @@ public class ReflectRegistry {
 			public static final ReflectField<?> chunks = wrapEx(() -> REFLECT.field("chunks"));
 			
 			public static final class Chunks {
-				public static final ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("io.papermc.paper.configuration.WorldConfiguration.Chunks"));
+				public static final ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("io.papermc.paper.configuration.WorldConfiguration$Chunks"));
 				public static final ReflectField<?> autoSavePeriod = wrapEx(() -> REFLECT.field("autoSaveInterval"));
 			}
 		}
@@ -492,6 +492,9 @@ public class ReflectRegistry {
 					f.get(null);
 			}
 		} catch (Throwable t) {
+			if (t instanceof ExceptionInInitializerError eiie && eiie.getCause() != null) {
+				t = eiie.getCause();
+			}
 			Log.severe("Error while initilizing a ReflectRegistry entry at " + cl.getName(), t);
 		}
 		for (Class<?> declaredClass : cl.getDeclaredClasses()) {

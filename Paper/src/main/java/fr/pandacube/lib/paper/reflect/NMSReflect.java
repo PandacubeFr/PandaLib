@@ -51,6 +51,8 @@ public class NMSReflect {
 			isInit = true;
 		}
 		
+		Log.info("[NMSReflect] Initializing NMS obfuscation mapping...");
+		
 		try {
 			ReflectClass<?> obfHelperClass;
 			try {
@@ -115,6 +117,8 @@ public class NMSReflect {
 			
 			if (exIfUnableToGetInstanceClass != null)
 				throw exIfUnableToGetInstanceClass;
+			
+			Log.info("[NMSReflect] Obfuscation mapping loaded for " + mappings.size() + " classes.");
 		} catch (Throwable t) {
 			Log.severe("[NMSReflect] The plugin will not be able to access NMS stuff because the obfuscation mapping couldn't be loaded.", t);
 			CLASSES_BY_MOJ.clear();
