@@ -92,13 +92,25 @@ public class NMSReflect {
 			if (IS_SERVER_OBFUSCATED == null) {
 				CLASSES_BY_MOJ.clear();
 				CLASSES_BY_OBF.clear();
-				throw exIfUnableToDetermine;
+				throw new IllegalStateException("Unable to determine if this server is obfuscated or not", exIfUnableToDetermine);
 			}
 			
-			
+
+			ClassNotFoundException exIfUnableToGetInstanceClass = null;
 			for (ClassMapping clazz : mappings) {
-				clazz.cacheReflectClass();
+				try {
+					clazz.cacheReflectClass();
+				} catch (ClassNotFoundException e) {
+					if (exIfUnableToGetInstanceClass == null)
+						exIfUnableToGetInstanceClass = e;
+					else {
+						exIfUnableToGetInstanceClass.addSuppressed(e);
+					}
+				}
 			}
+			
+			if (exIfUnableToGetInstanceClass != null)
+				throw exIfUnableToGetInstanceClass;
 		} catch (Throwable t) {
 			Log.severe("[NMSReflect] The plugin will not be able to access NMS stuff because the obfuscation mapping couldn't be loaded.", t);
 		}
@@ -111,9 +123,7 @@ public class NMSReflect {
 	 * @throws ClassNotFoundException if there is a mapping, but the runtime class was not found.
 	 */
 	public static ClassMapping mojClass(String mojName) throws ClassNotFoundException {
-		ClassMapping cm = Objects.requireNonNull(CLASSES_BY_MOJ.get(mojName), "Unable to find the Mojang mapped class '" + mojName + "'");
-		cm.cacheReflectClass();
-		return cm;
+		return Objects.requireNonNull(CLASSES_BY_MOJ.get(mojName), "Unable to find the Mojang mapped class '" + mojName + "'");
 	}
 	
 	
