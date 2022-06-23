@@ -112,20 +112,20 @@ public class NMSReflect {
 				} catch (ClassNotFoundException e) {
 					missingRuntimeClasses = true;
 					Log.severe("[NMSReflect] Missing runtime class " + e.getMessage() + (IS_SERVER_OBFUSCATED ? (" (moj class: " + clazz.mojName + ")") : ""));
+					CLASSES_BY_OBF.remove(clazz.obfName);
+					CLASSES_BY_MOJ.remove(clazz.mojName);
 				}
 			}
 			
 			if (missingRuntimeClasses)
 				throw new ClassNotFoundException("Unable to find all the following runtime classes referenced by the obfuscation mapping. They are removed from the mapping data.");
 			
-			Log.info("[NMSReflect] Obfuscation mapping loaded for " + mappings.size() + " classes.");
 		} catch (Throwable t) {
 			Log.severe("[NMSReflect] The plugin will hava limited access to access NMS stuff due to an error while loading the obfuscation mapping.");
 			Log.severe(t.toString());
 			Log.severe(t);
-			CLASSES_BY_MOJ.clear();
-			CLASSES_BY_OBF.clear();
 		}
+		Log.info("[NMSReflect] Obfuscation mapping loaded for " + CLASSES_BY_OBF.size() + " classes.");
 	}
 	
 	
