@@ -110,15 +110,13 @@ public class NMSReflect {
 				try {
 					clazz.cacheReflectClass();
 				} catch (Throwable e) {
-					if (missingRuntimeClasses == 0) { // first
-						Log.severe("[NMSReflect] Error while loading runtime classes referenced by the obfuscation mapping.");
-					}
 					missingRuntimeClasses++;
 					if (e instanceof ClassNotFoundException cnfe) {
-						Log.severe("[NMSReflect] Missing runtime class " + cnfe.getMessage() + (IS_SERVER_OBFUSCATED ? (" (moj class: " + clazz.mojName + ")") : ""));
+						Log.warning("[NMSReflect] Missing runtime class " + cnfe.getMessage() + (IS_SERVER_OBFUSCATED ? (" (moj class: " + clazz.mojName + ")") : ""));
 					}
 					else {
-						Log.severe("[NMSReflect] Unable to load runtime class " + (IS_SERVER_OBFUSCATED ? (clazz.obfName + " (moj class: " + clazz.mojName + ")") : clazz.mojName), e);
+						Log.warning("[NMSReflect] Unable to load runtime class " + (IS_SERVER_OBFUSCATED ? (clazz.obfName + " (moj class: " + clazz.mojName + ")") : clazz.mojName));
+						Log.warning(e); // throwable on separate log message due to sometimes the message not showing at all because of this exception
 					}
 					CLASSES_BY_OBF.remove(clazz.obfName);
 					CLASSES_BY_MOJ.remove(clazz.mojName);
@@ -126,15 +124,13 @@ public class NMSReflect {
 			}
 			
 			if (missingRuntimeClasses > 0) {
-				Log.severe("[NMSReflect] " + missingRuntimeClasses + " class have been removed from the mapping data due to errors.");
+				Log.warning("[NMSReflect] " + missingRuntimeClasses + " class have been removed from the mapping data due to the previously stated errors.");
 			}
 			
 		} catch (Throwable t) {
 			CLASSES_BY_OBF.clear();
 			CLASSES_BY_MOJ.clear();
-			Log.severe("[NMSReflect] The plugin will have limited access to NMS stuff due to an error while loading the obfuscation mapping.");
-			Log.severe(t.toString());
-			t.printStackTrace();
+			Log.severe("[NMSReflect] The plugin will not have access to NMS stuff due to an error while loading the obfuscation mapping.", t);
 		}
 		Log.info("[NMSReflect] Obfuscation mapping loaded for " + CLASSES_BY_OBF.size() + " classes.");
 	}

@@ -109,11 +109,6 @@ public class ReflectRegistry {
 			public static final ReflectConstructor<?> CONSTRUCTOR = wrapEx(() -> MAPPING.runtimeReflect().constructor());
 		}
 		
-		public static final class BlockStateArgument {
-			public static final ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.commands.arguments.blocks.BlockStateArgument"));
-			public static final ReflectConstructor<?> CONSTRUCTOR = wrapEx(() -> MAPPING.runtimeReflect().constructor());
-		}
-		
 		public static final class Vec3Argument {
 			public static final ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.commands.arguments.coordinates.Vec3Argument"));
 			public static final ReflectMethod<?> vec3 = wrapEx(() -> MAPPING.mojMethod("vec3", boolean.class));
