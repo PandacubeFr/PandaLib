@@ -53,6 +53,8 @@ public class NMSReflect {
 		
 		Log.info("[NMSReflect] Initializing NMS obfuscation mapping...");
 		
+		boolean clearIfError = true;
+		
 		try {
 			ReflectClass<?> obfHelperClass;
 			try {
@@ -117,13 +119,19 @@ public class NMSReflect {
 				}
 			}
 			
+			clearIfError = false;
+			
 			if (missingRuntimeClasses)
 				throw new ClassNotFoundException("Unable to find all the following runtime classes referenced by the obfuscation mapping. They are removed from the mapping data.");
 			
 		} catch (Throwable t) {
-			Log.severe("[NMSReflect] The plugin will hava limited access to access NMS stuff due to an error while loading the obfuscation mapping.");
+			if (clearIfError) {
+				CLASSES_BY_OBF.clear();
+				CLASSES_BY_MOJ.clear();
+			}
+			Log.severe("[NMSReflect] The plugin will have limited access to NMS stuff due to an error while loading the obfuscation mapping.");
 			Log.severe(t.toString());
-			Log.severe(t);
+			t.printStackTrace();
 		}
 		Log.info("[NMSReflect] Obfuscation mapping loaded for " + CLASSES_BY_OBF.size() + " classes.");
 	}
