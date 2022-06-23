@@ -419,9 +419,19 @@ public class ReflectRegistry {
 			public static final ReflectMethod<?> getVisibleMap = wrapEx(() -> REFLECT.method("getVisibleMap"));
 		}
 		
-		public static final class PaperWorldConfig {
-			public static final ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("com.destroystokyo.paper.PaperWorldConfig"));
-			public static final ReflectField<?> autoSavePeriod = wrapEx(() -> REFLECT.field("autoSavePeriod"));
+		public static final class WorldConfiguration {
+			public static final ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("io.papermc.paper.configuration.WorldConfiguration"));
+			public static final ReflectField<?> chunks = wrapEx(() -> REFLECT.field("chunks"));
+			
+			public static final class Chunks {
+				public static final ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("io.papermc.paper.configuration.WorldConfiguration.Chunks"));
+				public static final ReflectField<?> autoSavePeriod = wrapEx(() -> REFLECT.field("autoSaveInterval"));
+			}
+		}
+		
+		public static final class FallbackValue_Int {
+			public static final ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("io.papermc.paper.configuration.type.fallback.FallbackValue$Int"));
+			public static final ReflectMethod<?> value = wrapEx(() -> REFLECT.method("value"));
 		}
 		
 	}
