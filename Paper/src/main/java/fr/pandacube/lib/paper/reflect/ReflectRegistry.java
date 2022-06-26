@@ -182,6 +182,7 @@ public class ReflectRegistry {
 		public static final class ChunkStorage {
 			public static final ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.world.level.chunk.storage.ChunkStorage"));
 			public static final ReflectMethod<?> read = wrapEx(() -> MAPPING.mojMethod("read", ChunkPos.MAPPING));
+			public static final ReflectMethod<?> readSync = wrapEx(() -> MAPPING.runtimeReflect().method("readSync", ChunkPos.MAPPING.runtimeReflect().get())); // spigot/paper method
 		}
 		
 		
