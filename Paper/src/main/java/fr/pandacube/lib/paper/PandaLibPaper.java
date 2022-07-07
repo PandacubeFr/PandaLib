@@ -1,8 +1,8 @@
 package fr.pandacube.lib.paper;
 
+import fr.pandacube.lib.paper.reflect.NMSReflect;
+import fr.pandacube.lib.paper.reflect.wrapper.WrapperRegistry;
 import org.bukkit.plugin.Plugin;
-
-import fr.pandacube.lib.paper.reflect.ReflectRegistry;
 
 public class PandaLibPaper {
 	
@@ -10,8 +10,9 @@ public class PandaLibPaper {
 	
 	public static void init(Plugin plugin) {
 		PandaLibPaper.plugin = plugin;
-		
-		ReflectRegistry.init();
+
+		NMSReflect.init();
+		WrapperRegistry.init();
 		
 		
 	}

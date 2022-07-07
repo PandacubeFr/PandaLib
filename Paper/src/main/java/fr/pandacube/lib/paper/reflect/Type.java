@@ -20,7 +20,7 @@ public class Type implements Comparable<Type> {
 	
 	@Override
 	public boolean equals(Object obj) {
-		return obj != null && obj instanceof Type ot && type.equals(ot.type) && arrayDepth == ot.arrayDepth;
+		return obj instanceof Type ot && type.equals(ot.type) && arrayDepth == ot.arrayDepth;
 	}
 	@Override
 	public int hashCode() {

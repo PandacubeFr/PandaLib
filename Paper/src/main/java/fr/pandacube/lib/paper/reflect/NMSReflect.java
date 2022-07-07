@@ -43,7 +43,7 @@ public class NMSReflect {
 	
 	private static boolean isInit = false;
 	
-	static void init() {
+	public static void init() {
 		
 		synchronized (NMSReflect.class) {
 			if (isInit)
