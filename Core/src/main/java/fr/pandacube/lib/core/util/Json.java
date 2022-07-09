@@ -18,9 +18,9 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 public class Json {
-	public static final Gson gson = build(b -> b);
-	public static final Gson gsonPrettyPrinting = build(b -> b.setPrettyPrinting());
-	public static final Gson gsonSerializeNulls = build(b -> b.serializeNulls());
+	public static final Gson gson = build(Function.identity());
+	public static final Gson gsonPrettyPrinting = build(GsonBuilder::setPrettyPrinting);
+	public static final Gson gsonSerializeNulls = build(GsonBuilder::serializeNulls);
 	public static final Gson gsonSerializeNullsPrettyPrinting = build(b -> b.serializeNulls().setPrettyPrinting());
 
 
@@ -46,9 +46,9 @@ public class Json {
 	}
 
 	private static class RecordTypeAdapter<T> extends TypeAdapter<T> {
-		private Gson gson;
-		private TypeAdapterFactory factory;
-		private TypeToken<T> type;
+		private final Gson gson;
+		private final TypeAdapterFactory factory;
+		private final TypeToken<T> type;
 
 		public RecordTypeAdapter(Gson gson, TypeAdapterFactory factory, TypeToken<T> type) {
 			this.gson = gson;
@@ -72,8 +72,8 @@ public class Json {
 
 				RecordComponent[] recordComponents = clazz.getRecordComponents();
 				Map<String, TypeToken<?>> typeMap = new HashMap<>();
-				for (int i = 0; i < recordComponents.length; i++) {
-					typeMap.put(recordComponents[i].getName(), TypeToken.get(recordComponents[i].getGenericType()));
+				for (RecordComponent recordComponent : recordComponents) {
+					typeMap.put(recordComponent.getName(), TypeToken.get(recordComponent.getGenericType()));
 				}
 				var argsMap = new HashMap<String, Object>();
 				reader.beginObject();

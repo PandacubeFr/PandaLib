@@ -24,41 +24,24 @@ public class BukkitChatColorUtil {
 		// hmmm this is not that simple, of course
 		
 		// black 
-		switch (dye) {
-		case BLACK:
-			return ChatColor.of("#000000");
-		case RED:
-			return ChatColor.of("#650000");
-		case GREEN:
-			return ChatColor.of("#006500");
-		case BROWN:
-			return ChatColor.of("#361B07");
-		case BLUE:
-			return ChatColor.of("#000065");
-		case PURPLE:
-			return ChatColor.of("#3F0C5F");
-		case CYAN:
-			return ChatColor.of("#006565");
-		case LIGHT_GRAY:
-			return ChatColor.of("#535353");
-		case GRAY:
-			return ChatColor.of("#323232");
-		case PINK:
-			return ChatColor.of("#652947");
-		case LIME:
-			return ChatColor.of("#4B6500");
-		case YELLOW:
-			return ChatColor.of("#656500");
-		case LIGHT_BLUE:
-			return ChatColor.of("#3C4B51");
-		case MAGENTA:
-			return ChatColor.of("#650065");
-		case ORANGE:
-			return ChatColor.of("#65280C");
-		case WHITE:
-			return ChatColor.of("#656565");
-		}
-		throw new IllegalArgumentException("Unknown DyeColor: " + dye);
+		return switch (dye) {
+			case BLACK -> ChatColor.of("#000000");
+			case RED -> ChatColor.of("#650000");
+			case GREEN -> ChatColor.of("#006500");
+			case BROWN -> ChatColor.of("#361B07");
+			case BLUE -> ChatColor.of("#000065");
+			case PURPLE -> ChatColor.of("#3F0C5F");
+			case CYAN -> ChatColor.of("#006565");
+			case LIGHT_GRAY -> ChatColor.of("#535353");
+			case GRAY -> ChatColor.of("#323232");
+			case PINK -> ChatColor.of("#652947");
+			case LIME -> ChatColor.of("#4B6500");
+			case YELLOW -> ChatColor.of("#656500");
+			case LIGHT_BLUE -> ChatColor.of("#3C4B51");
+			case MAGENTA -> ChatColor.of("#650065");
+			case ORANGE -> ChatColor.of("#65280C");
+			case WHITE -> ChatColor.of("#656565");
+		};
 	}
 	
 

@@ -2,6 +2,8 @@ package fr.pandacube.lib.core.util;
 
 import java.util.Objects;
 
+import fr.pandacube.lib.core.util.ThrowableUtil.SupplierException;
+
 /**
  * Represents a lazy loaded value.
  * 
@@ -41,12 +43,6 @@ public class LazyOrException<T> {
 	public synchronized void set(T value) {
 		cachedValue = value;
 		cached = true;
-	}
-	
-	
-	@FunctionalInterface
-	public interface SupplierException<T> {
-		public T get() throws Exception;
 	}
 
 }

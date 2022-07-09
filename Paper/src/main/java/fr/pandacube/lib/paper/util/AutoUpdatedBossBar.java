@@ -95,17 +95,15 @@ public class AutoUpdatedBossBar implements Listener {
 	
 	public synchronized void followLoginLogout(Predicate<Player> condition) {
 		playerCondition = condition;
-		if (followPlayerList == true)
+		if (followPlayerList)
 			return;
 		followPlayerList = true;
 		BukkitEvent.register(this);
-		Bukkit.getServer().getOnlinePlayers().forEach(p -> {
-			onPlayerJoin(new PlayerJoinEvent(p, Component.text("")));
-		});
+		Bukkit.getServer().getOnlinePlayers().forEach(p -> onPlayerJoin(new PlayerJoinEvent(p, Component.text(""))));
 	}
 	
 	public synchronized void unfollowPlayerList() {
-		if (followPlayerList == false)
+		if (!followPlayerList)
 			return;
 		followPlayerList = false;
 		playerCondition = null;
@@ -115,7 +113,7 @@ public class AutoUpdatedBossBar implements Listener {
 
 	@EventHandler(priority=EventPriority.MONITOR)
 	public synchronized void onPlayerJoin(PlayerJoinEvent event) {
-		if (followPlayerList == false)
+		if (!followPlayerList)
 			return;
 		if (playerCondition != null && !playerCondition.test(event.getPlayer()))
 			return;
@@ -126,17 +124,13 @@ public class AutoUpdatedBossBar implements Listener {
 	
 	@EventHandler(priority=EventPriority.HIGH)
 	public synchronized void onPlayerQuit(PlayerQuitEvent event) {
-		if (followPlayerList == false)
+		if (!followPlayerList)
 			return;
 		synchronized (bar) {
 			event.getPlayer().hideBossBar(bar);
 		}
 	}
-	
-	/**
-	 * Utility method to update the progress of the bossbar without unnecessary packet.
-	 * @param title
-	 */
+
 	public void removeAll() {
 		synchronized (bar) {
 			for (Player p : Bukkit.getOnlinePlayers())
@@ -164,14 +158,13 @@ public class AutoUpdatedBossBar implements Listener {
 	
 	@FunctionalInterface
 	public interface BarUpdater {
-		public void update(AutoUpdatedBossBar bar);
+		void update(AutoUpdatedBossBar bar);
 	}
 	
 
 	
 	/**
 	 * Utility method to update the title of the bossbar without unnecessary packet.
-	 * @param title
 	 */
 	public void setTitle(Chat title) {
 		synchronized (bar) {
@@ -179,14 +172,8 @@ public class AutoUpdatedBossBar implements Listener {
 		}
 	}
 	
-	@Deprecated
-	public void setTitle(String title) {
-		setTitle(Chat.legacyText(title));
-	}
-	
 	/**
 	 * Utility method to update the color of the bossbar without unnecessary packet.
-	 * @param title
 	 */
 	public void setColor(Color color) {
 		synchronized (bar) {
@@ -196,7 +183,6 @@ public class AutoUpdatedBossBar implements Listener {
 	
 	/**
 	 * Utility method to update the progress of the bossbar without unnecessary packet.
-	 * @param title
 	 */
 	public void setProgress(double progress) {
 		synchronized (bar) {

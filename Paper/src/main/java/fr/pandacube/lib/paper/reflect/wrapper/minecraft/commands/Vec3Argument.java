@@ -12,8 +12,9 @@ public class Vec3Argument extends ReflectWrapperTyped<ArgumentType<?>> {
     public static final NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.commands.arguments.coordinates.Vec3Argument"));
     private static final Reflect.ReflectMethod<?> vec3 = wrapEx(() -> MAPPING.mojMethod("vec3", boolean.class));
 
-    public static ArgumentType<?> vec3(boolean centerIntegers) {
-        return (ArgumentType<?>) wrapReflectEx(() -> vec3.invokeStatic(centerIntegers));
+    @SuppressWarnings("unchecked")
+    public static ArgumentType<Object> vec3(boolean centerIntegers) {
+        return (ArgumentType<Object>) wrapReflectEx(() -> vec3.invokeStatic(centerIntegers));
     }
 
 

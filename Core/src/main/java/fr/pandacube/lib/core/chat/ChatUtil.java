@@ -1,9 +1,5 @@
 package fr.pandacube.lib.core.chat;
 
-import static fr.pandacube.lib.core.chat.ChatStatic.chat;
-import static fr.pandacube.lib.core.chat.ChatStatic.legacyText;
-import static fr.pandacube.lib.core.chat.ChatStatic.text;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,8 +9,6 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableMap;
-
-import fr.pandacube.lib.core.chat.Chat.FormatableChat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TranslatableComponent;
@@ -23,6 +17,12 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.format.TextDecoration.State;
 import net.md_5.bungee.api.ChatColor;
+
+import fr.pandacube.lib.core.chat.Chat.FormatableChat;
+
+import static fr.pandacube.lib.core.chat.ChatStatic.chat;
+import static fr.pandacube.lib.core.chat.ChatStatic.legacyText;
+import static fr.pandacube.lib.core.chat.ChatStatic.text;
 
 public class ChatUtil {
 
@@ -328,12 +328,10 @@ public class ChatUtil {
 			for (Component c : ((TranslatableComponent)component).args())
 				count += componentWidth(c, console, actuallyBold);
 		}
-		
-		if (component.children() != null) {
-			for (Component c : component.children())
-				count += componentWidth(c, console, actuallyBold);
-		}
-		
+
+		for (Component c : component.children())
+			count += componentWidth(c, console, actuallyBold);
+
 		return count;
 	}
 	
@@ -345,7 +343,7 @@ public class ChatUtil {
 		int count = 0;
 		for (char c : str.toCharArray())
 			count += charW(c, console, bold);
-		return (count < 0) ? 0 : count;
+		return Math.max(count, 0);
 	}
 
 	public static int charW(char c, boolean console, boolean bold) {
@@ -364,7 +362,7 @@ public class ChatUtil {
 	
 	public static List<Chat> wrapInLimitedPixelsToChat(String legacyText, int pixelWidth) {
 		return wrapInLimitedPixels(legacyText, pixelWidth).stream()
-				.map(t -> legacyText(t))
+				.map(ChatStatic::legacyText)
 				.collect(Collectors.toList());
 	}
 	
@@ -377,7 +375,7 @@ public class ChatUtil {
 		int currentLineSize = 0;
 		int index = 0;
 		
-		String currentWord = "";
+		StringBuilder currentWord = new StringBuilder();
 		int currentWordSize = 0;
 		boolean bold = false;
 		boolean firstCharCurrentWordBold = false;
@@ -385,9 +383,9 @@ public class ChatUtil {
 		do {
 			char c = legacyText.charAt(index);
 			if (c == ChatColor.COLOR_CHAR && index < legacyText.length() - 1) {
-				currentWord += c;
+				currentWord.append(c);
 				c = legacyText.charAt(++index);
-				currentWord += c;
+				currentWord.append(c);
 				
 				if (c == 'l' || c == 'L') // bold
 					bold = true;
@@ -404,7 +402,7 @@ public class ChatUtil {
 					lines.add(currentLine);
 					String lastStyle = ChatColorUtil.getLastColors(currentLine);
 					if (currentWord.charAt(0) == ' ') {
-						currentWord = currentWord.substring(1);
+						currentWord = new StringBuilder(currentWord.substring(1));
 						currentWordSize -= charW(' ', false, firstCharCurrentWordBold);
 					}
 					currentLine = (lastStyle.equals("§r") ? "" : lastStyle) + currentWord;
@@ -414,7 +412,7 @@ public class ChatUtil {
 					currentLine += currentWord;
 					currentLineSize += currentWordSize;
 				}
-				currentWord = ""+c;
+				currentWord = new StringBuilder("" + c);
 				currentWordSize = charW(c, false, bold);
 				firstCharCurrentWordBold = bold;
 			}
@@ -423,15 +421,12 @@ public class ChatUtil {
 					lines.add(currentLine);
 					String lastStyle = ChatColorUtil.getLastColors(currentLine);
 					if (currentWord.charAt(0) == ' ') {
-						currentWord = currentWord.substring(1);
-						currentWordSize -= charW(' ', false, firstCharCurrentWordBold);
+						currentWord = new StringBuilder(currentWord.substring(1));
 					}
 					currentLine = (lastStyle.equals("§r") ? "" : lastStyle) + currentWord;
-					currentLineSize = currentWordSize;
 				}
 				else {
 					currentLine += currentWord;
-					currentLineSize += currentWordSize;
 				}
 				// wrap after
 				lines.add(currentLine);
@@ -439,12 +434,12 @@ public class ChatUtil {
 				
 				currentLine = lastStyle.equals("§r") ? "" : lastStyle;
 				currentLineSize = 0;
-				currentWord = "";
+				currentWord = new StringBuilder();
 				currentWordSize = 0;
 				firstCharCurrentWordBold = bold;
 			}
 			else {
-				currentWord += c;
+				currentWord.append(c);
 				currentWordSize += charW(c, false, bold);
 			}
 			
@@ -674,7 +669,6 @@ public class ChatUtil {
 	 * 
 	 * Each element in the returned list represent 1 line of the tree view.
 	 * Thus, the caller may send each line separately or at once depending of the quantity of data.
-	 * @param node
 	 * @return A array of component, each element being a single line.
 	 */
 	public static List<Chat> treeView(DisplayTreeNode node, boolean console) {

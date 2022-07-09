@@ -1,5 +1,9 @@
 package fr.pandacube.lib.core.search;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import fr.pandacube.lib.core.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,14 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-
-import fr.pandacube.lib.core.util.Log;
 
 /**
  * Utility class to manage searching among a set of
@@ -23,15 +21,15 @@ import fr.pandacube.lib.core.util.Log;
  */
 public class SearchEngine<R extends SearchResult> {
 
-	Map<String, Set<R>> searchKeywordsResultMap = new HashMap<>();
-	Map<R, Set<String>> resultsSearchKeywordsMap = new HashMap<>();
+	private final Map<String, Set<R>> searchKeywordsResultMap = new HashMap<>();
+	private final Map<R, Set<String>> resultsSearchKeywordsMap = new HashMap<>();
 
-	Map<String, Set<R>> suggestionsKeywordsResultMap = new HashMap<>();
-	Map<R, Set<String>> resultsSuggestionsKeywordsMap = new HashMap<>();
+	private final Map<String, Set<R>> suggestionsKeywordsResultMap = new HashMap<>();
+	private final Map<R, Set<String>> resultsSuggestionsKeywordsMap = new HashMap<>();
+
+	private final Set<R> resultSet = new HashSet<>();
 	
-	Set<R> resultSet = new HashSet<>();
-	
-	private Cache<Set<String>, List<String>> suggestionsCache;
+	private final Cache<Set<String>, List<String>> suggestionsCache;
 	
 	public SearchEngine(int suggestionsCacheSize) {
 		suggestionsCache = CacheBuilder.newBuilder()
@@ -50,7 +48,7 @@ public class SearchEngine<R extends SearchResult> {
 			searchKw = result.getSearchKeywords();
 			Objects.requireNonNull(searchKw, "SearchResult instance must provide a non null set of search keywords");
 			searchKw = searchKw.stream()
-					.filter(e -> e != null)
+					.filter(Objects::nonNull)
 					.map(String::toLowerCase)
 					.collect(Collectors.toSet());
 		} catch (Exception e) {
@@ -63,7 +61,7 @@ public class SearchEngine<R extends SearchResult> {
 			suggestsKw = result.getSuggestionKeywords();
 			Objects.requireNonNull(suggestsKw, "SearchResult instance must provide a non null set of suggestions keywords");
 			suggestsKw = new HashSet<>(suggestsKw);
-			suggestsKw.removeIf(e -> e == null);
+			suggestsKw.removeIf(Objects::isNull);
 		} catch (Exception e) {
 			Log.severe(e);
 			return;
@@ -123,7 +121,7 @@ public class SearchEngine<R extends SearchResult> {
 	
 	public synchronized Set<R> search(Set<String> searchTerms) {
 		if (searchTerms == null)
-			searchTerms = new HashSet<String>();
+			searchTerms = new HashSet<>();
 		
 		Set<R> retainedResults = new HashSet<>(resultSet);
 		for (String term : searchTerms) {
@@ -157,7 +155,7 @@ public class SearchEngine<R extends SearchResult> {
 				.collect(Collectors.toSet());
 		
 		try {
-			return suggestionsCache.get(lowerCaseSearchTerm, (Callable<List<String>>) () -> {
+			return suggestionsCache.get(lowerCaseSearchTerm, () -> {
 				Set<R> prevResults = search(lowerCaseSearchTerm);
 				
 				Set<String> suggestions = new HashSet<>();

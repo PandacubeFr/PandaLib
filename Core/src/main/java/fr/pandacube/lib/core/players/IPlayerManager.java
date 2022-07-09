@@ -19,6 +19,7 @@ import fr.pandacube.lib.core.db.DB;
 import fr.pandacube.lib.core.db.DBInitTableException;
 import fr.pandacube.lib.core.util.Log;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.md_5.bungee.api.chat.BaseComponent;
 
 public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPlayer> {
@@ -45,11 +46,11 @@ public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPl
 	
 	
 	
-	private Map<UUID, OP> onlinePlayers = Collections.synchronizedMap(new HashMap<>());
+	private final Map<UUID, OP> onlinePlayers = Collections.synchronizedMap(new HashMap<>());
 	
-	private LoadingCache<UUID, OF> offlinePlayers = CacheBuilder.newBuilder()
+	private final LoadingCache<UUID, OF> offlinePlayers = CacheBuilder.newBuilder()
 			.expireAfterWrite(10, TimeUnit.MINUTES)
-			.build(CacheLoader.from(pId -> newOffPlayerInstance(pId)));
+			.build(CacheLoader.from(this::newOffPlayerInstance));
 	
 	
 	public IPlayerManager() throws DBInitTableException {
@@ -90,7 +91,7 @@ public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPl
 
 	public List<OP> getAllNotVanished() {
 		List<OP> players = getAll();
-		players.removeIf(op -> op.isVanished());
+		players.removeIf(IOnlinePlayer::isVanished);
 		return players;
 	}
 	
@@ -183,8 +184,8 @@ public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPl
 	/*
 	 * Message broadcasting
 	 */
-	
-	// BaseComponent/Chat/String message
+
+	// ComponentLike message
 	// boolean prefix
 	// boolean console = (permission == null)
 	// String permission = null
@@ -205,13 +206,13 @@ public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPl
 	 * 			
 	 * @throws IllegalArgumentException if message is null.
 	 */
-	public static void broadcast(Component message, boolean prefix, boolean console, String permission, UUID sourcePlayer) {
+	public static void broadcast(ComponentLike message, boolean prefix, boolean console, String permission, UUID sourcePlayer) {
 		Objects.requireNonNull(message, "message cannot be null");
 		
 		IOffPlayer oSourcePlayer = getInstance().getOffline(sourcePlayer);
 		
 		if (prefix)
-			message = prefixedAndColored(message);
+			message = prefixedAndColored(message.asComponent());
 
 		for (IOnlinePlayer op : getInstance().getAll()) {
 			if (permission != null && !(op.hasPermission(permission))) continue;
@@ -231,14 +232,14 @@ public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPl
 		}
 
 		if (console)
-			getInstance().sendMessageToConsole(message);
+			getInstance().sendMessageToConsole(message.asComponent());
 	}
 
 	/**
 	 * Broadcast a message to some or all players, and eventually to the console.
 	 * <p>
 	 * This method assumes this message is not caused by a specific player. To specify the source player, use
-	 * {@link #broadcast(BaseComponent, boolean, boolean, String, UUID)}.
+	 * {@link #broadcast(ComponentLike, boolean, boolean, String, UUID)}.
 	 *
 	 * @param message the message to send.
 	 * @param prefix if the server prefix will be prepended to the message.
@@ -246,7 +247,7 @@ public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPl
 	 * @param permission if not null, the message is only sent to player with this permission.
 	 * @throws IllegalArgumentException if message is null.
 	 */
-	public static void broadcast(Component message, boolean prefix, boolean console, String permission) {
+	public static void broadcast(ComponentLike message, boolean prefix, boolean console, String permission) {
 		broadcast(message, prefix, console, permission, null);
 	}
 
@@ -254,7 +255,7 @@ public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPl
 	 * Broadcast a message to all players, and eventually to the console.
 	 * <p>
 	 * This method does not restrict the reception of the message to a specific permission. If you
-	 * want to specify a permission, use {@link #broadcast(BaseComponent, boolean, boolean, String, UUID)}.
+	 * want to specify a permission, use {@link #broadcast(ComponentLike, boolean, boolean, String, UUID)}.
 	 *
 	 * @param message the message to send.
 	 * @param prefix if the server prefix will be prepended to the message.
@@ -265,7 +266,7 @@ public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPl
 	 * 			to players ignoring the provided player.
 	 * @throws IllegalArgumentException if message is null.
 	 */
-	public static void broadcast(Component message, boolean prefix, boolean console, UUID sourcePlayer) {
+	public static void broadcast(ComponentLike message, boolean prefix, boolean console, UUID sourcePlayer) {
 		broadcast(message, prefix, console, null, sourcePlayer);
 	}
 
@@ -273,36 +274,17 @@ public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPl
 	 * Broadcast a message to all players, and eventually to the console.
 	 * <p>
 	 * This method does not restrict the reception of the message to a specific permission. If you
-	 * want to specify a permission, use {@link #broadcast(BaseComponent, boolean, boolean, String)}.
+	 * want to specify a permission, use {@link #broadcast(ComponentLike, boolean, boolean, String)}.
 	 * <p>
 	 * This method assumes this message is not caused by a specific player. To specify the source player, use
-	 * {@link #broadcast(BaseComponent, boolean, boolean, UUID)}.
+	 * {@link #broadcast(ComponentLike, boolean, boolean, UUID)}.
 	 *
 	 * @param message the message to send.
 	 * @param prefix if the server prefix will be prepended to the message.
 	 * @param console if the message must be displayed in the console.
 	 * @throws IllegalArgumentException if message is null.
 	 */
-	@Deprecated
-	public static void broadcast(BaseComponent message, boolean prefix, boolean console) {
-		broadcast(Chat.toAdventure(message), prefix, console, null, null);
-	}
-
-	/**
-	 * Broadcast a message to all players, and eventually to the console.
-	 * <p>
-	 * This method does not restrict the reception of the message to a specific permission. If you
-	 * want to specify a permission, use {@link #broadcast(BaseComponent, boolean, boolean, String)}.
-	 * <p>
-	 * This method assumes this message is not caused by a specific player. To specify the source player, use
-	 * {@link #broadcast(BaseComponent, boolean, boolean, UUID)}.
-	 *
-	 * @param message the message to send.
-	 * @param prefix if the server prefix will be prepended to the message.
-	 * @param console if the message must be displayed in the console.
-	 * @throws IllegalArgumentException if message is null.
-	 */
-	public static void broadcast(Component message, boolean prefix, boolean console) {
+	public static void broadcast(ComponentLike message, boolean prefix, boolean console) {
 		broadcast(message, prefix, console, null, null);
 	}
 
@@ -310,11 +292,11 @@ public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPl
 	 * Broadcast a message to some or all players, and eventually to the console.
 	 * <p>
 	 * This method assumes this message is not caused by a specific player. To specify the source player, use
-	 * {@link #broadcast(BaseComponent, boolean, String, UUID)}.
+	 * {@link #broadcast(ComponentLike, boolean, String, UUID)}.
 	 * <p>
 	 * This method decides to send the message to the console depending on whether {@code permission}
 	 * is null (will send to console) or not (will not send to console). To specify this behaviour, use
-	 * {@link #broadcast(BaseComponent, boolean, boolean, String)}.
+	 * {@link #broadcast(ComponentLike, boolean, boolean, String)}.
 	 *
 	 * @param message the message to send.
 	 * @param prefix if the server prefix will be prepended to the message.
@@ -322,7 +304,7 @@ public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPl
 	 * 			If null, the message will be sent to all players and to console.
 	 * @throws IllegalArgumentException if message is null.
 	 */
-	public static void broadcast(Component message, boolean prefix, String permission) {
+	public static void broadcast(ComponentLike message, boolean prefix, String permission) {
 		broadcast(message, prefix, (permission == null), permission, null);
 	}
 
@@ -330,10 +312,10 @@ public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPl
 	 * Broadcast a message to all players, and to the console.
 	 * <p>
 	 * This method does not restrict the reception of the message to a specific permission. If you
-	 * want to specify a permission, use {@link #broadcast(BaseComponent, boolean, String, UUID)}.
+	 * want to specify a permission, use {@link #broadcast(ComponentLike, boolean, String, UUID)}.
 	 * <p>
 	 * This method sends the message to the console. To change this behaviour, use
-	 * {@link #broadcast(BaseComponent, boolean, boolean, UUID)}.
+	 * {@link #broadcast(ComponentLike, boolean, boolean, UUID)}.
 	 *
 	 * @param message the message to send.
 	 * @param prefix if the server prefix will be prepended to the message.
@@ -343,162 +325,46 @@ public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPl
 	 * 			to players ignoring the provided player.
 	 * @throws IllegalArgumentException if message is null.
 	 */
-	public static void broadcast(Component message, boolean prefix, UUID sourcePlayer) {
+	public static void broadcast(ComponentLike message, boolean prefix, UUID sourcePlayer) {
 		broadcast(message, prefix, true, null, sourcePlayer);
 	}
-
 	/**
 	 * Broadcast a message to all players, and to the console.
 	 * <p>
-	 * This method assumes this message is not caused by a specific player. To specify the source player, use
-	 * {@link #broadcast(BaseComponent, boolean, UUID)}.
-	 * <p>
-	 * This method does not restrict the reception of the message to a specific permission. If you
-	 * want to specify a permission, use {@link #broadcast(BaseComponent, boolean, String)}.
-	 * <p>
 	 * This method sends the message to the console. To change this behaviour, use
-	 * {@link #broadcast(BaseComponent, boolean, boolean)}.
-	 *
-	 * @param message the message to send.
-	 * @param prefix if the server prefix will be prepended to the message.
-	 * @throws IllegalArgumentException if message is null.
-	 */
-	public static void broadcast(Component message, boolean prefix) {
-		broadcast(message, prefix, true, null, null);
-	}
-	
-	
-	
-
-	/**
-	 * Broadcast a message to some or all players, and eventually to the console.
-	 *
-	 * @param message the message to send.
-	 * @param prefix if the server prefix will be prepended to the message.
-	 * @param console if the message must be displayed in the console.
-	 * @param permission if not null, the message is only sent to player with this permission.
-	 * @param sourcePlayer specifiy the eventual player that is the source of the message.
-	 * 			If null, the message will be sent as a SYSTEM chat message.
-	 * 			If not null, the message will be sent as a CHAT message, and will not be sent
-	 * 			to players ignoring the provided player.
-	 * @throws IllegalArgumentException if message is null.
-	 */
-	public static void broadcast(Chat message, boolean prefix, boolean console, String permission, UUID sourcePlayer) {
-		Objects.requireNonNull(message, "message cannot be null");
-		broadcast(message.getAdv(), prefix, console, permission, sourcePlayer);
-	}
-
-	/**
-	 * Broadcast a message to some or all players, and eventually to the console.
-	 * <p>
-	 * This method assumes this message is not caused by a specific player. To specify the source player, use
-	 * {@link #broadcast(BaseComponent, boolean, boolean, String, UUID)}.
-	 *
-	 * @param message the message to send.
-	 * @param prefix if the server prefix will be prepended to the message.
-	 * @param console if the message must be displayed in the console.
-	 * @param permission if not null, the message is only sent to player with this permission.
-	 * @throws IllegalArgumentException if message is null.
-	 */
-	public static void broadcast(Chat message, boolean prefix, boolean console, String permission) {
-		broadcast(message, prefix, console, permission, null);
-	}
-
-	/**
-	 * Broadcast a message to all players, and eventually to the console.
-	 * <p>
-	 * This method does not restrict the reception of the message to a specific permission. If you
-	 * want to specify a permission, use {@link #broadcast(BaseComponent, boolean, boolean, String, UUID)}.
-	 *
-	 * @param message the message to send.
-	 * @param prefix if the server prefix will be prepended to the message.
-	 * @param console if the message must be displayed in the console.
-	 * @param sourcePlayer specifiy the eventual player that is the source of the message.
-	 * 			If null, the message will be sent as a SYSTEM chat message.
-	 * 			If not null, the message will be sent as a CHAT message, and will not be sent
-	 * 			to players ignoring the provided player.
-	 * @throws IllegalArgumentException if message is null.
-	 */
-	public static void broadcast(Chat message, boolean prefix, boolean console, UUID sourcePlayer) {
-		broadcast(message, prefix, console, null, sourcePlayer);
-	}
-
-	/**
-	 * Broadcast a message to all players, and eventually to the console.
-	 * <p>
-	 * This method does not restrict the reception of the message to a specific permission. If you
-	 * want to specify a permission, use {@link #broadcast(BaseComponent, boolean, boolean, String)}.
-	 * <p>
-	 * This method assumes this message is not caused by a specific player. To specify the source player, use
-	 * {@link #broadcast(BaseComponent, boolean, boolean, UUID)}.
-	 *
-	 * @param message the message to send.
-	 * @param prefix if the server prefix will be prepended to the message.
-	 * @param console if the message must be displayed in the console.
-	 * @throws IllegalArgumentException if message is null.
-	 */
-	public static void broadcast(Chat message, boolean prefix, boolean console) {
-		broadcast(message, prefix, console, null, null);
-	}
-
-	/**
-	 * Broadcast a message to some or all players, and eventually to the console.
-	 * <p>
-	 * This method assumes this message is not caused by a specific player. To specify the source player, use
-	 * {@link #broadcast(BaseComponent, boolean, String, UUID)}.
-	 * <p>
-	 * This method decides to send the message to the console depending on whether {@code permission}
-	 * is null (will send to console) or not (will not send to console). To specify this behaviour, use
-	 * {@link #broadcast(BaseComponent, boolean, boolean, String)}.
+	 * {@link #broadcast(ComponentLike, boolean, boolean, String, UUID)}.
 	 *
 	 * @param message the message to send.
 	 * @param prefix if the server prefix will be prepended to the message.
 	 * @param permission if not null, the message is only sent to player with this permission (but not to console).
 	 * 			If null, the message will be sent to all players and to console.
-	 * @throws IllegalArgumentException if message is null.
-	 */
-	public static void broadcast(Chat message, boolean prefix, String permission) {
-		broadcast(message, prefix, (permission == null), permission, null);
-	}
-
-	/**
-	 * Broadcast a message to all players, and to the console.
-	 * <p>
-	 * This method does not restrict the reception of the message to a specific permission. If you
-	 * want to specify a permission, use {@link #broadcast(BaseComponent, boolean, String, UUID)}.
-	 * <p>
-	 * This method sends the message to the console. To change this behaviour, use
-	 * {@link #broadcast(BaseComponent, boolean, boolean, UUID)}.
-	 *
-	 * @param message the message to send.
-	 * @param prefix if the server prefix will be prepended to the message.
 	 * @param sourcePlayer specifiy the eventual player that is the source of the message.
 	 * 			If null, the message will be sent as a SYSTEM chat message.
 	 * 			If not null, the message will be sent as a CHAT message, and will not be sent
 	 * 			to players ignoring the provided player.
 	 * @throws IllegalArgumentException if message is null.
 	 */
-	public static void broadcast(Chat message, boolean prefix, UUID sourcePlayer) {
-		broadcast(message, prefix, true, null, sourcePlayer);
+	public static void broadcast(ComponentLike message, boolean prefix, String permission, UUID sourcePlayer) {
+		broadcast(message, prefix, true, permission, sourcePlayer);
 	}
 
 	/**
 	 * Broadcast a message to all players, and to the console.
 	 * <p>
 	 * This method assumes this message is not caused by a specific player. To specify the source player, use
-	 * {@link #broadcast(BaseComponent, boolean, UUID)}.
+	 * {@link #broadcast(ComponentLike, boolean, UUID)}.
 	 * <p>
 	 * This method does not restrict the reception of the message to a specific permission. If you
-	 * want to specify a permission, use {@link #broadcast(BaseComponent, boolean, String)}.
+	 * want to specify a permission, use {@link #broadcast(ComponentLike, boolean, String)}.
 	 * <p>
 	 * This method sends the message to the console. To change this behaviour, use
-	 * {@link #broadcast(BaseComponent, boolean, boolean)}.
+	 * {@link #broadcast(ComponentLike, boolean, boolean)}.
 	 *
 	 * @param message the message to send.
 	 * @param prefix if the server prefix will be prepended to the message.
 	 * @throws IllegalArgumentException if message is null.
 	 */
-	public static void broadcast(Chat message, boolean prefix) {
+	public static void broadcast(ComponentLike message, boolean prefix) {
 		broadcast(message, prefix, true, null, null);
 	}
 	

@@ -30,7 +30,7 @@ public class MemoryUtil {
 			return unitMultiplier == null ? "o" : (unitMultiplier + (si ? "o" : "io"));
 		}
 		
-		private MemoryUnit(long vTrad, long vSI, String uMult) {
+		MemoryUnit(long vTrad, long vSI, String uMult) {
 			valueTrad = vTrad;
 			valueSI = vSI;
 			unitMultiplier = uMult;

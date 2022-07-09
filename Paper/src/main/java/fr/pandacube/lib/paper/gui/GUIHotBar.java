@@ -30,13 +30,13 @@ import fr.pandacube.lib.paper.util.BukkitEvent;
  */
 public class GUIHotBar implements Listener {
 
-	private Map<ItemStack, BiConsumer<PlayerInventory, ItemStack>> itemsAndSetters = new HashMap<>();
+	private final Map<ItemStack, BiConsumer<PlayerInventory, ItemStack>> itemsAndSetters = new HashMap<>();
 	
-	private Map<ItemStack, Consumer<Player>> itemsAndRunnables = new HashMap<>();
+	private final Map<ItemStack, Consumer<Player>> itemsAndRunnables = new HashMap<>();
 	
 	private final int defltSlot;
 	
-	private List<Player> currentPlayers = new ArrayList<>();
+	private final List<Player> currentPlayers = new ArrayList<>();
 	
 	public GUIHotBar(int defaultSlot) {
 		defltSlot = Math.max(0, Math.min(8, defaultSlot));
@@ -50,7 +50,6 @@ public class GUIHotBar implements Listener {
 	 * @param i the item stack
 	 * @param setter code executed to put the item in the inventory. Additionally check for permission before doing the addition.
 	 * @param run the Runnable to run when the user right click on the item in the hotbar.
-	 * @return
 	 */
 	public GUIHotBar addItem(ItemStack i, BiConsumer<PlayerInventory, ItemStack> setter, Consumer<Player> run) {
 		itemsAndSetters.put(i, setter);
@@ -65,8 +64,7 @@ public class GUIHotBar implements Listener {
 	/**
 	 * Add the hotbar elements to this player.
 	 * 
-	 * The players is automatically removed when it quit. You can remove it before by calling {@link #removePlayer(Player)}.
-	 * @param p
+	 * The players is automatically removed when they quit. You can remove it before by calling {@link #removePlayer(Player)}.
 	 */
 	public void addPlayer(Player p) {
 		if (!currentPlayers.contains(p))
@@ -81,7 +79,6 @@ public class GUIHotBar implements Listener {
 	
 	/**
 	 * Detach this player from this hotbar manager and removes the managed items from the players inventory.
-	 * @param p
 	 */
 	public void removePlayer(Player p) {
 		if (!currentPlayers.contains(p))
@@ -134,7 +131,7 @@ public class GUIHotBar implements Listener {
 		
 		ItemStack item = event.getItemDrop().getItemStack();
 		for (ItemStack managed : itemsAndSetters.keySet()) {
-			if (item != null && item.isSimilar(managed)) {
+			if (item.isSimilar(managed)) {
 				event.setCancelled(true);
 				return;
 			}
@@ -173,12 +170,10 @@ public class GUIHotBar implements Listener {
 	
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
-		if (event.getClickedInventory() == null || !(event.getClickedInventory() instanceof PlayerInventory))
+		if (event.getClickedInventory() == null || !(event.getClickedInventory() instanceof PlayerInventory inv))
 			return;
-		
-		PlayerInventory inv = (PlayerInventory) event.getClickedInventory();
-		
-		if (!currentPlayers.contains(inv.getHolder()))
+
+		if (!currentPlayers.contains((Player) inv.getHolder()))
 			return;
 		
 		ItemStack item = event.getCurrentItem();

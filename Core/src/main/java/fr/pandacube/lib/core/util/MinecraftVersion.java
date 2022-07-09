@@ -59,7 +59,7 @@ public enum MinecraftVersion {
 	v1_19(759, "1.19");
 	// IMPORTANT: don't forget to update the versionMergeDisplay value when adding a new version;
 	
-	private static Map<EnumSet<MinecraftVersion>, List<String>> versionMergeDisplay;
+	private static final Map<EnumSet<MinecraftVersion>, List<String>> versionMergeDisplay;
 	
 	static {
 		versionMergeDisplay = new HashMap<>();
@@ -157,7 +157,7 @@ public enum MinecraftVersion {
 	public final int id;
 	public final List<String> versionDisplay;
 
-	private MinecraftVersion(int v, String... d) {
+	MinecraftVersion(int v, String... d) {
 		id = v;
 		versionDisplay = Arrays.asList(d);
 	}
@@ -193,7 +193,7 @@ public enum MinecraftVersion {
 	}
 	
 	
-	public static final List<String> getVersionsDisplayList(List<MinecraftVersion> vList) {
+	public static List<String> getVersionsDisplayList(List<MinecraftVersion> vList) {
 		if (vList == null)
 			return new ArrayList<>();
 		Set<MinecraftVersion> vSet = EnumSet.copyOf(vList);

@@ -29,10 +29,10 @@ import fr.pandacube.lib.core.util.Log;
 	
 	
 	
-	private Cache<UUID, CachedPlayer> usersCache = CacheBuilder.newBuilder()
+	private final Cache<UUID, CachedPlayer> usersCache = CacheBuilder.newBuilder()
 			.expireAfterAccess(10, TimeUnit.MINUTES)
 			.build();
-	private Set<String> fullPermissionsList = new TreeSet<String>();
+	private Set<String> fullPermissionsList = new TreeSet<>();
 	
 	/* package */ synchronized List<String> getFullPermissionsList() {
 		return new ArrayList<>(fullPermissionsList);
@@ -105,14 +105,12 @@ import fr.pandacube.lib.core.util.Log;
 		if (playerRawData.containsKey("groups")) {
 			playerRawData.get("groups").stream()
 					.map(e -> e.get(SQLPermissions.value))
-					.forEach(g -> {
-						player.groups.add(getCachedGroup(g));
-					});
+					.forEach(g -> player.groups.add(getCachedGroup(g)));
 		}
 		
 		if (player.groups.isEmpty()) {
 			player.usingDefaultGroups = true;
-			getDefaultGroups().forEach(player.groups::add);
+			player.groups.addAll(getDefaultGroups());
 		}
 		
 		return player;
@@ -121,7 +119,7 @@ import fr.pandacube.lib.core.util.Log;
 	
 	
 	
-	private Map<String, CachedGroup> groupsCache = new LinkedHashMap<>();
+	private final Map<String, CachedGroup> groupsCache = new LinkedHashMap<>();
 	private boolean cacheIsUpdating = false;
 	
 	
@@ -207,8 +205,7 @@ import fr.pandacube.lib.core.util.Log;
 		Map<String, List<SQLPermissions>> groupRawData = groupsRawData.getOrDefault(groupName, new LinkedHashMap<>());
 
 		boolean groupDefault = groupRawData.containsKey("default")
-				? "true".equals(groupRawData.get("default").get(0).get(SQLPermissions.value))
-				: false;
+				&& "true".equals(groupRawData.get("default").get(0).get(SQLPermissions.value));
 		
 		String groupSelfPrefix = null;
 		if (groupRawData.containsKey("prefix")) {

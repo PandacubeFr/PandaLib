@@ -1,9 +1,7 @@
 package fr.pandacube.lib.paper.util;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-
+import fr.pandacube.lib.core.util.Reflect;
+import fr.pandacube.lib.paper.PandaLibPaper;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
@@ -11,12 +9,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
-import org.bukkit.plugin.IllegalPluginAccessException;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.scheduler.BukkitTask;
 
-import fr.pandacube.lib.core.util.Reflect;
-import fr.pandacube.lib.paper.PandaLibPaper;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class BukkitEvent {
 	
@@ -58,21 +55,19 @@ public class BukkitEvent {
 	
 	
     // method retrieved from OB.plugin.SimplePluginManager#getEventListeners
-    public static HandlerList getHandlerList(Class<? extends Event> type) throws IllegalPluginAccessException {
+    public static HandlerList getHandlerList(Class<? extends Event> type) {
         try {
-            Method method = getRegistrationClass(type).getDeclaredMethod("getHandlerList", new Class[0]);
-            method.setAccessible(true);
-            return (HandlerList)method.invoke(null, new Object[0]);
+            return (HandlerList) Reflect.ofClass(getRegistrationClass(type)).method("getHandlerList").invokeStatic();
         }
-        catch (Exception e) {
+        catch (ReflectiveOperationException e) {
             return null;
         }
     }
 
     // method retrieved from OB.plugin.SimplePluginManager
-    private static Class<? extends Event> getRegistrationClass(Class<? extends Event> clazz) throws IllegalPluginAccessException {
+    private static Class<? extends Event> getRegistrationClass(Class<? extends Event> clazz) {
         try {
-            clazz.getDeclaredMethod("getHandlerList", new Class[0]);
+            clazz.getDeclaredMethod("getHandlerList");
             return clazz;
         }
         catch (NoSuchMethodException e) {	
@@ -87,7 +82,7 @@ public class BukkitEvent {
 	
 	public interface EventListener<E extends Event> extends Listener, EventExecutor {
 		
-		public abstract void onEvent(E event);
+		void onEvent(E event);
 		
 		@SuppressWarnings("unchecked")
 		@Override
@@ -123,13 +118,16 @@ public class BukkitEvent {
 		}
 		
 		
-		private AtomicReference<BukkitTask> listenerCheckTask = new AtomicReference<>();
+		private final AtomicReference<BukkitTask> listenerCheckTask = new AtomicReference<>();
 		
 		private void checkIfListenerIsLast() {
 			synchronized (listenerCheckTask) {
 				if (listenerCheckTask.get() != null)
 					return;
-				RegisteredListener[] listeners = BukkitEvent.getHandlerList(eventClass).getRegisteredListeners();
+				HandlerList hList = BukkitEvent.getHandlerList(eventClass);
+				if (hList == null)
+					return;
+				RegisteredListener[] listeners = hList.getRegisteredListeners();
 				if (listeners[listeners.length - 1].getListener() != this) {
 					listenerCheckTask.set(Bukkit.getScheduler().runTask(PandaLibPaper.getPlugin(), () -> {
 						// need to re-register the event so we are last

@@ -214,23 +214,10 @@ public class WrapperRegistry {
     }
 
 
-
-
-
-
-
-    private static class RegistryEntry {
-        Class<?> runtimeClass;
-        Class<? extends ReflectWrapperI> wrapperClass;
-        Class<? extends ReflectWrapperI> concreteWrapperClass;
-        ReflectConstructor<? extends ReflectWrapperI> objectWrapperConstructor;
-
-        public RegistryEntry(Class<?> runtimeClass, Class<? extends ReflectWrapperI> wrapperClass, Class<? extends ReflectWrapperI> concreteWrapperClass, ReflectConstructor<? extends ReflectWrapperI> objectWrapperConstructor) {
-            this.runtimeClass = runtimeClass;
-            this.wrapperClass = wrapperClass;
-            this.concreteWrapperClass = concreteWrapperClass;
-            this.objectWrapperConstructor = objectWrapperConstructor;
-        }
+    private record RegistryEntry(Class<?> runtimeClass,
+                                 Class<? extends ReflectWrapperI> wrapperClass,
+                                 Class<? extends ReflectWrapperI> concreteWrapperClass,
+                                 ReflectConstructor<? extends ReflectWrapperI> objectWrapperConstructor) {
     }
 
 }

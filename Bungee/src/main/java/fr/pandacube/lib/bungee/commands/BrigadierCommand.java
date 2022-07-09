@@ -33,9 +33,7 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 import net.md_5.bungee.command.ConsoleCommandSender;
 
 public abstract class BrigadierCommand extends ChatStatic {
-	
-	private LiteralCommandNode<CommandSender> commandNode;
-	
+
 	protected BrigadierDispatcher dispatcher;
 	
 	public BrigadierCommand() {
@@ -56,8 +54,8 @@ public abstract class BrigadierCommand extends ChatStatic {
 		}
 		if (aliases == null)
 			aliases = new String[0];
-		
-		commandNode = dispatcher.register(builder);
+
+		LiteralCommandNode<CommandSender> commandNode = dispatcher.register(builder);
 		
 		// still have to be registered for console
 		BungeeCord.getInstance().getPluginManager().registerCommand(dispatcher.plugin, new CommandRelay(commandNode.getLiteral()));
@@ -75,7 +73,7 @@ public abstract class BrigadierCommand extends ChatStatic {
 	}
 	
 	private class CommandRelay extends Command implements TabExecutor {
-		private String alias;
+		private final String alias;
 		public CommandRelay(String alias) {
 			super(alias);
 			this.alias = alias;
@@ -98,7 +96,7 @@ public abstract class BrigadierCommand extends ChatStatic {
 			return suggestions.getList()
 					.stream()
 					.filter(s -> s.getRange().equals(supportedRange))
-					.map(s -> s.getText())
+					.map(Suggestion::getText)
 					.collect(Collectors.toList());
 		}
 	}
@@ -125,7 +123,7 @@ public abstract class BrigadierCommand extends ChatStatic {
 	}
 	
 	public static Predicate<CommandSender> isPlayer() {
-		return sender -> isPlayer(sender);
+		return BrigadierCommand::isPlayer;
 	}
 	
 	public static boolean isPlayer(CommandSender sender) {
@@ -133,7 +131,7 @@ public abstract class BrigadierCommand extends ChatStatic {
 	}
 	
 	public static Predicate<CommandSender> isConsole() {
-		return sender -> isConsole(sender);
+		return BrigadierCommand::isConsole;
 	}
 	
 	public static boolean isConsole(CommandSender sender) {
@@ -172,16 +170,14 @@ public abstract class BrigadierCommand extends ChatStatic {
 			String message = builder.getInput();
 			try {
 				int tokenStartPos = builder.getStart();
-				
-				List<String> results = Collections.emptyList();
-			
+
 				int firstSpacePos = message.indexOf(" ");
 				String[] args = (firstSpacePos + 1 > tokenStartPos - 1) ? new String[0]
 						: message.substring(firstSpacePos + 1, tokenStartPos - 1).split(" ", -1);
 				args = Arrays.copyOf(args, args.length + 1);
 				args[args.length - 1] = message.substring(tokenStartPos);
-				
-				results = suggestions.getSuggestions(sender, args.length - 1, args[args.length - 1], args);
+
+				List<String> results = suggestions.getSuggestions(sender, args.length - 1, args[args.length - 1], args);
 			
 				for (String s : results) {
 					if (s != null)

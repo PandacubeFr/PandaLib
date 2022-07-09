@@ -18,8 +18,8 @@ import fr.pandacube.lib.core.util.Log;
  */
 @Deprecated
 public class PacketExecutor implements Runnable {
-	private Socket socket;
-	private NetworkAPIListener networkAPIListener;
+	private final Socket socket;
+	private final NetworkAPIListener networkAPIListener;
 
 	public PacketExecutor(Socket s, NetworkAPIListener napiListener) {
 		socket = s;
@@ -43,9 +43,9 @@ public class PacketExecutor implements Runnable {
 			rep.data = e.toString();
 			try {
 				rep.sendPacket(new PrintStream(socket.getOutputStream()));
-			} catch (IOException e1) {}
+			} catch (IOException ignored) {}
 			if (e instanceof IOException)
-				Log.warning("Unable to read packet from socket " + socket + ": " + e.toString());
+				Log.warning("Unable to read packet from socket " + socket + ": " + e);
 			else if(e instanceof BadRequestException) {
 				if (e.getMessage().equals("wrong_password"))
 					Log.warning("Wrong password received from socket " + socket);
@@ -60,6 +60,6 @@ public class PacketExecutor implements Runnable {
 
 		try {
 			socket.close();
-		} catch (Exception e) {}
+		} catch (Exception ignored) {}
 	}
 }

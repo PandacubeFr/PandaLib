@@ -31,9 +31,9 @@ public class BrigadierDispatcher implements Completer {
 	
 	
 	
-	private CommandDispatcher<Object> dispatcher;
+	private final CommandDispatcher<Object> dispatcher;
 	
-	private Object sender = new Object();	
+	private final Object sender = new Object();
 	
 	public BrigadierDispatcher() {
 		dispatcher = new CommandDispatcher<>();
@@ -69,7 +69,9 @@ public class BrigadierDispatcher implements Completer {
 		
 		Suggestions completeResult = getSuggestions(bufferBeforeCursor);
 		
-		completeResult.getList().stream().map(s -> s.getText()).forEach(candidates::add);
+		completeResult.getList().stream()
+				.map(Suggestion::getText)
+				.forEach(candidates::add);
 		
 		return completeResult.getRange().getStart();
 	}

@@ -19,17 +19,17 @@ public interface SuggestionsSupplier<S> {
 	/**
 	 * Number of suggestion visible at once without having to scroll
 	 */
-	public static int VISIBLE_SUGGESTION_COUNT = 10;
+	int VISIBLE_SUGGESTION_COUNT = 10;
 	
 	
-	public abstract List<String> getSuggestions(S sender, int tokenIndex, String token, String[] args);
-	
-	
-	
+	List<String> getSuggestions(S sender, int tokenIndex, String token, String[] args);
 	
 	
 	
-	public static Predicate<String> filter(String token) {
+	
+	
+	
+	static Predicate<String> filter(String token) {
 		return suggestion -> suggestion != null && suggestion.toLowerCase().startsWith(token.toLowerCase());
 	}
 	
@@ -39,7 +39,7 @@ public interface SuggestionsSupplier<S> {
 	 * 
 	 * This methods consume the provided stream, so will not be usable anymore.
 	 */
-	public static List<String> collectFilteredStream(Stream<String> stream, String token) {
+	static List<String> collectFilteredStream(Stream<String> stream, String token) {
 		return stream.filter(filter(token)).sorted().collect(Collectors.toList());
 	}
 	
@@ -47,40 +47,40 @@ public interface SuggestionsSupplier<S> {
 	
 	
 	
-	public static <S> SuggestionsSupplier<S> empty() { return (s, ti, t, a) -> Collections.emptyList(); }
+	static <S> SuggestionsSupplier<S> empty() { return (s, ti, t, a) -> Collections.emptyList(); }
 	
-	public static <S> SuggestionsSupplier<S> fromCollectionsSupplier(Supplier<Collection<String>> streamSupplier) {
+	static <S> SuggestionsSupplier<S> fromCollectionsSupplier(Supplier<Collection<String>> streamSupplier) {
 		return (s, ti, token, a) -> collectFilteredStream(streamSupplier.get().stream(), token);
 	}
 	
-	public static <S> SuggestionsSupplier<S> fromStreamSupplier(Supplier<Stream<String>> streamSupplier) {
+	static <S> SuggestionsSupplier<S> fromStreamSupplier(Supplier<Stream<String>> streamSupplier) {
 		return (s, ti, token, a) -> collectFilteredStream(streamSupplier.get(), token);
 	}
 	
-	public static <S> SuggestionsSupplier<S> fromCollection(Collection<String> suggestions) {
+	static <S> SuggestionsSupplier<S> fromCollection(Collection<String> suggestions) {
 		return fromStreamSupplier(suggestions::stream);
 	}
 	
-	public static <S> SuggestionsSupplier<S> fromArray(String... suggestions) {
+	static <S> SuggestionsSupplier<S> fromArray(String... suggestions) {
 		return fromStreamSupplier(() -> Arrays.stream(suggestions));
 	}
 	
 	
-	public static <E extends Enum<E>, S> SuggestionsSupplier<S> fromEnum(Class<E> enumClass) {
+	static <E extends Enum<E>, S> SuggestionsSupplier<S> fromEnum(Class<E> enumClass) {
 		return fromEnumValues(enumClass.getEnumConstants());
 	}
 	
-	public static <E extends Enum<E>, S> SuggestionsSupplier<S> fromEnum(Class<E> enumClass, boolean lowerCase) {
+	static <E extends Enum<E>, S> SuggestionsSupplier<S> fromEnum(Class<E> enumClass, boolean lowerCase) {
 		return fromEnumValues(lowerCase, enumClass.getEnumConstants());
 	}
 	
 	@SafeVarargs
-	public static <E extends Enum<E>, S> SuggestionsSupplier<S> fromEnumValues(E... enumValues) {
+	static <E extends Enum<E>, S> SuggestionsSupplier<S> fromEnumValues(E... enumValues) {
 		return fromEnumValues(false, enumValues);
 	}
 	
 	@SafeVarargs
-	public static <E extends Enum<E>, S> SuggestionsSupplier<S> fromEnumValues(boolean lowerCase, E... enumValues) {
+	static <E extends Enum<E>, S> SuggestionsSupplier<S> fromEnumValues(boolean lowerCase, E... enumValues) {
 		return (s, ti, token, a) -> {
 			Stream<String> st = Arrays.stream(enumValues).map(Enum::name);
 			if (lowerCase)
@@ -91,7 +91,7 @@ public interface SuggestionsSupplier<S> {
 	
 	
 	
-	public static <S> SuggestionsSupplier<S> booleanValues() {
+	static <S> SuggestionsSupplier<S> booleanValues() {
 		return fromCollection(Arrays.asList("true", "false"));
 	}
 	
@@ -103,11 +103,8 @@ public interface SuggestionsSupplier<S> {
 	 * Create a {@link SuggestionsSupplier} that suggest numbers according to the provided range.
 	 * 
 	 * The current implementation only support range that include either -1 or 1.
-	 * @param min
-	 * @param max
-	 * @return
 	 */
-	public static <S> SuggestionsSupplier<S> fromIntRange(int min, int max, boolean compact) {
+	static <S> SuggestionsSupplier<S> fromIntRange(int min, int max, boolean compact) {
 		return fromLongRange(min, max, compact);
 	}
 	
@@ -118,11 +115,8 @@ public interface SuggestionsSupplier<S> {
 	 * Create a {@link SuggestionsSupplier} that suggest numbers according to the provided range.
 	 * 
 	 * The current implementation only support range that include either -1 or 1.
-	 * @param min
-	 * @param max
-	 * @return
 	 */
-	public static <S> SuggestionsSupplier<S> fromLongRange(long min, long max, boolean compact) {
+	static <S> SuggestionsSupplier<S> fromLongRange(long min, long max, boolean compact) {
 		if (max < min) {
 			throw new IllegalArgumentException("min should be less or equals than max");
 		}
@@ -179,7 +173,7 @@ public interface SuggestionsSupplier<S> {
 						}
 					}
 					
-					return collectFilteredStream(proposedValues.stream().map(i -> i.toString()), token);
+					return collectFilteredStream(proposedValues.stream().map(Object::toString), token);
 				} catch (NumberFormatException e) {
 					return Collections.emptyList();
 				}
@@ -196,9 +190,8 @@ public interface SuggestionsSupplier<S> {
 	/**
 	 * Create a {@link SuggestionsSupplier} that support greedy strings argument using the suggestion from this {@link SuggestionsSupplier}.
 	 * @param index the index of the first argument of the greedy string argument
-	 * @return
 	 */
-	public default SuggestionsSupplier<S> greedyString(int index) { 
+	default SuggestionsSupplier<S> greedyString(int index) {
 		
 		return (s, ti, token, args) -> {
 			
@@ -233,7 +226,7 @@ public interface SuggestionsSupplier<S> {
 	
 
 	
-	public default SuggestionsSupplier<S> quotableString() {
+	default SuggestionsSupplier<S> quotableString() {
 		return (s, ti, token, a) -> {
 			boolean startWithQuote = token.length() > 0 && (token.charAt(0) == '"' || token.charAt(0) == '\'');
 			String realToken = startWithQuote ? unescapeBrigadierQuotable(token.substring(1), token.charAt(0)) : token;
@@ -309,10 +302,8 @@ public interface SuggestionsSupplier<S> {
 	
 	
 	
-	public default SuggestionsSupplier<S> requires(Predicate<S> check) {
-		return (s, ti, to, a) -> {
-			return check.test(s) ? getSuggestions(s, ti, to, a) : Collections.emptyList();
-		};
+	default SuggestionsSupplier<S> requires(Predicate<S> check) {
+		return (s, ti, to, a) -> check.test(s) ? getSuggestions(s, ti, to, a) : Collections.emptyList();
 	}
 	
 
@@ -320,10 +311,8 @@ public interface SuggestionsSupplier<S> {
 	/**
 	 * Returns a new {@link SuggestionsSupplier} containing all the element of this instance then the element of the provided one,
 	 * with all duplicated values removed using {@link Stream#distinct()}.
-	 * @param other
-	 * @return
 	 */
-	public default SuggestionsSupplier<S> merge(SuggestionsSupplier<S> other) {
+	default SuggestionsSupplier<S> merge(SuggestionsSupplier<S> other) {
 		return (s, ti, to, a) -> {
 			List<String> l1 = getSuggestions(s, ti, to, a);
 			List<String> l2 = other.getSuggestions(s, ti, to, a);
@@ -337,10 +326,8 @@ public interface SuggestionsSupplier<S> {
 	/**
 	 * Returns a new {@link SuggestionsSupplier} containing all the suggestions of this instance,
 	 * but if this list is still empty, returns the suggestions from the provided one.
-	 * @param other
-	 * @return
 	 */
-	public default SuggestionsSupplier<S> orIfEmpty(SuggestionsSupplier<S> other) {
+	default SuggestionsSupplier<S> orIfEmpty(SuggestionsSupplier<S> other) {
 		return (s, ti, to, a) -> {
 			List<String> l1 = getSuggestions(s, ti, to, a);
 			return !l1.isEmpty() ? l1 : other.getSuggestions(s, ti, to, a);

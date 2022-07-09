@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 
 public class ThrowableUtil {
 	
@@ -11,11 +12,11 @@ public class ThrowableUtil {
 	public static String stacktraceToString(Throwable t) {
 		if (t == null) return null;
 		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-			try (PrintStream ps = new PrintStream(os, false, "UTF-8")) {
+			try (PrintStream ps = new PrintStream(os, false, StandardCharsets.UTF_8)) {
 				t.printStackTrace(ps);
 				ps.flush();
 			}
-			return os.toString("UTF-8");
+			return os.toString(StandardCharsets.UTF_8);
 		} catch (IOException e) {
 			return null;
 		}
@@ -90,7 +91,7 @@ public class ThrowableUtil {
 	 */
 	@FunctionalInterface
 	public interface SupplierException<T> {
-		public T get() throws Exception;
+		T get() throws Exception;
 	}
 
 
@@ -100,7 +101,7 @@ public class ThrowableUtil {
 	 */
 	@FunctionalInterface
 	public interface RunnableException {
-		public void run() throws Exception;
+		void run() throws Exception;
 	}
 
 
@@ -133,10 +134,6 @@ public class ThrowableUtil {
 			}
 			else if (t instanceof InstantiationException ce) {
 				er = new InstantiationError();
-				er.initCause(ce);
-			}
-			else if (t instanceof IllegalAccessException ce) {
-				er = new IllegalAccessError();
 				er.initCause(ce);
 			}
 			if (er != null)

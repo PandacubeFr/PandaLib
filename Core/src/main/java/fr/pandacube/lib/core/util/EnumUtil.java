@@ -1,5 +1,8 @@
 package fr.pandacube.lib.core.util;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class EnumUtil {
 
 	/**
@@ -10,17 +13,9 @@ public class EnumUtil {
 	 * @return a string representation of the enum class.
 	 */
 	public static <T extends Enum<T>> String enumList(Class<T> enumType, String separator) {
-		T[] elements = enumType.getEnumConstants();
-
-		String out = "";
-		boolean first = true;
-		for (T el : elements) {
-			if (!first) out += separator;
-			first = false;
-			out += el.name();
-
-		}
-		return out;
+		return Arrays.stream(enumType.getEnumConstants())
+				.map(Enum::name)
+				.collect(Collectors.joining(separator));
 	}
 
 	/**

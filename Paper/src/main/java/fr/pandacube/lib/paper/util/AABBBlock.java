@@ -53,7 +53,7 @@ public class AABBBlock implements Iterable<BlockVector> {
 		
 		center = new Vector((p1x_ + p2x_) / 2d, (p1y_ + p2y_) / 2d, (p1z_ + p2z_) / 2d);
 		
-		volume = Math.abs(p2x_ - p1x_) * Math.abs(p2x_ - p1x_) * Math.abs(p2x_ - p1x_);
+		volume = (long) Math.abs(p2x_ - p1x_) * Math.abs(p2x_ - p1x_) * Math.abs(p2x_ - p1x_);
 	}
 	
 	public boolean overlaps(Entity e) {
@@ -96,11 +96,11 @@ public class AABBBlock implements Iterable<BlockVector> {
 	
 	@Override
 	public Iterator<BlockVector> iterator() {
-		return new Iterator<BlockVector>() {
+		return new Iterator<>() {
 			private int x = pos1.getBlockX(),
 					y = pos1.getBlockY(),
 					z = pos1.getBlockZ();
-			
+
 			@Override
 			public boolean hasNext() {
 				return x < pos2.getBlockX();
@@ -108,7 +108,7 @@ public class AABBBlock implements Iterable<BlockVector> {
 			@Override
 			public BlockVector next() {
 				BlockVector bv = new BlockVector(x, y, z);
-				
+
 				z++;
 				if (z >= pos2.getBlockZ()) {
 					y++;
@@ -118,7 +118,7 @@ public class AABBBlock implements Iterable<BlockVector> {
 						y = pos1.getBlockY();
 					}
 				}
-				
+
 				return bv;
 			}
 		};
@@ -126,21 +126,16 @@ public class AABBBlock implements Iterable<BlockVector> {
 	
 	
 	public Iterable<Block> asBlockIterable(World w) {
-		return new Iterable<Block>() {
+		return () -> new Iterator<>() {
+			final Iterator<BlockVector> nested = AABBBlock.this.iterator();
 			@Override
-			public Iterator<Block> iterator() {
-				return new Iterator<Block>() {
-					Iterator<BlockVector> nested = AABBBlock.this.iterator();
-					@Override
-					public boolean hasNext() {
-						return nested.hasNext();
-					}
-					@Override
-					public Block next() {
-						BlockVector bv = nested.next();
-						return w.getBlockAt(bv.getBlockX(), bv.getBlockY(), bv.getBlockZ());
-					}
-				};
+			public boolean hasNext() {
+				return nested.hasNext();
+			}
+			@Override
+			public Block next() {
+				BlockVector bv = nested.next();
+				return w.getBlockAt(bv.getBlockX(), bv.getBlockY(), bv.getBlockZ());
 			}
 		};
 	}

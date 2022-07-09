@@ -12,8 +12,9 @@ public class ComponentArgument extends ReflectWrapperTyped<ArgumentType<?>> {
     public static final NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.commands.arguments.ComponentArgument"));
     private static final Reflect.ReflectMethod<?> textComponent = wrapEx(() -> MAPPING.mojMethod("textComponent"));
 
-    public static ArgumentType<?> textComponent() {
-        return (ArgumentType<?>) wrapReflectEx(() -> textComponent.invokeStatic());
+    @SuppressWarnings("unchecked")
+    public static ArgumentType<Object> textComponent() {
+        return (ArgumentType<Object>) wrapReflectEx(() -> textComponent.invokeStatic());
     }
 
     protected ComponentArgument(Object obj) {

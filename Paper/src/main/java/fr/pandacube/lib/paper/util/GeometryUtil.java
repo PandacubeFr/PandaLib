@@ -127,11 +127,6 @@ public class GeometryUtil {
 	/**
 	 * Check if the path from <i>start</i> location to <i>end</i> pass through
 	 * the axis aligned bounding box defined by <i>min</i> and <i>max</i>.
-	 * @param start
-	 * @param end
-	 * @param min
-	 * @param max
-	 * @return
 	 */
     public static boolean hasIntersection(Vector start, Vector end, Vector min, Vector max) {
         final double epsilon = 0.0001f;
@@ -144,30 +139,30 @@ public class GeometryUtil {
         ad.setY(Math.abs(ad.getY()));
         ad.setZ(Math.abs(ad.getZ()));
  
-        if(Math.abs(c.getX()) > e.getX() + ad.getX()){
+        if (Math.abs(c.getX()) > e.getX() + ad.getX()){
             return false;
         }
  
-        if(Math.abs(c.getY()) > e.getY() + ad.getY()){
+        if (Math.abs(c.getY()) > e.getY() + ad.getY()){
             return false;
         }
  
-        if(Math.abs(c.getZ()) > e.getX() + ad.getZ()){
+        if (Math.abs(c.getZ()) > e.getX() + ad.getZ()){
             return false;
         }
  
-        if(Math.abs(d.getY() * c.getZ() - d.getZ() * c.getY()) > e.getY() * ad.getZ() + e.getZ() * ad.getY() + epsilon){
+        if (Math.abs(d.getY() * c.getZ() - d.getZ() * c.getY()) > e.getY() * ad.getZ() + e.getZ() * ad.getY() + epsilon){
             return false;
         }
  
-        if(Math.abs(d.getZ() * c.getX() - d.getX() * c.getZ()) > e.getZ() * ad.getX() + e.getX() * ad.getZ() + epsilon){
+        if (Math.abs(d.getZ() * c.getX() - d.getX() * c.getZ()) > e.getZ() * ad.getX() + e.getX() * ad.getZ() + epsilon){
             return false;
         }
- 
-        if(Math.abs(d.getX() * c.getY() - d.getY() * c.getX()) > e.getX() * ad.getY() + e.getY() * ad.getX() + epsilon){
+
+        if (Math.abs(d.getX() * c.getY() - d.getY() * c.getX()) > e.getX() * ad.getY() + e.getY() * ad.getX() + epsilon){
             return false;
         }
- 
+
         return true;
     }
 	
@@ -243,7 +238,6 @@ public class GeometryUtil {
 		 * contained in the provided {@link Location}.
 		 * {@link Location#getYaw()} and {@link Location#getPitch()} values are automatically
 		 * converted to conform {@link #yaw} and {@link #pitch} specification.
-		 * @param l
 		 */
 		public DirectionalVector(Location l) {
 			this(
@@ -322,7 +316,6 @@ public class GeometryUtil {
 		 * Set the yaw and the pitch of the provided {@link Location}
 		 * with the values inside the current {@link DirectionalVector}
 		 * after conversion of these values
-		 * @param l
 		 */
 		public void putIntoLocation(Location l) {
 			/*              std   : -PI/2         : <0 ? +2PI : MC
@@ -352,7 +345,6 @@ public class GeometryUtil {
 		 * If the current direction is the player face direction,
 		 * this method return the direction of the back of the head.
 		 * This is an alias of {@link #getOpposite()}
-		 * @return 
 		 */
 		public DirectionalVector getBackDirection() {
 			return getOpposite();
@@ -361,7 +353,6 @@ public class GeometryUtil {
 		/**
 		 * If the current direction is the player face direction,
 		 * this method return the direction of the bottom of the head.
-		 * @return 
 		 */
 		public DirectionalVector getBottomDirection() {
 			return new DirectionalVector(
@@ -373,7 +364,6 @@ public class GeometryUtil {
 		/**
 		 * If the current direction is the player face direction,
 		 * this method return the direction of the top of the head.
-		 * @return 
 		 */
 		public DirectionalVector getTopDirection() {
 			return new DirectionalVector(
@@ -387,7 +377,6 @@ public class GeometryUtil {
 		/**
 		 * If the current direction is the player face direction,
 		 * this method return the direction of the left of the head.
-		 * @return 
 		 */
 		public DirectionalVector getLeftDirection() {
 			return new DirectionalVector(
@@ -401,7 +390,6 @@ public class GeometryUtil {
 		/**
 		 * If the current direction is the player face direction,
 		 * this method return the direction of the right of the head.
-		 * @return 
 		 */
 		public DirectionalVector getRightDirection() {
 			return new DirectionalVector(

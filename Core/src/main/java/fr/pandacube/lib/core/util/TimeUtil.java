@@ -1,5 +1,7 @@
 package fr.pandacube.lib.core.util;
 
+import fr.pandacube.lib.core.commands.SuggestionsSupplier;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -7,10 +9,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -19,21 +21,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import fr.pandacube.lib.core.commands.SuggestionsSupplier;
-
 public class TimeUtil {
 	
 
-	private static DateTimeFormatter cmpDayOfWeekFormatter = DateTimeFormatter.ofPattern("EEE", Locale.getDefault());
-	private static DateTimeFormatter dayOfWeekFormatter = DateTimeFormatter.ofPattern("EEEE", Locale.getDefault());
-	private static DateTimeFormatter dayOfMonthFormatter = DateTimeFormatter.ofPattern("d", Locale.getDefault());
-	private static DateTimeFormatter cmpMonthFormatter = DateTimeFormatter.ofPattern("MMM", Locale.getDefault());
-	private static DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMMM", Locale.getDefault());
-	private static DateTimeFormatter yearFormatter = DateTimeFormatter.ofPattern("uuuu", Locale.getDefault());
+	private static final DateTimeFormatter cmpDayOfWeekFormatter = DateTimeFormatter.ofPattern("EEE", Locale.getDefault());
+	private static final DateTimeFormatter dayOfWeekFormatter = DateTimeFormatter.ofPattern("EEEE", Locale.getDefault());
+	private static final DateTimeFormatter dayOfMonthFormatter = DateTimeFormatter.ofPattern("d", Locale.getDefault());
+	private static final DateTimeFormatter cmpMonthFormatter = DateTimeFormatter.ofPattern("MMM", Locale.getDefault());
+	private static final DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMMM", Locale.getDefault());
+	private static final DateTimeFormatter yearFormatter = DateTimeFormatter.ofPattern("uuuu", Locale.getDefault());
 
-	private static DateTimeFormatter HMSFormatter = DateTimeFormatter.ofPattern("HH:mm:ss", Locale.getDefault());
-	private static DateTimeFormatter HMFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.getDefault());
-	private static DateTimeFormatter HFormatter = DateTimeFormatter.ofPattern("H'h'", Locale.getDefault());
+	private static final DateTimeFormatter HMSFormatter = DateTimeFormatter.ofPattern("HH:mm:ss", Locale.getDefault());
+	private static final DateTimeFormatter HMFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.getDefault());
+	private static final DateTimeFormatter HFormatter = DateTimeFormatter.ofPattern("H'h'", Locale.getDefault());
 	
 
 	public static String relativeDateFr(long displayTime, boolean showSeconds, boolean compactWords) {
@@ -67,7 +67,7 @@ public class TimeUtil {
 				if (timeDiffSec > -60*2) // dans 2 min
 					return compactWords ? "dans 1min" : "dans une minute";
 				if (timeDiffSec > -3600) // dans moins d’1h
-					return "dans " + (int)Math.floor((-timeDiffSec)/60) + (compactWords ? "min" : " minutes");
+					return "dans " + (-timeDiffSec/60) + (compactWords ? "min" : " minutes");
 			}
 			if (relPrecision.morePreciseOrEqTo(RelativePrecision.HOURS)) {
 				if (timeDiffSec > -3600) // dans moins d’1h
@@ -75,7 +75,7 @@ public class TimeUtil {
 				if (timeDiffSec > -3600*2) // dans moins de 2h
 					return compactWords ? "dans 1h" : "dans une heure";
 				if (timeDiffSec > -3600*12) // dans moins de 12h
-					return "dans " + (int)Math.floor((-timeDiffSec)/3600) + (compactWords ? "h" : " heures");
+					return "dans " + (-timeDiffSec/3600) + (compactWords ? "h" : " heures");
 			}
 			if (relPrecision.morePreciseOrEqTo(RelativePrecision.DAYS)) {
 				LocalDateTime nextMidnight = LocalDateTime.of(currentDateTime.getYear(), currentDateTime.getMonth(), currentDateTime.getDayOfMonth(), 0, 0).plusDays(1);
@@ -88,9 +88,7 @@ public class TimeUtil {
 							+ dayOfMonthFormatter.format(displayDateTime) + " à "
 							+ dayTimeFr(displayTime, dispPrecision);
 			}
-			
-			return fullDateFr(displayTime, dispPrecision, true, compactWords);
-			
+
 		}
 		else {
 			// present and past
@@ -107,7 +105,7 @@ public class TimeUtil {
 				if (timeDiffSec < 60*2) // ya moins de 2 min
 					return compactWords ? "il y a 1min" : "il y a une minute";
 				if (timeDiffSec < 3600) // ya moins d'1h
-					return "il y a " + (int)Math.floor(timeDiffSec/60) + (compactWords ? "min" : " minutes");
+					return "il y a " + (timeDiffSec/60) + (compactWords ? "min" : " minutes");
 			}
 			if (relPrecision.morePreciseOrEqTo(RelativePrecision.HOURS)) {
 				if (timeDiffSec < 3600) // ya moins d'1h
@@ -115,7 +113,7 @@ public class TimeUtil {
 				if (timeDiffSec < 3600*2) // ya moins de 2h
 					return "il y a une heure";
 				if (timeDiffSec < 3600*12) // ya moins de 12h
-					return "il y a " + (int)Math.floor(timeDiffSec/3600) + " heures";
+					return "il y a " + (timeDiffSec/3600) + " heures";
 			}
 			if (relPrecision.morePreciseOrEqTo(RelativePrecision.DAYS)) {
 				LocalDateTime lastMidnight = LocalDateTime.of(currentDateTime.getYear(), currentDateTime.getMonth(), currentDateTime.getDayOfMonth(), 0, 0);
@@ -127,11 +125,10 @@ public class TimeUtil {
 					return (compactWords ? cmpDayOfWeekFormatter : dayOfWeekFormatter).format(displayDateTime) + " dernier à "
 							+ dayTimeFr(displayTime, dispPrecision);
 			}
-			
-			return fullDateFr(displayTime, dispPrecision, true, compactWords);
-			
+
 		}
-		
+		return fullDateFr(displayTime, dispPrecision, true, compactWords);
+
 	}
 	
 	
@@ -207,7 +204,7 @@ public class TimeUtil {
 		String ret = Arrays.stream(TimeUnit.values())
 				.sequential()
 				.filter(u -> u.compareTo(fLUnit) >= 0 && u.compareTo(fHUnit) <= 0)
-				.sorted((u1, u2) -> u2.compareTo(u1))
+				.sorted(Comparator.reverseOrder())
 				.filter(u -> {
 					if (u.convert(remainingTime.get(), TimeUnit.MILLISECONDS) == 0 && !oneDisplayed.get())
 						return false;
@@ -226,40 +223,23 @@ public class TimeUtil {
 	
 	
 	public static String timeUnitToSuffix(TimeUnit u, boolean fr) {
-		switch (u) {
-		case DAYS:
-			return fr ? "j" : "d";
-		case HOURS:
-			return "h";
-		case MINUTES:
-			return "m";
-		case SECONDS:
-			return "s";
-		case MILLISECONDS:
-			return "ms";
-		case MICROSECONDS:
-			return "μs";
-		case NANOSECONDS:
-			return "ns";
-		default:
-			throw new IllegalArgumentException("Invalid TimeUnit: " + Objects.toString(u));
-		}
+		return switch (u) {
+			case DAYS -> fr ? "j" : "d";
+			case HOURS -> "h";
+			case MINUTES -> "m";
+			case SECONDS -> "s";
+			case MILLISECONDS -> "ms";
+			case MICROSECONDS -> "μs";
+			case NANOSECONDS -> "ns";
+		};
 	}
 	
 	public static int timeUnitToLeftPadLength(TimeUnit u) {
-		switch (u) {
-		case NANOSECONDS:
-		case MICROSECONDS:
-		case MILLISECONDS:
-			return 3;
-		case SECONDS:
-		case MINUTES:
-		case HOURS:
-			return 2;
-		case DAYS:
-		default:
-			return 1;
-		}
+		return switch (u) {
+			case NANOSECONDS, MICROSECONDS, MILLISECONDS -> 3;
+			case SECONDS, MINUTES, HOURS -> 2;
+			case DAYS -> 1;
+		};
 	}
 	
 	public static String toString(long value, int leftPad) {
@@ -279,7 +259,6 @@ public class TimeUtil {
 	 * Equivalent to {@link #durationToLongString(long, TimeUnit, TimeUnit, boolean, boolean, boolean) TimeUnit.durationToLongString(msDuration, TimeUnit.DAYS, milliseconds ? TimeUnit.MILLISECONDS : TimeUnit.SECONDS, true, true, false)}
 	 * @param msDuration the duration in ms
 	 * @param milliseconds if the milliseconds are displayed or not
-	 * @return
 	 */
 	public static String durationToString(long msDuration, boolean milliseconds) {
 		return durationToLongString(msDuration, TimeUnit.DAYS, milliseconds ? TimeUnit.MILLISECONDS : TimeUnit.SECONDS, true, true, false);
@@ -287,8 +266,7 @@ public class TimeUtil {
 
 	/**
 	 * Equivalent to {@link #durationToLongString(long, TimeUnit, TimeUnit, boolean, boolean, boolean) TimeUnit.durationToLongString(msDuration, TimeUnit.DAYS, TimeUnit.SECONDS, true, true, false)}
-	 * @param msDuration
-	 * @return
+	 * @param msDuration the duration in ms
 	 */
 	public static String durationToString(long msDuration) {
 		return durationToLongString(msDuration, TimeUnit.DAYS, TimeUnit.SECONDS, true, true, false);
@@ -296,8 +274,7 @@ public class TimeUtil {
 	
 	/**
 	 * Equivalent to {@link #durationToLongString(long, TimeUnit, TimeUnit, boolean, boolean, boolean) TimeUnit.durationToLongString(msDuration, TimeUnit.DAYS, TimeUnit.SECONDS, false, false, false)}
-	 * @param msDuration
-	 * @return
+	 * @param msDuration the duration in ms
 	 */
 	public static String durationToParsableString(long msDuration) {
 		return durationToLongString(msDuration, TimeUnit.DAYS, TimeUnit.SECONDS, false, false, false);
@@ -306,9 +283,10 @@ public class TimeUtil {
 
 	
 	/**
-	 * @see {@link com.earth2me.essentials.utils.DateUtil#parseDuration(String, boolean)}
+	 * @see <a href="https://github.com/EssentialsX/Essentials/blob/2.x/Essentials/src/main/java/com/earth2me/essentials/utils/DateUtil.java">Essentials DateUtil#parseDuration(String, boolean)</a>
 	 */
 	public static long parseDuration(String time, boolean future) throws Exception {
+		@SuppressWarnings("RegExpSimplifiable")
 		Pattern timePattern = Pattern.compile("(?:([0-9]+)\\s*y[a-z]*[,\\s]*)?" + "(?:([0-9]+)\\s*mo[a-z]*[,\\s]*)?"
 				+ "(?:([0-9]+)\\s*w[a-z]*[,\\s]*)?" + "(?:([0-9]+)\\s*d[a-z]*[,\\s]*)?"
 				+ "(?:([0-9]+)\\s*h[a-z]*[,\\s]*)?" + "(?:([0-9]+)\\s*m[a-z]*[,\\s]*)?"
@@ -367,17 +345,13 @@ public class TimeUtil {
 			List<String> remainingSuffixes = new ArrayList<>(allSuffixes);
 			char[] tokenChars = token.toCharArray();
 			String accSuffix = "";
-			for (int i = 0; i < tokenChars.length; i++) {
-				char c = tokenChars[i];
+			for (char c : tokenChars) {
 				if (Character.isDigit(c)) {
 					scanAndRemovePastSuffixes(remainingSuffixes, accSuffix);
 					accSuffix = "";
-					continue;
-				}
-				else if (Character.isLetter(c)) {
+				} else if (Character.isLetter(c)) {
 					accSuffix += c;
-				}
-				else
+				} else
 					return Collections.emptyList();
 			}
 			String prefixToken = token.substring(0, token.length() - accSuffix.length());
@@ -388,14 +362,12 @@ public class TimeUtil {
 		};
 	}
 	
-	private static List<String> allSuffixes = Arrays.asList("y", "mo", "w", "d", "h", "m", "s");
-	private static List<String> emptyTokenSuggestions = allSuffixes.stream().map(p -> "1" + p).collect(Collectors.toList());
+	private static final List<String> allSuffixes = Arrays.asList("y", "mo", "w", "d", "h", "m", "s");
+	private static final List<String> emptyTokenSuggestions = allSuffixes.stream().map(p -> "1" + p).collect(Collectors.toList());
 	private static void scanAndRemovePastSuffixes(List<String> suffixes, String foundSuffix) {
 		for (int i = 0; i < suffixes.size(); i++) {
 			if (foundSuffix.startsWith(suffixes.get(i))) {
-				for (int j = i; j >= 0; j--) {
-					suffixes.remove(j);
-				}
+				suffixes.subList(0, i + 1).clear();
 				return;
 			}
 		}

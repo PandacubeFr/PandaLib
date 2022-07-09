@@ -3,7 +3,7 @@ package fr.pandacube.lib.core.net;
 import java.util.Arrays;
 
 public class PPacketAnswer extends PPacket {
-	/* package */ int answer;
+	/* package */ final int answer;
 
 	/**
 	 * Construct a new PPacketAnswer based on the content of the provided buffer before his position.

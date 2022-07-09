@@ -42,27 +42,27 @@ public class SQLUpdate<E extends SQLElement<E>> {
 			return 0;
 		}
 
-		String sql = "UPDATE " + DB.getTableName(elemClass) + " SET ";
+		StringBuilder sql = new StringBuilder("UPDATE " + DB.getTableName(elemClass) + " SET ");
 		List<Object> params = new ArrayList<>();
 
 		boolean first = true;
 		for (Map.Entry<SQLField<E, ?>, Object> entry : values.entrySet()) {
 			if (!first)
-				sql += ", ";
-			sql += "`" + entry.getKey().getName() + "` = ? ";
+				sql.append(", ");
+			sql.append("`").append(entry.getKey().getName()).append("` = ? ");
 			SQLElement.addValueToSQLObjectList(params, entry.getKey(), entry.getValue());
 			first = false;
 		}
 
 		if (where != null) {
 			ParameterizedSQLString ret = where.toSQL();
-			sql += " WHERE " + ret.sqlString();
+			sql.append(" WHERE ").append(ret.sqlString());
 			params.addAll(ret.parameters());
 		}
 		
-		sql += ";";
+		sql.append(";");
 		
-		return DB.customUpdateStatement(sql, params);
+		return DB.customUpdateStatement(sql.toString(), params);
 	}
 
 }

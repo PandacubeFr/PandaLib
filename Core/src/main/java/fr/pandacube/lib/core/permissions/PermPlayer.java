@@ -50,7 +50,6 @@ public class PermPlayer extends PermEntity {
 	
 	/**
 	 * Alias for {@link #getInheritances()}.
-	 * @return
 	 */
 	public List<PermGroup> getGroups() {
 		return getInheritances();
@@ -58,7 +57,6 @@ public class PermPlayer extends PermEntity {
 	
 	/**
 	 * Alias for {@link #getInheritances()}.
-	 * @return
 	 */
 	public List<String> getGroupsString() {
 		return getInheritancesString();
@@ -68,7 +66,6 @@ public class PermPlayer extends PermEntity {
 	 * Tells if the player is directly part of a group.
 	 * This is equivalent to {@link #inheritsFromGroup(String, boolean) inheritsFromGroup(group, false)}
 	 * @param group the group to search for
-	 * @return
 	 */
 	public boolean isInGroup(String group) {
 		return inheritsFromGroup(group, false);

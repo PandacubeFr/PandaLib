@@ -12,8 +12,9 @@ public class BlockPosArgument extends ReflectWrapperTyped<ArgumentType<?>> {
     public static final NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.commands.arguments.coordinates.BlockPosArgument"));
     private static final Reflect.ReflectMethod<?> blockPos = wrapEx(() -> MAPPING.mojMethod("blockPos"));
 
-    public static ArgumentType<?> blockPos() {
-        return (ArgumentType<?>) wrapReflectEx(() -> blockPos.invokeStatic());
+    @SuppressWarnings("unchecked")
+    public static ArgumentType<Object> blockPos() {
+        return (ArgumentType<Object>) wrapReflectEx(() -> blockPos.invokeStatic());
     }
 
     protected BlockPosArgument(Object obj) {

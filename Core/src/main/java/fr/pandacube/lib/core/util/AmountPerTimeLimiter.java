@@ -19,7 +19,7 @@ public class AmountPerTimeLimiter {
 	
 	
 	
-	private class Entry {
+	private static class Entry {
 		private final long time;
 		private double amount;
 		public Entry(long t, double a) {

@@ -18,18 +18,16 @@ public class ChatColorUtil {
     public static final String ALL_COLORS = "0123456789AaBbCcDdEeFf";
 
 
-    private static Pattern HEX_COLOR_PATTERN = Pattern.compile("§x(?>§[0-9a-f]){6}", Pattern.CASE_INSENSITIVE);
-    private static Pattern ESS_COLOR_PATTERN = Pattern.compile("§#[0-9a-f]{6}", Pattern.CASE_INSENSITIVE);
+    private static final Pattern HEX_COLOR_PATTERN = Pattern.compile("§x(?>§[\\da-f]){6}", Pattern.CASE_INSENSITIVE);
+    private static final Pattern ESS_COLOR_PATTERN = Pattern.compile("§#[\\da-f]{6}", Pattern.CASE_INSENSITIVE);
     
     /**
      * Return the legacy format needed to reproduce the format at the end of the provided legacy text.
      * Supports standard chat colors and formats, BungeeCord Chat rgb format and EssentialsX rgb format.
      * The RGB value from EssentialsX format is converted to BungeeCord Chat when included in the returned value.
-     * @param legacyText
-     * @return
      */
 	public static String getLastColors(String legacyText) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         int length = legacyText.length();
 
         for (int index = length - 2; index >= 0; index--) {
@@ -42,7 +40,7 @@ public class ChatColorUtil {
             			&& (legacyText.charAt(index - 11) == 'x'
             				|| legacyText.charAt(index - 11) == 'X')
             			&& HEX_COLOR_PATTERN.matcher(rgb = legacyText.substring(index - 12, index + 2)).matches()) {
-	                result = rgb + result;
+	                result.insert(0, rgb);
 	                break;
 	            }
             	
@@ -53,7 +51,7 @@ public class ChatColorUtil {
             		rgb = "§x§" + rgb.charAt(2) + "§" + rgb.charAt(3)
             		+ "§" + rgb.charAt(4) + "§" + rgb.charAt(5)
             		+ "§" + rgb.charAt(6) + "§" + rgb.charAt(7);
-	                result = rgb + result;
+	                result.insert(0, rgb);
             		break;
             	}
             	
@@ -62,7 +60,7 @@ public class ChatColorUtil {
                 ChatColor legacyColor = getChatColorByChar(colorChar);
 
                 if (legacyColor != null) {
-                    result = legacyColor.toString() + result;
+                    result.insert(0, legacyColor);
 
                     // Once we find a color or reset we can stop searching
                     char col = legacyColor.toString().charAt(1);
@@ -75,7 +73,7 @@ public class ChatColorUtil {
             }
         }
 
-        return result;
+        return result.toString();
     }
 	
 	public static ChatColor getChatColorByChar(char code) {
@@ -215,7 +213,7 @@ public class ChatColorUtil {
 	private static String forceFormat(String legacyText, ChatColor format) {
 		return format + legacyText
 				.replace(format.toString(), "") // remove previous tag to make the result cleaner
-				.replaceAll("§([a-frA-FR0-9])", "§$1" + format);
+				.replaceAll("§([a-frA-FR\\d])", "§$1" + format);
 	}
 	
 	
@@ -270,7 +268,7 @@ public class ChatColorUtil {
 	public static class ChatValueGradient {
 		private record GradientValueColor(float value, TextColor color) { } // Java 16
 		
-		List<GradientValueColor> colors = new ArrayList<>();
+		final List<GradientValueColor> colors = new ArrayList<>();
 		
 		public synchronized ChatValueGradient add(float v, TextColor col) {
 			colors.add(new GradientValueColor(v, col));

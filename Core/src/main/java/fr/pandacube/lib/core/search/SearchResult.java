@@ -4,8 +4,8 @@ import java.util.Set;
 
 public interface SearchResult {
 	
-	public Set<String> getSearchKeywords();
+	Set<String> getSearchKeywords();
 	
-	public Set<String> getSuggestionKeywords();
+	Set<String> getSuggestionKeywords();
 
 }

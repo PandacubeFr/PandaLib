@@ -299,7 +299,7 @@ public class CronExpression {
         this.hourField = new SimpleField(CronFieldType.HOUR, parts[ix++]);
         this.dayOfMonthField = new DayOfMonthField(parts[ix++]);
         this.monthField = new SimpleField(CronFieldType.MONTH, parts[ix++]);
-        this.dayOfWeekField = new DayOfWeekField(parts[ix++]);
+        this.dayOfWeekField = new DayOfWeekField(parts[ix]);
     }
 
     public static CronExpression create(final String expr) {
@@ -336,7 +336,7 @@ public class CronExpression {
             if (!monthField.nextMatch(nextDateTime)) {
                 continue;
             }
-            if (!findDay(nextDateTime, dateTimeBarrier)) {
+            if (!findDay(nextDateTime)) {
                 continue;
             }
             if (!hourField.nextMatch(nextDateTime)) {
@@ -361,11 +361,10 @@ public class CronExpression {
      * to handle them together in the same method.
      *
      * @param dateTime        Initial {@link ZonedDateTime} instance to start from
-     * @param dateTimeBarrier At which point stop searching for next execution time
      * @return {@code true} if a match was found for this field or {@code false} if the field overflowed
-     * @see {@link SimpleField#nextMatch(ZonedDateTime[])}
+     * @see SimpleField#nextMatch(ZonedDateTime[])
      */
-    private boolean findDay(ZonedDateTime[] dateTime, ZonedDateTime dateTimeBarrier) {
+    private boolean findDay(ZonedDateTime[] dateTime) {
         int month = dateTime[0].getMonthValue();
 
             while (!(dayOfMonthField.matches(dateTime[0].toLocalDate())
@@ -400,16 +399,19 @@ public class CronExpression {
     }
 
     abstract static class BasicField {
+        @SuppressWarnings({"RegExpRepeatedSpace", "RegExpSimplifiable", "RegExpSingleCharAlternation", "RegExpRedundantEscape"})
         private static final Pattern CRON_FIELD_REGEXP = Pattern
-                .compile("(?:                                             # start of group 1\n"
-                        + "   (?:(?<all>\\*)|(?<ignore>\\?)|(?<last>L))  # global flag (L, ?, *)\n"
-                        + " | (?<start>[0-9]{1,2}|[a-z]{3,3})              # or start number or symbol\n"
-                        + "      (?:                                        # start of group 2\n"
-                        + "         (?<mod>L|W)                             # modifier (L,W)\n"
-                        + "       | -(?<end>[0-9]{1,2}|[a-z]{3,3})        # or end nummer or symbol (in range)\n"
-                        + "      )?                                         # end of group 2\n"
-                        + ")                                              # end of group 1\n"
-                        + "(?:(?<incmod>/|\\#)(?<inc>[0-9]{1,7}))?        # increment and increment modifier (/ or \\#)\n",
+                .compile("""
+                                (?:                                             # start of group 1
+                                   (?:(?<all>\\*)|(?<ignore>\\?)|(?<last>L))  # global flag (L, ?, *)
+                                 | (?<start>[0-9]{1,2}|[a-z]{3,3})              # or start number or symbol
+                                      (?:                                        # start of group 2
+                                         (?<mod>L|W)                             # modifier (L,W)
+                                       | -(?<end>[0-9]{1,2}|[a-z]{3,3})        # or end nummer or symbol (in range)
+                                      )?                                         # end of group 2
+                                )                                              # end of group 1
+                                (?:(?<incmod>/|\\#)(?<inc>[0-9]{1,7}))?        # increment and increment modifier (/ or \\#)
+                                """,
                         Pattern.CASE_INSENSITIVE | Pattern.COMMENTS);
 
         final CronFieldType fieldType;
@@ -500,10 +502,7 @@ public class CronExpression {
         }
 
         protected boolean matches(int val, FieldPart part) {
-            if (val >= part.from && val <= part.to && (val - part.from) % part.increment == 0) {
-                return true;
-            }
-            return false;
+            return val >= part.from && val <= part.to && (val - part.from) % part.increment == 0;
         }
 
         protected int nextMatch(int val, FieldPart part) {
@@ -527,17 +526,6 @@ public class CronExpression {
     static class SimpleField extends BasicField {
         SimpleField(CronFieldType fieldType, String fieldExpr) {
             super(fieldType, fieldExpr);
-        }
-
-        public boolean matches(int val) {
-            if (val >= fieldType.from && val <= fieldType.to) {
-                for (FieldPart part : parts) {
-                    if (matches(val, part)) {
-                        return true;
-                    }
-                }
-            }
-            return false;
         }
 
         /**
@@ -602,9 +590,9 @@ public class CronExpression {
 
         @Override
         protected void validatePart(FieldPart part) {
-            if (part.modifier != null && Arrays.asList("L", "?").indexOf(part.modifier) == -1) {
+            if (part.modifier != null && !Arrays.asList("L", "?").contains(part.modifier)) {
                 throw new IllegalArgumentException(String.format("Invalid modifier [%s]", part.modifier));
-            } else if (part.incrementModifier != null && Arrays.asList("/", "#").indexOf(part.incrementModifier) == -1) {
+            } else if (part.incrementModifier != null && !Arrays.asList("/", "#").contains(part.incrementModifier)) {
                 throw new IllegalArgumentException(String.format("Invalid increment modifier [%s]", part.incrementModifier));
             }
         }
@@ -639,7 +627,7 @@ public class CronExpression {
 
         @Override
         protected void validatePart(FieldPart part) {
-            if (part.modifier != null && Arrays.asList("L", "W", "?").indexOf(part.modifier) == -1) {
+            if (part.modifier != null && !Arrays.asList("L", "W", "?").contains(part.modifier)) {
                 throw new IllegalArgumentException(String.format("Invalid modifier [%s]", part.modifier));
             } else if (part.incrementModifier != null && !"/".equals(part.incrementModifier)) {
                 throw new IllegalArgumentException(String.format("Invalid increment modifier [%s]", part.incrementModifier));

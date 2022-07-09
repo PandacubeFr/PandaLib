@@ -116,9 +116,7 @@ public class TypeConverter {
 	 * @param o the object to convert to good type
 	 * @param mapIntKeys if the String key representing an int should be duplicated as integer type,
 	 * which map to the same value as the original String key. For example, if a key is "12" and map
-	 * to the object <i>o</i>, an integer key 12 will be added and map to the same object 
-	 * <i>o</i>
-	 * @return
+	 * to the object <i>o</i>, an integer key 12 will be added and map to the same object <i>o</i>
 	 */
 	@SuppressWarnings("unchecked")
 	public static Map<Object, Object> toMap(Object o, boolean mapIntKeys) {
@@ -139,7 +137,7 @@ public class TypeConverter {
 						try {
 							int intKey = Integer.parseInt((String)entry.getKey());
 							newEntries.put(intKey, entry.getValue());
-						} catch (NumberFormatException e) { }
+						} catch (NumberFormatException ignored) { }
 					}
 				}
 				if (!newEntries.isEmpty()) {
@@ -150,8 +148,7 @@ public class TypeConverter {
 			return currMap;
 		}
 		
-		if (o instanceof List) {
-			List<?> list = (List<?>) o;
+		if (o instanceof List<?> list) {
 			Map<Object, Object> map = new HashMap<>();
 			for(int i = 0; i < list.size(); i++) {
 				map.put(Integer.toString(i), list.get(i));
@@ -200,7 +197,6 @@ public class TypeConverter {
 	
 	
 	public static class ConvertionException extends RuntimeException {
-		private static final long serialVersionUID = 1L;
 		
 		public ConvertionException(String m) {
 			super(m);

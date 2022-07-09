@@ -11,7 +11,6 @@ import java.util.logging.Logger;
  * 
  */
 public class BadCommandUsage extends RuntimeException {
-	private static final long serialVersionUID = 1L;
 
 	public BadCommandUsage() {
 		super();

@@ -38,8 +38,8 @@ public class CLI {
 	
 	
 	
-	private ConsoleReader reader;
-	private Logger logger;
+	private final ConsoleReader reader;
+	private final Logger logger;
 	
 	
 	public CLI() throws IOException {
@@ -78,9 +78,7 @@ public class CLI {
 				if (line.trim().equals(""))
 					continue;
 				String cmdLine = line;
-				new Thread(() -> {
-					BrigadierDispatcher.instance.execute(cmdLine);
-				}, "CLICmdThread #"+(i++)).start();
+				new Thread(() -> BrigadierDispatcher.instance.execute(cmdLine), "CLICmdThread #"+(i++)).start();
 				
 			}
 		} catch (IOException e) {

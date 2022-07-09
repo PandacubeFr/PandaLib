@@ -12,17 +12,17 @@ import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapperI;
 
 @ConcreteWrapper(Tag.__concrete.class)
 public interface Tag extends ReflectWrapperI {
-	public static final ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.nbt.Tag"));
-	public static final ReflectMethod<?> getAsString = wrapEx(() -> MAPPING.mojMethod("getAsString"));
+	ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.nbt.Tag"));
+	ReflectMethod<?> getAsString = wrapEx(() -> MAPPING.mojMethod("getAsString"));
 
 	
-	public default String getAsString() {
+	default String getAsString() {
 		return wrapReflectEx(() -> (String) getAsString.invoke(__getRuntimeInstance()));
 	}
 	
 
 	
-	public static class __concrete extends ReflectWrapper implements Tag {
+	class __concrete extends ReflectWrapper implements Tag {
 		private __concrete(Object obj) {
 			super(obj);
 		}

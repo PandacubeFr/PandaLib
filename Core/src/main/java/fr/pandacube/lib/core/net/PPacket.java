@@ -3,9 +3,9 @@ package fr.pandacube.lib.core.net;
 import java.util.Arrays;
 
 public class PPacket {
-	public String name;
+	public final String name;
 	/* package */ int id;
-	public byte[] content;
+	public final byte[] content;
 	
 	/**
 	 * Construct a new PPacket based on the content of the provided buffer before his position.

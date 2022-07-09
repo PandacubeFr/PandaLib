@@ -20,7 +20,7 @@ import fr.pandacube.lib.core.util.Log;
 public interface IOffPlayer {
 
 	/** From how long the last web activity should be before considering the user offline (in ms)? */
-	public static final long TIMEOUT_WEB_SESSION = 10000; // msec
+	long TIMEOUT_WEB_SESSION = 10000; // msec
 	
 	
 	
@@ -34,7 +34,7 @@ public interface IOffPlayer {
 	 * 
 	 * @return the id of the player
 	 */
-	public abstract UUID getUniqueId();
+	UUID getUniqueId();
 
 	
 	/**
@@ -42,7 +42,7 @@ public interface IOffPlayer {
 	 * 
 	 * An alt account uses a specific bit in the UUID to distinguish themselves from the original account.
 	 */
-	public default boolean isAltAccount() {
+	default boolean isAltAccount() {
 		return (getUniqueId().getMostSignificantBits() & 0x8000L) == 0x8000L;
 	}
 
@@ -53,14 +53,14 @@ public interface IOffPlayer {
 	 * 
 	 * This method will return undetermined value if {@link #isAltAccount()} is false.
 	 */
-	public default int getAltIndex() {
+	default int getAltIndex() {
 		return (int) (getUniqueId().getMostSignificantBits() >> 8) & 0xF;
 	}
 
 	/**
 	 * @return the last known player name of this player, or null if this player never joined the network.
 	 */
-	public default String getName() {
+	default String getName() {
 		return PlayerFinder.getLastKnownName(getUniqueId());
 	}
 	
@@ -68,7 +68,7 @@ public interface IOffPlayer {
 	 * Indicate if this player is connected to the current node (server or proxy, depending on interface implementation)
 	 * @return wether the player is online or not
 	 */
-	public abstract boolean isOnline();
+	boolean isOnline();
 	
 	
 	
@@ -80,7 +80,7 @@ public interface IOffPlayer {
 	 * If the player is online in game, it provides the current server they are
 	 * connected.
 	 */
-	public default PlayerStatusOnServer getPlayerStatus() {
+	default PlayerStatusOnServer getPlayerStatus() {
 		
 		IOnlinePlayer op = getOnlineInstance();
 		if (op != null && !op.isVanished())
@@ -103,7 +103,7 @@ public interface IOffPlayer {
 		return new PlayerStatusOnServer(PlayerStatusOnServer.PlayerStatus.OFFLINE, null);
 	}
 	
-	public record PlayerStatusOnServer(PlayerStatus status, String server) {
+	record PlayerStatusOnServer(PlayerStatus status, String server) {
 		public Chat toComponent() {
 			if (status == PlayerStatus.ONLINE_IG)
 				return successText("En ligne, " + server);
@@ -130,12 +130,12 @@ public interface IOffPlayer {
 	 * Floodgate related stuff
 	 */
 	
-	public default boolean isBedrockAccount() {
+	default boolean isBedrockAccount() {
 		int v = getUniqueId().version();
 		return v == 0 || v == 8; // also 8 if one day we supports alt accounts for floodgate players
 	}
 	
-	public default boolean isJavaAccount() {
+	default boolean isJavaAccount() {
 		return !isBedrockAccount();
 	}
 	
@@ -149,13 +149,12 @@ public interface IOffPlayer {
 	 * Return the online instance of this player, if any exists.
 	 * May return itself if the current instance already represent an online player.
 	 */
-	public abstract IOnlinePlayer getOnlineInstance();
+	IOnlinePlayer getOnlineInstance();
 	
 	/**
 	 * Get the database entry of this player, or null if the player never joined the network.
-	 * @throws DBException
 	 */
-	public default SQLPlayer getDbPlayer() throws DBException {
+	default SQLPlayer getDbPlayer() throws DBException {
 		return SQLPlayer.getPlayerFromUUID(getUniqueId());
 	}
 
@@ -163,7 +162,7 @@ public interface IOffPlayer {
 	 * Get the permission instance of this player. This will never return null.
 	 * @return the permission instance of this player 
 	 */
-	public default PermPlayer getPermissionUser() {
+	default PermPlayer getPermissionUser() {
 		return Permissions.getPlayer(getUniqueId());
 	}
 	
@@ -181,15 +180,14 @@ public interface IOffPlayer {
 	 * (and team for bukkit implementation)
 	 * @return the display name of the player
 	 */
-	public abstract String getDisplayName();
+	String getDisplayName();
 
 	/**
 	 * Get an updated display name of the user,
 	 * generated using eventual permission’s prefix(es) and suffix(es) of the player,
 	 * and with color codes translated to Minecraft’s native {@code §}.
-	 * @return 
 	 */
-	public default String getDisplayNameFromPermissionSystem() {
+	default String getDisplayNameFromPermissionSystem() {
 		PermPlayer permU = getPermissionUser();
 		return ChatColorUtil.translateAlternateColorCodes('&',
 				permU.getPrefix() + getName() + permU.getSuffix());
@@ -215,7 +213,7 @@ public interface IOffPlayer {
 	 * @param permission the permission node to test
 	 * @return whether this player has the provided permission
 	 */
-	public default boolean hasPermission(String permission) {
+	default boolean hasPermission(String permission) {
 		IOnlinePlayer online = getOnlineInstance();
 		
 		if (online != null)
@@ -233,10 +231,10 @@ public interface IOffPlayer {
 	 * loop.
 	 * If the player is offline, it just call the Pandacube
 	 * permission system.
-	 * @param permission the permission node to test
+	 * @param permissionExpression the permission node to test
 	 * @return whether this player has the provided permission
 	 */
-	public default boolean hasPermissionExpression(String permissionExpression) {
+	default boolean hasPermissionExpression(String permissionExpression) {
 		IOnlinePlayer online = getOnlineInstance();
 		
 		if (online != null)
@@ -259,7 +257,7 @@ public interface IOffPlayer {
 	 * @param permissionPrefix the permission prefix to search for.
 	 * @return a LongStream containing all the values found for the specified permission prefix.
 	 */
-	public default LongStream getPermissionRangeValues(String permissionPrefix) {
+	default LongStream getPermissionRangeValues(String permissionPrefix) {
 		IOnlinePlayer online = getOnlineInstance();
 		
 		if (online != null)
@@ -272,7 +270,7 @@ public interface IOffPlayer {
 	/**
 	 * Returns the maximum value returned by {@link IOffPlayer#getPermissionRangeValues(String)}.
 	 */
-	public default OptionalLong getPermissionRangeMax(String permissionPrefix) {
+	default OptionalLong getPermissionRangeMax(String permissionPrefix) {
 		IOnlinePlayer online = getOnlineInstance();
 		
 		if (online != null)
@@ -289,14 +287,14 @@ public interface IOffPlayer {
 	 * @return <i>true</i> if this player is part of the group,
 	 *         <i>false</i> otherwise
 	 */
-	public default boolean isInGroup(String group) {
+	default boolean isInGroup(String group) {
 		return getPermissionUser().isInGroup(group);
 	}
 
 	/**
 	 * Tells if this player is part of the staff, based on permission groups
 	 */
-	public default boolean isInStaff() {
+	default boolean isInStaff() {
 		return getPermissionUser().inheritsFromGroup("staff-base", true);
 	}
 	
@@ -315,7 +313,7 @@ public interface IOffPlayer {
 	 * @param ignored the player that is potentially ignored by this player.
 	 *                If this parameter is null, this method returns false.
 	 */
-	public default boolean canIgnore(IOffPlayer ignored) {
+	default boolean canIgnore(IOffPlayer ignored) {
 		if (ignored == null)
 			return false;
 		if (equals(ignored))
@@ -331,7 +329,7 @@ public interface IOffPlayer {
 	 *                If this parameter is null, this method returns false.
 	 * @implNote the default implementation just calls {@link #canIgnore(IOffPlayer) ignorer.canIgnore(this)}.
 	 */
-	public default boolean canBeIgnoredBy(IOffPlayer ignorer) {
+	default boolean canBeIgnoredBy(IOffPlayer ignorer) {
 		if (ignorer == null)
 			return false;
 		return ignorer.canIgnore(this);
@@ -343,7 +341,7 @@ public interface IOffPlayer {
 	 *                If this parameter is null, this method returns false.
 	 * @return true if this player have to right to ignore the provided player and is actually ignoring him.
 	 */
-	public default boolean isIgnoring(IOffPlayer ignored) {
+	default boolean isIgnoring(IOffPlayer ignored) {
 		if (!canIgnore(ignored))
 			return false;
 
@@ -363,7 +361,7 @@ public interface IOffPlayer {
 	 * @return true if the provided player have to right to ignore this player and is actually ignoring him.
 	 * @implNote the default implementation just calls {@link #isIgnoring(IOffPlayer) ignorer.isIgnoring(this)}.
 	 */
-	public default boolean isIgnoredBy(IOffPlayer ignorer) {
+	default boolean isIgnoredBy(IOffPlayer ignorer) {
 		return ignorer.isIgnoring(this);
 	}
 	
@@ -379,7 +377,7 @@ public interface IOffPlayer {
 	 * Retrieve the time when the player will be unmuted, or null if the player is not muted.
 	 * @return the timestamp in millisecond of when the player will be unmuted
 	 */
-	public default Long getMuteTimeout() {
+	default Long getMuteTimeout() {
 		try {
 			Long muteTimeout = getDbPlayer().get(SQLPlayer.muteTimeout);
 			if (muteTimeout == null || muteTimeout <= System.currentTimeMillis())
@@ -394,9 +392,8 @@ public interface IOffPlayer {
 	/**
 	 * Tells if the player is currently muted, meaning that they cannot communicate
 	 * through the chat or private messages.
-	 * @return
 	 */
-	public default boolean isMuted() {
+	default boolean isMuted() {
 		return getMuteTimeout() != null;
 	}
 	
@@ -408,7 +405,7 @@ public interface IOffPlayer {
 	 * Birthday
 	 */
 	
-	public default void setBirthday(int day, int month, Integer year) {
+	default void setBirthday(int day, int month, Integer year) {
 		try {
 			SQLPlayer dbPlayer = getDbPlayer();
 			dbPlayer.setBirthday(day, month, year);
@@ -418,7 +415,7 @@ public interface IOffPlayer {
 		}
 	}
 	
-	public default Calendar getBirthday() {
+	default Calendar getBirthday() {
 		try {
 			return getDbPlayer().getBirthday();
 		} catch (DBException e) {
@@ -434,25 +431,25 @@ public interface IOffPlayer {
 	 * Player config
 	 */
 	
-	public default String getConfig(String key) throws DBException {
+	default String getConfig(String key) throws DBException {
 		return SQLPlayerConfig.get(getUniqueId(), key);
 	}
 	
-	public default String getConfig(String key, String deflt) throws DBException {
+	default String getConfig(String key, String deflt) throws DBException {
 		return SQLPlayerConfig.get(getUniqueId(), key, deflt);
 	}
 	
-	public default void setConfig(String key, String value) throws DBException {
+	default void setConfig(String key, String value) throws DBException {
 		SQLPlayerConfig.set(getUniqueId(), key, value);
 	}
 	
-	public default void unsetConfig(String key) throws DBException {
+	default void unsetConfig(String key) throws DBException {
 		SQLPlayerConfig.unset(getUniqueId(), key);
 	}
 	
-	public default boolean isWelcomeQuizzDone() {
+	default boolean isWelcomeQuizzDone() {
 		try {
-			return Boolean.valueOf(getConfig("welcome.quizz.done", "false"));
+			return Boolean.parseBoolean(getConfig("welcome.quizz.done", "false"));
 		} catch (DBException e) {
 			Log.severe("Error knowing if player has already done the quizz. Assuming they did for now.", e);
 			return true;

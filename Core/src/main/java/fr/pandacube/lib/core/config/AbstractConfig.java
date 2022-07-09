@@ -6,14 +6,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import fr.pandacube.lib.core.chat.ChatColorUtil;
 import fr.pandacube.lib.core.util.Log;
 /**
- * Classe chargeant en mémoire un fichier de configuration ou un dossier donné
- * @author Marc Baloup
+ * Class tht loads a specific config file or directory
  *
  */
 public abstract class AbstractConfig {
@@ -22,12 +20,13 @@ public abstract class AbstractConfig {
 	 * Correspond au dossier ou au fichier de configuration traité par la sous-classe
 	 * courante de {@link AbstractConfig}
 	 */
-	protected File configFile;
+	protected final File configFile;
 	
 	/**
-	 * @param fileOrDirName le nom du fichier ou du dossier correspondant à la sous-classe de {@link AbstractConfig}
-	 * @param isDir <code>true</code> si il s'agit d'un dossier, <code>false</code> sinon
-	 * @throws IOException si le fichier est impossible à créer
+	 * @param configDir the parent directory
+	 * @param fileOrDirName The name of the config file or folder
+	 * @param type if the provided name is a file or a directory
+	 * @throws IOException if we cannot create the file
 	 */
 	public AbstractConfig(File configDir, String fileOrDirName, FileType type) throws IOException {
 		configFile = new File(configDir, fileOrDirName);
@@ -38,13 +37,12 @@ public abstract class AbstractConfig {
 	}
 	
 	/**
-	 * Retourne toutes les lignes d'un fichier donné
-	 * @param ignoreEmpty <code>true</code> si on doit ignorer les lignes vides
-	 * @param ignoreHashtagComment <code>true</code> si on doit ignorer les lignes commentés (commençant par un #)
-	 * @param trimOutput <code>true</code> si on doit appeller la méthode String.trim() sur chaque ligne retournée
-	 * @param f le fichier à lire
-	 * @return la liste des lignes utiles
-	 * @throws IOException
+	 * Gets the lines from the config file
+	 * @param ignoreEmpty <code>true</code> if we ignore the empty lines
+	 * @param ignoreHashtagComment <code>true</code> if we ignore the comment lines (starting with {@code #})
+	 * @param trimOutput <code>true</code> if we want to trim all lines using {@link String#trim()}
+	 * @param f the file to read
+	 * @return the list of lines, filtered according to the parameters
 	 */
 	protected List<String> getFileLines(boolean ignoreEmpty, boolean ignoreHashtagComment, boolean trimOutput, File f) throws IOException {
 		if (!f.isFile())
@@ -83,7 +81,6 @@ public abstract class AbstractConfig {
 	 * @param ignoreHashtagComment <code>true</code> si on doit ignorer les lignes commentés (commençant par un #)
 	 * @param trimOutput <code>true</code> si on doit appeller la méthode String.trim() sur chaque ligne retournée
 	 * @return la liste des lignes utiles
-	 * @throws IOException
 	 */
 	protected List<String> getFileLines(boolean ignoreEmpty, boolean ignoreHashtagComment, boolean trimOutput) throws IOException {
 		return getFileLines(ignoreEmpty, ignoreHashtagComment, trimOutput, configFile);
@@ -119,7 +116,7 @@ public abstract class AbstractConfig {
 	
 	
 	public static List<String> getSplittedString(String value, String split) {
-		return Collections.unmodifiableList(Arrays.asList(value.split(split)));
+		return List.of(value.split(split));
 	}
 	
 

@@ -1,25 +1,23 @@
 package fr.pandacube.lib.core.db;
 
-import java.sql.SQLException;
+import com.google.gson.JsonArray;
+import fr.pandacube.lib.core.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import com.google.gson.JsonArray;
-
-import fr.pandacube.lib.core.util.Log;
 
 /**
  *
  * @param <E>
  */
 public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
-	private static final long serialVersionUID = 1L;
 
 	private final Map<SQLField<E, ?>, Object> modifiedValues = new LinkedHashMap<>();
 
@@ -38,14 +36,13 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 	 * que lors de
 	 * l'appel à {@link #saveCommon()}
 	 *
-	 * @param <T>
 	 * @param field le champs à modifier
 	 * @param value la valeur à lui appliquer
 	 */
 	public synchronized <T> void setCommon(SQLField<E, T> field, T value) {
 		if (field == null)
 			throw new IllegalArgumentException("field can't be null");
-		if (field.getName() == "id")
+		if (Objects.equals(field.getName(), "id"))
 			throw new IllegalArgumentException("Can't modify id field in a SQLElementList");
 		
 		Class<E> elemClass = field.getSQLElementType();
@@ -72,8 +69,6 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 	 * {@link SQLElement#set(SQLField, Object)}.<br/>
 	 * Les objets de cette liste qui n'ont pas leur données en base de données
 	 * sont ignorées.
-	 *
-	 * @throws SQLException
 	 */
 	public synchronized int saveCommon() throws DBException {
 		List<E> storedEl = getStoredEl();
@@ -102,7 +97,7 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 	}
 
 	private List<E> getStoredEl() {
-		return stream().filter(SQLElement::isStored).collect(Collectors.toCollection(() -> new ArrayList<>()));
+		return stream().filter(SQLElement::isStored).collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	/**

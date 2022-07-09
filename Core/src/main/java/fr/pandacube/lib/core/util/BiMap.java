@@ -11,8 +11,8 @@ import java.util.function.Supplier;
 
 public class BiMap<K, V> implements Iterable<Entry<K, V>> {
 
-    protected Map<K, V> map;
-    protected Map<V, K> inversedMap;
+    protected final Map<K, V> map;
+    protected final Map<V, K> inversedMap;
     
     private BiMap<V, K> reversedView = null;
     

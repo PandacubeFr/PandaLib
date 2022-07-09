@@ -15,9 +15,8 @@ public class SQLType<T> {
 		return sqlDeclaration;
 	}
 
-	public boolean isAssignableFrom(Object val) {
-		if (javaTypes.isInstance(val)) return true;
-		return false;
+	public boolean isInstance(Object val) {
+		return javaTypes.isInstance(val);
 	}
 
 	@Override
@@ -27,8 +26,8 @@ public class SQLType<T> {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof SQLType)) return false;
-		return toString().equals(((SQLType<?>) obj).toString());
+		return obj instanceof SQLType o
+				&& toString().equals(o.toString());
 	}
 
 	public Class<T> getJavaType() {

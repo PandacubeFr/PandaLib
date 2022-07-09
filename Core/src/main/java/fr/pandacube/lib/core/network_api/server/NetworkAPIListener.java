@@ -10,11 +10,11 @@ import fr.pandacube.lib.core.util.Log;
 @Deprecated
 public class NetworkAPIListener implements Runnable {
 
-	private int port = 0;
-	String pass;
+	private final int port;
+	final String pass;
 	private ServerSocket serverSocket;
-	private HashMap<String, AbstractRequestExecutor> requestExecutors = new HashMap<>();
-	private String name;
+	private final HashMap<String, AbstractRequestExecutor> requestExecutors = new HashMap<>();
+	private final String name;
 
 	/**
 	 * Instencie le côté serveur du NetworkAPI
@@ -22,8 +22,6 @@ public class NetworkAPIListener implements Runnable {
 	 * @param n nom du networkAPI (permet l'identification dans les logs)
 	 * @param p le port d'écoute
 	 * @param pa le mot de passe réseau
-	 * @param peh PacketExecutionHandler permettant de prendre en charge
-	 *        l'exécution asynchrone d'une requête reçu pas un client
 	 */
 	public NetworkAPIListener(String n, int p, String pa) {
 		port = p;
@@ -51,12 +49,13 @@ public class NetworkAPIListener implements Runnable {
 				t.setDaemon(true);
 				t.start();
 			}
-		} catch (IOException e) {}
+		} catch (IOException ignored) {}
 
 		synchronized (this) {
 			try {
-				if (!serverSocket.isClosed()) serverSocket.close();
-			} catch (IOException e) {}
+				if (!serverSocket.isClosed())
+					serverSocket.close();
+			} catch (IOException ignored) {}
 		}
 
 		Log.info("NetworkAPI '" + name + "' ferme le port " + port);
@@ -70,7 +69,7 @@ public class NetworkAPIListener implements Runnable {
 	public synchronized void closeServerSocket() {
 		if (serverSocket != null) try {
 			serverSocket.close();
-		} catch (IOException e) {}
+		} catch (IOException ignored) {}
 	}
 
 	public int getPort() {

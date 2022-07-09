@@ -36,7 +36,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 
 public abstract sealed class Chat extends ChatStatic implements HoverEventSource<Component>, ComponentLike {
 	
-	protected ComponentBuilder<?, ?> builder;
+	protected final ComponentBuilder<?, ?> builder;
 	protected boolean console = false;
 	
 	/* package */ Chat(ComponentBuilder<?, ?> b) {
@@ -76,12 +76,11 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
 	
 	
 	public Chat then(Component comp) {
-		if (comp instanceof TextComponent) {
-			TextComponent txtComp = (TextComponent) comp;
-			if (!txtComp.hasStyling() && (txtComp.content() == null || txtComp.content().isEmpty())) {
+		if (comp instanceof TextComponent txtComp) {
+			if (!txtComp.hasStyling() && (txtComp.content().isEmpty())) {
 				// no need to add the provided component to the current component.
 				// but eventual child component must be added
-				if (txtComp.children() != null && !txtComp.children().isEmpty()) {
+				if (!txtComp.children().isEmpty()) {
 					for (Component child : txtComp.children())
 						then(child);
 				}
@@ -313,9 +312,8 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof Chat))
-			return false;
-		return getAdv().equals(((Chat)obj).getAdv());
+		return obj instanceof Chat c
+				&& getAdv().equals(c.getAdv());
 	}
 	
 	@Override
@@ -330,18 +328,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
 	
 	
 	
-	
 
-	/* package */ static Object[] filterChatToBaseComponent(Object[] values) {
-		if (values == null)
-			return null;
-		for (int i = 0; i < values.length; i++) {
-			Object v = values[i];
-			if (v instanceof Chat)
-				values[i] = ((Chat) v).get();
-		}
-		return values;
-	}
 
 	/* package */ static ComponentLike[] filterObjToComponentLike(Object[] values) {
 		if (values == null)

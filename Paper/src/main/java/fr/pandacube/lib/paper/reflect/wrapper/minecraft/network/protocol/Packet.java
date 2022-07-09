@@ -9,9 +9,9 @@ import static fr.pandacube.lib.core.util.ThrowableUtil.wrapEx;
 
 @ConcreteWrapper(Packet.__concrete.class)
 public interface Packet extends ReflectWrapperI {
-    public static final NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.network.protocol.Packet"));
+    NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.network.protocol.Packet"));
 
-    public class __concrete extends ReflectWrapper implements Packet {
+    class __concrete extends ReflectWrapper implements Packet {
         protected __concrete(Object obj) {
             super(obj);
         }

@@ -11,11 +11,11 @@ import org.bukkit.scheduler.BukkitTask;
 import fr.pandacube.lib.paper.PandaLibPaper;
 
 public class AutoUpdatedObject {
-	private static Plugin plugin = PandaLibPaper.getPlugin();
+	private static final Plugin plugin = PandaLibPaper.getPlugin();
 	
 	private Runnable updater;
 	
-	private List<BukkitTask> tasks = new ArrayList<>();
+	private final List<BukkitTask> tasks = new ArrayList<>();
 	
 
 	protected AutoUpdatedObject() { }
@@ -52,7 +52,7 @@ public class AutoUpdatedObject {
 	}
 	
 	public synchronized void cancel() {
-		tasks.forEach(t -> t.cancel());
+		tasks.forEach(BukkitTask::cancel);
 		tasks.clear();
 	}
 

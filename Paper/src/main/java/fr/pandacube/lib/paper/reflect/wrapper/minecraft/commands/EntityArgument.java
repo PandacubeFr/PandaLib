@@ -15,20 +15,24 @@ public class EntityArgument extends ReflectWrapperTyped<ArgumentType<?>> {
     private static final Reflect.ReflectMethod<?> player = wrapEx(() -> MAPPING.mojMethod("player"));
     private static final Reflect.ReflectMethod<?> players = wrapEx(() -> MAPPING.mojMethod("players"));
 
-    public static ArgumentType<?> entity() {
-        return (ArgumentType<?>) wrapReflectEx(() -> entity.invokeStatic());
+    @SuppressWarnings("unchecked")
+    public static ArgumentType<Object> entity() {
+        return (ArgumentType<Object>) wrapReflectEx(() -> entity.invokeStatic());
     }
 
-    public static ArgumentType<?> entities() {
-        return (ArgumentType<?>) wrapReflectEx(() -> entities.invokeStatic());
+    @SuppressWarnings("unchecked")
+    public static ArgumentType<Object> entities() {
+        return (ArgumentType<Object>) wrapReflectEx(() -> entities.invokeStatic());
     }
 
-    public static ArgumentType<?> player() {
-        return (ArgumentType<?>) wrapReflectEx(() -> player.invokeStatic());
+    @SuppressWarnings("unchecked")
+    public static ArgumentType<Object> player() {
+        return (ArgumentType<Object>) wrapReflectEx(() -> player.invokeStatic());
     }
 
-    public static ArgumentType<?> players() {
-        return (ArgumentType<?>) wrapReflectEx(() -> players.invokeStatic());
+    @SuppressWarnings("unchecked")
+    public static ArgumentType<Object> players() {
+        return (ArgumentType<Object>) wrapReflectEx(() -> players.invokeStatic());
     }
 
 

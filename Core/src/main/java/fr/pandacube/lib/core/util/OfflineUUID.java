@@ -1,6 +1,6 @@
 package fr.pandacube.lib.core.util;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.UUID;
@@ -8,7 +8,7 @@ import java.util.UUID;
 public class OfflineUUID {
 
 	public static UUID getFromNickName(String nickname) {
-		byte[] from_str = ("OfflinePlayer:" + nickname).getBytes(Charset.forName("UTF-8"));
+		byte[] from_str = ("OfflinePlayer:" + nickname).getBytes(StandardCharsets.UTF_8);
 		return UUID.nameUUIDFromBytes(from_str);
 	}
 

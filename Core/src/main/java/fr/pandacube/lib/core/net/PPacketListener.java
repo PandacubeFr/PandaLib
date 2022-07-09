@@ -8,6 +8,6 @@ public interface PPacketListener<P extends PPacket> {
 	 * @param connection the connection from where the packet comes
 	 * @param packet the received packet
 	 */
-	public void onPacketReceive(PSocket connection, P packet);
+	void onPacketReceive(PSocket connection, P packet);
 
 }

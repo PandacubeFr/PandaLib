@@ -18,15 +18,15 @@ import fr.pandacube.lib.core.util.Log;
 /**
  * Static class to handle most of the database operations.
  * 
- * To use this database library, first call {@link #init(DBConnection)} with an appropriate {@link DBConnection},
+ * To use this database library, first call {@link #init(DBConnection, String)} with an appropriate {@link DBConnection},
  * they you can initialize every table you need for your application, using {@link #initTable(Class)}.
  *
  * @author Marc Baloup
  */
 public final class DB {
 
-	private static List<Class<? extends SQLElement<?>>> tables = new ArrayList<>();
-	private static Map<Class<? extends SQLElement<?>>, String> tableNames = new HashMap<>();
+	private static final List<Class<? extends SQLElement<?>>> tables = new ArrayList<>();
+	private static final Map<Class<? extends SQLElement<?>>, String> tableNames = new HashMap<>();
 
 	private static DBConnection connection;
 	/* package */ static String tablePrefix = "";
@@ -35,7 +35,7 @@ public final class DB {
 		return connection;
 	}
 
-	public synchronized static <E extends SQLElement<E>> void init(DBConnection conn, String tablePrefix) {
+	public synchronized static void init(DBConnection conn, String tablePrefix) {
 		connection = conn;
 		DB.tablePrefix = Objects.requireNonNull(tablePrefix);
 	}
@@ -62,7 +62,7 @@ public final class DB {
 		
 		String tableName = tablePrefix + elem.tableName();
 
-		String sql = "CREATE TABLE IF NOT EXISTS " + tableName + " (";
+		StringBuilder sql = new StringBuilder("CREATE TABLE IF NOT EXISTS " + tableName + " (");
 		List<Object> params = new ArrayList<>();
 
 		Collection<SQLField<E, ?>> tableFields = elem.getFields().values();
@@ -71,14 +71,15 @@ public final class DB {
 			ParameterizedSQLString statementPart = f.forSQLPreparedStatement();
 			params.addAll(statementPart.parameters());
 
-			if (!first) sql += ", ";
+			if (!first)
+				sql.append(", ");
 			first = false;
-			sql += statementPart.sqlString();
+			sql.append(statementPart.sqlString());
 		}
 
-		sql += ", PRIMARY KEY id(id))";
+		sql.append(", PRIMARY KEY id(id))");
 		
-		try (PreparedStatement ps = connection.getNativeConnection().prepareStatement(sql)) {
+		try (PreparedStatement ps = connection.getNativeConnection().prepareStatement(sql.toString())) {
 			int i = 1;
 			for (Object val : params)
 				ps.setObject(i++, val);
@@ -93,11 +94,9 @@ public final class DB {
 	}
 
 	private static boolean tableExistInDB(String tableName) throws SQLException {
-		boolean exist = false;
 		try (ResultSet set = connection.getNativeConnection().getMetaData().getTables(null, null, tableName, null)) {
-			exist = set.next();
+			return set.next();
 		}
-		return exist;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -277,7 +276,7 @@ public final class DB {
 	
 
 	
-	public static <E extends SQLElement<E>> SQLUpdate<E> update(Class<E> elemClass, SQLWhere<E> where) throws DBException {
+	public static <E extends SQLElement<E>> SQLUpdate<E> update(Class<E> elemClass, SQLWhere<E> where) {
 		return new SQLUpdate<>(elemClass, where);
 	}
 	
@@ -291,7 +290,6 @@ public final class DB {
 	 * @param elemClass the SQLElement representing the table.
 	 * @param where the condition to meet for an element to be deleted from the table. If null, the table is truncated using {@link #truncateTable(Class)}.
 	 * @return The return value of {@link PreparedStatement#executeUpdate()}, for an SQL query {@code DELETE}.
-	 * @throws DBException
 	 */
 	public static <E extends SQLElement<E>> int delete(Class<E> elemClass, SQLWhere<E> where) throws DBException {
 		initTable(elemClass);
@@ -369,7 +367,7 @@ public final class DB {
 							val = ((SQLCustomType<Object, Object>)sqlField.type).dbToJavaConv.apply(val);
 						} catch (Exception e) {
 							throw new DBException("Error while converting value of field '"+sqlField.getName()+"' with SQLCustomType from "+((SQLCustomType<Object, Object>)sqlField.type).intermediateJavaType
-									+"(jdbc source) to "+sqlField.type.getJavaType()+"(java destination). The original value is '"+val.toString()+"'", e);
+									+"(jdbc source) to "+sqlField.type.getJavaType()+"(java destination). The original value is '"+ val +"'", e);
 						}
 					}
 					
@@ -383,7 +381,7 @@ public final class DB {
 			}
 
 			if (!instance.isValidForSave()) throw new DBException(
-					"This SQLElement representing a database entry is not valid for save : " + instance.toString());
+					"This SQLElement representing a database entry is not valid for save : " + instance);
 
 			return instance;
 		} catch (ReflectiveOperationException | IllegalArgumentException | SecurityException | SQLException e) {

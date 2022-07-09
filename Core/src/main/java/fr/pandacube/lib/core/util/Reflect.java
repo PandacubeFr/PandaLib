@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -73,7 +74,7 @@ public class Reflect {
 		}
     	@Override
     	public boolean equals(Object other) {
-			return other != null && other instanceof MethodIdentifier o
+			return other instanceof MethodIdentifier o
 					&& o.methodName.equals(methodName)
 					&& Arrays.equals(o.parameters, parameters);
 		}
@@ -89,7 +90,7 @@ public class Reflect {
 		}
     	@Override
     	public boolean equals(Object other) {
-			return other != null && other instanceof ConstructorIdentifier o
+			return other instanceof ConstructorIdentifier o
 					&& Arrays.equals(o.parameters, parameters);
 		}
     	@Override
@@ -196,10 +197,10 @@ public class Reflect {
 	
 	
 	public static abstract class ReflectMember<T, ID, EL, EX extends ReflectiveOperationException> {
-		ReflectClass<T> reflectClass;
-		protected ID identifier;
+		protected final ReflectClass<T> reflectClass;
+		protected final ID identifier;
 		
-		protected EL cached;
+		protected final EL cached;
 		
 		protected ReflectMember(ReflectClass<T> c, ID id, boolean bypassFilter) throws EX {
 			reflectClass = c;
@@ -210,78 +211,71 @@ public class Reflect {
 		
 		
 		protected EL fetch() throws EX {
-			EX ex = null;
 			
 			// get element in current class
 			try {
 				EL el = fetchFromClass(reflectClass.clazz);
 				setAccessible(el);
 				return el;
-			} catch (ReflectiveOperationException e) {
+			} catch (ReflectiveOperationException e1) {
 				@SuppressWarnings("unchecked")
-				EX ee = (EX) e;
-				ex = ee;
+				EX ex = (EX) e1;
+
+				// get parent class
+				Class<? super T> superClass = reflectClass.clazz.getSuperclass();
+				if (superClass == null)
+					throw ex;
+
+				// get element in parent class (will do recursion)
+				try {
+					EL el = fetchFromReflectClass(ofClass(superClass));
+					setAccessible(el);
+					return el;
+				} catch (ReflectiveOperationException e2) {
+					ex.addSuppressed(e2);
+					throw ex;
+				}
 			}
-			
-			// get parent class
-			Class<? super T> superClass = reflectClass.clazz.getSuperclass();
-			if (superClass == null)
-				throw ex;
-			
-			// get element in parent class (will do recursion)
-			try {
-				EL el = fetchFromReflectClass(ofClass(superClass));
-				setAccessible(el);
-				return el;
-			} catch (ReflectiveOperationException e) {
-				ex.addSuppressed(e);
-				throw ex;
-			}
-			
 		}
 		
 		protected EL fetchFiltered() throws EX {
-			EX ex = null;
 
 			// get element in current class
 			try {
 				EL el = fetchFromClass(reflectClass.clazz);
 				setAccessible(el);
 				return el;
-			} catch (ReflectiveOperationException e) {
+			} catch (ReflectiveOperationException e1) {
 				@SuppressWarnings("unchecked")
-				EX ee = (EX) e;
-				ex = ee;
+				EX ex = (EX) e1;
+
+				// trying to bypass filtered member
+				try {
+					@SuppressWarnings("unchecked")
+					EL[] elements = (EL[]) Reflect.ofClassOfInstance(reflectClass.clazz)
+							.method(internalMethodNameElementArray(), boolean.class)
+							.invoke(reflectClass.clazz, false);
+					for (EL element : elements) {
+						if (isEqualOurElement(element)) {
+							// the values in the elements array have to be copied
+							// (using special private methods in reflection api) before using it
+							Object reflectionFactoryOfClazz = Reflect.ofClassOfInstance(reflectClass.clazz)
+									.method("getReflectionFactory")
+									.invoke(reflectClass.clazz);
+							@SuppressWarnings("unchecked")
+							EL copiedElement = (EL) Reflect.ofClassOfInstance(reflectionFactoryOfClazz)
+									.method(internalMethodNameCopyElement(), element.getClass())
+									.invoke(reflectionFactoryOfClazz, element);
+							setAccessible(copiedElement);
+							return copiedElement;
+						}
+					}
+				} catch (ReflectiveOperationException e2) {
+					ex.addSuppressed(e2);
+				}
+
+				throw ex;
 			}
-			
-			// trying to bypass filtered member
-			try {
-				@SuppressWarnings("unchecked")
-				EL[] elements = (EL[]) Reflect.ofClassOfInstance(reflectClass.clazz)
-						.method(internalMethodNameElementArray(), boolean.class)
-						.invoke(reflectClass.clazz, false);
-				for (EL element : elements) {
-					if (isEqualOurElement(element)) {
-						// the values in the elements array have to be copied
-						// (using special private methods in reflection api) before using it
-						Object reflectionFactoryOfClazz = Reflect.ofClassOfInstance(reflectClass.clazz)
-								.method("getReflectionFactory")
-								.invoke(reflectClass.clazz);
-						@SuppressWarnings("unchecked")
-						EL copiedElement = (EL) Reflect.ofClassOfInstance(reflectionFactoryOfClazz)
-								.method(internalMethodNameCopyElement(), element.getClass())
-								.invoke(reflectionFactoryOfClazz, element);
-						EL el = copiedElement;
-						setAccessible(el);
-			            return el;
-			        }
-			    }
-			} catch (ReflectiveOperationException e) {
-				ex.addSuppressed(e);
-			}
-			
-			throw ex;
-			
 		}
 		
 		protected abstract EL fetchFromClass(Class<T> clazz) throws EX;
@@ -311,11 +305,11 @@ public class Reflect {
 			super(c, name, bypassFilter);
 		}
 
-		@Override protected Field fetchFromClass(Class<T> clazz) throws NoSuchFieldException { return clazz.getDeclaredField(identifier); };
-		@Override protected Field fetchFromReflectClass(ReflectClass<?> rc) throws NoSuchFieldException { return rc.field(identifier).get(); };
-		@Override protected boolean isEqualOurElement(Field el) { return identifier.equals(el.getName()); };
-		@Override protected String internalMethodNameElementArray() { return "getDeclaredFields0"; };
-		@Override protected String internalMethodNameCopyElement() { return "copyField"; };
+		@Override protected Field fetchFromClass(Class<T> clazz) throws NoSuchFieldException { return clazz.getDeclaredField(identifier); }
+		@Override protected Field fetchFromReflectClass(ReflectClass<?> rc) throws NoSuchFieldException { return rc.field(identifier).get(); }
+		@Override protected boolean isEqualOurElement(Field el) { return identifier.equals(el.getName()); }
+		@Override protected String internalMethodNameElementArray() { return "getDeclaredFields0"; }
+		@Override protected String internalMethodNameCopyElement() { return "copyField"; }
 		@Override protected void setAccessible(Field el) { el.setAccessible(true); }
 		
 		
@@ -379,11 +373,11 @@ public class Reflect {
 			super(c, methodId, bypassFilter);
 		}
 
-		@Override protected Method fetchFromClass(Class<T> clazz) throws NoSuchMethodException { return clazz.getDeclaredMethod(identifier.methodName, identifier.parameters); };
-		@Override protected Method fetchFromReflectClass(ReflectClass<?> rc) throws NoSuchMethodException { return rc.method(identifier, false).get(); };
-		@Override protected boolean isEqualOurElement(Method el) { return identifier.methodName.equals(el.getName()) && Arrays.equals(identifier.parameters, el.getParameterTypes()); };
-		@Override protected String internalMethodNameElementArray() { return "getDeclaredMethods0"; };
-		@Override protected String internalMethodNameCopyElement() { return "copyMethod"; };
+		@Override protected Method fetchFromClass(Class<T> clazz) throws NoSuchMethodException { return clazz.getDeclaredMethod(identifier.methodName, identifier.parameters); }
+		@Override protected Method fetchFromReflectClass(ReflectClass<?> rc) throws NoSuchMethodException { return rc.method(identifier, false).get(); }
+		@Override protected boolean isEqualOurElement(Method el) { return identifier.methodName.equals(el.getName()) && Arrays.equals(identifier.parameters, el.getParameterTypes()); }
+		@Override protected String internalMethodNameElementArray() { return "getDeclaredMethods0"; }
+		@Override protected String internalMethodNameCopyElement() { return "copyMethod"; }
 		@Override protected void setAccessible(Method el) { el.setAccessible(true); }
 		
 		public Object invoke(Object instance, Object... values) throws ReflectiveOperationException {
@@ -415,17 +409,16 @@ public class Reflect {
 		// Override since we don't want to recursively search for a constructor
 		@Override
 		protected Constructor<T> fetch() throws NoSuchMethodException {
-			Constructor<T> el = null;
-			el = fetchFromClass(reflectClass.clazz);
+			Constructor<T> el = fetchFromClass(reflectClass.clazz);
 			setAccessible(el);
 			return el;
 		}
 
-		@Override protected Constructor<T> fetchFromClass(Class<T> clazz) throws NoSuchMethodException { return clazz.getDeclaredConstructor(identifier.parameters); };
-		@Override protected Constructor<T> fetchFromReflectClass(ReflectClass<?> rc) throws NoSuchMethodException { throw new UnsupportedOperationException(); };
-		@Override protected boolean isEqualOurElement(Constructor<T> el) { return Arrays.equals(identifier.parameters, el.getParameterTypes()); };
-		@Override protected String internalMethodNameElementArray() { return "getDeclaredConstructors0"; };
-		@Override protected String internalMethodNameCopyElement() { return "copyConstructor"; };
+		@Override protected Constructor<T> fetchFromClass(Class<T> clazz) throws NoSuchMethodException { return clazz.getDeclaredConstructor(identifier.parameters); }
+		@Override protected Constructor<T> fetchFromReflectClass(ReflectClass<?> rc) { throw new UnsupportedOperationException(); }
+		@Override protected boolean isEqualOurElement(Constructor<T> el) { return Arrays.equals(identifier.parameters, el.getParameterTypes()); }
+		@Override protected String internalMethodNameElementArray() { return "getDeclaredConstructors0"; }
+		@Override protected String internalMethodNameCopyElement() { return "copyConstructor"; }
 		@Override protected void setAccessible(Constructor<T> el) { el.setAccessible(true); }
 		
 		public T instanciate(Object... values) throws ReflectiveOperationException {
@@ -453,7 +446,7 @@ public class Reflect {
     
     
     
-    private static Cache<Class<?>, List<Class<?>>> subClassesLists = CacheBuilder.newBuilder()
+    private static final Cache<Class<?>, List<Class<?>>> subClassesLists = CacheBuilder.newBuilder()
 			.expireAfterAccess(10, TimeUnit.MINUTES)
 			.build();
 	
@@ -468,7 +461,7 @@ public class Reflect {
 			return classes;
 		} catch(ExecutionException e) {
 			Log.severe(e);
-			return null;
+			return new ArrayList<>();
 		}
 		
 	}

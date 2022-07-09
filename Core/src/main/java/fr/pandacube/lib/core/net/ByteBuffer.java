@@ -1,13 +1,14 @@
 package fr.pandacube.lib.core.net;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public final class ByteBuffer implements Cloneable {
 
-	public static final Charset NETWORK_CHARSET = Charset.forName("UTF-8");
+	public static final Charset NETWORK_CHARSET = StandardCharsets.UTF_8;
 
 	private java.nio.ByteBuffer buff;
 
@@ -64,7 +65,6 @@ public final class ByteBuffer implements Cloneable {
 	/**
 	 * Return the next byte array wich is preceded with his size as integer,
 	 * or null if the founded size is negative.
-	 * @return
 	 */
 	public byte[] getSizedByteArray() {
 		int size = getInt();
@@ -218,7 +218,6 @@ public final class ByteBuffer implements Cloneable {
 	/**
 	 * 
 	 * @param s null String are supported
-	 * @return
 	 */
 	public ByteBuffer putString(String s) {
 		if (s == null) {
@@ -229,7 +228,6 @@ public final class ByteBuffer implements Cloneable {
 
 	/**
 	 * returned string can be null
-	 * @return
 	 */
 	public String getString() {
 		byte[] binaryString = getSizedByteArray();
@@ -239,7 +237,6 @@ public final class ByteBuffer implements Cloneable {
 	/**
 	 * 
 	 * @param list The list can be null, and any String can be null too.
-	 * @return
 	 */
 	public ByteBuffer putListOfString(List<String> list) {
 		if (list == null) {

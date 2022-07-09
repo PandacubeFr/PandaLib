@@ -12,9 +12,9 @@ import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
 class DailyLogRotateFileHandler extends Handler {
+	private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 	private BufferedWriter currentFile = null;
-	private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private String currentFileDate = getCurrentDay();
 	private boolean closed = false;
 
@@ -24,7 +24,7 @@ class DailyLogRotateFileHandler extends Handler {
 		closed = true;
 		if (currentFile != null) try {
 			currentFile.close();
-		} catch (IOException e) {}
+		} catch (IOException ignored) {}
 	}
 
 	@Override
@@ -33,7 +33,7 @@ class DailyLogRotateFileHandler extends Handler {
 		if (currentFile == null) return;
 		try {
 			currentFile.flush();
-		} catch (IOException e) {}
+		} catch (IOException ignored) {}
 	}
 
 	@Override
@@ -68,7 +68,7 @@ class DailyLogRotateFileHandler extends Handler {
 			try {
 				currentFile.flush();
 				currentFile.close();
-			} catch (IOException e) {}
+			} catch (IOException ignored) {}
 			new File("logs/latest.log").renameTo(new File("logs/" + currentFileDate + ".log"));
 		}
 
@@ -76,11 +76,10 @@ class DailyLogRotateFileHandler extends Handler {
 		try {
 			File logDir = new File("logs");
 			logDir.mkdir();
-			currentFile = new BufferedWriter(new FileWriter(new File("logs/latest.log"), true));
+			currentFile = new BufferedWriter(new FileWriter("logs/latest.log", true));
 		} catch (SecurityException | IOException e) {
 			reportError("Erreur lors de l'initialisation d'un fichier log", e, ErrorManager.OPEN_FAILURE);
 			currentFile = null;
-			return;
 		}
 
 	}

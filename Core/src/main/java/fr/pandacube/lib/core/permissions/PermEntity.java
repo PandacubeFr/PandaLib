@@ -33,12 +33,11 @@ public abstract class PermEntity {
 	 * Tells if the current entity inherits directly or indirectly from the specified group
 	 * @param group the group to search for
 	 * @param recursive true to search in the inheritance tree, or false to search only in the inheritance list of the current entity.
-	 * @return
 	 */
 	public boolean inheritsFromGroup(String group, boolean recursive) {
 		if (group == null)
 			return false;
-		return getInheritances().stream().anyMatch(g -> g.name.equals(group) || (recursive && g.inheritsFromGroup(group, recursive)));
+		return getInheritances().stream().anyMatch(g -> g.name.equals(group) || (recursive && g.inheritsFromGroup(group, true)));
 	}
 	
 	public String getPrefix() {
@@ -105,8 +104,8 @@ public abstract class PermEntity {
 		String prefixWithEndingDot = permissionPrefix.endsWith(".") ? permissionPrefix : (permissionPrefix + ".");
 		int prefixLength = prefixWithEndingDot.length();
 		return listEffectivePermissions(server, world).entrySet().stream()
-				.filter(e -> e.getValue()) // permission must be positive
-				.map(e -> e.getKey()) // keep only the permission node (key), since the value is always true
+				.filter(Map.Entry::getValue) // permission must be positive
+				.map(Map.Entry::getKey) // keep only the permission node (key), since the value is always true
 				.filter(p -> p.startsWith(prefixWithEndingDot)) // keep only relevant permissions
 				.map(p -> p.substring(prefixLength)) // keep only what is after the prefix
 				.map(suffix -> { // convert to long
@@ -117,7 +116,7 @@ public abstract class PermEntity {
 						return null;
 					}
 				})
-				.filter(longSuffix -> longSuffix != null)
+				.filter(Objects::nonNull)
 				.mapToLong(longSuffix -> longSuffix)
 				.sorted();
 	}
@@ -224,10 +223,9 @@ public abstract class PermEntity {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof PermEntity))
-			return false;
-		PermEntity o = (PermEntity) obj;
-		return Objects.equals(name, o.name) && type == o.type;
+		return obj instanceof PermEntity o
+				&& Objects.equals(name, o.name)
+				&& type == o.type;
 	}
 	
 	@Override

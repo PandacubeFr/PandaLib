@@ -1,7 +1,6 @@
 package fr.pandacube.lib.paper.reflect.wrapper.brigadier;
 
 import fr.pandacube.lib.core.util.Reflect;
-import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapper;
 import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapperTyped;
 
 import static fr.pandacube.lib.core.util.ThrowableUtil.wrapEx;

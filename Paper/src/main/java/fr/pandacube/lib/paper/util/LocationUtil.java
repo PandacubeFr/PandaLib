@@ -29,9 +29,8 @@ public class LocationUtil {
 	/**
 	 * Return a random secure location in the provided world, inside the current
 	 * WorldBorder. Will be on the surface, for non-nether world, or below the roof of the nether world
-	 * @param w
-	 * @param checkCubo true if the returned location can't be in a /cubo
-	 * @return
+	 * @param w the world in which to pick a location
+	 * @param extraSecureCheck provides extra checks to determine location security
 	 */
 	public static CompletableFuture<Location> getRandomSecureLocation(World w, Predicate<Location> extraSecureCheck) {
 
@@ -51,7 +50,7 @@ public class LocationUtil {
 	private static final int maxTryBeforeCancelRandomLocation = 75;
 	public static CompletableFuture<Location> getRandomSecureLocation(World w, Location min, Location max, Predicate<Location> extraSecureCheck) {
 
-		CompletableFuture<Location> future = new CompletableFuture<Location>();
+		CompletableFuture<Location> future = new CompletableFuture<>();
 
 		AtomicReference<BukkitTask> t = new AtomicReference<>();
 		AtomicInteger count = new AtomicInteger(0);
@@ -100,7 +99,7 @@ public class LocationUtil {
 
 	/**
 	 * 
-	 * @param l
+	 * @param l the source location
 	 * @return a secure location with the same X and Z coordinate as the
 	 * provided location, but Y modified to ensure security for player
 	 * who will be teleported to this location.
@@ -128,7 +127,7 @@ public class LocationUtil {
 	public static boolean isAir(Block b) { return b.getType() == Material.AIR; }
 	public static boolean isSecureFloor(Block b) { return !isAir(b) && !dangerousBlocks.contains(b.getType()); }
 	
-	public static Set<Material> dangerousBlocks = EnumSet.of(
+	public static final Set<Material> dangerousBlocks = EnumSet.of(
 			Material.LAVA,
 			Material.WATER,
 			Material.COBWEB,
@@ -141,7 +140,7 @@ public class LocationUtil {
 			Material.END_PORTAL,
 			Material.NETHER_PORTAL,
 			Material.END_GATEWAY
-			);
+	);
 	
 	
 	
@@ -150,9 +149,6 @@ public class LocationUtil {
 	/**
 	 * Check if the {@link Location} l is inside the cuboïd formed by the 2 others
 	 * Locations min and max.
-	 * @param l
-	 * @param min
-	 * @param max
 	 * @return true if l is inside the cuboid min-max
 	 */
 	public static boolean isIn(Location l, Location min, Location max) {
@@ -168,8 +164,6 @@ public class LocationUtil {
 	
 	/**
 	 * Return a new location based on the linear interpolation between p0 and p1, according to the value c.
-	 * @param p0
-	 * @param p1
 	 * @param c between 0 and 1. If 0, it returns p0 and if 1, returns p1. Other finite numbers are allowed, but the returned location wont be part of the {@code [p0;p1]} segment.
 	 * @return The location, linearly interpolated between p0 and p1 with the value c. The yaw and pitch in the returned location are those of p0.
 	 * @throws IllegalArgumentException if the provided locations are not in the same world.

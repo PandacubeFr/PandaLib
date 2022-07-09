@@ -29,7 +29,7 @@ import net.md_5.bungee.api.ChatColor;
 
 public class PermissionsResolver {
 
-	private PermissionsCachedBackendReader backendReader;
+	private final PermissionsCachedBackendReader backendReader;
 	
 	/* package */ PermissionsResolver(PermissionsCachedBackendReader b) {
 		backendReader = b;
@@ -74,7 +74,7 @@ public class PermissionsResolver {
 		return debugData(name, type, DataType.SUFFIX);
 	}
 
-	private Cache<DataCacheKey, String> effectiveDataCache = CacheBuilder.newBuilder()
+	private final Cache<DataCacheKey, String> effectiveDataCache = CacheBuilder.newBuilder()
 			.expireAfterAccess(10, TimeUnit.MINUTES)
 			.build();
 	
@@ -83,9 +83,7 @@ public class PermissionsResolver {
 		Objects.requireNonNull(type, "type can’t be null");
 		
 		try {
-			return effectiveDataCache.get(new DataCacheKey(name, type, dataType), () -> {
-				return resolveData(name, type, dataType);
-			});
+			return effectiveDataCache.get(new DataCacheKey(name, type, dataType), () -> resolveData(name, type, dataType));
 		} catch (ExecutionException e) {
 			Log.severe(e);
 			return null;
@@ -108,7 +106,7 @@ public class PermissionsResolver {
 		if (resolutionResult.conflict) {
 			Log.warning("For data " + dataType + ":\n"
 					+ ChatUtil.treeView(resolutionResult.toDisplayTreeNode(), true).stream()
-					.map(cmp -> cmp.getLegacyText())
+					.map(Chat::getLegacyText)
 					.collect(Collectors.joining(ChatColor.RESET + "\n")));
 		}
 		
@@ -140,7 +138,7 @@ public class PermissionsResolver {
 		
 		Set<String> inheritedPermissions = inheritedResults.stream()
 				.map(g -> g.result)
-				.filter(r -> r != null)
+				.filter(Objects::nonNull)
 				.collect(Collectors.toSet());
 		
 		if (inheritedPermissions.size() == 1)
@@ -176,7 +174,7 @@ public class PermissionsResolver {
 				c.thenFailure(" " + conflictMessage);
 			DisplayTreeNode node = new DisplayTreeNode(c);
 			
-			if (result == null && conflict == false && !inheritances.isEmpty()) {
+			if (result == null && !conflict && !inheritances.isEmpty()) {
 				// there is nothing interesting to show on current or subnode
 				node.children.add(new DisplayTreeNode(Chat.text("(Inheritances hidden for brevety)").darkGray().italic()));
 				return node;
@@ -197,10 +195,8 @@ public class PermissionsResolver {
 		}
 		@Override
 		public boolean equals(Object obj) {
-			if (obj == null || !(obj instanceof DataCacheKey))
-				return false;
-			DataCacheKey o = (DataCacheKey) obj;
-			return Objects.equals(name, o.name)
+			return obj instanceof DataCacheKey o
+					&& Objects.equals(name, o.name)
 					&& Objects.equals(type, o.type)
 					&& dataType == o.dataType;
 		}
@@ -211,7 +207,7 @@ public class PermissionsResolver {
 		SUFFIX(CachedEntity::getSelfSuffix);
 		
 		private final CachedEntityGetter<String> getter;
-		private DataType(CachedEntityGetter<String> g) {
+		DataType(CachedEntityGetter<String> g) {
 			getter = g;
 		}
 	}
@@ -233,7 +229,7 @@ public class PermissionsResolver {
 	
 
 	
-	private Cache<PermCacheKey, Map<String, Boolean>> effectivePermissionsListCache = CacheBuilder.newBuilder()
+	private final Cache<PermCacheKey, Map<String, Boolean>> effectivePermissionsListCache = CacheBuilder.newBuilder()
 			.expireAfterAccess(10, TimeUnit.MINUTES)
 			.build();
 	
@@ -265,7 +261,7 @@ public class PermissionsResolver {
 		
 	}
 
-	private Cache<PermCacheKey, PermState> effectivePermissionsCache = CacheBuilder.newBuilder()
+	private final Cache<PermCacheKey, PermState> effectivePermissionsCache = CacheBuilder.newBuilder()
 			.expireAfterAccess(10, TimeUnit.MINUTES)
 			.build();
 	
@@ -281,14 +277,14 @@ public class PermissionsResolver {
 			reversed = true;
 		}
 		
-		String fPermission = permission == null ? null : permission.toLowerCase();
+		String fPermission = permission.toLowerCase();
 		String fServer = server == null ? null : server.toLowerCase();
 		String fWorld = world == null ? null : world.toLowerCase();
 		try {
-			Boolean resolved = effectivePermissionsCache.get(new PermCacheKey(name, type, fPermission, fServer, fWorld), () -> {
-				return resolvePermission(name, type, fPermission, fServer, fWorld);
-			}).value;
-			return resolved == null ? null : (reversed != resolved.booleanValue());
+			Boolean resolved = effectivePermissionsCache.get(new PermCacheKey(name, type, fPermission, fServer, fWorld),
+					() -> resolvePermission(name, type, fPermission, fServer, fWorld)
+			).value;
+			return resolved == null ? null : (reversed != resolved);
 		} catch (ExecutionException e) {
 			Log.severe(e);
 			return null;
@@ -312,7 +308,7 @@ public class PermissionsResolver {
 		if (resolutionResult.conflict) {
 			Log.warning("For permission " + permission + ":\n"
 					+ ChatUtil.treeView(resolutionResult.toDisplayTreeNode(), true).stream()
-					.map(cmp -> cmp.getLegacyText())
+					.map(Chat::getLegacyText)
 					.collect(Collectors.joining(ChatColor.RESET + "\n")));
 		}
 		
@@ -374,7 +370,7 @@ public class PermissionsResolver {
 		if (inheritancesGranted != inheritancesRevoqued) {
 			resolutionNode.result = inheritancesGranted ? PermState.GRANTED : PermState.REVOQUED;
 		}
-		else if (inheritancesGranted && inheritancesRevoqued) {
+		else if (inheritancesGranted) {
 			resolutionNode.conflictMessage = (resolutionNode.conflictMessage == null ? "" : (resolutionNode.conflictMessage + " ; "))
 					+ "Unsolvable conflict between inheritances";
 			resolutionNode.conflict = true;
@@ -388,7 +384,7 @@ public class PermissionsResolver {
 	
 	
 	
-	/* package */ List<SpecialPermission> specialPermissions = new ArrayList<>();
+	/* package */ final List<SpecialPermission> specialPermissions = new ArrayList<>();
 	
 	
 	
@@ -436,7 +432,7 @@ public class PermissionsResolver {
 							resNode = new ParsedSelfPermission(p, false, PermType.WILDCARD);
 						return resNode;
 					})
-					.filter(p -> p != null)
+					.filter(Objects::nonNull)
 					.collect(Collectors.toList());
 
 				boolean explicitGranted = foundPerms.stream()
@@ -459,13 +455,13 @@ public class PermissionsResolver {
 						conflict = "Unnecessary explicit permission already granted by self wildcard permissions"; // redundent explicit perm
 					}
 				}
-				else if (explicitGranted && explicitRevoqued) {
+				else if (explicitGranted) {
 					conflict = "Unsolvable conflit between explicit permissions";
 				}
 				else if (wildcardGranted != wildcardRevoqued) {
 					result = PermState.of(wildcardGranted);
 				}
-				else if (wildcardGranted && wildcardRevoqued) {
+				else if (wildcardGranted) {
 					conflict = "Unsolvable conflit between wildcard permissions";
 				}
 		}
@@ -505,7 +501,7 @@ public class PermissionsResolver {
 			
 			selfPermissions.forEach(p -> node.children.add(p.toDisplayTreeNode()));
 			
-			if (result == PermState.UNDEFINED && conflict == false && !inheritances.isEmpty()) {
+			if (result == PermState.UNDEFINED && !conflict && !inheritances.isEmpty()) {
 				// there is nothing interesting to show on current or subnode
 				node.children.add(new DisplayTreeNode(Chat.text("(Inheritances hidden for brevety)").darkGray().italic()));
 				return node;
@@ -542,10 +538,8 @@ public class PermissionsResolver {
 		}
 		@Override
 		public boolean equals(Object obj) {
-			if (obj == null || !(obj instanceof PermCacheKey))
-				return false;
-			PermCacheKey o = (PermCacheKey) obj;
-			return Objects.equals(name, o.name)
+			return obj instanceof PermCacheKey o
+					&& Objects.equals(name, o.name)
 					&& Objects.equals(type, o.type)
 					&& Objects.equals(permission, o.permission)
 					&& Objects.equals(server, o.server)
@@ -554,7 +548,7 @@ public class PermissionsResolver {
 	}
 	
 	private enum PermType {
-		EXPLICIT, WILDCARD, SPECIAL;
+		EXPLICIT, WILDCARD, SPECIAL
 	}
 	
 	private enum PermState {
@@ -562,7 +556,7 @@ public class PermissionsResolver {
 		REVOQUED(false),
 		UNDEFINED(null);
 		final Boolean value;
-		private PermState(Boolean v) { value = v; }
+		PermState(Boolean v) { value = v; }
 		private static PermState of(Boolean v) {
 			return v == null ? UNDEFINED : v ? GRANTED : REVOQUED;
 		}

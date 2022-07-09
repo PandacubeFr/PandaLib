@@ -46,7 +46,6 @@ public class SQLPlayerIgnore extends SQLElement<SQLPlayerIgnore> {
 		}
 		if (el != null && !newIgnoreState) {
 			el.delete();
-			return;
 		}
 
 	}

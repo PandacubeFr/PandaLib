@@ -63,7 +63,7 @@ public class SQLField<E extends SQLElement<E>, T> {
 	}
 
 	/**
-	 * <b>Don't use this {@link #toString()} method in a SQL query, because
+	 * <b>Don't use this {@code toString()} method in a SQL query, because
 	 * the default value is not escaped correctly</b>
 	 *
 	 * @see java.lang.Object#toString()
@@ -76,12 +76,9 @@ public class SQLField<E extends SQLElement<E>, T> {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (!(obj instanceof SQLField)) return false;
-		SQLField<?, ?> f = (SQLField<?, ?>) obj;
-		if (!f.getName().equals(getName())) return false;
-		if (!f.sqlElemClass.equals(sqlElemClass)) return false;
-		return true;
+		return obj instanceof SQLField<?, ?> f
+				&& f.getName().equals(getName())
+				&& f.sqlElemClass.equals(sqlElemClass);
 	}
 
 	@Override

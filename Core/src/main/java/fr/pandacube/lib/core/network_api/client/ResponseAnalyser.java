@@ -35,7 +35,7 @@ public class ResponseAnalyser {
 		if (line == null)
 			throw new IOException("Not enough data to read second line of response.");
 
-		int data_size = 0;
+		int data_size;
 		try {
 			data_size = Integer.parseInt(line);
 		} catch (NumberFormatException e) {
@@ -45,7 +45,7 @@ public class ResponseAnalyser {
 		// lecture du reste
 		StringBuilder sB_data = new StringBuilder();
 		char[] c = new char[100];
-		int nbC = 0;
+		int nbC;
 		while ((nbC = in.read(c)) != -1)
 			sB_data.append(c, 0, nbC);
 		data = sB_data.toString();

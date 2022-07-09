@@ -10,11 +10,11 @@ import static fr.pandacube.lib.core.util.ThrowableUtil.wrapEx;
 
 @ConcreteWrapper(WorldVersion.__concrete.class)
 public interface WorldVersion extends ReflectWrapperI {
-    public static final ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.WorldVersion"));
+    ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.WorldVersion"));
 
 
 
-    public static class __concrete extends ReflectWrapper implements WorldVersion {
+    class __concrete extends ReflectWrapper implements WorldVersion {
         private __concrete(Object obj) {
             super(obj);
         }

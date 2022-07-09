@@ -114,16 +114,5 @@ public abstract class ChatStatic {
 	}
 	
 	
-	
-	
-	
-//	public static void main(String[] args) {
-//		for (Chat c : new Chat[] {
-//				chat(),
-//				text("toto").color(NamedTextColor.GRAY),
-//				legacyText("tot§9o").color(NamedTextColor.GRAY),
-//		}) {
-//			System.out.println(GsonComponentSerializer.gson().serialize(c.getAdv()));
-//		}
-//	}
+
 }

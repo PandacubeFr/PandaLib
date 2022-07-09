@@ -6,12 +6,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Objects;
 
 import com.google.gson.JsonSyntaxException;
 
 public class ServerPropertyFile {
 
-	private transient File file;
+	private final transient File file;
 	
 	private String name = "default_name";
 	private String memory = "512M";
@@ -22,8 +23,7 @@ public class ServerPropertyFile {
 	private boolean run = true;
 
 	public ServerPropertyFile(File f) {
-		if (f == null) throw new IllegalArgumentException("f ne doit pas être null");
-		file = f;
+		file = Objects.requireNonNull(f, "f");
 
 	}
 
@@ -101,7 +101,7 @@ public class ServerPropertyFile {
 	}
 
 	public void setMemory(String m) {
-		if (m == null || !m.matches("^[0-9]+[mgMG]$")) throw new IllegalArgumentException();
+		if (m == null || !m.matches("^\\d+[mgMG]$")) throw new IllegalArgumentException();
 		memory = m;
 	}
 

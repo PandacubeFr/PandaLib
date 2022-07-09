@@ -10,13 +10,12 @@ public class ColorUtil {
 	/*
 	 * Rainbow
 	 */
-	private static List<Color> rainbowColors = new ArrayList<>();
+	private static final List<Color> rainbowColors = new ArrayList<>();
 	
 	/**
 	 * Get a rainbow color
 	 * @param variation from 0 (include) to 1 (exclude).
 	 * 0 is red, 1/6 is yellow, 2/6 is green, 3/6 is cyan, 4/6 is blue, 5/6 is magenta
-	 * @return
 	 */
 	public static Color getRainbowColor(double variation) {
 		synchronized (rainbowColors) {

@@ -2,10 +2,11 @@ package fr.pandacube.lib.core.db;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SQLOrderBy<E extends SQLElement<E>> {
 
-	private List<OBField> orderByFields = new ArrayList<>();
+	private final List<OBField> orderByFields = new ArrayList<>();
 
 	/**
 	 * Construit une nouvelle clause ORDER BY
@@ -45,14 +46,9 @@ public class SQLOrderBy<E extends SQLElement<E>> {
 	}
 
 	/* package */ String toSQL() {
-		String ret = "";
-		boolean first = true;
-		for (OBField f : orderByFields) {
-			if (!first) ret += ", ";
-			first = false;
-			ret += "`" + f.field.getName() + "` " + f.direction.name();
-		}
-		return ret;
+		return orderByFields.stream()
+				.map(f -> "`" + f.field.getName() + "` " + f.direction.name())
+				.collect(Collectors.joining(", "));
 	}
 
 	@Override
@@ -72,7 +68,7 @@ public class SQLOrderBy<E extends SQLElement<E>> {
 	}
 
 	private enum Direction {
-		ASC, DESC;
+		ASC, DESC
 	}
 	
 	

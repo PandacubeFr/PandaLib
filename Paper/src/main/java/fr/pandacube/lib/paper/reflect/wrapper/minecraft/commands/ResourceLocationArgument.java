@@ -12,8 +12,9 @@ public class ResourceLocationArgument extends ReflectWrapperTyped<ArgumentType<?
     public static final NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.commands.arguments.ResourceLocationArgument"));
     private static final Reflect.ReflectMethod<?> id = wrapEx(() -> MAPPING.mojMethod("id"));
 
-    public static ArgumentType<?> id() {
-        return (ArgumentType<?>) wrapReflectEx(() -> id.invokeStatic());
+    @SuppressWarnings("unchecked")
+    public static ArgumentType<Object> id() {
+        return (ArgumentType<Object>) wrapReflectEx(() -> id.invokeStatic());
     }
 
     protected ResourceLocationArgument(Object obj) {

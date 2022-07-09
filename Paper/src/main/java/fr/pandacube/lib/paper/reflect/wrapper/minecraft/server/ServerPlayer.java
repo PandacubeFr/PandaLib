@@ -1,5 +1,7 @@
 package fr.pandacube.lib.paper.reflect.wrapper.minecraft.server;
 
+import org.bukkit.entity.Player;
+
 import fr.pandacube.lib.core.util.Reflect;
 import fr.pandacube.lib.paper.reflect.NMSReflect;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.DamageSource;
@@ -29,6 +31,11 @@ public class ServerPlayer extends Entity { // in NMS, ServerPlayer is not a dire
 
     public ServerGamePacketListenerImpl connection() {
         return wrap(wrapReflectEx(() -> connection.getValue(__getRuntimeInstance())), ServerGamePacketListenerImpl.class);
+    }
+
+    @Override
+    public Player getBukkitEntity() {
+        return (Player) super.getBukkitEntity();
     }
 
     protected ServerPlayer(Object obj) {

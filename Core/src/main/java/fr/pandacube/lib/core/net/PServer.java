@@ -17,25 +17,25 @@ import com.google.common.base.MoreObjects;
 import fr.pandacube.lib.core.util.Log;
 
 public class PServer extends Thread implements Closeable {
-	private static AtomicInteger connectionCounterId = new AtomicInteger(0);
+	private static final AtomicInteger connectionCounterId = new AtomicInteger(0);
 
-	private int port;
+	private final int port;
 	private ServerSocket socket;
-	private String socketName;
+	private final String socketName;
 
-	private List<TCPServerClientConnection> clients = Collections.synchronizedList(new ArrayList<>());
+	private final List<TCPServerClientConnection> clients = Collections.synchronizedList(new ArrayList<>());
 
-	private AtomicBoolean isClosed = new AtomicBoolean(false);
+	private final AtomicBoolean isClosed = new AtomicBoolean(false);
 	
 
-	private List<PPacketListener<PPacket>> globalPacketListeners = Collections.synchronizedList(new ArrayList<>());
-	private List<PSocketConnectionListener> clientConnectionListeners = Collections.synchronizedList(new ArrayList<>());
+	private final List<PPacketListener<PPacket>> globalPacketListeners = Collections.synchronizedList(new ArrayList<>());
+	private final List<PSocketConnectionListener> clientConnectionListeners = Collections.synchronizedList(new ArrayList<>());
 	
 	
 	
-	private String password;
+	private final String password;
 
-	public PServer(int port, String sckName, String password) throws IOException {
+	public PServer(int port, String sckName, String password) {
 		super("PServer " + sckName);
 		setDaemon(true);
 		if (port <= 0 || port > 65535) throw new IllegalArgumentException("le numéro de port est invalide");
@@ -59,17 +59,11 @@ public class PServer extends Thread implements Closeable {
 				socketClient.setSendBufferSize(PSocket.NETWORK_TCP_BUFFER_SIZE);
 				socketClient.setSoTimeout(PSocket.NETWORK_TIMEOUT);
 
-				try {
-					@SuppressWarnings("resource")
-					TCPServerClientConnection co = new TCPServerClientConnection(socketClient,
-							connectionCounterId.getAndIncrement());
-					co.start();
-				} catch (IOException e) {
-					Log.severe("Connexion impossible avec " + socketClient.getInetAddress());
-				}
+				TCPServerClientConnection co = new TCPServerClientConnection(socketClient,
+						connectionCounterId.getAndIncrement());
+				co.start();
 			}
-		} catch(SocketException e) {
-			
+		} catch (SocketException ignored) {
 		} catch (Exception e) {
 			Log.warning("Plus aucune connexion ne peux être acceptée", e);
 		}
@@ -97,7 +91,7 @@ public class PServer extends Thread implements Closeable {
 		
 		boolean loggedIn;
 
-		private TCPServerClientConnection(Socket s, int coId) throws IOException {
+		private TCPServerClientConnection(Socket s, int coId) {
 			super(s, "Conn#" + coId + " via TCPSv " + socketName, password);
 			addConnectionListener(new PSocketConnectionListener() {
 				@Override
@@ -114,16 +108,16 @@ public class PServer extends Thread implements Closeable {
 					clientConnectionListeners.forEach(l -> l.onConnect(connection));
 				}
 			});
-			addPacketListener((conn, packet) -> {
-				globalPacketListeners.forEach(l -> {
-					try {
-						l.onPacketReceive(conn, packet);
-					} catch (Exception e) {
-						Log.severe("Exception while calling PPacketListener.onPacketReceive().", e);
-						sendSilently(PPacketAnswer.buildExceptionPacket(packet, e.toString()));
-					}
-				});
-			});
+			addPacketListener((conn, packet) ->
+					globalPacketListeners.forEach(l -> {
+						try {
+							l.onPacketReceive(conn, packet);
+						} catch (Exception e) {
+							Log.severe("Exception while calling PPacketListener.onPacketReceive().", e);
+							sendSilently(PPacketAnswer.buildExceptionPacket(packet, e.toString()));
+						}
+					})
+			);
 		}
 
 	}
@@ -137,7 +131,7 @@ public class PServer extends Thread implements Closeable {
 			clients.forEach(PSocket::close);
 
 			socket.close();
-		} catch (IOException e) {}
+		} catch (IOException ignored) {}
 	}
 
 	public boolean isClosed() {

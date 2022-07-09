@@ -25,6 +25,9 @@ public abstract class ReflectWrapper implements ReflectWrapperI {
 	public static <W extends ReflectWrapperI> W wrap(Object runtimeObj) {
 		return wrap(runtimeObj, null);
 	}
+	public static <T, W extends ReflectWrapperTypedI<T>> W wrapTyped(T runtimeObj, Class<W> expectedWrapperClass) {
+		return wrap(runtimeObj, expectedWrapperClass);
+	}
 	public static <W extends ReflectWrapperI> W wrap(Object runtimeObj, Class<W> expectedWrapperClass) {
 		if (runtimeObj == null)
 			return null;

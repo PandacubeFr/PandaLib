@@ -1,9 +1,6 @@
 package fr.pandacube.lib.paper.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,11 +17,11 @@ public class AABBBlockGroup implements Iterable<BlockVector> {
 	public final List<AABBBlock> aabbBlocks;
 	
 	public AABBBlockGroup(Collection<AABBBlock> in) {
-		aabbBlocks = Collections.unmodifiableList(new ArrayList<>(in));
+		aabbBlocks = List.copyOf(in);
 	}
 	
 	public AABBBlockGroup(AABBBlock... in) {
-		aabbBlocks = Collections.unmodifiableList(Arrays.asList(in));
+		aabbBlocks = List.of(in);
 	}
 	
 	
@@ -42,7 +39,7 @@ public class AABBBlockGroup implements Iterable<BlockVector> {
 	}
 	
 	public Vector getRandomPosition() {
-		double[] freq = aabbBlocks.stream().mapToDouble(b -> b.getVolume()).toArray();
+		double[] freq = aabbBlocks.stream().mapToDouble(AABBBlock::getVolume).toArray();
 		int i = RandomUtil.randomIndexOfFrequencies(freq);
 		return aabbBlocks.get(i).getRandomPosition();
 	}
@@ -56,7 +53,7 @@ public class AABBBlockGroup implements Iterable<BlockVector> {
 	
 	@Override
 	public Iterator<BlockVector> iterator() {
-		return IteratorIterator.ofCollectionOfIterator(aabbBlocks.stream().map(b -> b.iterator()).toList());
+		return IteratorIterator.ofCollectionOfIterator(aabbBlocks.stream().map(AABBBlock::iterator).toList());
 	}
 	
 }

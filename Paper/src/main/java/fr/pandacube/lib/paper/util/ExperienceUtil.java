@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 
 /**
  * A utility for managing Player experience properly.<br/>
- * https://gist.github.com/Jikoo/30ec040443a4701b8980
+ * <a href="https://gist.github.com/Jikoo/30ec040443a4701b8980">Github Gist - Jikoo</a>
  *
  * @author Jikoo
  */
@@ -13,7 +13,7 @@ public class ExperienceUtil {
 	/**
 	 * Calculates a player's total exp based on level and progress to next.
 	 *
-	 * @see http://minecraft.gamepedia.com/Experience#Leveling_up
+	 * @see <a href="http://minecraft.gamepedia.com/Experience#Leveling_up">Experience (#leveling up) - Minecraft Wiki</a>
 	 *
 	 * @param player the Player
 	 *
@@ -26,14 +26,7 @@ public class ExperienceUtil {
 	/**
 	 * Calculates total experience based on level.
 	 *
-	 * @see http://minecraft.gamepedia.com/Experience#Leveling_up
-	 *
-	 *      "One can determine how much experience has been collected to reach a
-	 *      level using the equations:
-	 *
-	 *      Total Experience = [Level]2 + 6[Level] (at levels 0-15)
-	 *      2.5[Level]2 - 40.5[Level] + 360 (at levels 16-30)
-	 *      4.5[Level]2 - 162.5[Level] + 2220 (at level 31+)"
+	 * @see <a href="http://minecraft.gamepedia.com/Experience#Leveling_up">Experience (#leveling up) - Minecraft Wiki</a>
 	 *
 	 * @param level the level
 	 *
@@ -60,7 +53,7 @@ public class ExperienceUtil {
 	}
 
 	/**
-	 * @see http://minecraft.gamepedia.com/Experience#Leveling_up
+	 * @see <a href="http://minecraft.gamepedia.com/Experience#Leveling_up">Experience (#leveling up) - Minecraft Wiki</a>
 	 *
 	 *      "The formulas for figuring out how many experience orbs you need to
 	 *      get to the next level are as follows:

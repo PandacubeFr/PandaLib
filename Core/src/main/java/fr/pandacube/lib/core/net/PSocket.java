@@ -40,17 +40,17 @@ public class PSocket extends Thread implements Closeable {
 
 	private boolean server = false;
 	private Socket socket;
-	private SocketAddress addr;
+	private final SocketAddress addr;
 	private DataInputStream in;
 	private DataOutputStream out;
-	private Object outSynchronizer = new Object();
+	private final Object outSynchronizer = new Object();
 	private String password;
 	
-	private AtomicBoolean isClosed = new AtomicBoolean(false);
+	private final AtomicBoolean isClosed = new AtomicBoolean(false);
 
-	private List<PPacketListener<PPacket>> packetListeners = Collections.synchronizedList(new ArrayList<>());
-	private List<PSocketConnectionListener> connectionListeners = Collections.synchronizedList(new ArrayList<>());
-	private Map<Integer, PPacketListener<PPacketAnswer>> answersCallbacks = Collections.synchronizedMap(new HashMap<>());
+	private final List<PPacketListener<PPacket>> packetListeners = Collections.synchronizedList(new ArrayList<>());
+	private final List<PSocketConnectionListener> connectionListeners = Collections.synchronizedList(new ArrayList<>());
+	private final Map<Integer, PPacketListener<PPacketAnswer>> answersCallbacks = Collections.synchronizedMap(new HashMap<>());
 	
 	private int nextSendId = 0;
 
@@ -58,7 +58,7 @@ public class PSocket extends Thread implements Closeable {
 	 * Create a new PSocket that will connect to the specified SocketAddress.
 	 * @param a The target server to connect to
 	 * @param connName the name of the connection, used to name the Thread used to receive the packet.
-	 * @param the password to send to the server.
+	 * @param pass the password to send to the server.
 	 */
 	public PSocket(SocketAddress a, String connName, String pass) {
 		super("PSocket " + connName);
@@ -115,7 +115,6 @@ public class PSocket extends Thread implements Closeable {
 				}
 				send(PPacketAnswer.buildLoginOkPacket(packet));
 				// login ok at this point
-				password = null;
 			}
 			else {
 				send(PPacket.buildLoginPacket(password));
@@ -136,9 +135,9 @@ public class PSocket extends Thread implements Closeable {
 					return;
 				}
 				// login ok at this point
-				password = null;
 			}
-			
+			password = null;
+
 			socket.setSoTimeout(NETWORK_TIMEOUT);
 			
 			Log.info(getName() + " connected.");
@@ -189,7 +188,6 @@ public class PSocket extends Thread implements Closeable {
 	/**
 	 * Return the packet read in the socket, or null if the packet is in a bad format.
 	 * @return the packet
-	 * @throws IOException
 	 * 
 	 */
 	private PPacket readPacket() throws IOException {
@@ -232,8 +230,6 @@ public class PSocket extends Thread implements Closeable {
 	
 	/**
 	 * Send the provided packet, without waiting for an answer.
-	 * @param packet
-	 * @throws IOException
 	 */
 	public void send(PPacket packet) throws IOException {
 		if (packet == null)
@@ -271,7 +267,7 @@ public class PSocket extends Thread implements Closeable {
 	public void sendSilently(PPacket packet) {
 		try {
 			send(packet);
-		} catch (IOException e) {}
+		} catch (IOException ignored) {}
 	}
 	
 	

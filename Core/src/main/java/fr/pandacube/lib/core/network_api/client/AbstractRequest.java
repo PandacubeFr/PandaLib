@@ -6,7 +6,7 @@ import java.io.PrintStream;
 public abstract class AbstractRequest {
 
 	private final String pass;
-	private String command;
+	private final String command;
 	private String data;
 
 	protected AbstractRequest(String cmd, String p) {

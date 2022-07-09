@@ -1,5 +1,12 @@
 package fr.pandacube.lib.core.db;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.gson.JsonObject;
+import fr.pandacube.lib.core.util.EnumUtil;
+import fr.pandacube.lib.core.util.Json;
+import fr.pandacube.lib.core.util.Log;
+
 import java.lang.reflect.Modifier;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -17,19 +24,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.gson.JsonObject;
-
-import fr.pandacube.lib.core.util.EnumUtil;
-import fr.pandacube.lib.core.util.Json;
-import fr.pandacube.lib.core.util.Log;
-
 public abstract class SQLElement<E extends SQLElement<E>> {
 	/** cache for fields for each subclass of SQLElement */
 	/* package */ static final Map<Class<? extends SQLElement<?>>, SQLFieldMap<? extends SQLElement<?>>> fieldsCache = new HashMap<>();
 
-	DBConnection db = DB.getConnection();
+	private final DBConnection db = DB.getConnection();
 
 	private boolean stored = false;
 	private int id;
@@ -109,7 +108,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 			field.setAccessible(true);
 			try {
 				Object val = field.get(null);
-				if (val == null || !(val instanceof SQLField)) {
+				if (!(val instanceof SQLField)) {
 					Log.severe("[ORM] The field " + field.getDeclaringClass().getName() + "." + field.getName() + " can't be initialized because its value is null.");
 					continue;
 				}
@@ -122,7 +121,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 				checkedF.setSQLElementType((Class<E>) getClass());
 				listToFill.addField((SQLField<?, ?>) val);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
-				Log.severe("Can't get value of static field " + field.toString(), e);
+				Log.severe("Can't get value of static field " + field, e);
 			}
 		}
 
@@ -147,20 +146,18 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 		if (!fields.containsValue(sqlField)) // should not append at runtime because of generic type check at compilation
 			throw new IllegalStateException("In the table "+getClass().getName()+ ": the field asked for modification is not initialized properly.");
 
-		boolean modify = false;
 		if (value == null) {
-			if (sqlField.canBeNull || (sqlField.autoIncrement && !stored)) modify = true;
-			else
+			if (!sqlField.canBeNull && (!sqlField.autoIncrement || stored))
 				throw new IllegalArgumentException(
 						"SQLField '" + sqlField.getName() + "' of " + getClass().getName() + " is a NOT NULL field");
 		}
-		else if (sqlField.type.isAssignableFrom(value)) modify = true;
-		else
+		else if (!sqlField.type.isInstance(value)) {
 			throw new IllegalArgumentException("SQLField '" + sqlField.getName() + "' of " + getClass().getName()
-					+ " type is '" + sqlField.type.toString() + "' and can't accept values of type "
+					+ " type is '" + sqlField.type + "' and can't accept values of type "
 					+ value.getClass().getName());
+		}
 
-		if (modify) if (!values.containsKey(sqlField)) {
+		if (!values.containsKey(sqlField)) {
 			values.put(sqlField, value);
 			if (setModified) modifiedSinceLastSave.add(sqlField.getName());
 		}
@@ -227,7 +224,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 	@SuppressWarnings("unchecked")
 	public E save() throws DBException {
 		if (!isValidForSave())
-			throw new IllegalStateException(toString() + " has at least one undefined value and can't be saved.");
+			throw new IllegalStateException(this + " has at least one undefined value and can't be saved.");
 
 		DB.initTable((Class<E>)getClass());
 		try {
@@ -251,24 +248,24 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 				// values
 				values.put(fields.get("id"), null);
 
-				String concat_vals = "";
-				String concat_fields = "";
+				StringBuilder concatValues = new StringBuilder();
+				StringBuilder concatFields = new StringBuilder();
 				List<Object> psValues = new ArrayList<>();
 
 				boolean first = true;
 				for (Map.Entry<SQLField<E, ?>, Object> entry : values.entrySet()) {
 					if (!first) {
-						concat_vals += ",";
-						concat_fields += ",";
+						concatValues.append(",");
+						concatFields.append(",");
 					}
 					first = false;
-					concat_vals += " ? ";
-					concat_fields += "`" + entry.getKey().getName() + "`";
+					concatValues.append(" ? ");
+					concatFields.append("`").append(entry.getKey().getName()).append("`");
 					addValueToSQLObjectList(psValues, entry.getKey(), entry.getValue());
 				}
 				
 				try (PreparedStatement ps = db.getNativeConnection().prepareStatement(
-						"INSERT INTO " + DB.tablePrefix + tableName() + "  (" + concat_fields + ") VALUES (" + concat_vals + ")",
+						"INSERT INTO " + DB.tablePrefix + tableName() + "  (" + concatFields + ") VALUES (" + concatValues + ")",
 						Statement.RETURN_GENERATED_KEYS)) {
 
 					int i = 1;
@@ -300,7 +297,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 				jValue = ((SQLCustomType)field.type).javaToDbConv.apply(jValue);
 			} catch (Exception e) {
 				throw new DBException("Error while converting value of field '"+field.getName()+"' with SQLCustomType from "+field.type.getJavaType()
-						+"(java source) to "+((SQLCustomType<?, ?>)field.type).intermediateJavaType+"(jdbc destination). The original value is '"+jValue.toString()+"'", e);
+						+"(java source) to "+((SQLCustomType<?, ?>)field.type).intermediateJavaType+"(jdbc destination). The original value is '"+jValue+"'", e);
 			}
 		}
 		list.add(jValue);
@@ -346,8 +343,6 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 	}
 
 	protected static class SQLFieldMap<E extends SQLElement<E>> extends LinkedHashMap<String, SQLField<E, ?>> {
-		private static final long serialVersionUID = 1L;
-
 		private final Class<E> sqlElemClass;
 
 		private SQLFieldMap(Class<E> elemClass) {
@@ -382,7 +377,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 	
 	@Override
 	public boolean equals(Object o) {
-		if (o == null || !(getClass().isInstance(o))) return false;
+		if (!(getClass().isInstance(o))) return false;
 		SQLElement<?> oEl = (SQLElement<?>) o;
 		if (oEl.getId() == null) return false;
 		return oEl.getId().equals(getId());
@@ -390,7 +385,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 	
 	@Override
 	public int hashCode() {
-		return super.hashCode();
+		return getClass().hashCode() ^ Objects.hashCode(getId());
 	}
 	
 	
@@ -466,12 +461,12 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 
 	public static final SQLType<Double> DOUBLE = new SQLType<>("DOUBLE", Double.class);
 	
-	public static final SQLType<String> CHAR(int charCount) {
+	public static SQLType<String> CHAR(int charCount) {
 		if (charCount <= 0) throw new IllegalArgumentException("charCount must be positive.");
 		return new SQLType<>("CHAR(" + charCount + ")", String.class);
 	}
 
-	public static final SQLType<String> VARCHAR(int charCount) {
+	public static SQLType<String> VARCHAR(int charCount) {
 		if (charCount <= 0) throw new IllegalArgumentException("charCount must be positive.");
 		return new SQLType<>("VARCHAR(" + charCount + ")", String.class);
 	}
@@ -479,29 +474,29 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 	public static final SQLType<String> TEXT = new SQLType<>("TEXT", String.class);
 	public static final SQLType<String> STRING = TEXT;
 
-	public static final SQLType<byte[]> BINARY(int byteCount) {
+	public static SQLType<byte[]> BINARY(int byteCount) {
 		if (byteCount <= 0) throw new IllegalArgumentException("byteCount must be positive.");
 		return new SQLType<>("BINARY(" + byteCount + ")", byte[].class);
 	}
 
-	public static final SQLType<byte[]> VARBINARY(int byteCount) {
+	public static SQLType<byte[]> VARBINARY(int byteCount) {
 		if (byteCount <= 0) throw new IllegalArgumentException("byteCount must be positive.");
 		return new SQLType<>("VARBINARY(" + byteCount + ")", byte[].class);
 	}
 
 	public static final SQLType<byte[]> BLOB = new SQLType<>("BLOB", byte[].class);
 
-	public static final <T extends Enum<T>> SQLType<T> ENUM(Class<T> enumType) {
+	public static <T extends Enum<T>> SQLType<T> ENUM(Class<T> enumType) {
 		if (enumType == null) throw new IllegalArgumentException("enumType can't be null.");
-		String enumStr = "'";
+		StringBuilder enumStr = new StringBuilder("'");
 		boolean first = true;
 		for (T el : enumType.getEnumConstants()) {
-			if (!first) enumStr += "', '";
+			if (!first) enumStr.append("', '");
 			first = false;
-			enumStr += el.name();
+			enumStr.append(el.name());
 
 		}
-		enumStr += "'";
+		enumStr.append("'");
 
 		return new SQLCustomType<>("VARCHAR(" + enumStr + ")", String.class, enumType, s -> EnumUtil.searchEnum(enumType, s), Enum::name);
 	}

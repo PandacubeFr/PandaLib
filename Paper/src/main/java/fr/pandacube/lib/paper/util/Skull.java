@@ -19,8 +19,8 @@ import fr.pandacube.lib.core.chat.Chat;
  * Represents some special mob heads, also support creating player skulls and custom skulls.
  *
  * @author xigsag, SBPrime
- * 
- * @see https://github.com/TigerHix/Hex-Utils/blob/9954159a323d12733b29c287a56980991cee2948/hex/util/Skull.java
+ *
+ * @see <a href="https://github.com/TigerHix/Hex-Utils/blob/9954159a323d12733b29c287a56980991cee2948/hex/util/Skull.java">github.com/TigerHix/Hex-Utils/hex/util/Skull.java</a>
  */
 public enum Skull {
 
@@ -60,9 +60,9 @@ public enum Skull {
     TNT("MHF_TNT"),
     DYNAMITE("MHF_TNT2");
 
-    private String name;
+    private final String name;
 
-    private Skull(String mcName) {
+    Skull(String mcName) {
         name = mcName;
     }
 
@@ -102,7 +102,7 @@ public enum Skull {
         	meta.displayName(dispName.getAdv());
         
         if (lore != null)
-        	meta.lore(lore.stream().map(c -> c.getAdv()).collect(Collectors.toList()));
+        	meta.lore(lore.stream().map(Chat::getAdv).collect(Collectors.toList()));
         
         itemStack.setItemMeta(meta);
         return itemStack;
@@ -175,7 +175,7 @@ public enum Skull {
         	headMeta.displayName(dispName.getAdv());
         
         if (lore != null)
-        	headMeta.lore(lore.stream().map(c -> c.getAdv()).collect(Collectors.toList()));
+        	headMeta.lore(lore.stream().map(Chat::getAdv).collect(Collectors.toList()));
         
         head.setItemMeta(headMeta);
         

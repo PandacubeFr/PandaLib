@@ -32,13 +32,13 @@ import fr.pandacube.lib.core.util.Log;
  */
 public class PlayerFinder {
 	
-	private static Cache<UUID, String> playerLastKnownName = CacheBuilder.newBuilder()
+	private static final Cache<UUID, String> playerLastKnownName = CacheBuilder.newBuilder()
 			.expireAfterWrite(10, TimeUnit.MINUTES)
 			.maximumSize(1000)
 			.build();
 	
 	record PlayerIdCacheKey(String pName, boolean old) { }
-	private static Cache<PlayerIdCacheKey, UUID> playerId = CacheBuilder.newBuilder()
+	private static final Cache<PlayerIdCacheKey, UUID> playerId = CacheBuilder.newBuilder()
 			.expireAfterWrite(2, TimeUnit.MINUTES)
 			.maximumSize(1000)
 			.build();
@@ -142,7 +142,7 @@ public class PlayerFinder {
 
 	public static boolean isValidPlayerName(String name) {
 		if (name == null) return false;
-		return name.matches("[0-9a-zA-Z_.]{2,20}");
+		return name.matches("[\\da-zA-Z_.]{2,20}");
 	}
 
 	public static SQLPlayer getDBPlayer(UUID id) throws DBException {
@@ -167,7 +167,7 @@ public class PlayerFinder {
 	};
 	
 	@SuppressWarnings("unchecked")
-	public static final <S> SuggestionsSupplier<S> TAB_PLAYER_OFFLINE() {
+	public static <S> SuggestionsSupplier<S> TAB_PLAYER_OFFLINE() {
 		return (SuggestionsSupplier<S>) TAB_PLAYER_OFFLINE;
 	}
 	
@@ -188,12 +188,12 @@ public class PlayerFinder {
 	public static int OLD_NICK_MULTIPLIER = 2;
 	
 	
-	private static List<List<Character>> CONFUSABLE_CHARACTERS = ImmutableList.of(
+	private static final List<List<Character>> CONFUSABLE_CHARACTERS = ImmutableList.of(
 			ImmutableList.of('o', '0'),
 			ImmutableList.of('i', '1', 'l'),
 			ImmutableList.of('b', '8')
 	);
-	private static ToIntBiFunction<Character, Character> CHAR_DISTANCE = (c1, c2) -> {
+	private static final ToIntBiFunction<Character, Character> CHAR_DISTANCE = (c1, c2) -> {
 		if (c1.equals(c2))
 			return 0;
 		for (List<Character> charTab : CONFUSABLE_CHARACTERS) {
@@ -205,7 +205,7 @@ public class PlayerFinder {
 	
 	record NamesCacheResult(String name, String lowercaseName, UUID id) { } // Java 16
 	
-	private static LoadingCache<String, List<NamesCacheResult>> namesCache = CacheBuilder.newBuilder()
+	private static final LoadingCache<String, List<NamesCacheResult>> namesCache = CacheBuilder.newBuilder()
 			.expireAfterWrite(2, TimeUnit.MINUTES)
 			.maximumSize(1)
 			.build(CacheLoader.from((String k) -> {
@@ -221,7 +221,7 @@ public class PlayerFinder {
 				return cached;
 			}));
 	
-	private static LoadingCache<String, SearchResponse> searchCache = CacheBuilder.newBuilder()
+	private static final LoadingCache<String, SearchResponse> searchCache = CacheBuilder.newBuilder()
 			.expireAfterWrite(2, TimeUnit.MINUTES)
 			.maximumSize(100)
 			.build(CacheLoader.from((String query) -> {

@@ -9,10 +9,10 @@ import static fr.pandacube.lib.core.util.ThrowableUtil.wrapEx;
 
 @ConcreteWrapper(ProgressListener.__concrete.class)
 public interface ProgressListener extends ReflectWrapperI {
-    public static final NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.util.ProgressListener"));
+    NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.util.ProgressListener"));
 
 
-    public class __concrete extends ReflectWrapper implements ProgressListener {
+    class __concrete extends ReflectWrapper implements ProgressListener {
         protected __concrete(Object obj) {
             super(obj);
         }

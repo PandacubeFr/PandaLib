@@ -30,11 +30,11 @@ public class GUIInventory implements Listener {
 	
 	public static final Map<Enchantment, Integer> FAKE_ENCHANT = ImmutableMap.of(Enchantment.DURABILITY, 1);
 
-	private Player player;
-	private Inventory inv;
+	private final Player player;
+	private final Inventory inv;
 	private Consumer<InventoryCloseEvent> onCloseEvent;
 	private boolean isOpened = false;
-	private Map<Integer, Consumer<InventoryClickEvent>> onClickEvents;
+	private final Map<Integer, Consumer<InventoryClickEvent>> onClickEvents;
 
 	public GUIInventory(Player p, int nbLines, Chat title, Consumer<InventoryCloseEvent> closeEventAction,
 			Plugin pl) {

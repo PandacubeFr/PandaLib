@@ -141,14 +141,11 @@ public class Type implements Comparable<Type> {
 	
 	/* package */ static Type parse(StringReader desc) {
 		try {
-			StringBuilder sbRaw = new StringBuilder();
 			int arrayDepth = 0;
 			char c;
 			while ((c = (char) desc.read()) == '[') {
-				sbRaw.append(c);
 				arrayDepth++;
 			}
-			sbRaw.append(c);
 			String type = switch(c) {
 			case 'Z' -> "boolean";
 			case 'B' -> "byte";
@@ -162,10 +159,8 @@ public class Type implements Comparable<Type> {
 				StringBuilder sbClass = new StringBuilder();
 				char r;
 				while ((r = (char) desc.read()) != ';') {
-					sbRaw.append(c);
     				sbClass.append(r);
 				}
-				sbRaw.append(c);
 				yield NMSReflect.binaryClassName(sbClass.toString());
 			}
 			default -> "void";

@@ -103,13 +103,7 @@ public class GifDecoder {
 	protected ArrayList<GifFrame> frames; // frames read from current file
 	protected int frameCount;
 
-	static class GifFrame {
-		public GifFrame(BufferedImage im, int del) {
-			image = im;
-			delay = del;
-		}
-		public BufferedImage image;
-		public int delay;
+	record GifFrame(BufferedImage image, int delay) {
 	}
 
 	/**
@@ -184,12 +178,7 @@ public class GifDecoder {
 				if (lastDispose == 2) {
 					// fill last image rect area with background color
 					Graphics2D g = image.createGraphics();
-					Color c = null;
-					if (transparency) {
-						c = new Color(0, 0, 0, 0); 	// assume background is transparent
-					} else {
-						c = new Color(lastBgColor); // use given background color
-					}
+					Color c = transparency ? new Color(0, 0, 0, 0) : new Color(lastBgColor);
 					g.setColor(c);
 					g.setComposite(AlphaComposite.Src); // replace area
 					g.fill(lastRect);
@@ -270,7 +259,7 @@ public class GifDecoder {
 	/**
 	 * Reads GIF image from stream
 	 *
-	 * @param BufferedInputStream containing GIF file.
+	 * @param is containing GIF file.
 	 * @return read status code (0 = no errors)
 	 */
 	public int read(BufferedInputStream is) {
@@ -286,7 +275,7 @@ public class GifDecoder {
 			}
 			try {
 				is.close();
-			} catch (IOException e) {
+			} catch (IOException ignored) {
 			}
 		} else {
 			status = STATUS_OPEN_ERROR;
@@ -297,7 +286,7 @@ public class GifDecoder {
 	/**
 	 * Reads GIF image from stream
 	 *
-	 * @param InputStream containing GIF file.
+	 * @param is containing GIF file.
 	 * @return read status code (0 = no errors)
 	 */
 	public int read(InputStream is) {
@@ -315,7 +304,7 @@ public class GifDecoder {
 			}
 			try {
 				is.close();
-			} catch (IOException e) {
+			} catch (IOException ignored) {
 			}
 		} else {
 			status = STATUS_OPEN_ERROR;
@@ -334,7 +323,7 @@ public class GifDecoder {
 		status = STATUS_OK;
 		try {
 			name = name.trim().toLowerCase();
-			if ((name.indexOf("file:") >= 0) ||
+			if ((name.contains("file:")) ||
 				(name.indexOf(":/") > 0)) {
 				URL url = new URL(name);
 				in = new BufferedInputStream(url.openStream());
@@ -524,14 +513,14 @@ public class GifDecoder {
 		int n = 0;
 		if (blockSize > 0) {
 			try {
-				int count = 0;
+				int count;
 				while (n < blockSize) {
 					count = in.read(block, n, blockSize - n);
 					if (count == -1) 
 						break;
 					n += count;
 				}
-			} catch (IOException e) {
+			} catch (IOException ignored) {
 			}
 
 			if (n < blockSize) {
@@ -554,7 +543,7 @@ public class GifDecoder {
 		int n = 0;
 		try {
 			n = in.read(c);
-		} catch (IOException e) {
+		} catch (IOException ignored) {
 		}
 		if (n < nbytes) {
 			status = STATUS_FORMAT_ERROR;
@@ -595,11 +584,11 @@ public class GifDecoder {
 
 						case 0xff : // application extension
 							readBlock();
-							String app = "";
+							StringBuilder app = new StringBuilder();
 							for (int i = 0; i < 11; i++) {
-								app += (char) block[i];
+								app.append((char) block[i]);
 							}
-							if (app.equals("NETSCAPE2.0")) {
+							if (app.toString().equals("NETSCAPE2.0")) {
 								readNetscapeExt();
 							}
 							else
@@ -644,11 +633,11 @@ public class GifDecoder {
 	 * Reads GIF file header information.
 	 */
 	protected void readHeader() {
-		String id = "";
+		StringBuilder id = new StringBuilder();
 		for (int i = 0; i < 6; i++) {
-			id += (char) read();
+			id.append((char) read());
 		}
-		if (!id.startsWith("GIF")) {
+		if (!id.toString().startsWith("GIF")) {
 			status = STATUS_FORMAT_ERROR;
 			return;
 		}
@@ -769,9 +758,6 @@ public class GifDecoder {
 		lastRect = new Rectangle(ix, iy, iw, ih);
 		lastImage = image;
 		lastBgColor = bgColor;
-		/*int dispose = 0;
-		boolean transparency = false;
-		int delay = 0;*/
 		lct = null;
 	}
 

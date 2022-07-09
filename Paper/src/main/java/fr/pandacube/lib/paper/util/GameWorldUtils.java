@@ -17,7 +17,7 @@ import fr.pandacube.lib.core.util.RandomUtil;
 
 public class GameWorldUtils implements Listener {
 	
-	private static BiMap<String, World> gameWorld = new BiMap<>();
+	private static final BiMap<String, World> gameWorld = new BiMap<>();
 	
 	
 	public static World getOrLoadGameWorld(String world, Consumer<World> operationOnLoad) throws IOException {

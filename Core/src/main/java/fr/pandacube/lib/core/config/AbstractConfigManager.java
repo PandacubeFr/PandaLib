@@ -17,13 +17,11 @@ public abstract class AbstractConfigManager {
 	
 	/**
 	 * Implementation must close all closeable configuration (saving for example)
-	 * @throws IOException 
 	 */
 	public abstract void close() throws IOException;
 	
 	/**
 	 * Implementation must init all config data
-	 * @throws IOException 
 	 */
 	public abstract void init() throws IOException;
 	

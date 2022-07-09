@@ -12,8 +12,9 @@ public class GameProfileArgument extends ReflectWrapperTyped<ArgumentType<?>> {
     public static final NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.commands.arguments.GameProfileArgument"));
     private static final Reflect.ReflectMethod<?> gameProfile = wrapEx(() -> MAPPING.mojMethod("gameProfile"));
 
-    public static ArgumentType<?> gameProfile() {
-        return (ArgumentType<?>) wrapReflectEx(() -> gameProfile.invokeStatic());
+    @SuppressWarnings("unchecked")
+    public static ArgumentType<Object> gameProfile() {
+        return (ArgumentType<Object>) wrapReflectEx(() -> gameProfile.invokeStatic());
     }
 
     protected GameProfileArgument(Object obj) {

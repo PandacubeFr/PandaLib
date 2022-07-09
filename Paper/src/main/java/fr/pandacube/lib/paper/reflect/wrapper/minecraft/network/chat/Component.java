@@ -9,10 +9,10 @@ import static fr.pandacube.lib.core.util.ThrowableUtil.wrapEx;
 
 @ConcreteWrapper(Component.__concrete.class)
 public interface Component extends ReflectWrapperI {
-    public static final NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.network.chat.Component"));
+    NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.network.chat.Component"));
 
 
-    public class __concrete extends ReflectWrapper implements Component {
+    class __concrete extends ReflectWrapper implements Component {
         protected __concrete(Object obj) {
             super(obj);
         }

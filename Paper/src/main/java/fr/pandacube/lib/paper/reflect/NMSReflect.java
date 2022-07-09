@@ -139,9 +139,8 @@ public class NMSReflect {
 	/**
 	 * @param mojName the binary name of the desired class, on the mojang mapping.
 	 * @throws NullPointerException if there is no mapping for the provided Mojang mapped class.
-	 * @throws ClassNotFoundException if there is a mapping, but the runtime class was not found.
 	 */
-	public static ClassMapping mojClass(String mojName) throws ClassNotFoundException {
+	public static ClassMapping mojClass(String mojName) {
 		return Objects.requireNonNull(CLASSES_BY_MOJ.get(mojName), "Unable to find the Mojang mapped class '" + mojName + "'");
 	}
 	
@@ -339,7 +338,6 @@ public class NMSReflect {
 		 * @param mojParametersType the list of parameters of the method.
 		 * Each parameter type must be an instance of one of the following type:
 		 * {@link Type}, {@link Class}, {@link ReflectClass} or {@link ClassMapping}.
-		 * @return
 		 * @throws IllegalArgumentException if one of the parameter has an invalid type
 		 * @throws NullPointerException if one of the parameter is null, or if there is no mapping for the provided Mojang mapped method.
 		 * @throws ClassNotFoundException if there is no runtime class to represent one of the provided parametersType.
@@ -368,7 +366,6 @@ public class NMSReflect {
 		/**
 		 * 
 		 * @param mojName the Mojang mapped name of the field.
-		 * @return
 		 * @throws NullPointerException if there is no mapping for the provided Mojang mapped field.
 		 * @throws NoSuchFieldException if there is no runtime method to represent the provided method.
 		 */
@@ -393,9 +390,7 @@ public class NMSReflect {
 	    	String classToPrint = isObfClass ? obfName : mojName;
 	    	String classSimpleName = classToPrint.substring(classToPrint.lastIndexOf('.') + 1);
 	    	String htmlTitle = classSimpleName.equals(classToPrint) ? "" : (" title='" + classToPrint + "'");
-	    	String typeHTML = "<a href='#c" + id + "'" + htmlTitle + " class='cl'>" + classSimpleName + "</a>";
-			
-			return typeHTML;
+			return "<a href='#c" + id + "'" + htmlTitle + " class='cl'>" + classSimpleName + "</a>";
 		}
 		
 		
@@ -420,7 +415,7 @@ public class NMSReflect {
 			String classToPrint = obf ? obfName : mojName;
 			int packageSep = classToPrint.lastIndexOf('.');
 	    	String classSimpleName = classToPrint.substring(packageSep + 1);
-	    	String classPackages = classToPrint.substring(0, packageSep > 0 ? packageSep : 0);
+	    	String classPackages = classToPrint.substring(0, Math.max(packageSep, 0));
 	    	String classHTML = (packageSep >= 0 ? (classPackages + ".") : "") + "<b class='cl'>" + classSimpleName + "</b>";
 			
 			Type superClass = superClass(obf);
@@ -487,7 +482,7 @@ public class NMSReflect {
     
     
     
-    private static record MethodId(String name, List<Type> parametersType) implements Comparable<MethodId> {
+    private record MethodId(String name, List<Type> parametersType) implements Comparable<MethodId> {
     	@Override
     	public int compareTo(MethodId o) {
     		int cmp = name.compareTo(o.name);
@@ -497,14 +492,13 @@ public class NMSReflect {
     	}
     	
 		private String toHTML(boolean isObfClass, boolean isStatic, boolean isFinal) {
-				String paramsHTML = parametersType.stream().map(p -> p.toHTML(isObfClass)).collect(Collectors.joining(", "));
-				String cl = "mtd";
-				if (isStatic)
-					cl += " st";
-				if (isFinal)
-					cl += " fn";
-				String identifierHTML = "<span class='" + cl + "'>" + name + "</span>(" + paramsHTML + ")";
-			return identifierHTML;
+			String paramsHTML = parametersType.stream().map(p -> p.toHTML(isObfClass)).collect(Collectors.joining(", "));
+			String cl = "mtd";
+			if (isStatic)
+				cl += " st";
+			if (isFinal)
+				cl += " fn";
+			return "<span class='" + cl + "'>" + name + "</span>(" + paramsHTML + ")";
 		}
 		
 		public String toString() {
@@ -516,7 +510,7 @@ public class NMSReflect {
 
 
     
-    private static record MemberDesc<I extends Comparable<I>>(I identifier, Type returnType) {
+    private record MemberDesc<I extends Comparable<I>>(I identifier, Type returnType) {
 		private String toHTML(boolean isObfClass, boolean isStatic, boolean isFinal) {
 			String identifierHTML = "";
 			if (identifier instanceof MethodId mId)
@@ -541,7 +535,7 @@ public class NMSReflect {
 				
 				List<Type> paramsType = new ArrayList<>();
 				
-				while ((r = (char) descReader.read()) != ')') {
+				while (((char) descReader.read()) != ')') {
 					descReader.skip(-1);
 					paramsType.add(Type.parse(descReader));
 				}
@@ -565,8 +559,8 @@ public class NMSReflect {
     
     
     private static abstract class MemberMapping<I extends Comparable<I>, R extends ReflectMember<?, ?, ?, ?>> {
-    	private String htmlTypeChar;
-    	/* package */ MemberDesc<I> obfDesc, mojDesc;
+    	private final String htmlTypeChar;
+    	/* package */ final MemberDesc<I> obfDesc, mojDesc;
     	/* package */ ClassMapping declaringClass;
     	private MemberMapping(String htmlType, MemberDesc<I> obfDesc, MemberDesc<I> mojDesc) {
     		htmlTypeChar = htmlType;

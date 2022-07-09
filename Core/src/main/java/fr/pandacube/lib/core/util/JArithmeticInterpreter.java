@@ -53,7 +53,7 @@ pour les calculs (division par zero, etc...).
 
 */
 
-// Classe servant � palier l'absence de passage par variables ou reference
+// Classe servant à palier l'absence de passage par variables ou reference
 
 class VariableInt {
 	public int mValue;
@@ -65,8 +65,8 @@ public class JArithmeticInterpreter {
 
 	// Variables
 
-	int mOperator;
-	double mValue;
+	final int mOperator;
+	final double mValue;
 	JArithmeticInterpreter fg, fd;
 
 	// Methods
@@ -75,27 +75,21 @@ public class JArithmeticInterpreter {
 	// Node
 
 	private JArithmeticInterpreter() {
-		this(0, 0, null, null);
+		this(0, 0);
 	}
 
 	// ....................................................................................
 	// Node
 
-	private JArithmeticInterpreter(int Operator, double Value, JArithmeticInterpreter Fg, JArithmeticInterpreter Fd) {
+	private JArithmeticInterpreter(int Operator, double Value) {
 		mOperator = Operator;
 		mValue = Value;
-		fg = Fg;
-		fd = Fd;
-	}
-
-	private JArithmeticInterpreter(int Operator, double Value) {
-		this(Operator, Value, null, null);
 	}
 
 	// ....................................................................................
 	// Construct_Tree
 
-	private static JArithmeticInterpreter constructTree(StringBuffer string, int length, int error) {
+	private static JArithmeticInterpreter constructTree(StringBuffer string, int length) {
 		int imbric, Bimbric;
 		int priorite, ope;
 		int position, positionv, i, j;
@@ -108,7 +102,6 @@ public class JArithmeticInterpreter {
 		// Initialisation des variables
 
 		if (length <= 0) {
-			error = 3;
 			return null;
 		}
 
@@ -180,7 +173,6 @@ public class JArithmeticInterpreter {
 					i++;
 				}
 				else {
-					error = 2; // symbole non reconnu
 					return null;
 				}
 			}
@@ -202,7 +194,7 @@ public class JArithmeticInterpreter {
 						position = i;
 						caspp = 0;
 					}
-					else if ((imbric == Bimbric) && (priorite >= 1)) {
+					else if (imbric == Bimbric) {
 						priorite = 1;
 						ope = 1;
 						position = i;
@@ -238,7 +230,7 @@ public class JArithmeticInterpreter {
 							caspp = 0;
 						}
 					}
-					else if ((imbric == Bimbric) && (priorite >= 1)) if ((i - 1) < 0) {
+					else if (imbric == Bimbric) if ((i - 1) < 0) {
 						if (priorite > 5) {
 							priorite = 1;
 							position = i;
@@ -308,12 +300,10 @@ public class JArithmeticInterpreter {
 					i++;
 					break;
 				default:
-					error = 2; // symbole non reconnu
 					return null;
 				}
 
 		if (imbric != 0) {
-			error = 1; // erreur de "parenthesage"
 			return null;
 		}
 
@@ -330,46 +320,42 @@ public class JArithmeticInterpreter {
 			node.fd = new JArithmeticInterpreter();
 
 			if ((length - position - 1 - Bimbric) == 0) { // argument absent
-				error = 3;
 				return null;
 			}
 			StringBuffer temp = CopyPartialString(string, (position + 1), (length - 1 - Bimbric));
-			node.fd = constructTree(temp, (length - position - 1 - Bimbric), error);
+			node.fd = constructTree(temp, (length - position - 1 - Bimbric));
 
 			return node;
 		}
 
 		else if (priorite == 5) {
-			node = new JArithmeticInterpreter(0, calc_const(string, positionv), null, null);
+			node = new JArithmeticInterpreter(0, calc_const(string, positionv));
 
 			return node;
 		}
 		else if (ope > 5) {
-			node = new JArithmeticInterpreter(ope, 0, null, null);
+			node = new JArithmeticInterpreter(ope, 0);
 
 			if ((length - position - espa - Bimbric) == 0) { // argument absent
-				error = 3;
 				return null;
 			}
 			StringBuffer temp = CopyPartialString(string, (position + espa), (length - 1));
-			node.fg = constructTree(temp, (length - position - espa - Bimbric), error);
+			node.fg = constructTree(temp, (length - position - espa - Bimbric));
 			return node;
 		}
 		else {
-			node = new JArithmeticInterpreter(ope, 0, null, null);
+			node = new JArithmeticInterpreter(ope, 0);
 
 			if ((position - Bimbric) == 0) { // argument absent
-				error = 3;
 				return null;
 			}
 			StringBuffer temp = CopyPartialString(string, Bimbric, (position - 1));
-			node.fg = constructTree(temp, (position - Bimbric), error);
+			node.fg = constructTree(temp, (position - Bimbric));
 			if ((length - position - 1 - Bimbric) == 0) { // argument absent
-				error = 3;
 				return null;
 			}
 			temp = CopyPartialString(string, (position + 1), (length - 1 - Bimbric));
-			node.fd = constructTree(temp, (length - position - 1 - Bimbric), error);
+			node.fd = constructTree(temp, (length - position - 1 - Bimbric));
 			return node;
 		}
 	}
@@ -378,15 +364,12 @@ public class JArithmeticInterpreter {
 
 	private double computeTree() {
 		if (mOperator == 0) return mValue;
-		int error = 0;
 
 		double valueL = fg.computeTree();
 
-		if (error != 0) return 0;
 		double valueR = 0;
 
 		if (fd != null) valueR = fd.computeTree();
-		if (error != 0) return 0;
 
 		switch (mOperator) {
 		case 1: // +
@@ -397,7 +380,6 @@ public class JArithmeticInterpreter {
 			return (valueL * valueR);
 		case 4: // -
 			if (valueR == 0) {
-				error = 1;
 				return 0;
 			}
 			return (valueL / valueR);
@@ -407,23 +389,16 @@ public class JArithmeticInterpreter {
 			return Math.exp(valueL);
 		case 7: // ln
 			if (valueL <= 0) {
-				if (valueL < 0) error = 2;
-				else
-					error = 1;
 				return 0;
 			}
 			return (Math.log(valueL) / Math.log(2));
 		case 8: // log
 			if (valueL <= 0) {
-				if (valueL < 0) error = 2;
-				else
-					error = 1;
 				return 0;
 			}
 			return Math.log(valueL);
 		case 9: // sqrt
 			if (valueL < 0) {
-				error = 2;
 				return 0;
 			}
 			return Math.sqrt(valueL);
@@ -462,8 +437,7 @@ public class JArithmeticInterpreter {
 			fd.writeTree(string);
 			break;
 		case 2:
-			if ((fg.mOperator == 0) && (fg.mValue == 0)) ;
-			else
+			if (fg.mOperator != 0 || fg.mValue != 0)
 				fg.writeTree(string);
 			string.append('-');
 			if ((fd.mOperator == 1) || (fd.mOperator == 2)) {
@@ -471,7 +445,7 @@ public class JArithmeticInterpreter {
 				string.append('(');
 			}
 			fd.writeTree(string);
-			if (parenthese == true) string.append(')');
+			if (parenthese) string.append(')');
 			break;
 		case 3:
 			if ((fg.mOperator == 1) || (fg.mOperator == 2)) {
@@ -479,7 +453,7 @@ public class JArithmeticInterpreter {
 				string.append('(');
 			}
 			fg.writeTree(string);
-			if (parenthese == true) string.append(')');
+			if (parenthese) string.append(')');
 			parenthese = false;
 			string.append('*');
 			if ((fd.mOperator == 1) || (fd.mOperator == 2)) {
@@ -487,7 +461,7 @@ public class JArithmeticInterpreter {
 				string.append('(');
 			}
 			fd.writeTree(string);
-			if (parenthese == true) string.append(')');
+			if (parenthese) string.append(')');
 			break;
 		case 4:
 			if ((fg.mOperator == 1) || (fg.mOperator == 2)) {
@@ -495,7 +469,7 @@ public class JArithmeticInterpreter {
 				string.append('(');
 			}
 			fg.writeTree(string);
-			if (parenthese == true) string.append(')');
+			if (parenthese) string.append(')');
 			parenthese = false;
 			string.append('/');
 			if ((fd.mOperator > 0) && (fd.mOperator < 5)) {
@@ -503,7 +477,7 @@ public class JArithmeticInterpreter {
 				string.append('(');
 			}
 			fd.writeTree(string);
-			if (parenthese == true) string.append(')');
+			if (parenthese) string.append(')');
 			break;
 		case 5:
 			if ((fg.mOperator > 0) && (fg.mOperator < 5)) {
@@ -511,7 +485,7 @@ public class JArithmeticInterpreter {
 				string.append('(');
 			}
 			fg.writeTree(string);
-			if (parenthese == true) string.append(')');
+			if (parenthese) string.append(')');
 			parenthese = false;
 			string.append('^');
 			if ((fd.mOperator > 0) && (fd.mOperator < 5)) {
@@ -519,7 +493,7 @@ public class JArithmeticInterpreter {
 				string.append('(');
 			}
 			fd.writeTree(string);
-			if (parenthese == true) string.append(')');
+			if (parenthese) string.append(')');
 			break;
 		case 6:
 			string.append("exp(");
@@ -732,8 +706,8 @@ public class JArithmeticInterpreter {
 		JArithmeticInterpreter jai = null;
 
 		try {
-			jai = JArithmeticInterpreter.constructTree(input, input.length(), 0);
-		} catch (Exception e) {}
+			jai = JArithmeticInterpreter.constructTree(input, input.length());
+		} catch (Exception ignored) {}
 
 		if (jai == null) throw new IllegalArgumentException("Le calcul passé en paramètre est invalide");
 
@@ -749,7 +723,7 @@ public class JArithmeticInterpreter {
 		return getResultFromExpression(expr, null);
 	}
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 
 		StringBuffer b = new StringBuffer(0);
 

@@ -50,8 +50,8 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 	
 	public static abstract class SQLWhereChain<E extends SQLElement<E>> extends SQLWhere<E> {
 
-		private SQLBoolOp operator;
-		protected List<SQLWhere<E>> conditions = new ArrayList<>();
+		private final SQLBoolOp operator;
+		private final List<SQLWhere<E>> conditions = new ArrayList<>();
 
 		private SQLWhereChain(SQLBoolOp op) {
 			if (op == null) throw new IllegalArgumentException("op can't be null");
@@ -73,20 +73,21 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 				throw new DBException("SQLWhereChain needs at least one element inside !");
 			}
 			
-			String sql = "";
+			StringBuilder sql = new StringBuilder();
 			List<Object> params = new ArrayList<>();
 			boolean first = true;
 
 			for (SQLWhere<E> w : conditions) {
-				if (!first) sql += " " + operator.sql + " ";
+				if (!first)
+					sql.append(" ").append(operator.sql).append(" ");
 				first = false;
 
 				ParameterizedSQLString ret = w.toSQL();
-				sql += "(" + ret.sqlString() + ")";
+				sql.append("(").append(ret.sqlString()).append(")");
 				params.addAll(ret.parameters());
 			}
 
-			return new ParameterizedSQLString(sql, params);
+			return new ParameterizedSQLString(sql.toString(), params);
 		}
 
 		protected enum SQLBoolOp {
@@ -96,7 +97,7 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 			OR("OR");
 			/* package */ final String sql;
 
-			private SQLBoolOp(String s) {
+			SQLBoolOp(String s) {
 				sql = s;
 			}
 
@@ -151,9 +152,9 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 	
 	/* package */ static class SQLWhereComp<E extends SQLElement<E>> extends SQLWhere<E> {
 
-		private SQLField<E, ?> left;
-		private SQLComparator comp;
-		private Object right;
+		private final SQLField<E, ?> left;
+		private final SQLComparator comp;
+		private final Object right;
 
 		/**
 		 * Compare a field with a value
@@ -193,7 +194,7 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 
 			/* package */ final String sql;
 
-			private SQLComparator(String s) {
+			SQLComparator(String s) {
 				sql = s;
 			}
 
@@ -208,8 +209,8 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 	
 	/* package */ static class SQLWhereIn<E extends SQLElement<E>> extends SQLWhere<E> {
 
-		private SQLField<E, ?> field;
-		private Collection<?> values;
+		private final SQLField<E, ?> field;
+		private final Collection<?> values;
 
 		/* package */ <T> SQLWhereIn(SQLField<E, T> f, Collection<T> v) {
 			if (f == null || v == null)
@@ -246,8 +247,8 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 	
 	/* package */ static class SQLWhereLike<E extends SQLElement<E>> extends SQLWhere<E> {
 
-		private SQLField<E, ?> field;
-		private String likeExpr;
+		private final SQLField<E, ?> field;
+		private final String likeExpr;
 
 		/**
 		 * Compare a field with a value
@@ -279,8 +280,8 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 	
 	/* package */ static class SQLWhereNull<E extends SQLElement<E>> extends SQLWhere<E> {
 
-		private SQLField<E, ?> fild;
-		private boolean nulll;
+		private final SQLField<E, ?> field;
+		private final boolean isNull;
 
 		/**
 		 * Init a IS NULL / IS NOT NULL expression for a SQL WHERE condition.
@@ -294,13 +295,13 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 			if (!field.canBeNull) Log.getLogger().log(Level.WARNING,
 					"Useless : Trying to check IS [NOT] NULL on the field " + field.getSQLElementType().getName() + "#"
 							+ field.getName() + " which is declared in the ORM as 'can't be null'");
-			fild = field;
-			nulll = isNull;
+			this.field = field;
+			this.isNull = isNull;
 		}
 
 		@Override
 		public ParameterizedSQLString toSQL() {
-			return new ParameterizedSQLString("`" + fild.getName() + "` IS " + ((nulll) ? "NULL" : "NOT NULL"), new ArrayList<>());
+			return new ParameterizedSQLString("`" + field.getName() + "` IS " + ((isNull) ? "NULL" : "NOT NULL"), new ArrayList<>());
 		}
 
 	}

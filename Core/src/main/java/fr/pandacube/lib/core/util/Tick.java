@@ -14,7 +14,7 @@ public class Tick {
 	
 	/**
 	 * Returns the number of tick is the provided duration, in second
-	 * @param seconds the duration in second
+	 * @param minutes the duration in minutes
 	 * @return the same duration as provided, but in Minecraft server ticks
 	 */
 	public static long min(long minutes) {

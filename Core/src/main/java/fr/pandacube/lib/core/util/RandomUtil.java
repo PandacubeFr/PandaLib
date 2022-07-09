@@ -6,7 +6,7 @@ import java.util.Set;
 
 public class RandomUtil {
 
-	public static Random rand = new Random();
+	public static final Random rand = new Random();
 
 	public static int nextIntBetween(int minInclu, int maxExclu) {
 		return rand.nextInt(maxExclu - minInclu) + minInclu;
@@ -32,8 +32,8 @@ public class RandomUtil {
 	 * Returns a random value from a set.
 	 * 
 	 * May not be optimized (Actually O(n) )
-	 * @param arr
-	 * @return
+	 * @param set the Set from which to pick a random value
+	 * @return a random value from the set
 	 */
 	public static <T> T setElement(Set<T> set) {
 		if (set.isEmpty())
@@ -51,26 +51,26 @@ public class RandomUtil {
 	 * Return a value between 0 and the number of parameter minus 1, using the provided frequencies.
 	 * 
 	 * The probability of each value to be returned depends of the frequencies provided.
-	 * @param frequencies the frequencies of each entries
+	 * @param f the frequencies of each entries
 	 * @return the index of an entry, or -1 if it is unable to pick anything (all the frequencies are 0 or there is not provided frequency)
 	 */
-	public static int randomIndexOfFrequencies(double... frequencies) {
-		if (frequencies == null)
-			return -1;
+	public static int randomIndexOfFrequencies(double... f) {
+		if (f == null)
+			throw new IllegalArgumentException("f cannot be null");
+		int n = f.length;
+		double[] fSums = new double[n];
 		double sum = 0;
-		for (double f : frequencies)
-			sum += f;
-		if (sum == 0)
-			return -1;
-		double r = rand.nextDouble() * sum;
-		int i = -1;
-		double limit = frequencies[++i];
-		while (i < frequencies.length) {
-			if (r < limit)
-				return i;
-			limit += frequencies[++i];
+		for (int i = 0; i < n; i++) {
+			if (f[i] < 0)
+				throw new IllegalArgumentException("f[" + i + "] cannot be negative.");
+			fSums[i] = (sum += f[i]);
 		}
-		return frequencies.length - 1;
+		double r = rand.nextDouble() * sum;
+		for (int i = 0; i < n; i++) {
+			if (fSums[i] > r)
+				return i;
+		}
+		return n - 1;
 	}
 	
 	
@@ -81,7 +81,7 @@ public class RandomUtil {
 	public static final String PASSWORD_CHARSET_LATIN_LOWERCASE = "abcdefghijklmnopqrstuvwxyz";
 	public static final String PASSWORD_CHARSET_LATIN_UPPERCASE = PASSWORD_CHARSET_LATIN_LOWERCASE.toUpperCase();
 	public static final String PASSWORD_CHARSET_DIGIT = "0123456789";
-	public static final String PASSWORD_CHARSET_SPECIAL = "@#+*/-;:,.?!='()[]{}&\"\\";
+	public static final String PASSWORD_CHARSET_SPECIAL = "@#+*/-;:,.?!='()[]{}&";
 	public static final String PASSWORD_CHARSET_NO_ANBIGUITY = "abcdefghkmnpqrstwxyzACDEFGHKLMNPQRSTWXYZ2345679";
 
 	public static String randomPassword(int length) {

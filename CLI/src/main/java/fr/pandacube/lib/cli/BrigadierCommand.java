@@ -1,7 +1,6 @@
 package fr.pandacube.lib.cli;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -22,16 +21,14 @@ import fr.pandacube.lib.core.util.Log;
 import fr.pandacube.lib.core.util.Reflect;
 
 public abstract class BrigadierCommand extends ChatStatic {
-	
-	private LiteralCommandNode<Object> commandNode;
-	
+
 	public BrigadierCommand() {
 		LiteralArgumentBuilder<Object> builder = buildCommand();
 		String[] aliases = getAliases();
 		if (aliases == null)
 			aliases = new String[0];
-		
-		commandNode = BrigadierDispatcher.instance.register(builder);
+
+		LiteralCommandNode<Object> commandNode = BrigadierDispatcher.instance.register(builder);
 		
 		
 		for (String alias : aliases) {
@@ -94,16 +91,14 @@ public abstract class BrigadierCommand extends ChatStatic {
 			String message = builder.getInput();
 			try {
 				int tokenStartPos = builder.getStart();
-				
-				List<String> results = Collections.emptyList();
 			
 				int firstSpacePos = message.indexOf(" ");
 				String[] args = (firstSpacePos + 1 > tokenStartPos - 1) ? new String[0]
 						: message.substring(firstSpacePos + 1, tokenStartPos - 1).split(" ", -1);
 				args = Arrays.copyOf(args, args.length + 1);
 				args[args.length - 1] = message.substring(tokenStartPos);
-				
-				results = suggestions.getSuggestions(sender, args.length - 1, args[args.length - 1], args);
+
+				List<String> results = suggestions.getSuggestions(sender, args.length - 1, args[args.length - 1], args);
 			
 				for (String s : results) {
 					if (s != null)

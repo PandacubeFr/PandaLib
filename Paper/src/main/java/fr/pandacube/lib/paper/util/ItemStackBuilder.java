@@ -52,7 +52,6 @@ public class ItemStackBuilder {
 	 * of ItemStack as the parameter of this method.
 	 * 
 	 * To create a builder that doesn’t modify the provided ItemStack, use {@link #of(ItemStack)}.
-	 * @param stack
 	 * @return the builder
 	 */
 	public static ItemStackBuilder wrap(ItemStack stack) {
@@ -70,7 +69,7 @@ public class ItemStackBuilder {
 	
 	
 	
-	private ItemStack stack;
+	private final ItemStack stack;
 	private ItemMeta cachedMeta;
 	
 	private ItemStackBuilder(ItemStack base) {
@@ -91,10 +90,7 @@ public class ItemStackBuilder {
 	}
 
 	public ItemStackBuilder rawDisplayName(Component displayName) {
-		if (displayName != null)
-			getOrInitMeta().displayName(displayName);
-		else
-			getOrInitMeta().displayName(null);
+		getOrInitMeta().displayName(displayName);
 		updateMeta();
 		return this;
 	}
@@ -106,7 +102,7 @@ public class ItemStackBuilder {
 			return rawDisplayName(displayName.getAdv());
 		}
 		else
-			return rawDisplayName((Component) null);
+			return rawDisplayName(null);
 	}
 	
 	public ItemStackBuilder rawLore(List<Component> lore) {

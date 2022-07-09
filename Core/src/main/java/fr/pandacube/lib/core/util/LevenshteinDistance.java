@@ -5,12 +5,12 @@ import java.util.function.ToIntBiFunction;
 
 public class LevenshteinDistance {
 	
-	private String initialList;
+	private final String initialList;
 
-	private int elementAdditionScore;
-	private int elementDeletionScore;
+	private final int elementAdditionScore;
+	private final int elementDeletionScore;
 	
-	private ToIntBiFunction<Character, Character> elementDistanceFunction;
+	private final ToIntBiFunction<Character, Character> elementDistanceFunction;
 	
 	private int[] prev, curr; 
 	

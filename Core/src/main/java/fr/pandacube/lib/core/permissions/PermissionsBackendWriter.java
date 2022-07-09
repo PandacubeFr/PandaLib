@@ -57,22 +57,20 @@ import fr.pandacube.lib.core.permissions.SQLPermissions.EntityType;
 					.and(SQLPermissions.type.eq(EntityType.Group.getCode()))
 					.and(SQLPermissions.key.like("default"))
 					);
-			if (entry == null && !deflt) {
-				return;
+			if (entry != null) {
+				if (deflt) {
+					// update just in case
+					if ("true".equals(entry.get(SQLPermissions.value)))
+						return;
+					entry.set(SQLPermissions.value, "true");
+					entry.save();
+				}
+				else {
+					// delete
+					entry.delete();
+				}
 			}
-			else if (entry != null && deflt) {
-				// update
-				if ("true".equals(entry.get(SQLPermissions.value)))
-					return;
-				entry.set(SQLPermissions.value, "true");
-				entry.save();
-				return;
-			}
-			else if (entry != null && !deflt) {
-				// delete
-				entry.delete();
-			}
-			else {
+			else if (deflt) {
 				// insert
 				addEntry(name, EntityType.Group, "default", "true", null, null);
 			}
@@ -97,20 +95,18 @@ import fr.pandacube.lib.core.permissions.SQLPermissions.EntityType;
 					.and(SQLPermissions.type.eq(type.getCode()))
 					.and(SQLPermissions.key.like("prefix"))
 					);
-			if (entry == null && prefix == null) {
-				return;
+			if (entry != null) {
+				if (prefix != null) {
+					// update
+					entry.set(SQLPermissions.value, prefix);
+					entry.save();
+				}
+				else {
+					// delete
+					entry.delete();
+				}
 			}
-			else if (entry != null && prefix != null) {
-				// update
-				entry.set(SQLPermissions.value, prefix);
-				entry.save();
-				return;
-			}
-			else if (entry != null && prefix == null) {
-				// delete
-				entry.delete();
-			}
-			else {
+			else if (prefix != null) {
 				// insert
 				addEntry(name, type, "prefix", prefix, null, null);
 			}
@@ -130,20 +126,18 @@ import fr.pandacube.lib.core.permissions.SQLPermissions.EntityType;
 					.and(SQLPermissions.type.eq(type.getCode()))
 					.and(SQLPermissions.key.like("suffix"))
 					);
-			if (entry == null && suffix == null) {
-				return;
+			if (entry != null) {
+				if (suffix != null) {
+					// update
+					entry.set(SQLPermissions.value, suffix);
+					entry.save();
+				}
+				else {
+					// delete
+					entry.delete();
+				}
 			}
-			else if (entry != null && suffix != null) {
-				// update
-				entry.set(SQLPermissions.value, suffix);
-				entry.save();
-				return;
-			}
-			else if (entry != null && suffix == null) {
-				// delete
-				entry.delete();
-			}
-			else {
+			else if (suffix != null) {
 				// insert
 				addEntry(name, type, "suffix", suffix, null, null);
 			}
@@ -175,7 +169,7 @@ import fr.pandacube.lib.core.permissions.SQLPermissions.EntityType;
 				throw new IllegalStateException("Inheritance already set");
 			addEntry(name, type, key, inheritance, null, null);
 		} catch (DBException e) {
-			new RuntimeException(e);
+			throw new RuntimeException(e);
 		}
 		
 	}

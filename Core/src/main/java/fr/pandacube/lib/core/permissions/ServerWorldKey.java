@@ -10,10 +10,8 @@ public class ServerWorldKey implements Comparable<ServerWorldKey> {
 	}
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof ServerWorldKey))
-			return false;
-		ServerWorldKey o = (ServerWorldKey) obj;
-		return Objects.equals(server, o.server)
+		return obj instanceof ServerWorldKey o
+				&& Objects.equals(server, o.server)
 				&& Objects.equals(world, o.world);
 	}
 	@Override

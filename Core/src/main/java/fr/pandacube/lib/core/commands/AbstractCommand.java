@@ -30,11 +30,8 @@ public class AbstractCommand extends ChatStatic {
 	 *        Le premier élément est l'argument qui suit le nom de la commande.
 	 *        Usuellement, ce paramètre correspond au paramètre
 	 *        <code>args</code> de la méthode onCommand
-	 * @param index
-	 * @return
 	 */
 	public static String getLastParams(String[] args, int index) {
-		if (index < 0 || index >= args.length) return null;
 		return String.join(" ", Arrays.copyOfRange(args, index, args.length));
 	}
 	

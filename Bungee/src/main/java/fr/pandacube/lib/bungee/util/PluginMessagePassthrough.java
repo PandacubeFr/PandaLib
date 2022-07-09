@@ -25,7 +25,7 @@ public class PluginMessagePassthrough implements Listener {
 	
 	public static void clear() {
 		synchronized (channels) {
-			new ArrayList<>(channels).forEach(c -> unregister(c));
+			unregisterAll(channels.toArray(new String[0]));
 		}
 	}
 	

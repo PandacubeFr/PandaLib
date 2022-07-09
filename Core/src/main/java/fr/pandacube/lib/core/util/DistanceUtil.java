@@ -19,8 +19,8 @@ public class DistanceUtil {
 
 		String precisionFormat = "##0";
 		if (precision > 0) precisionFormat += ".";
-		for (int i = 0; i < precision; i++)
-			precisionFormat += "0";
+		precisionFormat += "0".repeat(precision);
+
 		DecimalFormat df = new DecimalFormat(precisionFormat);
 
 		double dist = meterDist / choosenUnit.multiplicator;
@@ -33,12 +33,17 @@ public class DistanceUtil {
 	}
 
 	public enum DistanceUnit {
-		NM(0.000000001, "nm"), µM(0.000001, "µm"), MM(0.001, "mm"), CM(0.01, "cm"), M(1, "m"), KM(1000, "km");
+		NM(0.000000001, "nm"),
+		UM(0.000001, "µm"),
+		MM(0.001, "mm"),
+		CM(0.01, "cm"),
+		M(1, "m"),
+		KM(1000, "km");
 
 		private final double multiplicator;
 		private final String unitStr;
 
-		private DistanceUnit(double mult, String s) {
+		DistanceUnit(double mult, String s) {
 			multiplicator = mult;
 			unitStr = s;
 		}

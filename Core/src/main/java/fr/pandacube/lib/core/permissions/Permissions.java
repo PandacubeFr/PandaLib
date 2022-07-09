@@ -1,9 +1,11 @@
 package fr.pandacube.lib.core.permissions;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 import fr.pandacube.lib.core.db.DB;
+import fr.pandacube.lib.core.db.DBConnection;
 import fr.pandacube.lib.core.db.DBException;
 import fr.pandacube.lib.core.util.Log;
 
@@ -16,7 +18,6 @@ public class Permissions {
 	/**
 	 * Initialize the permission system.
 	 * The connection to the database needs to be initialized first, using {@link DB#init(DBConnection, String)}.
-	 * @throws DBException
 	 */
 	public static void init() throws DBException {
 		if (backendReader != null)
@@ -38,8 +39,7 @@ public class Permissions {
 		checkInitialized();
 		if (specialPermissions == null)
 			return;
-		for (SpecialPermission sp : specialPermissions)
-			resolver.specialPermissions.add(sp);
+		resolver.specialPermissions.addAll(Arrays.asList(specialPermissions));
 	}
 
 	private static void checkInitialized() {

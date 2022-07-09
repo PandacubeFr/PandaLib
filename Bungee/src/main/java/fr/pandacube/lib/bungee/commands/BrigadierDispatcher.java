@@ -46,8 +46,8 @@ public class BrigadierDispatcher implements Listener {
 	
 	
 	
-	private CommandDispatcher<CommandSender> dispatcher;
-	/* package */ Plugin plugin;
+	private final CommandDispatcher<CommandSender> dispatcher;
+	/* package */ final Plugin plugin;
 	
 	private BrigadierDispatcher(Plugin pl) {
 		plugin = pl;
@@ -114,27 +114,23 @@ public class BrigadierDispatcher implements Listener {
 		
 		event.setCancelled(true);
 		
-		ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
-			execute((ProxiedPlayer) event.getSender(), commandLine);
-		});
+		ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> execute((ProxiedPlayer) event.getSender(), commandLine));
 		
 	}
 	
 	
 	
 	
-	/* package */ int execute(CommandSender sender, String commandWithoutSlash) {
+	/* package */ void execute(CommandSender sender, String commandWithoutSlash) {
 		ParseResults<CommandSender> parsed = dispatcher.parse(commandWithoutSlash, sender);
 		
 		try {
-			return dispatcher.execute(parsed);
+			dispatcher.execute(parsed);
 		} catch (CommandSyntaxException e) {
 			sender.sendMessage(Chat.failureText("Erreur d'utilisation de la commande : " + e.getMessage()).get());
-			return 0;
 		} catch (Throwable e) {
 			sender.sendMessage(Chat.failureText("Erreur lors de l'exécution de la commande : " + e.getMessage()).get());
 			Log.severe(e);
-			return 0;
 		}
 		
 	}

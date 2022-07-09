@@ -23,8 +23,6 @@ public class Array8Bit {
 	
 	/**
 	 * i = 0 is the lowest significant bit
-	 * @param i
-	 * @return
 	 */
 	public boolean getBit(int i) {
 		return values[i];
@@ -32,8 +30,6 @@ public class Array8Bit {
 	
 	/**
 	 * i = 0 is the lowest significant bit
-	 * @param i
-	 * @param b
 	 */
 	public void setBit(int i, boolean b) {
 		values[i] = b;
