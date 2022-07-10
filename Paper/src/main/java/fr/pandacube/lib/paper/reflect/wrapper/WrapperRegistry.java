@@ -38,10 +38,15 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.network.protocol.Clientb
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.network.protocol.Packet;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.resources.ResourceLocation;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ChunkMap;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.DedicatedPlayerList;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.DedicatedServer;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.DedicatedServerProperties;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.MinecraftServer;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerChunkCache;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerGamePacketListenerImpl;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerLevel;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerPlayer;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.Settings;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.util.ProgressListener;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.AABB;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ChunkPos;
@@ -115,10 +120,15 @@ public class WrapperRegistry {
         initWrapper(ResourceLocation.class, ResourceLocation.MAPPING.runtimeClass());
         // minecraft.server
         initWrapper(ChunkMap.class, ChunkMap.MAPPING.runtimeClass());
+        initWrapper(DedicatedPlayerList.class, DedicatedPlayerList.MAPPING.runtimeClass());
+        initWrapper(DedicatedServer.class, DedicatedServer.MAPPING.runtimeClass());
+        initWrapper(DedicatedServerProperties.class, DedicatedServerProperties.MAPPING.runtimeClass());
+        initWrapper(MinecraftServer.class, MinecraftServer.MAPPING.runtimeClass());
         initWrapper(ServerChunkCache.class, ServerChunkCache.MAPPING.runtimeClass());
         initWrapper(ServerGamePacketListenerImpl.class, ServerGamePacketListenerImpl.MAPPING.runtimeClass());
         initWrapper(ServerLevel.class, ServerLevel.MAPPING.runtimeClass());
         initWrapper(ServerPlayer.class, ServerPlayer.MAPPING.runtimeClass());
+        initWrapper(Settings.class, Settings.MAPPING.runtimeClass());
         // minecraft.util
         initWrapper(ProgressListener.class, ProgressListener.MAPPING.runtimeClass());
         // minecraft.world.block
