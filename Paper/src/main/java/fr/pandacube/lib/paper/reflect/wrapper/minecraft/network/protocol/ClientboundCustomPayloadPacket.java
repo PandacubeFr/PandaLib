@@ -14,7 +14,9 @@ public class ClientboundCustomPayloadPacket extends ReflectWrapper implements Pa
     private static final Reflect.ReflectConstructor<?> CONSTRUCTOR = wrapEx(() -> MAPPING.runtimeReflect().constructor(ResourceLocation.MAPPING.runtimeClass(), FriendlyByteBuf.MAPPING.runtimeClass()));
     private static final Reflect.ReflectField<?> FIELD_BRAND = wrapEx(() -> MAPPING.mojField("BRAND"));
 
-    public static final ResourceLocation BRAND = wrap(wrapReflectEx(FIELD_BRAND::getStaticValue), ResourceLocation.class);
+    public static ResourceLocation BRAND() {
+        return wrap(wrapReflectEx(FIELD_BRAND::getStaticValue), ResourceLocation.class);
+    }
 
     protected ClientboundCustomPayloadPacket(Object obj) {
         super(obj);

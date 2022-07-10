@@ -13,8 +13,12 @@ public class ClientboundGameEventPacket extends ReflectWrapper implements Packet
     private static final Reflect.ReflectField<?> FIELD_RAIN_LEVEL_CHANGE = wrapEx(() -> MAPPING.mojField("RAIN_LEVEL_CHANGE"));
     private static final Reflect.ReflectField<?> FIELD_THUNDER_LEVEL_CHANGE = wrapEx(() -> MAPPING.mojField("THUNDER_LEVEL_CHANGE"));
 
-    public static final Type RAIN_LEVEL_CHANGE = wrap(wrapReflectEx(FIELD_RAIN_LEVEL_CHANGE::getStaticValue), Type.class);
-    public static final Type THUNDER_LEVEL_CHANGE = wrap(wrapReflectEx(FIELD_THUNDER_LEVEL_CHANGE::getStaticValue), Type.class);
+    public static Type RAIN_LEVEL_CHANGE() {
+        return wrap(wrapReflectEx(FIELD_RAIN_LEVEL_CHANGE::getStaticValue), Type.class);
+    }
+    public static Type THUNDER_LEVEL_CHANGE() {
+        return wrap(wrapReflectEx(FIELD_THUNDER_LEVEL_CHANGE::getStaticValue), Type.class);
+    }
 
     public ClientboundGameEventPacket(Type type, float value) {
         this(wrapReflectEx(() -> CONSTRUCTOR.instanciate(unwrap(type), value)));
