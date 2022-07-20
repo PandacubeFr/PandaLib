@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>pandalib-parent</artifactId>
+        <groupId>fr.pandacube.lib</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>pandalib-paper-reflect</artifactId>
+
+    <repositories>
+        <repository>
+            <id>papermc</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>fabricmc</id>
+            <url>https://maven.fabricmc.net/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>fr.pandacube.lib</groupId>
+            <artifactId>pandalib-util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.pandacube.lib</groupId>
+            <artifactId>pandalib-reflect</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Paper -->
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>${paper.version}-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-mojangapi</artifactId>
+            <version>${paper.version}-SNAPSHOT</version>
+        </dependency>
+
+
+        <!-- Needed to read obfuscation mapping file. Already included in Paper -->
+        <dependency>
+            <groupId>net.fabricmc</groupId>
+            <artifactId>mapping-io</artifactId>
+            <version>0.3.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+</project>

@@ -25,11 +25,13 @@ import fr.pandacube.lib.util.Log;
  * as wrapper for the target {@link ServerSocket}.
  * <br>
  * This class provides a simple way to exchange data between client and server :
+ * <ul>
  * <li>Maintained connection with the server</li>
  * <li>Login with a password (send in the first packet)</li>
  * <li>Binary packet id</li>
  * <li>Binary data</li>
  * <li>Input stream in a separate Thread</li>
+ * </ul>
  * 
  */
 @Beta

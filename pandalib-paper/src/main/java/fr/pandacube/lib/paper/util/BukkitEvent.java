@@ -1,7 +1,8 @@
 package fr.pandacube.lib.paper.util;
 
-import fr.pandacube.lib.reflect.Reflect;
-import fr.pandacube.lib.paper.PandaLibPaper;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
@@ -12,8 +13,8 @@ import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import fr.pandacube.lib.paper.PandaLibPaper;
+import fr.pandacube.lib.reflect.Reflect;
 
 public class BukkitEvent {
 	

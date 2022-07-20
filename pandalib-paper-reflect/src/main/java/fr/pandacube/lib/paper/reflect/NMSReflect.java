@@ -337,14 +337,14 @@ public class NMSReflect {
 		 * @param mojName the Mojang mapped name of the method.
 		 * @param mojParametersType the list of parameters of the method.
 		 * Each parameter type must be an instance of one of the following type:
-		 * {@link Type}, {@link Class}, {@link ReflectClass} or {@link ClassMapping}.
+		 * {@link NMSTypeWrapper}, {@link Class}, {@link ReflectClass} or {@link ClassMapping}.
 		 * @throws IllegalArgumentException if one of the parameter has an invalid type
 		 * @throws NullPointerException if one of the parameter is null, or if there is no mapping for the provided Mojang mapped method.
 		 * @throws ClassNotFoundException if there is no runtime class to represent one of the provided parametersType.
 		 * @throws NoSuchMethodException if there is no runtime method to represent the provided method.
 		 */
 		public ReflectMethod<?> mojMethod(String mojName, Object... mojParametersType) throws ClassNotFoundException, NoSuchMethodException {
-			MethodId mId = new MethodId(mojName, Type.toTypeList(Arrays.asList(mojParametersType)));
+			MethodId mId = new MethodId(mojName, NMSTypeWrapper.toTypeList(Arrays.asList(mojParametersType)));
 			MemberMapping<MethodId, ReflectMethod<?>> mm = methodsByMoj.get(mId);
 			Objects.requireNonNull(mm, "Unable to find the Mojang mapped method " + mId);
 			
@@ -396,8 +396,8 @@ public class NMSReflect {
 		
 		
 		
-		/* package */ Type toType(boolean obf) {
-			return new Type(obf ? obfName : mojName, 0);
+		/* package */ NMSTypeWrapper toType(boolean obf) {
+			return new NMSTypeWrapper(obf ? obfName : mojName, 0);
 		}
 
 
@@ -418,30 +418,30 @@ public class NMSReflect {
 	    	String classPackages = classToPrint.substring(0, Math.max(packageSep, 0));
 	    	String classHTML = (packageSep >= 0 ? (classPackages + ".") : "") + "<b class='cl'>" + classSimpleName + "</b>";
 			
-			Type superClass = superClass(obf);
+			NMSTypeWrapper superClass = superClass(obf);
 			String superClassHTML = superClass == null ? "" : (" <span class='kw'>extends</span> " + superClass.toHTML(obf));
 			
-			List<Type> superInterfaces = superInterfaces(obf);
+			List<NMSTypeWrapper> superInterfaces = superInterfaces(obf);
 			String superInterfacesHTML = superInterfaces.isEmpty() ? ""
 					: (" <span class='kw'>implements</span> " + superInterfaces.stream().map(t -> t.toHTML(obf)).collect(Collectors.joining(", ")));
 			
 			return classHTML + superClassHTML + superInterfacesHTML;
 		}
 		
-		private Type superClass(boolean obf) {
+		private NMSTypeWrapper superClass(boolean obf) {
 			Class<?> superClass = runtimeClass().getSuperclass();
 			if (superClass == null || superClass.equals(Object.class) || superClass.equals(Enum.class) || superClass.equals(Record.class))
 				return null;
 			ClassMapping cm = (IS_SERVER_OBFUSCATED ? CLASSES_BY_OBF : CLASSES_BY_MOJ).get(superClass.getName());
-			return (cm != null) ? cm.toType(obf) : Type.of(superClass);
+			return (cm != null) ? cm.toType(obf) : NMSTypeWrapper.of(superClass);
 		}
 		
-		private List<Type> superInterfaces(boolean obf) {
+		private List<NMSTypeWrapper> superInterfaces(boolean obf) {
 			Class<?>[] interfaces = runtimeClass().getInterfaces();
-			List<Type> types = new ArrayList<>(interfaces.length);
+			List<NMSTypeWrapper> types = new ArrayList<>(interfaces.length);
 			for (Class<?> interfce : interfaces) {
 				ClassMapping cm = (IS_SERVER_OBFUSCATED ? CLASSES_BY_OBF : CLASSES_BY_MOJ).get(interfce.getName());
-				types.add((cm != null) ? cm.toType(obf) : Type.of(interfce));
+				types.add((cm != null) ? cm.toType(obf) : NMSTypeWrapper.of(interfce));
 			}
 			return types;
 		}
@@ -451,12 +451,12 @@ public class NMSReflect {
 	    	String classObfSimpleName = obfName.substring(obfName.lastIndexOf('.') + 1);
 	    	String classMojSimpleName = mojName.substring(mojName.lastIndexOf('.') + 1);
 			for (Constructor<?> ct : runtimeClass().getDeclaredConstructors()) {
-				List<Type> obfParams = new ArrayList<>();
-				List<Type> mojParams = new ArrayList<>();
+				List<NMSTypeWrapper> obfParams = new ArrayList<>();
+				List<NMSTypeWrapper> mojParams = new ArrayList<>();
 				for (Class<?> param : ct.getParameterTypes()) {
 					ClassMapping cm = (IS_SERVER_OBFUSCATED ? CLASSES_BY_OBF : CLASSES_BY_MOJ).get(param.getName());
 					if (cm == null) {
-						Type t = Type.of(param);
+						NMSTypeWrapper t = NMSTypeWrapper.of(param);
 						obfParams.add(t);
 						mojParams.add(t);
 					}
@@ -482,7 +482,7 @@ public class NMSReflect {
     
     
     
-    private record MethodId(String name, List<Type> parametersType) implements Comparable<MethodId> {
+    private record MethodId(String name, List<NMSTypeWrapper> parametersType) implements Comparable<MethodId> {
     	@Override
     	public int compareTo(MethodId o) {
     		int cmp = name.compareTo(o.name);
@@ -502,7 +502,7 @@ public class NMSReflect {
 		}
 		
 		public String toString() {
-			String paramsStr = parametersType.stream().map(Type::toString).collect(Collectors.joining(", "));
+			String paramsStr = parametersType.stream().map(NMSTypeWrapper::toString).collect(Collectors.joining(", "));
 			return name + "(" + paramsStr + ")";
 		}
     	
@@ -510,7 +510,7 @@ public class NMSReflect {
 
 
     
-    private record MemberDesc<I extends Comparable<I>>(I identifier, Type returnType) {
+    private record MemberDesc<I extends Comparable<I>>(I identifier, NMSTypeWrapper returnType) {
 		private String toHTML(boolean isObfClass, boolean isStatic, boolean isFinal) {
 			String identifierHTML = "";
 			if (identifier instanceof MethodId mId)
@@ -533,14 +533,14 @@ public class NMSReflect {
 				if (r != '(')
 					throw new IllegalArgumentException("Invalid method description '" + desc + "'. Must start with '('.");
 				
-				List<Type> paramsType = new ArrayList<>();
+				List<NMSTypeWrapper> paramsType = new ArrayList<>();
 				
 				while (((char) descReader.read()) != ')') {
 					descReader.skip(-1);
-					paramsType.add(Type.parse(descReader));
+					paramsType.add(NMSTypeWrapper.parse(descReader));
 				}
 				
-				Type retType = Type.parse(descReader);
+				NMSTypeWrapper retType = NMSTypeWrapper.parse(descReader);
 				return new MemberDesc<>(new MethodId(member.getName(namespace), Collections.unmodifiableList(paramsType)), retType);
 			} catch (IOException e) {
 				throw new RuntimeException("StringReader read error", e);
@@ -551,7 +551,7 @@ public class NMSReflect {
 		
 		private static MemberDesc<String> of(MappingTree.FieldMapping member, String namespace) {
 			StringReader descReader = new StringReader(member.getDesc(namespace));
-			return new MemberDesc<>(member.getName(namespace), Type.parse(descReader));
+			return new MemberDesc<>(member.getName(namespace), NMSTypeWrapper.parse(descReader));
 		}
     }
     
@@ -604,7 +604,7 @@ public class NMSReflect {
 				@Override
 				ReflectMethod<?> getReflectMember() throws ClassNotFoundException, NoSuchMethodException {
 					MethodId id = getReflectDesc().identifier;
-					return declaringClass.runtimeReflectClass.method(id.name, Type.toClassArray(id.parametersType));
+					return declaringClass.runtimeReflectClass.method(id.name, NMSTypeWrapper.toClassArray(id.parametersType));
 				}
     		};
 		}

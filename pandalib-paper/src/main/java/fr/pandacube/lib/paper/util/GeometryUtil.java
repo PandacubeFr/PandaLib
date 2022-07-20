@@ -80,14 +80,16 @@ public class GeometryUtil {
 	 * @param playerLocation the location of the player, generally provided by {@link Player#getLocation()}
 	 * @param isSneaking if the player is sneaking. Generally {@link Player#isSneaking()}
 	 * @return an array of 8 {@link Location}s with x, y, and z values filled (yaw and pitch are ignored).
-	 * <pre>return[0] // top front left
-	 *return[1] // top front right
-	 *return[2] // bottom front left
-	 *return[3] // bottom front right
-	 *return[4] // top back left
-	 *return[5] // top back right
-	 *return[6] // bottom back left
-	 *return[7] // bottom back right
+	 * <pre>
+	 * return[0] // top front left
+	 * return[1] // top front right
+	 * return[2] // bottom front left
+	 * return[3] // bottom front right
+	 * return[4] // top back left
+	 * return[5] // top back right
+	 * return[6] // bottom back left
+	 * return[7] // bottom back right
+	 * </pre>
 	 */
 	public static Location[] getPlayerHeadGeometry(Location playerLocation, boolean isSneaking) {
 		Location[] headAnglesPoints = new Location[8];
@@ -255,11 +257,11 @@ public class GeometryUtil {
 
 		
 		/**
-		 * @param v the vector representing the direction. If v.getX() && v.getZ() are 0,
+		 * @param v the vector representing the direction. If v.getX() and v.getZ() are 0,
 		 * the yaw will be 0. This may have inconsistence if the vector is calculated
 		 * from a {@link Location}'s yaw and pitch. In this case, prefer using
 		 * {@link #DirectionalVector(Location)}. The {@link Vector} is
-		 * normalized if necessary (does not modify provided {@link Vector}).
+		 * normalized if necessary (does not modify the provided {@link Vector}).
 		 */
 		public DirectionalVector(Vector v) {
 			this(v.getX(), v.getY(), v.getZ());

@@ -9,18 +9,18 @@ import java.util.Objects;
 import fr.pandacube.lib.reflect.Reflect.ReflectClass;
 import fr.pandacube.lib.paper.reflect.NMSReflect.ClassMapping;
 
-public class Type implements Comparable<Type> {
+/* package */ class NMSTypeWrapper implements Comparable<NMSTypeWrapper> {
 	private final String type;
 	private final int arrayDepth;
 	
-	/* package */ Type(String type, int arrayDepth) {
+	/* package */ NMSTypeWrapper(String type, int arrayDepth) {
 		this.type = type;
 		this.arrayDepth = arrayDepth;
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		return obj instanceof Type ot && type.equals(ot.type) && arrayDepth == ot.arrayDepth;
+		return obj instanceof NMSTypeWrapper ot && type.equals(ot.type) && arrayDepth == ot.arrayDepth;
 	}
 	@Override
 	public int hashCode() {
@@ -28,7 +28,7 @@ public class Type implements Comparable<Type> {
 	}
 	
 	@Override
-	public int compareTo(Type o) {
+	public int compareTo(NMSTypeWrapper o) {
 		return toString().compareTo(o.toString());
 	}
 	
@@ -54,36 +54,36 @@ public class Type implements Comparable<Type> {
 		return cl;
 	}
 	
-	public Type arrayType() {
-		return new Type(type, arrayDepth + 1);
+	public NMSTypeWrapper arrayType() {
+		return new NMSTypeWrapper(type, arrayDepth + 1);
 	}
 	
-	/* package */ static Type of(Class<?> cl) {
+	/* package */ static NMSTypeWrapper of(Class<?> cl) {
 		int arrayDepth = 0;
 		while (cl.isArray()) {
 			cl = cl.getComponentType();
 			arrayDepth++;
 		}
-		return new Type(cl.getName(), arrayDepth);
+		return new NMSTypeWrapper(cl.getName(), arrayDepth);
 	}
 	
-	public static Type of(ReflectClass<?> rc) {
+	public static NMSTypeWrapper of(ReflectClass<?> rc) {
 		return arrayOf(rc, 0);
 	}
 	
-	public static Type arrayOf(ReflectClass<?> rc, int arrayDepth) {
-		return new Type(rc.get().getName(), arrayDepth);
+	public static NMSTypeWrapper arrayOf(ReflectClass<?> rc, int arrayDepth) {
+		return new NMSTypeWrapper(rc.get().getName(), arrayDepth);
 	}
 	
-	public static Type mojOf(ClassMapping cm) {
+	public static NMSTypeWrapper mojOf(ClassMapping cm) {
 		return arrayMojOf(cm, 0);
 	}
 	
-	public static Type arrayMojOf(ClassMapping cm, int arrayDepth) {
-		return new Type(cm.mojName, arrayDepth);
+	public static NMSTypeWrapper arrayMojOf(ClassMapping cm, int arrayDepth) {
+		return new NMSTypeWrapper(cm.mojName, arrayDepth);
 	}
 	
-	/* package */ static Type toType(Object typeObj) {
+	/* package */ static NMSTypeWrapper toType(Object typeObj) {
 		Objects.requireNonNull(typeObj, "typeObj cannot be null");
 		if (typeObj instanceof Class<?> cl) {
 			return of(cl);
@@ -94,7 +94,7 @@ public class Type implements Comparable<Type> {
 		else if (typeObj instanceof ReflectClass<?> rc) {
 			return of(rc);
 		}
-		else if (typeObj instanceof Type t) {
+		else if (typeObj instanceof NMSTypeWrapper t) {
 			return t;
 		}
 		else
@@ -139,7 +139,7 @@ public class Type implements Comparable<Type> {
 	
 	
 	
-	/* package */ static Type parse(StringReader desc) {
+	/* package */ static NMSTypeWrapper parse(StringReader desc) {
 		try {
 			int arrayDepth = 0;
 			char c;
@@ -165,7 +165,7 @@ public class Type implements Comparable<Type> {
 			}
 			default -> "void";
 			};
-			return new Type(type, arrayDepth);
+			return new NMSTypeWrapper(type, arrayDepth);
 		} catch (IOException e) {
 			throw new RuntimeException("StringReader read error", e);
 		}
@@ -174,12 +174,12 @@ public class Type implements Comparable<Type> {
 	
 
 	
-	/* package */ static List<Type> toTypeList(List<Object> paramsType) {
-		List<Type> types = new ArrayList<>(paramsType.size());
+	/* package */ static List<NMSTypeWrapper> toTypeList(List<Object> paramsType) {
+		List<NMSTypeWrapper> types = new ArrayList<>(paramsType.size());
 		for (int i = 0; i < paramsType.size(); i++) {
 			Object param = paramsType.get(i);
 			try {
-				types.add(Type.toType(param));
+				types.add(NMSTypeWrapper.toType(param));
 			} catch (NullPointerException|IllegalArgumentException e) {
 				throw new IllegalArgumentException("Invalid parameterType at index " + i, e);
 			}
@@ -187,7 +187,7 @@ public class Type implements Comparable<Type> {
 		return types;
 	}
 	
-	/* package */ static Class<?>[] toClassArray(List<Type> types) throws ClassNotFoundException {
+	/* package */ static Class<?>[] toClassArray(List<NMSTypeWrapper> types) throws ClassNotFoundException {
 		Class<?>[] classes = new Class<?>[types.size()];
 		for (int i = 0; i < types.size(); i++) {
 			classes[i] = types.get(i).toClass();

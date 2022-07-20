@@ -61,7 +61,7 @@ public class IteratorIterator<T> implements Iterator<T> {
 	}
 
 	/**
-	 * @implNote The current implementation of {@link IteratorIterator} may not support
+	 * @implNote  The current implementation of {@link IteratorIterator} may not support
 	 * running this method if the current position is the last value of one of
 	 * the underlying iterable, and if the {@link #hasNext()} method has been called before this one.
 	 */
