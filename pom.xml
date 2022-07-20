@@ -45,17 +45,17 @@
     </properties>
 	
     <modules>
-        <module>Bungee</module>
-        <module>Chat</module>
-        <module>CLI</module>
-        <module>Core</module>
-        <module>DB</module>
-        <module>Net</module>
-        <module>NetworkAPI</module>
-        <module>Paper</module>
-        <module>Permissions</module>
-        <module>Reflect</module>
-        <module>Util</module>
+        <module>pandalib-bungee</module>
+        <module>pandalib-chat</module>
+        <module>pandalib-cli</module>
+        <module>pandalib-core</module>
+        <module>pandalib-db</module>
+        <module>pandalib-net</module>
+        <module>pandalib-netapi</module>
+        <module>pandalib-paper</module>
+        <module>pandalib-permissions</module>
+        <module>pandalib-reflect</module>
+        <module>pandalib-util</module>
     </modules>
 
     <dependencies>
