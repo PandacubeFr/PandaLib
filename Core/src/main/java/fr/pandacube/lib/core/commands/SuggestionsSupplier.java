@@ -11,7 +11,8 @@ import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import fr.pandacube.lib.core.util.ListUtil;
+import fr.pandacube.lib.util.ListUtil;
+import fr.pandacube.lib.util.TimeUtil;
 
 @FunctionalInterface
 public interface SuggestionsSupplier<S> {
@@ -183,6 +184,49 @@ public interface SuggestionsSupplier<S> {
 			return (s, ti, token, a) -> collectFilteredStream(LongStream.rangeClosed(min, max).mapToObj(Long::toString), token);
 		}
 	}
+
+
+
+
+
+	public static <S> SuggestionsSupplier<S> suggestDuration() {
+		final List<String> emptyTokenSuggestions = TimeUtil.DURATION_SUFFIXES.stream().map(p -> "1" + p).collect(Collectors.toList());
+		return (s, ti, token, args) -> {
+			if (token.isEmpty()) {
+				return emptyTokenSuggestions;
+			}
+			List<String> remainingSuffixes = new ArrayList<>(TimeUtil.DURATION_SUFFIXES);
+			char[] tokenChars = token.toCharArray();
+			String accSuffix = "";
+			for (char c : tokenChars) {
+				if (Character.isDigit(c)) {
+					scanAndRemovePastSuffixes(remainingSuffixes, accSuffix);
+					accSuffix = "";
+				} else if (Character.isLetter(c)) {
+					accSuffix += c;
+				} else
+					return Collections.emptyList();
+			}
+			String prefixToken = token.substring(0, token.length() - accSuffix.length());
+			return SuggestionsSupplier.collectFilteredStream(remainingSuffixes.stream(), accSuffix)
+					.stream()
+					.map(str -> prefixToken + str)
+					.collect(Collectors.toList());
+		};
+	}
+
+
+	private static void scanAndRemovePastSuffixes(List<String> suffixes, String foundSuffix) {
+		for (int i = 0; i < suffixes.size(); i++) {
+			if (foundSuffix.startsWith(suffixes.get(i))) {
+				suffixes.subList(0, i + 1).clear();
+				return;
+			}
+		}
+	}
+
+
+
 	
 	
 	

@@ -10,7 +10,7 @@ import org.bukkit.util.BlockVector;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
-import fr.pandacube.lib.core.util.RandomUtil;
+import fr.pandacube.lib.util.RandomUtil;
 
 /**
  * Checkpoint represented as a 3D Axis and Block Aligned Bounding Box (sort of AABB).

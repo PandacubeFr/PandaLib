@@ -1,21 +1,21 @@
 package fr.pandacube.lib.core.players;
 
-import static fr.pandacube.lib.core.chat.ChatStatic.dataText;
-import static fr.pandacube.lib.core.chat.ChatStatic.successText;
-import static fr.pandacube.lib.core.chat.ChatStatic.text;
-import static fr.pandacube.lib.core.chat.ChatStatic.warningText;
-
 import java.util.Calendar;
 import java.util.OptionalLong;
 import java.util.UUID;
 import java.util.stream.LongStream;
 
-import fr.pandacube.lib.core.chat.Chat;
-import fr.pandacube.lib.core.chat.ChatColorUtil;
-import fr.pandacube.lib.core.db.DBException;
-import fr.pandacube.lib.core.permissions.PermPlayer;
-import fr.pandacube.lib.core.permissions.Permissions;
-import fr.pandacube.lib.core.util.Log;
+import fr.pandacube.lib.chat.Chat;
+import fr.pandacube.lib.chat.ChatColorUtil;
+import fr.pandacube.lib.db.DBException;
+import fr.pandacube.lib.permissions.PermPlayer;
+import fr.pandacube.lib.permissions.Permissions;
+import fr.pandacube.lib.util.Log;
+
+import static fr.pandacube.lib.chat.ChatStatic.dataText;
+import static fr.pandacube.lib.chat.ChatStatic.successText;
+import static fr.pandacube.lib.chat.ChatStatic.text;
+import static fr.pandacube.lib.chat.ChatStatic.warningText;
 
 public interface IOffPlayer {
 

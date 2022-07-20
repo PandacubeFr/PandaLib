@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import fr.pandacube.lib.core.util.MappedListView;
+import fr.pandacube.lib.util.MappedListView;
 
 public class ReflectListWrapper<W extends ReflectWrapperI> extends MappedListView<Object, W> implements ReflectWrapperTypedI<List<Object>> {
 

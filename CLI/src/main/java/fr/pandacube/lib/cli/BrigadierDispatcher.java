@@ -18,7 +18,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
-import fr.pandacube.lib.core.util.Log;
+import fr.pandacube.lib.util.Log;
 import jline.console.completer.Completer;
 
 public class BrigadierDispatcher implements Completer {

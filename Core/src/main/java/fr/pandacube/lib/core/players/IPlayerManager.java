@@ -13,14 +13,14 @@ import java.util.stream.Collectors;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-
-import fr.pandacube.lib.core.chat.Chat;
-import fr.pandacube.lib.core.db.DB;
-import fr.pandacube.lib.core.db.DBInitTableException;
-import fr.pandacube.lib.core.util.Log;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.md_5.bungee.api.chat.BaseComponent;
+
+import fr.pandacube.lib.chat.Chat;
+import fr.pandacube.lib.db.DB;
+import fr.pandacube.lib.db.DBInitTableException;
+import fr.pandacube.lib.util.Log;
 
 public abstract class IPlayerManager<OP extends IOnlinePlayer, OF extends IOffPlayer> {
 	private static IPlayerManager<?, ?> instance;

@@ -10,10 +10,10 @@ import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
 import org.bukkit.event.Listener;
 
-import fr.pandacube.lib.core.util.BiMap;
-import fr.pandacube.lib.core.util.FileUtils;
-import fr.pandacube.lib.core.util.Log;
-import fr.pandacube.lib.core.util.RandomUtil;
+import fr.pandacube.lib.util.BiMap;
+import fr.pandacube.lib.util.FileUtils;
+import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.RandomUtil;
 
 public class GameWorldUtils implements Listener {
 	

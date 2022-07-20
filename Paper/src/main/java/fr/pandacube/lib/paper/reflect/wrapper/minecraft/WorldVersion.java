@@ -6,7 +6,7 @@ import fr.pandacube.lib.paper.reflect.wrapper.ConcreteWrapper;
 import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapper;
 import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapperI;
 
-import static fr.pandacube.lib.core.util.ThrowableUtil.wrapEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 
 @ConcreteWrapper(WorldVersion.__concrete.class)
 public interface WorldVersion extends ReflectWrapperI {

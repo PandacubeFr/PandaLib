@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import fr.pandacube.lib.core.util.Reflect.ReflectClass;
+import fr.pandacube.lib.reflect.Reflect.ReflectClass;
 import fr.pandacube.lib.paper.reflect.NMSReflect.ClassMapping;
 
 public class Type implements Comparable<Type> {

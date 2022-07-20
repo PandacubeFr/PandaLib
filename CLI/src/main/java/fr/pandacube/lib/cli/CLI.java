@@ -3,10 +3,10 @@ package fr.pandacube.lib.cli;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import jline.console.ConsoleReader;
 import org.fusesource.jansi.AnsiConsole;
 
-import fr.pandacube.lib.core.util.Log;
-import jline.console.ConsoleReader;
+import fr.pandacube.lib.util.Log;
 
 public class CLI {
 	

@@ -1,6 +1,6 @@
 package fr.pandacube.lib.paper.reflect.wrapper.minecraft.world;
 
-import fr.pandacube.lib.core.util.Reflect;
+import fr.pandacube.lib.reflect.Reflect;
 import fr.pandacube.lib.paper.reflect.NMSReflect;
 import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapper;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
@@ -8,8 +8,8 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-import static fr.pandacube.lib.core.util.ThrowableUtil.wrapEx;
-import static fr.pandacube.lib.core.util.ThrowableUtil.wrapReflectEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class ChunkStorage extends ReflectWrapper {
     public static final NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.world.level.chunk.storage.ChunkStorage"));

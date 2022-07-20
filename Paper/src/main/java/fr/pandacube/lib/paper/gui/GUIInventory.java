@@ -21,9 +21,9 @@ import org.bukkit.plugin.Plugin;
 
 import com.google.common.collect.ImmutableMap;
 
-import fr.pandacube.lib.core.chat.Chat;
+import fr.pandacube.lib.chat.Chat;
 import fr.pandacube.lib.core.players.IPlayerManager;
-import fr.pandacube.lib.core.util.Log;
+import fr.pandacube.lib.util.Log;
 import fr.pandacube.lib.paper.util.ItemStackBuilder;
 
 public class GUIInventory implements Listener {

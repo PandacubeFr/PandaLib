@@ -2,12 +2,12 @@ package fr.pandacube.lib.core.players;
 
 import java.util.UUID;
 
-import fr.pandacube.lib.core.db.DB;
-import fr.pandacube.lib.core.db.DBException;
-import fr.pandacube.lib.core.db.SQLElement;
-import fr.pandacube.lib.core.db.SQLElementList;
-import fr.pandacube.lib.core.db.SQLFKField;
-import fr.pandacube.lib.core.db.SQLField;
+import fr.pandacube.lib.db.DB;
+import fr.pandacube.lib.db.DBException;
+import fr.pandacube.lib.db.SQLElement;
+import fr.pandacube.lib.db.SQLElementList;
+import fr.pandacube.lib.db.SQLFKField;
+import fr.pandacube.lib.db.SQLField;
 
 public class SQLPlayerConfig extends SQLElement<SQLPlayerConfig> {
 

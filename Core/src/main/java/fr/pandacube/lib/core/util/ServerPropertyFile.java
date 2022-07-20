@@ -10,6 +10,8 @@ import java.util.Objects;
 
 import com.google.gson.JsonSyntaxException;
 
+import fr.pandacube.lib.util.Log;
+
 public class ServerPropertyFile {
 
 	private final transient File file;

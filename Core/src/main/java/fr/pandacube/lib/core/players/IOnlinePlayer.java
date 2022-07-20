@@ -8,8 +8,8 @@ import java.util.stream.LongStream;
 import org.geysermc.floodgate.api.FloodgateApi;
 import org.geysermc.floodgate.api.player.FloodgatePlayer;
 
-import fr.pandacube.lib.core.chat.Chat;
-import fr.pandacube.lib.core.db.DBException;
+import fr.pandacube.lib.chat.Chat;
+import fr.pandacube.lib.db.DBException;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;

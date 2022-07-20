@@ -2,15 +2,15 @@ package fr.pandacube.lib.paper.reflect.wrapper.craftbukkit;
 
 import com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource;
 import com.mojang.brigadier.tree.CommandNode;
-import fr.pandacube.lib.core.util.Reflect;
+import fr.pandacube.lib.reflect.Reflect;
 import fr.pandacube.lib.paper.reflect.OBCReflect;
 import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapperTyped;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Commands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 
-import static fr.pandacube.lib.core.util.ThrowableUtil.wrapEx;
-import static fr.pandacube.lib.core.util.ThrowableUtil.wrapReflectEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class VanillaCommandWrapper extends ReflectWrapperTyped<BukkitCommand> {
     public static final Reflect.ReflectClass<?> REFLECT = wrapEx(() -> OBCReflect.ofClass("command.VanillaCommandWrapper"));

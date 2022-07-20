@@ -1,10 +1,10 @@
 package fr.pandacube.lib.paper.reflect.wrapper.brigadier;
 
-import fr.pandacube.lib.core.util.Reflect;
+import fr.pandacube.lib.reflect.Reflect;
 import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapperTyped;
 
-import static fr.pandacube.lib.core.util.ThrowableUtil.wrapEx;
-import static fr.pandacube.lib.core.util.ThrowableUtil.wrapReflectEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class CommandNode<S> extends ReflectWrapperTyped<com.mojang.brigadier.tree.CommandNode<S>> {
     public static final Reflect.ReflectClass<?> REFLECT = Reflect.ofClass(com.mojang.brigadier.tree.CommandNode.class);

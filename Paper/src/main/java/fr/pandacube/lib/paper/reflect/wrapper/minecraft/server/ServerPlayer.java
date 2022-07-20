@@ -2,13 +2,13 @@ package fr.pandacube.lib.paper.reflect.wrapper.minecraft.server;
 
 import org.bukkit.entity.Player;
 
-import fr.pandacube.lib.core.util.Reflect;
+import fr.pandacube.lib.reflect.Reflect;
 import fr.pandacube.lib.paper.reflect.NMSReflect;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.DamageSource;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Entity;
 
-import static fr.pandacube.lib.core.util.ThrowableUtil.wrapEx;
-import static fr.pandacube.lib.core.util.ThrowableUtil.wrapReflectEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class ServerPlayer extends Entity { // in NMS, ServerPlayer is not a direct subclass of Entity
     public static final NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.server.level.ServerPlayer"));

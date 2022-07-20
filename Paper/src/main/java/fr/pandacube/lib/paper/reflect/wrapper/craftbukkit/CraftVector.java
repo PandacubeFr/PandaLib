@@ -1,14 +1,14 @@
 package fr.pandacube.lib.paper.reflect.wrapper.craftbukkit;
 
-import fr.pandacube.lib.core.util.Reflect;
+import fr.pandacube.lib.reflect.Reflect;
 import fr.pandacube.lib.paper.reflect.OBCReflect;
 import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapper;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.core.BlockPos;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Vec3;
 import org.bukkit.util.Vector;
 
-import static fr.pandacube.lib.core.util.ThrowableUtil.wrapEx;
-import static fr.pandacube.lib.core.util.ThrowableUtil.wrapReflectEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class CraftVector extends ReflectWrapper {
     public static final Reflect.ReflectClass<?> REFLECT = wrapEx(() -> OBCReflect.ofClass("util.CraftVector"));

@@ -5,7 +5,7 @@ import fr.pandacube.lib.paper.reflect.wrapper.ConcreteWrapper;
 import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapper;
 import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapperI;
 
-import static fr.pandacube.lib.core.util.ThrowableUtil.wrapEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 
 @ConcreteWrapper(Packet.__concrete.class)
 public interface Packet extends ReflectWrapperI {

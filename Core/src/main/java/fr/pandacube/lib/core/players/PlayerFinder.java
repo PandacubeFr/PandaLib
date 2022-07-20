@@ -19,11 +19,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 
 import fr.pandacube.lib.core.commands.SuggestionsSupplier;
-import fr.pandacube.lib.core.db.DB;
-import fr.pandacube.lib.core.db.DBException;
-import fr.pandacube.lib.core.db.SQLOrderBy;
-import fr.pandacube.lib.core.util.LevenshteinDistance;
-import fr.pandacube.lib.core.util.Log;
+import fr.pandacube.lib.db.DB;
+import fr.pandacube.lib.db.DBException;
+import fr.pandacube.lib.db.SQLOrderBy;
+import fr.pandacube.lib.util.LevenshteinDistance;
+import fr.pandacube.lib.util.Log;
 
 /*
  * Etape de recherche de joueur :

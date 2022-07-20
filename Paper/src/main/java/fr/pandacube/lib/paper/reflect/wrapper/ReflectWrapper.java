@@ -1,13 +1,13 @@
 package fr.pandacube.lib.paper.reflect.wrapper;
 
 import com.google.common.collect.MapMaker;
-import fr.pandacube.lib.core.util.Reflect;
+import fr.pandacube.lib.reflect.Reflect;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static fr.pandacube.lib.core.util.ThrowableUtil.wrapEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 
 public abstract class ReflectWrapper implements ReflectWrapperI {
 

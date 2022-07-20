@@ -19,12 +19,12 @@ import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 
-import fr.pandacube.lib.core.util.Log;
-import fr.pandacube.lib.core.util.Reflect;
-import fr.pandacube.lib.core.util.Reflect.ReflectClass;
-import fr.pandacube.lib.core.util.Reflect.ReflectField;
-import fr.pandacube.lib.core.util.Reflect.ReflectMember;
-import fr.pandacube.lib.core.util.Reflect.ReflectMethod;
+import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.reflect.Reflect;
+import fr.pandacube.lib.reflect.Reflect.ReflectClass;
+import fr.pandacube.lib.reflect.Reflect.ReflectField;
+import fr.pandacube.lib.reflect.Reflect.ReflectMember;
+import fr.pandacube.lib.reflect.Reflect.ReflectMethod;
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.format.MappingFormat;
 import net.fabricmc.mappingio.tree.MappingTree;

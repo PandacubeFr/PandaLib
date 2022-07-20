@@ -1,10 +1,10 @@
 package fr.pandacube.lib.paper.reflect.wrapper.netty;
 
-import fr.pandacube.lib.core.util.Reflect;
+import fr.pandacube.lib.reflect.Reflect;
 import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapper;
 
-import static fr.pandacube.lib.core.util.ThrowableUtil.wrapEx;
-import static fr.pandacube.lib.core.util.ThrowableUtil.wrapReflectEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class Unpooled extends ReflectWrapper {
     public static final Reflect.ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("io.netty.buffer.Unpooled"));

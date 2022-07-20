@@ -2,8 +2,8 @@ package fr.pandacube.lib.paper.reflect;
 
 import org.bukkit.Bukkit;
 
-import fr.pandacube.lib.core.util.Reflect;
-import fr.pandacube.lib.core.util.Reflect.ReflectClass;
+import fr.pandacube.lib.reflect.Reflect;
+import fr.pandacube.lib.reflect.Reflect.ReflectClass;
 
 public class OBCReflect {
 	

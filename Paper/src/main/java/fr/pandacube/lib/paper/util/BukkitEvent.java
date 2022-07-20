@@ -1,6 +1,6 @@
 package fr.pandacube.lib.paper.util;
 
-import fr.pandacube.lib.core.util.Reflect;
+import fr.pandacube.lib.reflect.Reflect;
 import fr.pandacube.lib.paper.PandaLibPaper;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
@@ -44,10 +44,10 @@ public class BukkitEvent {
 		HandlerList.unregisterAll(listener);
 	}
 	
-	
+
 
 	public static List<Class<? extends Event>> getAllEventClasses() {
-		List<Class<? extends Event>> classes = Reflect.getAllSubclasses(Event.class);
+		List<Class<? extends Event>> classes = Reflect.ofClass(Event.class).getAllSubclasses(false);
 		classes.removeIf(e -> getHandlerList(e) == null);
 		return classes;
 	}

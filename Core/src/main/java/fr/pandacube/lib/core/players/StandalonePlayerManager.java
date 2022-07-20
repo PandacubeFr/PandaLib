@@ -2,9 +2,9 @@ package fr.pandacube.lib.core.players;
 
 import java.util.UUID;
 
-import fr.pandacube.lib.core.chat.Chat;
-import fr.pandacube.lib.core.db.DBInitTableException;
-import fr.pandacube.lib.core.util.Log;
+import fr.pandacube.lib.chat.Chat;
+import fr.pandacube.lib.db.DBInitTableException;
+import fr.pandacube.lib.util.Log;
 import net.kyori.adventure.text.Component;
 
 /**

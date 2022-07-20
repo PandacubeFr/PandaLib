@@ -14,8 +14,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
-import fr.pandacube.lib.core.chat.Chat;
-import fr.pandacube.lib.core.util.Log;
+import fr.pandacube.lib.chat.Chat;
+import fr.pandacube.lib.util.Log;
 import fr.pandacube.lib.paper.PandaLibPaper;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.bossbar.BossBar.Color;

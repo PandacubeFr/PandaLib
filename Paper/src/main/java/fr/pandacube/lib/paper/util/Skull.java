@@ -13,7 +13,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 
-import fr.pandacube.lib.core.chat.Chat;
+import fr.pandacube.lib.chat.Chat;
 
 /**
  * Represents some special mob heads, also support creating player skulls and custom skulls.

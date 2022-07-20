@@ -14,8 +14,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import com.google.common.collect.Streams;
 
-import fr.pandacube.lib.core.chat.Chat;
-import fr.pandacube.lib.core.chat.Chat.FormatableChat;
+import fr.pandacube.lib.chat.Chat;
+import fr.pandacube.lib.chat.Chat.FormatableChat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.format.TextDecoration.State;

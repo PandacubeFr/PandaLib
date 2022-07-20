@@ -4,7 +4,7 @@ import java.util.concurrent.Callable;
 
 import org.bukkit.Bukkit;
 
-import fr.pandacube.lib.core.util.Log;
+import fr.pandacube.lib.util.Log;
 import fr.pandacube.lib.paper.PandaLibPaper;
 
 public class SchedulerUtil {

@@ -9,7 +9,7 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import fr.pandacube.lib.core.chat.Chat;
+import fr.pandacube.lib.chat.Chat;
 import net.kyori.adventure.text.Component;
 
 public class ScoreboardUtil {

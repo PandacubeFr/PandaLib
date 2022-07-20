@@ -1,7 +1,7 @@
 package fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands;
 
 import com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource;
-import fr.pandacube.lib.core.util.Reflect;
+import fr.pandacube.lib.reflect.Reflect;
 import fr.pandacube.lib.paper.reflect.NMSReflect;
 import fr.pandacube.lib.paper.reflect.wrapper.ConcreteWrapper;
 import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapper;
@@ -9,8 +9,8 @@ import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapperI;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.core.BlockPos;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Vec3;
 
-import static fr.pandacube.lib.core.util.ThrowableUtil.wrapEx;
-import static fr.pandacube.lib.core.util.ThrowableUtil.wrapReflectEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 import static fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapper.wrap;
 
 @ConcreteWrapper(Coordinates.__concrete.class)

@@ -17,7 +17,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.scheduler.BukkitTask;
 
-import fr.pandacube.lib.core.util.RandomUtil;
+import fr.pandacube.lib.util.RandomUtil;
 import fr.pandacube.lib.paper.PandaLibPaper;
 
 public class LocationUtil {

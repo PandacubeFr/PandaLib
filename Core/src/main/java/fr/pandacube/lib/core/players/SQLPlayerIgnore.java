@@ -3,10 +3,10 @@ package fr.pandacube.lib.core.players;
 import java.util.Map;
 import java.util.UUID;
 
-import fr.pandacube.lib.core.db.DB;
-import fr.pandacube.lib.core.db.DBException;
-import fr.pandacube.lib.core.db.SQLElement;
-import fr.pandacube.lib.core.db.SQLFKField;
+import fr.pandacube.lib.db.DB;
+import fr.pandacube.lib.db.DBException;
+import fr.pandacube.lib.db.SQLElement;
+import fr.pandacube.lib.db.SQLFKField;
 
 public class SQLPlayerIgnore extends SQLElement<SQLPlayerIgnore> {
 

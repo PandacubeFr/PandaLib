@@ -8,8 +8,7 @@
   </parent>
 
   <artifactId>pandalib-cli</artifactId>
-
-  <name>PandaLib-CLI</name>
+    <packaging>jar</packaging>
     
 	<repositories>
 		<repository>
@@ -17,7 +16,11 @@
 			<name>Minecraft Libraries</name>
 			<url>https://libraries.minecraft.net</url>
 		</repository>
-	</repositories>
+        <repository>
+            <id>bungeecord-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
 
   <dependencies>
         <dependency>
@@ -28,13 +31,13 @@
         </dependency>
 
         <dependency>
-            <groupId>fr.pandacube.bungeecord</groupId>
+            <groupId>net.md-5</groupId>
             <artifactId>bungeecord-log</artifactId>
             <version>${bungeecord.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>fr.pandacube.bungeecord</groupId>
+            <groupId>net.md-5</groupId>
             <artifactId>bungeecord-config</artifactId>
             <version>${bungeecord.version}</version>
             <scope>compile</scope>

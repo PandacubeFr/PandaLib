@@ -2,7 +2,7 @@ package fr.pandacube.lib.core.commands;
 
 import java.util.Arrays;
 
-import fr.pandacube.lib.core.chat.ChatStatic;
+import fr.pandacube.lib.chat.ChatStatic;
 
 public class AbstractCommand extends ChatStatic {
 	

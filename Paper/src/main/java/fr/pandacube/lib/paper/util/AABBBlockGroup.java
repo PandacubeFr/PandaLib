@@ -9,8 +9,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.util.BlockVector;
 import org.bukkit.util.Vector;
 
-import fr.pandacube.lib.core.util.IteratorIterator;
-import fr.pandacube.lib.core.util.RandomUtil;
+import fr.pandacube.lib.util.IteratorIterator;
+import fr.pandacube.lib.util.RandomUtil;
 
 public class AABBBlockGroup implements Iterable<BlockVector> {
 	

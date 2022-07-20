@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import fr.pandacube.lib.core.chat.ChatColorUtil;
-import fr.pandacube.lib.core.util.Log;
+import fr.pandacube.lib.chat.ChatColorUtil;
+import fr.pandacube.lib.util.Log;
+
 /**
  * Class tht loads a specific config file or directory
  *

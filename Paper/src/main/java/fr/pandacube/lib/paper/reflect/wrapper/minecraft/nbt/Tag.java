@@ -1,9 +1,9 @@
 package fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt;
 
-import static fr.pandacube.lib.core.util.ThrowableUtil.wrapEx;
-import static fr.pandacube.lib.core.util.ThrowableUtil.wrapReflectEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
-import fr.pandacube.lib.core.util.Reflect.ReflectMethod;
+import fr.pandacube.lib.reflect.Reflect.ReflectMethod;
 import fr.pandacube.lib.paper.reflect.NMSReflect;
 import fr.pandacube.lib.paper.reflect.NMSReflect.ClassMapping;
 import fr.pandacube.lib.paper.reflect.wrapper.ConcreteWrapper;

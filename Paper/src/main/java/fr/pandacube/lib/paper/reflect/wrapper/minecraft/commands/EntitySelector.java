@@ -1,7 +1,7 @@
 package fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands;
 
 import com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource;
-import fr.pandacube.lib.core.util.Reflect;
+import fr.pandacube.lib.reflect.Reflect;
 import fr.pandacube.lib.paper.reflect.NMSReflect;
 import fr.pandacube.lib.paper.reflect.wrapper.ReflectListWrapper;
 import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapper;
@@ -10,8 +10,8 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Entity;
 
 import java.util.List;
 
-import static fr.pandacube.lib.core.util.ThrowableUtil.wrapEx;
-import static fr.pandacube.lib.core.util.ThrowableUtil.wrapReflectEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class EntitySelector extends ReflectWrapper {
     public static final NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.commands.arguments.selector.EntitySelector"));

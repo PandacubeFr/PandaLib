@@ -8,8 +8,6 @@
     <artifactId>pandalib-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-
-    <name>PandaLib-Parent</name>
     
     <organization>
         <name>Pandacube</name>
@@ -48,9 +46,16 @@
 	
     <modules>
         <module>Bungee</module>
+        <module>Chat</module>
         <module>CLI</module>
         <module>Core</module>
+        <module>DB</module>
+        <module>Net</module>
+        <module>NetworkAPI</module>
         <module>Paper</module>
+        <module>Permissions</module>
+        <module>Reflect</module>
+        <module>Util</module>
     </modules>
 
     <dependencies>
@@ -68,9 +73,10 @@
             <plugin>
                 <groupId>net.md-5</groupId>
                 <artifactId>scriptus</artifactId>
-                <version>0.3.1</version>
+                <version>0.4.1</version>
                 <configuration>
                     <format>git:${project.name}:${project.version}:%s:${build.number}</format>
+                    <override>true</override> <!-- Hide warnings about parameters already set -->
                 </configuration>
                 <executions>
                     <execution>
@@ -95,51 +101,19 @@
                     </archive>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
-        <pluginManagement>
-            <plugins>
-                <!--This plugin's configuration is used to store Eclipse 
-                    m2e settings only. It has no influence on the Maven build itself. -->
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>net.md-5</groupId>
-                                        <artifactId>scriptus</artifactId>
-                                        <versionRange>[0.3.1,)</versionRange>
-                                        <goals>
-                                            <goal>describe</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <execute>
-                                            <runOnIncremental>false</runOnIncremental>
-                                        </execute>
-                                    </action>
-                                </pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.apache.maven.plugins</groupId>
-                                        <artifactId>maven-enforcer-plugin</artifactId>
-                                        <versionRange>[1.0.0,)</versionRange>
-                                        <goals>
-                                            <goal>enforce</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore />
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
 </project>
