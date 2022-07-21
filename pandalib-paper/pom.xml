@@ -24,7 +24,7 @@
   <dependencies>
         <dependency>
             <groupId>fr.pandacube.lib</groupId>
-            <artifactId>pandalib-core</artifactId>
+            <artifactId>pandalib-chat</artifactId>
             <version>${project.version}</version>
             <exclusions>
             	<exclusion>
@@ -37,17 +37,31 @@
 		        </exclusion>
             </exclusions>
         </dependency>
+
+      <dependency>
+          <groupId>fr.pandacube.lib</groupId>
+          <artifactId>pandalib-reflect</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>fr.pandacube.lib</groupId>
+          <artifactId>pandalib-util</artifactId>
+          <version>${project.version}</version>
+      </dependency>
         
         <!-- Paper -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>${paper.version}-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-mojangapi</artifactId>
             <version>${paper.version}-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
   </dependencies>
   

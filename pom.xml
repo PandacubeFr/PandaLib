@@ -59,6 +59,9 @@
         <module>pandalib-reflect</module>
         <module>pandalib-util</module>
         <module>pandalib-players-permissible</module>
+        <module>pandalib-bungee-permissions</module>
+        <module>pandalib-bungee-players</module>
+        <module>pandalib-paper-permissions</module>
     </modules>
 
     <dependencies>

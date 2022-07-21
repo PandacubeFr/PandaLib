@@ -23,12 +23,19 @@
     </repositories>
 
   <dependencies>
-        <dependency>
-            <groupId>fr.pandacube.lib</groupId>
-            <artifactId>pandalib-core</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
+      <dependency>
+          <groupId>fr.pandacube.lib</groupId>
+          <artifactId>pandalib-core</artifactId>
+          <version>${project.version}</version>
+          <scope>compile</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>fr.pandacube.lib</groupId>
+          <artifactId>pandalib-reflect</artifactId>
+          <version>${project.version}</version>
+          <scope>compile</scope>
+      </dependency>
 
         <dependency>
             <groupId>net.md-5</groupId>

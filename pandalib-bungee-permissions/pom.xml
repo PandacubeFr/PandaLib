@@ -9,10 +9,22 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>pandalib-players-permissible</artifactId>
+    <artifactId>pandalib-bungee-permissions</artifactId>
+
+    <repositories>
+        <repository>
+            <id>bungeecord-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
 
     <dependencies>
-
+        <dependency>
+            <groupId>fr.pandacube.lib</groupId>
+            <artifactId>pandalib-players-permissible</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>fr.pandacube.lib</groupId>
             <artifactId>pandalib-permissions</artifactId>
@@ -20,11 +32,12 @@
         </dependency>
 
         <dependency>
-            <groupId>fr.pandacube.lib</groupId>
-            <artifactId>pandalib-players-standalone</artifactId>
-            <version>${project.version}</version>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-api</artifactId>
+            <version>${bungeecord.version}</version>
+            <scope>provided</scope>
         </dependency>
-
     </dependencies>
+
 
 </project>
