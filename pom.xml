@@ -53,10 +53,12 @@
         <module>pandalib-net</module>
         <module>pandalib-netapi</module>
         <module>pandalib-paper</module>
+        <module>pandalib-paper-reflect</module>
         <module>pandalib-permissions</module>
+        <module>pandalib-players-standalone</module>
         <module>pandalib-reflect</module>
         <module>pandalib-util</module>
-        <module>pandalib-paper-reflect</module>
+        <module>pandalib-players-permissible</module>
     </modules>
 
     <dependencies>
@@ -69,39 +71,7 @@
     </dependencies>
 
     <build>
-        <finalName>${project.name}-${build.number}</finalName>
         <plugins>
-            <plugin>
-                <groupId>net.md-5</groupId>
-                <artifactId>scriptus</artifactId>
-                <version>0.4.1</version>
-                <configuration>
-                    <format>git:${project.name}:${project.version}:%s:${build.number}</format>
-                    <override>true</override> <!-- Hide warnings about parameters already set -->
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>describe</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.2</version>
-                <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <!--suppress UnresolvedMavenProperty -->
-                            <Implementation-Version>${describe}</Implementation-Version>
-                            <Specification-Version>${maven.build.timestamp}</Specification-Version>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>

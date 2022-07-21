@@ -1,21 +1,17 @@
-package fr.pandacube.lib.core.players;
+package fr.pandacube.lib.players.standalone;
 
 import java.util.Locale;
-import java.util.OptionalLong;
 import java.util.UUID;
-import java.util.stream.LongStream;
 
-import org.geysermc.floodgate.api.FloodgateApi;
-import org.geysermc.floodgate.api.player.FloodgatePlayer;
-
-import fr.pandacube.lib.chat.Chat;
-import fr.pandacube.lib.db.DBException;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 
-public interface IOnlinePlayer extends IOffPlayer {
+import fr.pandacube.lib.chat.Chat;
+import fr.pandacube.lib.chat.ChatStatic;
+
+public interface StandaloneOnlinePlayer extends StandaloneOffPlayer {
 	
 	
 	
@@ -26,137 +22,24 @@ public interface IOnlinePlayer extends IOffPlayer {
 	
 	/**
 	 * @return The current name of this player
-	 * @implSpec The implementation is expected to call the environment API
+	 * @apiNote The implementation is expected to call the environment API
 	 * (Bukkit/Bungee) to get the name of the player.
 	 */
-	String getName();
 	
 	String getServerName();
 	
 	String getWorldName();
 	
 	
+
+
 	
-	
-	/*
-	 * Floodgate related
-	 */
-	
-	default boolean isBedrockClient() {
-		try {
-			return FloodgateApi.getInstance().isFloodgatePlayer(getUniqueId());
-		} catch (NoClassDefFoundError e) {
-			return false;
-		}
-	}
-	
-	default FloodgatePlayer getBedrockClient() {
-		return FloodgateApi.getInstance().getPlayer(getUniqueId());
-	}
-	
-	default boolean isJavaClient() {
-		return !isBedrockClient();
-	}
 	
 
 	
 	
-	/*
-	 * Related class instances
-	 */
+	
 
-	/**
-	 * @throws IllegalStateException if the player was not found in the database (should never happen)
-	 * @throws DBException if a database access error occurs
-	 */
-	@Override
-	default SQLPlayer getDbPlayer() throws DBException {
-		SQLPlayer p = SQLPlayer.getPlayerFromUUID(getUniqueId());
-		if (p == null)
-			throw new IllegalStateException("The player was not found in the database: " + getUniqueId());
-		return p;
-	}
-	
-	
-	
-	
-	
-	
-	
-	/*
-	 * Permissions and groups
-	 */
-
-	/**
-	 * Tells if this online player has the specified permission.
-	 * @implSpec the implementation of this method must not directly or
-	 * indirectly call the method {@link IOffPlayer#hasPermission(String)},
-	 * or it may result in a {@link StackOverflowError}.
-	 */
-	boolean hasPermission(String permission);
-
-	/**
-	 * Tells if this online player has the permission resulted from the provided expression.
-	 * @implSpec the implementation of this method must not directly or
-	 * indirectly call the method {@link IOffPlayer#hasPermissionExpression(String)},
-	 * or it may result in a {@link StackOverflowError}.
-	 */
-	boolean hasPermissionExpression(String permission);
-
-	/**
-	 * Lists all the values for a set of permission indicating an integer in a range.
-	 * <p>
-	 * A permission range is used to easily attribute a number to a group or player,
-	 * like the maximum number of homes allowed. For instance, if the player has the permission
-	 * {@code essentials.home.12}, this method would return a stream containing the value 12,
-	 * if the parameter {@code permissionPrefix} is {@code "essentials.home."}.
-	 * <p>
-	 * The use of a stream allow the caller to get either the maximum, the minimum, or do any
-	 * other treatment to the values.
-	 * @param permissionPrefix the permission prefix to search for.
-	 * @return a LongStream containing all the values found for the specified permission prefix.
-	 */
-	LongStream getPermissionRangeValues(String permissionPrefix);
-	
-	/**
-	 * Returns the maximum value returned by {@link IOffPlayer#getPermissionRangeValues(String)}.
-	 */
-	OptionalLong getPermissionRangeMax(String permissionPrefix);
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/*
-	 * Vanish
-	 */
-	
-	boolean isVanished();
-	
-	default boolean isVanishedFor(IOffPlayer other) {
-		if (!isVanished())
-			return false; // can see unvanished
-		
-		if (getUniqueId().equals(other.getUniqueId()))
-			return false; // can see themself
-		
-		if (!isInStaff() && other.isInStaff())
-			return false; // can see non-staff as a staff
-		
-		if (other.hasPermission("pandacube.vanish.see." + getUniqueId()))
-			return false; // can see if has a specific permission
-		
-		return true;
-	}
-	
-	
-	
-	
-	
 	
 	
 	/*
@@ -181,29 +64,6 @@ public interface IOnlinePlayer extends IOffPlayer {
 
 	/**
 	 * Display the provided message in the player’s chat, if
-	 * the chat is activated
-	 * @param message the message to display
-	 */
-	default void sendMessage(Chat message) {
-		sendMessage(message.getAdv());
-	}
-
-	/**
-	 * Display the provided message in the player’s chat, if
-	 * they allows to display CHAT messages
-	 * @param message the message to display.
-	 * @param sender the player causing the send of this message. Client side filtering may occur.
-	 * May be null if we don’t want client filtering, but still consider the message as CHAT message.
-	 * @implNote implementation of this method should not filter the send of the message, based on
-	 * the sender. This parameter is only there to be transmitted to the client, so client side filtering can
-	 * be processed.
-	 */
-	default void sendMessage(Component message, UUID sender) {
-		sendMessage(message, () -> sender == null ? Identity.nil() : Identity.identity(sender));
-	}
-
-	/**
-	 * Display the provided message in the player’s chat, if
 	 * they allows to display CHAT messages
 	 * @param message the message to display.
 	 * @param sender the player causing the send of this message. Client side filtering may occur.
@@ -220,20 +80,12 @@ public interface IOnlinePlayer extends IOffPlayer {
 	 * @param message the message to display
 	 * @param sender the player causing the send of this message. Client side filtering may occur.
 	 * May be null if we don’t want client filtering, but still consider the message as CHAT message.
+	 * @implNote implementation of this method should not filter the send of the message, based on
+	 * the sender. This parameter is only there to be transmitted to the client, so client side filtering can
+	 * be processed.
 	 */
 	default void sendMessage(ComponentLike message, UUID sender) {
-		sendMessage(message.asComponent(), sender);
-	}
-
-	/**
-	 * Display the provided message in the player’s chat, if
-	 * they allows to display CHAT messages
-	 * @param message the message to display
-	 * @param sender the player causing the send of this message. Client side filtering may occur.
-	 * May be null if we don’t want client filtering, but still consider the message as CHAT message.
-	 */
-	default void sendMessage(Chat message, UUID sender) {
-		sendMessage(message.getAdv(), sender);
+		sendMessage(message.asComponent(), () -> sender == null ? Identity.nil() : Identity.identity(sender));
 	}
 	
 	/**
@@ -241,17 +93,8 @@ public interface IOnlinePlayer extends IOffPlayer {
 	 * activated, prepended with the server prefix.
 	 * @param message the message to display
 	 */
-	default void sendPrefixedMessage(Component message) {
-		sendMessage(IPlayerManager.prefixedAndColored(message));
-	}
-	
-	/**
-	 * Display the provided message in the player’s chat, if the chat is
-	 * activated, prepended with the server prefix.
-	 * @param message the message to display
-	 */
-	default void sendPrefixedMessage(Chat message) {
-		sendPrefixedMessage(message.getAdv());
+	default void sendPrefixedMessage(ComponentLike message) {
+		sendMessage(ChatStatic.prefixedAndColored(message));
 	}
 	
 	/**
@@ -272,8 +115,8 @@ public interface IOnlinePlayer extends IOffPlayer {
 	 * @param stay Stay time in tick
 	 * @param fadeOut Fade out time in tick
 	 */
-    default void sendTitle(Chat title, Chat subtitle, int fadeIn, int stay, int fadeOut) {
-    	sendTitle(title.getAdv(), subtitle.getAdv(), fadeIn, stay, fadeOut);
+    default void sendTitle(ComponentLike title, ComponentLike subtitle, int fadeIn, int stay, int fadeOut) {
+    	sendTitle(title.asComponent(), subtitle.asComponent(), fadeIn, stay, fadeOut);
     }
 	
     /**

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
+import com.google.common.collect.ImmutableMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -19,11 +20,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import com.google.common.collect.ImmutableMap;
-
 import fr.pandacube.lib.chat.Chat;
-import fr.pandacube.lib.core.players.IPlayerManager;
-import fr.pandacube.lib.util.Log;
 import fr.pandacube.lib.paper.util.ItemStackBuilder;
 
 public class GUIInventory implements Listener {
@@ -42,10 +39,6 @@ public class GUIInventory implements Listener {
 			inv = Bukkit.createInventory(null, nbLines * 9);
 		else
 			inv = Bukkit.createInventory(null, nbLines * 9, title.getAdv());
-		
-		if (IPlayerManager.getInstance().get(p.getUniqueId()).isBedrockClient()) {
-			Log.warning("Opening GUI inventory for player on Bedrock client " + p.getName() + " (" + p.getUniqueId() + "). Please use a Form instead.", new Throwable());
-		}
 
 		setCloseEvent(closeEventAction);
 

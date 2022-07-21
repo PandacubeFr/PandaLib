@@ -38,8 +38,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
 	protected boolean console = false;
 	
 	/* package */ Chat(ComponentBuilder<?, ?> b) {
-		Objects.requireNonNull(b, "Provided component builder must not be null");
-		builder = b;
+		builder = Objects.requireNonNull(b, "Provided component builder must not be null");
 	}
 	
 	

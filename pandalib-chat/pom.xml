@@ -20,12 +20,6 @@
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>fr.pandacube.lib</groupId>
-            <artifactId>pandalib-util</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
 
 
         <dependency>

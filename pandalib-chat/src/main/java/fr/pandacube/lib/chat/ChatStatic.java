@@ -3,18 +3,18 @@ package fr.pandacube.lib.chat;
 import java.util.Objects;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 
 import fr.pandacube.lib.chat.Chat.FormatableChat;
-import fr.pandacube.lib.util.Log;
 
 public abstract class ChatStatic {
 
 
 
-	public static FormatableChat chatComponent(Component c) {
+	private static FormatableChat chatComponent(Component c) {
 		return new FormatableChat(Chat.componentToBuilder(c));
 	}
 
@@ -22,8 +22,8 @@ public abstract class ChatStatic {
 		return new FormatableChat(Chat.componentToBuilder(Chat.toAdventure(c)));
 	}
 
-	public static FormatableChat chatComponent(Chat c) {
-		return chatComponent(c.getAdv());
+	public static FormatableChat chatComponent(ComponentLike c) {
+		return chatComponent(c.asComponent());
 	}
 	
 	public static FormatableChat chat() {
@@ -34,26 +34,38 @@ public abstract class ChatStatic {
 		return chatComponent(Chat.toAdventure(c));
 	}
 
+
+	/**
+	 * Create a Chat instance with the provided plain text as its main text content.
+	 *
+	 * @param plainText the text to use as he content of the new Chat instance.
+	 * @return a Chat instance with the provided text as its main text content.
+	 *
+	 * @throws IllegalArgumentException If the {@code plainText} parameter is instance of {@link Chat} or
+	 *         {@link Component}. The caller should use {@link #chatComponent(ComponentLike)}
+	 *         instead.
+	 */
 	public static FormatableChat text(Object plainText) {
-		if (plainText instanceof Chat) {
-			Log.warning("Using Chat instance as plain text. Please use proper API method. I’ll properly use your Chat instance this time...", new Throwable());
-			return (FormatableChat) plainText;
-		}
-		if (plainText instanceof Component) {
-			Log.warning("Using Component instance as plain text. Please use proper API method. I’ll properly use your Component this time...", new Throwable());
-			return chatComponent((Component) plainText);
+		if (plainText instanceof ComponentLike) {
+			throw new IllegalArgumentException("Expected any object except instance of " + ComponentLike.class + ". Received " + plainText + ". Please use ChatStatic.chatComponent(ComponentLike) instead.");
 		}
 		return new FormatableChat(Component.text().content(Objects.toString(plainText)));
 	}
 
+
+	/**
+	 * Create a Chat instance with the provided legacy text as its main text content.
+	 *
+	 * @param legacyText the text to use as he content of the new Chat instance.
+	 * @return a Chat instance with the provided text as its main text content.
+	 *
+	 * @throws IllegalArgumentException If the {@code plainText} parameter is instance of {@link Chat} or
+	 *         {@link Component}. The caller should use {@link #chatComponent(ComponentLike)}
+	 *         instead.
+	 */
 	public static FormatableChat legacyText(Object legacyText) {
-		if (legacyText instanceof Chat) {
-			Log.warning("Using Chat instance as legacy text. Please use proper API method. I’ll properly use your Chat instance this time...", new Throwable());
-			return (FormatableChat) legacyText;
-		}
-		if (legacyText instanceof Component) {
-			Log.warning("Using Component instance as legacy text. Please use proper API method. I’ll properly use your Component this time...", new Throwable());
-			return chatComponent((Component) legacyText);
+		if (legacyText instanceof ComponentLike) {
+			throw new IllegalArgumentException("Expected any object except instance of " + ComponentLike.class + ". Received " + legacyText + ". Please use ChatStatic.chatComponent(ComponentLike) instead.");
 		}
 		return chatComponent(LegacyComponentSerializer.legacySection().deserialize(Objects.toString(legacyText)));
 	}
@@ -112,6 +124,21 @@ public abstract class ChatStatic {
 				.name(name)
 				.objective(objective)
 				);
+	}
+
+
+
+
+
+	public static Component prefixedAndColored(ComponentLike message) {
+		return prefixedAndColored(Chat.chatComponent(message)).getAdv();
+	}
+
+	public static Chat prefixedAndColored(Chat message) {
+		return Chat.chat()
+				.broadcastColor()
+				.then(Chat.getConfig().prefix.get())
+				.then(message);
 	}
 	
 	

@@ -56,17 +56,9 @@
 
         <dependency>
             <groupId>fr.pandacube.lib</groupId>
-            <artifactId>pandalib-network-api</artifactId>
+            <artifactId>pandalib-players-standalone</artifactId>
             <version>${project.version}</version>
         </dependency>
-		 
-
-		
-		<dependency>
-			<groupId>com.fathzer</groupId>
-			<artifactId>javaluator</artifactId>
-			<version>3.0.3</version>
-		</dependency> 
 		
 		
 		<dependency>
