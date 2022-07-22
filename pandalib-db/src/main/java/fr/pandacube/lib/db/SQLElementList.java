@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import fr.pandacube.lib.util.Log;
@@ -144,10 +145,12 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 	
 	public <T, P extends SQLElement<P>> Map<T, P> getReferencedEntriesInGroups(SQLFKField<E, T, P> foreignKey) throws DBException {
 		SQLElementList<P> foreignElemts = getReferencedEntries(foreignKey, null);
-		
-		Map<T, P> ret = new HashMap<>();
-		foreignElemts.forEach(foreignVal -> ret.put(foreignVal.get(foreignKey.getPrimaryField()), foreignVal));
-		return ret;
+
+		return foreignElemts.stream()
+				.collect(Collectors.toMap(
+						foreignVal -> foreignVal.get(foreignKey.getPrimaryField()),
+						Function.identity(), (a, b) -> b)
+				);
 	}
 	
 

@@ -13,7 +13,6 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class ChunkStorage extends ReflectWrapper {
     public static final NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.world.level.chunk.storage.ChunkStorage"));
-    private static final Reflect.ReflectMethod<?> read = wrapEx(() -> MAPPING.mojMethod("read", ChunkPos.MAPPING));
     private static final Reflect.ReflectMethod<?> readSync = wrapEx(() -> MAPPING.runtimeReflect().method("readSync", ChunkPos.MAPPING.runtimeReflect().get())); // spigot/paper method
 
     public CompoundTag readSync(ChunkPos pos) {

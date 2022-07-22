@@ -65,6 +65,9 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 	public void putByteArray(String key, byte[] value) {
 		wrapReflectEx(() -> putByteArray.invoke(__getRuntimeInstance(), key, value));
 	}
+	public void putByteArray(String key, List<Byte> value) {
+		wrapReflectEx(() -> putByteArray_List.invoke(__getRuntimeInstance(), key, value));
+	}
 	public void putDouble(String key, double value) {
 		wrapReflectEx(() -> putDouble.invoke(__getRuntimeInstance(), key, value));
 	}
@@ -77,6 +80,9 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 	public void putIntArray(String key, int[] value) {
 		wrapReflectEx(() -> putIntArray.invoke(__getRuntimeInstance(), key, value));
 	}
+	public void putIntArray(String key, List<Integer> value) {
+		wrapReflectEx(() -> putIntArray_List.invoke(__getRuntimeInstance(), key, value));
+	}
 	public void putString(String key, String value) {
 		wrapReflectEx(() -> putString.invoke(__getRuntimeInstance(), key, value));
 	}
@@ -88,6 +94,9 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 	}
 	public void putLongArray(String key, long[] value) {
 		wrapReflectEx(() -> putLongArray.invoke(__getRuntimeInstance(), key, value));
+	}
+	public void putLongArray(String key, List<Long> value) {
+		wrapReflectEx(() -> putLongArray_List.invoke(__getRuntimeInstance(), key, value));
 	}
 	public void putShort(String key, short value) {
 		wrapReflectEx(() -> putShort.invoke(__getRuntimeInstance(), key, value));

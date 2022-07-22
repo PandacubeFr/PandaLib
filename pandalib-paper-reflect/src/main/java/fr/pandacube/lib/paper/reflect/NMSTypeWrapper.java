@@ -54,10 +54,6 @@ import fr.pandacube.lib.paper.reflect.NMSReflect.ClassMapping;
 		return cl;
 	}
 	
-	public NMSTypeWrapper arrayType() {
-		return new NMSTypeWrapper(type, arrayDepth + 1);
-	}
-	
 	/* package */ static NMSTypeWrapper of(Class<?> cl) {
 		int arrayDepth = 0;
 		while (cl.isArray()) {

@@ -46,7 +46,7 @@ public class ScoreboardUtil {
 				obj.displayName(title);
 			}
 			// fix display slot if someone else changed it
-			if (DisplaySlot.SIDEBAR != obj.getDisplaySlot()) {
+			if (obj.getDisplaySlot() != DisplaySlot.SIDEBAR) {
 				obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 			}
 		}

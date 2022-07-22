@@ -45,6 +45,7 @@ public final class ByteBuffer implements Cloneable {
 	/**
 	 * This clone method also clone the underlying array.
 	 */
+	@SuppressWarnings("MethodDoesntCallSuperMethod")
 	@Override
 	public ByteBuffer clone() {
 		return new ByteBuffer(Arrays.copyOf(buff.array(), buff.array().length));

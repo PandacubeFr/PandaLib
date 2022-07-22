@@ -121,7 +121,7 @@ public interface BungeeOnlinePlayer extends BungeeOffPlayer, StandaloneOnlinePla
 
     class BungeeClientOptions implements StandaloneOnlinePlayer.ClientOptions {
 
-        BungeeOnlinePlayer op;
+        private final BungeeOnlinePlayer op;
         public BungeeClientOptions(BungeeOnlinePlayer op) {
             this.op = op;
         }

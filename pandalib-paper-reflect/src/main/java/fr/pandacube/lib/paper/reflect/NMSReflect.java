@@ -404,8 +404,8 @@ public class NMSReflect {
 		private void printHTML(PrintStream out) {
 			String modifiersHTML = classModifiersToHTML(runtimeClass());
 			out.println("<tr id='c" + id + "'><th>" + modifiersHTML + "</th><th>" + nameToHTML(true) + "</th><th>" + nameToHTML(false) + "</th></tr>");
-			fieldsByObf.values().stream().filter(mm -> mm.isStatic()).forEach(f -> f.printHTML(out));
-			methodsByObf.values().stream().filter(mm -> mm.isStatic()).forEach(m -> m.printHTML(out));
+			fieldsByObf.values().stream().filter(MemberMapping::isStatic).forEach(f -> f.printHTML(out));
+			methodsByObf.values().stream().filter(MemberMapping::isStatic).forEach(m -> m.printHTML(out));
 			printConstructorsHTML(out);
 			fieldsByObf.values().stream().filter(mm -> !mm.isStatic()).forEach(f -> f.printHTML(out));
 			methodsByObf.values().stream().filter(mm -> !mm.isStatic()).forEach(m -> m.printHTML(out));

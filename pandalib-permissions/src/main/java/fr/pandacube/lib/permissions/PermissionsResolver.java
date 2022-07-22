@@ -196,7 +196,7 @@ public class PermissionsResolver {
 		public boolean equals(Object obj) {
 			return obj instanceof DataCacheKey o
 					&& Objects.equals(name, o.name)
-					&& Objects.equals(type, o.type)
+					&& type == o.type
 					&& dataType == o.dataType;
 		}
 	}
@@ -538,8 +538,8 @@ public class PermissionsResolver {
 		@Override
 		public boolean equals(Object obj) {
 			return obj instanceof PermCacheKey o
+					&& type == o.type
 					&& Objects.equals(name, o.name)
-					&& Objects.equals(type, o.type)
 					&& Objects.equals(permission, o.permission)
 					&& Objects.equals(server, o.server)
 					&& Objects.equals(world, o.world);

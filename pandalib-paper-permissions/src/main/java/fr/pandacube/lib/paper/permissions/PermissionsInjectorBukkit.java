@@ -113,10 +113,14 @@ public class PermissionsInjectorBukkit
         private final CommandSender sender;
         private final Permissible oldPermissible;
         
-        /* package */ LoadingCache<String, List<Permission>> superPermsPermissionCache = CacheBuilder.newBuilder()
+        /* package */ final LoadingCache<String, List<Permission>> superPermsPermissionCache = CacheBuilder.newBuilder()
         		.build(CacheLoader.from(PandalibPaperPermissions.SUPERPERMS_PARENT_PERMISSION_GETTER::apply));
-        
+
+        @SuppressWarnings("UnusedAssignment")
         private boolean init = false;
+        /* assigment to false is necessary because of super class constructor calling the method recalculatePermission()
+         * and we don’t want that.
+         */
 
     	private PandaPermissible(CommandSender sender, Permissible oldPermissible)
         {
@@ -175,7 +179,7 @@ public class PermissionsInjectorBukkit
         	res = PandalibPaperPermissions.hasSuperPermsPermission(sender, permission.getName(), this::hasPermission, this); // supports negative permission
         	if (res != null)
         		return res;
-        	
+
         	return oldPermissible.hasPermission(permission); // doesn’t need to manage negative permission (should not happend)
         }
 

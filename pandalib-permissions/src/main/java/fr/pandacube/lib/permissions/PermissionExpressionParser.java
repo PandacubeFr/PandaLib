@@ -90,7 +90,7 @@ public class PermissionExpressionParser {
 	}
 	
 	
-	/*
+	/* TODO move to test code
 	public static void main(String[] args) {
 		java.util.List<String> pList = java.util.Arrays.asList("p1.cmd", "p1.toto", "p2.lol");
 		LitteralPermissionTester tester = p -> pList.contains(p);

@@ -7,7 +7,6 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -77,11 +76,11 @@ public class PandalibPaperPermissions implements Listener {
 	
 	
 	
-	/* package */ static Function<String, List<Permission>> SUPERPERMS_PARENT_PERMISSION_GETTER = childPerm -> {
-		return Bukkit.getPluginManager().getPermissions().stream()
-				.filter(p -> p.getChildren().containsKey(childPerm))
-				.collect(Collectors.toList());
-	};
+	/* package */ static final Function<String, List<Permission>> SUPERPERMS_PARENT_PERMISSION_GETTER = childPerm -> Bukkit.getPluginManager()
+			.getPermissions()
+			.stream()
+			.filter(p -> p.getChildren().containsKey(childPerm))
+			.toList();
 	
 	/* package */ static ServerOperator dummyOperator(boolean isOp) {
 		return new ServerOperator() {

@@ -64,6 +64,7 @@ public interface PaperOffPlayer extends StandaloneOffPlayer {
     default String getDisplayName() {
         String name = getName();
         Player p = getBukkitPlayer();
+        @SuppressWarnings("deprecation")
         String bukkitDispName = p != null ? p.getDisplayName() : name;
         if (!name.equals(bukkitDispName))
             return bukkitDispName;
@@ -80,8 +81,11 @@ public interface PaperOffPlayer extends StandaloneOffPlayer {
         Team team = Bukkit.getScoreboardManager().getMainScoreboard().getEntryTeam(name);
         if (team == null)
             return null;
+        @SuppressWarnings("deprecation")
         String teamPrefix = team.getPrefix();
+        @SuppressWarnings("deprecation")
         String teamSuffix = team.getSuffix();
+        @SuppressWarnings("deprecation")
         String teamColor = team.getColor().toString();
 
         return teamPrefix + teamColor + name + teamSuffix;

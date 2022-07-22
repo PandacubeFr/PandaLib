@@ -189,7 +189,7 @@ public interface SuggestionsSupplier<S> {
 
 
 
-	public static <S> SuggestionsSupplier<S> suggestDuration() {
+	static <S> SuggestionsSupplier<S> suggestDuration() {
 		final List<String> emptyTokenSuggestions = TimeUtil.DURATION_SUFFIXES.stream().map(p -> "1" + p).collect(Collectors.toList());
 		return (s, ti, token, args) -> {
 			if (token.isEmpty()) {

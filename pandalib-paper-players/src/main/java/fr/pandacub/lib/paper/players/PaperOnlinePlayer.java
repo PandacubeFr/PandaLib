@@ -104,7 +104,7 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, StandaloneOnlinePlaye
     @Override
     PaperClientOptions getClientOptions();
 
-    public abstract class PaperClientOptions implements StandaloneOnlinePlayer.ClientOptions {
+    abstract class PaperClientOptions implements StandaloneOnlinePlayer.ClientOptions {
 
         private final PaperOnlinePlayer op;
 
