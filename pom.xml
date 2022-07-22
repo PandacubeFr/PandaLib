@@ -8,6 +8,8 @@
     <artifactId>pandalib-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+
+    <description>Open Source Software for the Minecraft server Pandacube.fr</description>
     
     <organization>
         <name>Pandacube</name>
@@ -32,6 +34,19 @@
     <scm>
     	<url>https://git.pandacube.fr/PandacubeFr/</url>
     </scm>
+
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/PandacubeFr/Pandalib/issues</url>
+    </issueManagement>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://api.github.com/licenses/mit</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <properties>
         <build.number>unknown</build.number>
