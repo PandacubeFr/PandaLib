@@ -9,46 +9,36 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>pandalib-bungee-players</artifactId>
+    <artifactId>pandalib-paper-players</artifactId>
 
     <repositories>
         <repository>
-            <id>bungeecord-repo</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <id>papermc</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
     </repositories>
 
     <dependencies>
         <dependency>
             <groupId>fr.pandacube.lib</groupId>
-            <artifactId>pandalib-util</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>fr.pandacube.lib</groupId>
             <artifactId>pandalib-players-standalone</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>fr.pandacube.lib</groupId>
-            <artifactId>pandalib-reflect</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
+
+        <!-- Paper -->
         <dependency>
-            <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-api</artifactId>
-            <version>${bungeecord.version}</version>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>${paper.version}-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
-            <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-protocol</artifactId>
-            <version>${bungeecord.version}</version>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-mojangapi</artifactId>
+            <version>${paper.version}-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
 
 </project>

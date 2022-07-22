@@ -13,6 +13,7 @@ import net.md_5.bungee.api.SkinConfiguration;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.ProxiedPlayer.ChatMode;
 import net.md_5.bungee.api.connection.ProxiedPlayer.MainHand;
+import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.protocol.DefinedPacket;
 import net.md_5.bungee.protocol.packet.ClientSettings;
 import net.md_5.bungee.protocol.packet.PluginMessage;
@@ -20,9 +21,39 @@ import net.md_5.bungee.protocol.packet.PluginMessage;
 import fr.pandacube.lib.chat.Chat;
 import fr.pandacube.lib.players.standalone.StandaloneOnlinePlayer;
 import fr.pandacube.lib.reflect.Reflect;
+import fr.pandacube.lib.util.MinecraftVersion;
 
 public interface BungeeOnlinePlayer extends BungeeOffPlayer, StandaloneOnlinePlayer {
 
+    /*
+     * General data and state
+     */
+
+
+    @Override
+    default String getName() {
+        return getBungeeProxiedPlayer().getName();
+    }
+
+    @Override
+    default String getServerName() {
+        if (getServer() == null) return null;
+        return getServer().getInfo().getName();
+    }
+
+    default Server getServer() {
+        return getBungeeProxiedPlayer().getServer();
+    }
+
+    default MinecraftVersion getMinecraftVersion() {
+        return MinecraftVersion.getVersion(getBungeeProxiedPlayer().getPendingConnection().getVersion());
+    }
+
+
+
+    /*
+     * Related class instances
+     */
 
     @Override
     ProxiedPlayer getBungeeProxiedPlayer();
