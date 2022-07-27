@@ -53,8 +53,9 @@ public enum MinecraftVersion {
 	
 	v1_18_to_1_18_1(757, "1.18", "1.18.1"),
 	v1_18_2(758, "1.18.2"),
-	
-	v1_19(759, "1.19");
+	v1_19(759, "1.19"),
+	v1_19_1(760, "1.19.1");
+
 	// IMPORTANT: don't forget to update the versionMergeDisplay value when adding a new version;
 	
 	private static final Map<EnumSet<MinecraftVersion>, List<String>> versionMergeDisplay;
@@ -149,6 +150,9 @@ public enum MinecraftVersion {
 		
 		versionMergeDisplay.put(EnumSet.of(v1_18_to_1_18_1, v1_18_2),
 				List.of("1.18.x"));
+
+		versionMergeDisplay.put(EnumSet.of(v1_19, v1_19_1),
+				List.of("1.19.x"));
 	}
 	
 
