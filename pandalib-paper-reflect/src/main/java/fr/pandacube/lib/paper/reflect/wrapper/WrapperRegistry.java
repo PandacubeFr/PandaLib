@@ -2,7 +2,7 @@ package fr.pandacube.lib.paper.reflect.wrapper;
 
 import fr.pandacube.lib.util.Log;
 import fr.pandacube.lib.reflect.Reflect;
-import fr.pandacube.lib.reflect.Reflect.ReflectConstructor;
+import fr.pandacube.lib.reflect.ReflectConstructor;
 import fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftMapView;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftNamespacedKey;

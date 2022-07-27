@@ -1,17 +1,17 @@
 package fr.pandacube.lib.paper.reflect.wrapper.minecraft.server;
 
-import fr.pandacube.lib.reflect.Reflect;
 import fr.pandacube.lib.paper.reflect.NMSReflect;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.util.ProgressListener;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Level;
+import fr.pandacube.lib.reflect.ReflectMethod;
 
 import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class ServerLevel extends Level {
     public static final NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.server.level.ServerLevel"));
-    public static final Reflect.ReflectMethod<?> save = wrapEx(() -> MAPPING.mojMethod("save", ProgressListener.MAPPING, boolean.class, boolean.class));
-    public static final Reflect.ReflectMethod<?> getChunkSource = wrapEx(() -> MAPPING.mojMethod("getChunkSource"));
+    public static final ReflectMethod<?> save = wrapEx(() -> MAPPING.mojMethod("save", ProgressListener.MAPPING, boolean.class, boolean.class));
+    public static final ReflectMethod<?> getChunkSource = wrapEx(() -> MAPPING.mojMethod("getChunkSource"));
 
 
     public ServerChunkCache getChunkSource() {

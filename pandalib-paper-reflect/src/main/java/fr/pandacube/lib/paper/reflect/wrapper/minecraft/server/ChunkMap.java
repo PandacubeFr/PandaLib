@@ -1,9 +1,10 @@
 package fr.pandacube.lib.paper.reflect.wrapper.minecraft.server;
 
-import fr.pandacube.lib.reflect.Reflect;
 import fr.pandacube.lib.paper.reflect.NMSReflect;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ChunkStorage;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.QueuedChangesMapLong2Object;
+import fr.pandacube.lib.reflect.ReflectField;
+
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import it.unimi.dsi.fastutil.objects.ObjectRBTreeSet;
@@ -13,11 +14,11 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class ChunkMap extends ChunkStorage {
     public static final NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.server.level.ChunkMap"));
-    private static final Reflect.ReflectField<?> FIELD_autoSaveQueue = wrapEx(() -> MAPPING.runtimeReflect().field("autoSaveQueue")); // spigot/paper field
-    public static final Reflect.ReflectField<?> FIELD_level = wrapEx(() -> MAPPING.mojField("level"));
-    public static final Reflect.ReflectField<?> FIELD_pendingUnloads = wrapEx(() -> MAPPING.mojField("pendingUnloads"));
-    public static final Reflect.ReflectField<?> FIELD_toDrop = wrapEx(() -> MAPPING.mojField("toDrop"));
-    public static final Reflect.ReflectField<?> FIELD_updatingChunks = wrapEx(() -> MAPPING.runtimeReflect().field("updatingChunks")); // spigot/paper field
+    private static final ReflectField<?> FIELD_autoSaveQueue = wrapEx(() -> MAPPING.runtimeReflect().field("autoSaveQueue")); // spigot/paper field
+    public static final ReflectField<?> FIELD_level = wrapEx(() -> MAPPING.mojField("level"));
+    public static final ReflectField<?> FIELD_pendingUnloads = wrapEx(() -> MAPPING.mojField("pendingUnloads"));
+    public static final ReflectField<?> FIELD_toDrop = wrapEx(() -> MAPPING.mojField("toDrop"));
+    public static final ReflectField<?> FIELD_updatingChunks = wrapEx(() -> MAPPING.runtimeReflect().field("updatingChunks")); // spigot/paper field
 
     /** This field in unmapped */
     public final ObjectRBTreeSet<?> autoSaveQueue;

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import fr.pandacube.lib.reflect.Reflect.ReflectClass;
+import fr.pandacube.lib.reflect.ReflectClass;
 import fr.pandacube.lib.paper.reflect.NMSReflect.ClassMapping;
 
 /* package */ class NMSTypeWrapper implements Comparable<NMSTypeWrapper> {

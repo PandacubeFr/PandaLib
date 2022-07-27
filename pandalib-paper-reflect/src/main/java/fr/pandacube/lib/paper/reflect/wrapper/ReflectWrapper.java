@@ -1,7 +1,8 @@
 package fr.pandacube.lib.paper.reflect.wrapper;
 
 import com.google.common.collect.MapMaker;
-import fr.pandacube.lib.reflect.Reflect;
+
+import fr.pandacube.lib.reflect.ReflectConstructor;
 
 import java.util.List;
 import java.util.Map;
@@ -60,7 +61,7 @@ public abstract class ReflectWrapper implements ReflectWrapperI {
 			if (expectedWrapperClass != null && !expectedWrapperClass.isAssignableFrom(wrapperClass)) {
 				throw new ClassCastException("Wrapper class " + wrapperClass + " is not a sub-class or a sub-interface of expected wrapper class" + expectedWrapperClass);
 			}
-			Reflect.ReflectConstructor<? extends ReflectWrapperI> constructor = WrapperRegistry.getWrapperConstructorOfWrapperClass(wrapperClass);
+			ReflectConstructor<? extends ReflectWrapperI> constructor = WrapperRegistry.getWrapperConstructorOfWrapperClass(wrapperClass);
 			if (constructor == null) {
 				throw new IllegalStateException("Unable to find a constructor to instanciate " + wrapperClass + " to wrap an instance of " + runtimeObj);
 			}

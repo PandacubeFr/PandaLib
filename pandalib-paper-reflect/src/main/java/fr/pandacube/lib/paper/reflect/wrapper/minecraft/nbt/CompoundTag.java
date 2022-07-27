@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import fr.pandacube.lib.reflect.Reflect.ReflectMethod;
+import fr.pandacube.lib.reflect.ReflectMethod;
 import fr.pandacube.lib.paper.reflect.NMSReflect;
 import fr.pandacube.lib.paper.reflect.NMSReflect.ClassMapping;
 import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapper;

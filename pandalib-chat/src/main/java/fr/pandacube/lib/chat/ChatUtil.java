@@ -2,6 +2,8 @@ package fr.pandacube.lib.chat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,10 +21,16 @@ import net.md_5.bungee.api.ChatColor;
 
 import fr.pandacube.lib.chat.Chat.FormatableChat;
 
+/**
+ * Provides various methods and properties to manipulate text displayed in chat an other parts of the game.
+ */
 public class ChatUtil {
 
-	public static final int DEFAULT_CHAR_SIZE = 6;
-	public static final Map<Integer, String> CHARS_SIZE = Map.ofEntries(
+	/*
+	 * Note : this field is for easy listing of all characters with special sizes. It will all be reported to
+	 * #CHAR_SIZES on class initialization for optimization.
+	 */
+	private static final Map<Integer, String> SIZE_CHARS_MAPPING = Map.ofEntries(
 			Map.entry(-6, "§"),
 			Map.entry(2, "!.,:;i|¡'"),
 			Map.entry(3, "`lìí’‘"),
@@ -31,88 +39,146 @@ public class ChatUtil {
 			Map.entry(7, "@~®©«»"),
 			Map.entry(9, "├└")
 	);
-	
-	
 
+	/**
+	 * The default text pixel width for a character in the default Minecraft font.
+	 * If a character has another width, it should be found in {@link #CHAR_SIZES}.
+	 */
+	public static final int DEFAULT_CHAR_SIZE = 6;
+
+	/**
+	 * Mapping indicating the text pixel with for specific characters in the default Minecraft font.
+	 * If a character doesn’t have a mapping in this map, then its width is {@link #DEFAULT_CHAR_SIZE}.
+	 */
+	public static final Map<Character, Integer> CHAR_SIZES;
+	static {
+		Map<Character, Integer> charSizes = new HashMap<>();
+		for (var e : SIZE_CHARS_MAPPING.entrySet()) {
+			int size = e.getKey();
+			for (char c : e.getValue().toCharArray()) {
+				charSizes.put(c, size);
+			}
+		}
+		CHAR_SIZES = Collections.unmodifiableMap(charSizes);
+	}
+
+
+	/**
+	 * The default width of the Minecraft Java Edition chat window, in text pixels.
+	 */
 	public static final int DEFAULT_CHAT_WIDTH = 320;
+
+	/**
+	 * The width of a Minecraft sign, in text pixels.
+	 */
 	public static final int SIGN_WIDTH = 90;
+
+	/**
+	 * The width of a Minecraft book content, in text pixels.
+	 */
 	public static final int BOOK_WIDTH = 116;
+
+	/**
+	 * The width of a Minecraft server MOTD message, in text pixels.
+	 */
 	public static final int MOTD_WIDTH = 270;
+
+	/**
+	 * The width of a Minecraft Bedrock Edition form button, in text pixels.
+	 */
 	public static final int BEDROCK_FORM_WIDE_BUTTON = 178;
 
+	/**
+	 * The default number of character per lines for the console.
+	 */
 	public static final int CONSOLE_NB_CHAR_DEFAULT = 50;
-	
-	
-	
-	
-	
-	
 
+
+
+
+
+
+	/**
+	 * Create a {@link Chat} that is a cliquable URL link.
+	 * It is equivalent to the HTML {@code <a>} tag pointing to another page.
+	 * @param text the link text.
+	 * @param url the destination url. must starts with {@code http} or {@code https}.
+	 * @return a {@link Chat} that is a cliquable URL link.
+	 * @deprecated it uses String for displayed text. Use {@link Chat#clickableURL(Chat, String)} instead.
+	 */
+	@Deprecated(forRemoval = true, since = "2022-07-27")
 	public static FormatableChat createURLLink(String text, String url) {
-		return createURLLink(ChatStatic.legacyText(text), url, null);
+		return Chat.clickableURL(text == null ? null : Chat.legacyText(text), url);
 	}
-	
+
+	/**
+	 * Create a {@link Chat} that is a cliquable URL link.
+	 * It is equivalent to the HTML {@code <a>} tag pointing to another page.
+	 * @param text the link text.
+	 * @param url the destination url. must starts with {@code http} or {@code https}.
+	 * @param hoverText the text displayed when hovering the link.
+	 * @return a {@link Chat} that is a cliquable URL link.
+	 * @deprecated it uses String for displayed text. Use {@link Chat#clickableURL(Chat, String, Chat)} instead.
+	 */
+	@Deprecated(forRemoval = true, since = "2022-07-27")
 	public static FormatableChat createURLLink(String text, String url, String hoverText) {
-		return createURLLink(ChatStatic.legacyText(text), url, hoverText != null ? ChatStatic.legacyText(hoverText) : null);
+		return Chat.clickableURL(text == null ? null : Chat.legacyText(text), url, hoverText == null ? null : Chat.legacyText(hoverText));
 	}
-	
-	/* package */ static FormatableChat createURLLink(Chat element, String url, Chat hover) {
-		String dispURL = (url.length() > 50) ? (url.substring(0, 48) + "...") : url;
-		return (FormatableChat) ChatStatic.chat()
-				.clickURL(url)
-				.urlColor()
-				.hover(
-						hover != null ? hover : Chat.text(dispURL)
-				)
-				.then(element);
-	}
-	
-	
-	
 
-	
-	
-	
-	
+	/**
+	 * Create a {@link Chat} that is a cliquable command link.
+	 * When the players clicks on it, they will execute the command.
+	 * @param text the link text.
+	 * @param commandWithSlash the command to execute when clicked.
+	 * @param hoverText the text displayed when hovering the link.
+	 * @return a {@link Chat} that is a cliquable command link.
+	 * @deprecated it uses String for displayed text. Use {@link Chat#clickableCommand(Chat, String, Chat)} instead.
+	 */
+	@Deprecated(forRemoval = true, since = "2022-07-27")
 	public static FormatableChat createCommandLink(String text, String commandWithSlash, String hoverText) {
-		return createCommandLink(text, commandWithSlash, hoverText == null ? null : ChatStatic.legacyText(hoverText));
+		return Chat.clickableCommand(text == null ? null : Chat.legacyText(text), commandWithSlash, hoverText == null ? null : Chat.legacyText(hoverText));
 	}
+
+	/**
+	 * Create a {@link Chat} that is a cliquable command link.
+	 * When the players clicks on it, they will execute the command.
+	 * @param text the link text.
+	 * @param commandWithSlash the command to execute when clicked.
+	 * @param hoverText the text displayed when hovering the link.
+	 * @return a {@link Chat} that is a cliquable command link.
+	 * @deprecated it uses String for displayed text. Use {@link Chat#clickableCommand(Chat, String, Chat)} instead.
+	 */
+	@Deprecated(forRemoval = true, since = "2022-07-27")
 	public static FormatableChat createCommandLink(String text, String commandWithSlash, Chat hoverText) {
-		return createCommandLink(ChatStatic.legacyText(text), commandWithSlash, hoverText);
-	}
-	
-	/* package */ static FormatableChat createCommandLink(Chat d, String commandWithSlash, Chat hoverText) {
-		FormatableChat c = ChatStatic.chat()
-				.clickCommand(commandWithSlash)
-				.commandColor();
-		if (hoverText != null)
-			c.hover(hoverText);
-		return (FormatableChat) c.then(d);
+		return Chat.clickableCommand(text == null ? null : Chat.legacyText(text), commandWithSlash, hoverText);
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
+	/**
+	 * Create a {@link Chat} that is a cliquable command suggestion.
+	 * When the players clicks on it, they will execute the command.
+	 * @param inner the link text.
+	 * @param commandWithSlash the command to put in the chat box when clicked.
+	 * @param hover the text displayed when hovering the link.
+	 * @return a {@link Chat} that is a cliquable command suggestion.
+	 * @deprecated it uses String for displayed text. Use {@link Chat#clickableSuggest(Chat, String, Chat)} instead.
+	 */
+	@Deprecated(forRemoval = true, since = "2022-07-27")
+	public static FormatableChat createCommandSuggest(String inner, String commandWithSlash, String hover) {
+		return Chat.clickableSuggest(inner == null ? null : Chat.legacyText(inner), commandWithSlash, hover == null ? null : Chat.legacyText(hover));
+	}
 
-	public static FormatableChat createCommandSuggest(String text, String commandWithSlash, String hoverText) {
-		return createCommandSuggest(text, commandWithSlash, hoverText == null ? null : ChatStatic.legacyText(hoverText));
-	}
-	public static FormatableChat createCommandSuggest(String text, String commandWithSlash, Chat hoverText) {
-		return createCommandSuggest(ChatStatic.legacyText(text), commandWithSlash, hoverText);
-	}
-	
-	/* package */ static FormatableChat createCommandSuggest(Chat d, String commandWithSlash, Chat hoverText) {
-		FormatableChat c = ChatStatic.chat()
-				.clickSuggest(commandWithSlash)
-				.commandColor();
-		if (hoverText != null)
-			c.hover(hoverText);
-		return (FormatableChat) c.then(d);
+	/**
+	 * Create a {@link Chat} that is a cliquable command suggestion.
+	 * When the players clicks on it, they will execute the command.
+	 * @param inner the link text.
+	 * @param commandWithSlash the command to put in the chat box when clicked.
+	 * @param hover the text displayed when hovering the link.
+	 * @return a {@link Chat} that is a cliquable command suggestion.
+	 * @deprecated it uses String for displayed text. Use {@link Chat#clickableSuggest(Chat, String, Chat)} instead.
+	 */
+	@Deprecated(forRemoval = true, since = "2022-07-27")
+	public static FormatableChat createCommandSuggest(String inner, String commandWithSlash, Chat hover) {
+		return Chat.clickableSuggest(inner == null ? null : Chat.legacyText(inner), commandWithSlash, hover);
 	}
 
 
@@ -123,7 +189,15 @@ public class ChatUtil {
 	
 	
 	/**
+	 * Create a page navigator with clickable page numbers for the chat.
+	 * @param prefix the text to put before the
 	 * @param cmdFormat the command with %d inside to be replaced with the page number (must start with slash)
+	 * @param currentPage the current page number (it is highlighted, and the pages around are displayed, according to
+	 *                    {@code nbPagesToDisplay}).
+	 * @param nbPages the number of pages.
+	 * @param nbPagesToDisplay the number of pages to display around the first page, the last page and the
+	 *                         {@code currentPage}.
+	 * @return a {@link Chat} containging the created page navigator.
 	 */
 	public static Chat createPagination(String prefix, String cmdFormat, int currentPage, int nbPages, int nbPagesToDisplay) {
 		Set<Integer> pagesToDisplay = new TreeSet<>();
@@ -150,7 +224,7 @@ public class ChatUtil {
 				else {
 					if (cmdFormat.endsWith("%d")) {
 						d.thenText(" ");
-						d.then(createCommandSuggest("...", cmdFormat.substring(0, cmdFormat.length() - 2), "Choisir la page"));
+						d.then(Chat.clickableSuggest(Chat.text("..."), cmdFormat.substring(0, cmdFormat.length() - 2), Chat.text("Choisir la page")));
 						d.thenText(" ");
 					}
 					else
@@ -160,7 +234,7 @@ public class ChatUtil {
 			else
 				first = false;
 			
-			FormatableChat pDisp = createCommandLink(Integer.toString(page), String.format(cmdFormat, page), "Aller à la page " + page);
+			FormatableChat pDisp = Chat.clickableCommand(Chat.text(page), String.format(cmdFormat, page), Chat.text("Aller à la page " + page));
 			if (page == currentPage) {
 				pDisp.highlightedCommandColor();
 			}
@@ -342,10 +416,9 @@ public class ChatUtil {
 	}
 
 	public static int charW(char c, boolean console, boolean bold) {
-		if (console) return (c == '§') ? -1 : 1;
-		for (int px : CHARS_SIZE.keySet())
-			if (CHARS_SIZE.get(px).indexOf(c) >= 0) return px + (bold ? 1 : 0);
-		return 6 + (bold ? 1 : 0);
+		if (console)
+			return (c == '§') ? -1 : 1;
+		return CHAR_SIZES.getOrDefault(c, DEFAULT_CHAR_SIZE);
 	}
 	
 	

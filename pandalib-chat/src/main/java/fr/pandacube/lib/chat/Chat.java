@@ -90,8 +90,8 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
 	public Chat then(BaseComponent subComponent) {
 		return then(toAdventure(subComponent));
 	}
-	public Chat then(Chat comp) {
-		return then(comp.getAdv());
+	public Chat then(ComponentLike comp) {
+		return then(comp.asComponent());
 	}
 	public Chat then(BaseComponent[] components) {
 		return then(toAdventure(components));
@@ -112,20 +112,20 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
 	public Chat thenKeyBind(String key) { return then(keybind(key)); }
 	public Chat thenScore(String name, String objective) { return then(score(name, objective)); }
 	
-	public Chat thenURLLink(Chat inner, String url, Chat hover) { return then(ChatUtil.createURLLink(inner, url, hover)); }
-	public Chat thenURLLink(Chat inner, String url) { return thenURLLink(inner, url, null); }
-	public Chat thenURLLink(String url, Chat hover) { return thenURLLink(text(url), url, hover); }
-	public Chat thenURLLink(String url) { return thenURLLink(text(url), url); }
+	public Chat thenURLLink(Chat inner, String url, Chat hover) { return then(clickableURL(inner, url, hover)); }
+	public Chat thenURLLink(Chat inner, String url) { return then(clickableURL(inner, url)); }
+	public Chat thenURLLink(String url, Chat hover) { return then(clickableURL(url, hover)); }
+	public Chat thenURLLink(String url) { return then(clickableURL(url)); }
 	
-	public Chat thenCommandLink(Chat inner, String cmdWithSlash, Chat hover) { return then(ChatUtil.createCommandLink(inner, cmdWithSlash, hover)); }
-	public Chat thenCommandLink(Chat inner, String cmdWithSlash) { return thenCommandLink(inner, cmdWithSlash, null); }
-	public Chat thenCommandLink(String cmdWithSlash, Chat hover) { return thenCommandLink(text(cmdWithSlash), cmdWithSlash, hover); }
-	public Chat thenCommandLink(String cmdWithSlash) { return thenCommandLink(text(cmdWithSlash), cmdWithSlash); }
+	public Chat thenCommandLink(Chat inner, String cmdWithSlash, Chat hover) { return then(clickableCommand(inner, cmdWithSlash, hover)); }
+	public Chat thenCommandLink(Chat inner, String cmdWithSlash) { return then(clickableCommand(inner, cmdWithSlash)); }
+	public Chat thenCommandLink(String cmdWithSlash, Chat hover) { return then(clickableCommand(cmdWithSlash, hover)); }
+	public Chat thenCommandLink(String cmdWithSlash) { return then(clickableCommand(cmdWithSlash)); }
 	
-	public Chat thenCommandSuggest(Chat inner, String cmdWithSlash, Chat hover) { return then(ChatUtil.createCommandSuggest(inner, cmdWithSlash, hover)); }
-	public Chat thenCommandSuggest(Chat inner, String cmdWithSlash) { return thenCommandSuggest(inner, cmdWithSlash, null); }
-	public Chat thenCommandSuggest(String cmdWithSlash, Chat hover) { return thenCommandSuggest(text(cmdWithSlash), cmdWithSlash, hover); }
-	public Chat thenCommandSuggest(String cmdWithSlash) { return thenCommandSuggest(text(cmdWithSlash), cmdWithSlash); }
+	public Chat thenCommandSuggest(Chat inner, String cmdWithSlash, Chat hover) { return then(clickableSuggest(inner, cmdWithSlash, hover)); }
+	public Chat thenCommandSuggest(Chat inner, String cmdWithSlash) { return then(clickableSuggest(inner, cmdWithSlash)); }
+	public Chat thenCommandSuggest(String cmdWithSlash, Chat hover) { return then(clickableSuggest(cmdWithSlash, hover)); }
+	public Chat thenCommandSuggest(String cmdWithSlash) { return then(clickableSuggest(cmdWithSlash)); }
 	
 	
 	

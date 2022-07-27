@@ -4,7 +4,7 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 
 import java.io.File;
 
-import fr.pandacube.lib.reflect.Reflect.ReflectMethod;
+import fr.pandacube.lib.reflect.ReflectMethod;
 import fr.pandacube.lib.paper.reflect.NMSReflect;
 import fr.pandacube.lib.paper.reflect.NMSReflect.ClassMapping;
 import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapper;

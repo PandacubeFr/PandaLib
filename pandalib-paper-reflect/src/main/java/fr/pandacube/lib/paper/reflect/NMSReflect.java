@@ -21,10 +21,10 @@ import org.bukkit.Bukkit;
 
 import fr.pandacube.lib.util.Log;
 import fr.pandacube.lib.reflect.Reflect;
-import fr.pandacube.lib.reflect.Reflect.ReflectClass;
-import fr.pandacube.lib.reflect.Reflect.ReflectField;
-import fr.pandacube.lib.reflect.Reflect.ReflectMember;
-import fr.pandacube.lib.reflect.Reflect.ReflectMethod;
+import fr.pandacube.lib.reflect.ReflectClass;
+import fr.pandacube.lib.reflect.ReflectField;
+import fr.pandacube.lib.reflect.ReflectMember;
+import fr.pandacube.lib.reflect.ReflectMethod;
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.format.MappingFormat;
 import net.fabricmc.mappingio.tree.MappingTree;
