@@ -47,13 +47,18 @@
                                         <exclude>META-INF/*.SF</exclude>
                                         <exclude>META-INF/*.DSA</exclude>
                                         <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
                             <relocations>
                                 <relocation>
                                     <pattern>io.github.classgraph</pattern>
-                                    <shadedPattern>fr.pandacube.shaded.classgraph</shadedPattern>
+                                    <shadedPattern>fr.pandacube.lib.reflect.shaded.classgraph</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>nonapi.io.github.classgraph</pattern>
+                                    <shadedPattern>fr.pandacube.lib.reflect.shaded.classgraph.nonapi</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
