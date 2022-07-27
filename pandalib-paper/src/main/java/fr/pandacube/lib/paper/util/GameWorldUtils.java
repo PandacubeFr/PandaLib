@@ -73,7 +73,7 @@ public class GameWorldUtils implements Listener {
 		if (!new File(Bukkit.getWorldContainer(), world).isDirectory())
 			throw new IllegalStateException("GameWorld '"+world+"' does not exist");
 		
-		String copiedName = world + "_gen" + RandomUtil.nextIntBetween(100000, 999999);
+		String copiedName = world + "_gen" + RandomUtil.rand.nextInt(100000, 999999);
 		
 		File srcDir = new File(Bukkit.getWorldContainer(), world);
 		File destDir = new File(Bukkit.getWorldContainer(), copiedName);

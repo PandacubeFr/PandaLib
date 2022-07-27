@@ -6,16 +6,23 @@ import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Utility class to easily manipulate {@link Throwable}s.
+ */
 public class ThrowableUtil {
-	
-	
+
+	/**
+	 * Convert a {@link Throwable} into a {@link String} using the {@link Throwable#printStackTrace(PrintStream)} method,
+	 * so the returned string contains the full stack trace.
+	 * @param t the {@link Throwable}
+	 * @return a {@link String} containing the full stack thace of the provided {@link Throwable}.
+	 */
 	public static String stacktraceToString(Throwable t) {
 		if (t == null) return null;
-		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-			try (PrintStream ps = new PrintStream(os, false, StandardCharsets.UTF_8)) {
-				t.printStackTrace(ps);
-				ps.flush();
-			}
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream();
+				PrintStream ps = new PrintStream(os, false, StandardCharsets.UTF_8)) {
+			t.printStackTrace(ps);
+			ps.flush();
 			return os.toString(StandardCharsets.UTF_8);
 		} catch (IOException e) {
 			return null;
@@ -33,6 +40,7 @@ public class ThrowableUtil {
 	 * @param supp the {@link SupplierException} to run and get the value from.
 	 * @return the value returned by the provided supplier.
 	 * @throws RuntimeException if the provided {@link SupplierException} throws a checked exception.
+	 * @param <T> the type of the returned object
 	 */
 	public static <T> T wrapEx(SupplierException<T> supp) {
 		try {
@@ -58,10 +66,12 @@ public class ThrowableUtil {
 
 
 	/**
-	 * Wraps a {@link SupplierException} into a try catch.
+	 * Wraps a {@link SupplierException} into a try catch, with special handling of subclasses of
+	 * {@link ReflectiveOperationException}.
 	 * @param supp the {@link SupplierException} to run and get the value from.
 	 * @return the value returned by the provided supplier.
 	 * @throws RuntimeException if the provided {@link SupplierException} throws a checked exception.
+	 * @param <T> the type of the returned object
 	 */
 	public static <T> T wrapReflectEx(SupplierException<T> supp) {
 		try {
@@ -72,7 +82,8 @@ public class ThrowableUtil {
 	}
 
 	/**
-	 * Wraps a {@link RunnableException} into a try catch.
+	 * Wraps a {@link RunnableException} into a try catch with special handling of subclasses of
+	 * {@link ReflectiveOperationException}.
 	 * @param run the {@link RunnableException} to run.
 	 * @throws RuntimeException if the provided {@link RunnableException} throws a checked exception.
 	 */
@@ -87,20 +98,29 @@ public class ThrowableUtil {
 
 
 	/**
-	 * A supplier that can possibly throw a checked exception
+	 * A supplier that can possibly throw a checked exception.
 	 */
 	@FunctionalInterface
 	public interface SupplierException<T> {
+		/**
+		 * Gets a result.
+		 * @return a result.
+		 * @throws Exception if implementation failed to run.
+		 */
 		T get() throws Exception;
 	}
 
 
 
 	/**
-	 * A runnable that can possibly throw a checked exception
+	 * A runnable that can possibly throw a checked exception.
 	 */
 	@FunctionalInterface
 	public interface RunnableException {
+		/**
+		 * Run any code implemented.
+		 * @throws Exception if implementation failed to run.
+		 */
 		void run() throws Exception;
 	}
 

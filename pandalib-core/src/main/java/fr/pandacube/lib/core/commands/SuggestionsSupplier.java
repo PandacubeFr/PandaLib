@@ -190,12 +190,12 @@ public interface SuggestionsSupplier<S> {
 
 
 	static <S> SuggestionsSupplier<S> suggestDuration() {
-		final List<String> emptyTokenSuggestions = TimeUtil.DURATION_SUFFIXES.stream().map(p -> "1" + p).collect(Collectors.toList());
+		final List<String> emptyTokenSuggestions = DURATION_SUFFIXES.stream().map(p -> "1" + p).collect(Collectors.toList());
 		return (s, ti, token, args) -> {
 			if (token.isEmpty()) {
 				return emptyTokenSuggestions;
 			}
-			List<String> remainingSuffixes = new ArrayList<>(TimeUtil.DURATION_SUFFIXES);
+			List<String> remainingSuffixes = new ArrayList<>(DURATION_SUFFIXES);
 			char[] tokenChars = token.toCharArray();
 			String accSuffix = "";
 			for (char c : tokenChars) {
@@ -214,6 +214,11 @@ public interface SuggestionsSupplier<S> {
 					.collect(Collectors.toList());
 		};
 	}
+
+	/**
+	 * List of all possible duration unit symbols for suggestions.
+	 */
+	public static final List<String> DURATION_SUFFIXES = List.of("y", "mo", "w", "d", "h", "m", "s");
 
 
 	private static void scanAndRemovePastSuffixes(List<String> suffixes, String foundSuffix) {

@@ -1,16 +1,26 @@
 package fr.pandacube.lib.util;
 
+/**
+ * Provides utility methods around Minecraft and Web stuff.
+ */
 public class MinecraftWebUtil {
-	
-	
-	
 
 	/**
-		Convert a legacy Minecraft color coded String into HTML Format.
+	 * Convert a legacy Minecraft color coded String into HTML Format.
+	 * <p>
+	 * Each colored part of the text will be contained in a {@code <span>} tag with {@code class="cX"} where {@code X}
+	 * is the color code from 0 to F in uppercase.
+	 * The bold, striked, underlined and italic parts will be contained in a {@code <span>} tag with respectively the
+	 * classes {@code cL}, {@code cM}, {@code cN} and {@code cO}.
+	 * Some CSS properties are needed to apply the colors to the CSS classes.
+	 * @param chatcolorPrefix the prefix used for the color codes
+	 * @param legacyText the legacy text to convert to HTML.
+	 * @return The text formated in HTML.
+	 * @implNote the current implementation does not yet supports the RGB colors.
 	*/
-	// TODO update to support RGB colors (Bungee and Essentials notation).
-	// See JavaScript implementation at https://www.pandacube.fr/assets/js/global.js
-	public static String fromMinecraftColorCodeToHTML(char code_prefix, String ligne)
+	// TODO update to support RGB colors (Bungee and Essentials notation). (see JS implementation at https://www.pandacube.fr/assets/js/global.js )
+	// TODO moves this to pandalib-chat and use Adventure API to help serializing to HTML
+	public static String fromMinecraftColorCodeToHTML(char chatcolorPrefix, String legacyText)
 	{
 		String color_char = "0123456789abcdefr";
 		
@@ -18,12 +28,12 @@ public class MinecraftWebUtil {
 		char currentColor = 'r';
 		boolean bold = false, italic = false, underlined = false, strikethrough = false;
 		
-		for (int i=0; i<ligne.length(); i++) {
-			char c = ligne.charAt(i);
+		for (int i=0; i<legacyText.length(); i++) {
+			char c = legacyText.charAt(i);
 			
-			if (c == code_prefix && (i<ligne.length()-1)) {
+			if (c == chatcolorPrefix && (i<legacyText.length()-1)) {
 				i++;
-				c = ligne.charAt(i);
+				c = legacyText.charAt(i);
 				if (color_char.contains(String.valueOf(Character.toLowerCase(c)))) {
 					if (bold) {
 						builder.append("</span>");
@@ -75,7 +85,7 @@ public class MinecraftWebUtil {
 					}
 				}
 				else {
-					builder.append(code_prefix + c);
+					builder.append(chatcolorPrefix + c);
 				}
 				
 				

@@ -1,10 +1,13 @@
 package fr.pandacube.lib.util;
 
+/**
+ * Provides methods related to Minecraft Java server ticks.
+ */
 public class Tick {
 	
 	
 	/**
-	 * Returns the number of tick is the provided duration, in second
+	 * Returns the number of tick is the provided number of seconds.
 	 * @param seconds the duration in second
 	 * @return the same duration as provided, but in Minecraft server ticks
 	 */
@@ -13,7 +16,7 @@ public class Tick {
 	}
 	
 	/**
-	 * Returns the number of tick is the provided duration, in second
+	 * Returns the number of tick is the provided number of minutes.
 	 * @param minutes the duration in minutes
 	 * @return the same duration as provided, but in Minecraft server ticks
 	 */

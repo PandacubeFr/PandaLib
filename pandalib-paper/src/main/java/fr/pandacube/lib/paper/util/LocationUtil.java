@@ -65,9 +65,9 @@ public class LocationUtil {
 			
 			// generate a random (x,z) coordinate
 			Location ret = new Location(w,
-					RandomUtil.nextIntBetween(min.getBlockX(), max.getBlockX()) + 0.5,
+					RandomUtil.rand.nextInt(min.getBlockX(), max.getBlockX()) + 0.5,
 					w.getMaxHeight() - 1,
-					RandomUtil.nextIntBetween(min.getBlockZ(), max.getBlockZ()) + 0.5);
+					RandomUtil.rand.nextInt(min.getBlockZ(), max.getBlockZ()) + 0.5);
 			
 			// find a secure y value
 			ret = getSecureLocationOrNull(ret);

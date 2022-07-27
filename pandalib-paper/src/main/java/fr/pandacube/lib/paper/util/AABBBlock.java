@@ -88,9 +88,9 @@ public class AABBBlock implements Iterable<BlockVector> {
 	}
 	
 	public Vector getRandomPosition() {
-		double x = RandomUtil.nextDoubleBetween(pos1.getX(), pos2.getX());
-		double y = RandomUtil.nextDoubleBetween(pos1.getY(), pos2.getY());
-		double z = RandomUtil.nextDoubleBetween(pos1.getZ(), pos2.getZ());
+		double x = RandomUtil.rand.nextDouble(pos1.getX(), pos2.getX());
+		double y = RandomUtil.rand.nextDouble(pos1.getY(), pos2.getY());
+		double z = RandomUtil.rand.nextDouble(pos1.getZ(), pos2.getZ());
 		return new Vector(x, y, z);
 	}
 	
