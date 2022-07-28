@@ -9,6 +9,9 @@ import java.lang.reflect.Modifier;
  */
 public final class ReflectField<T> extends ReflectMember<T, String, Field, NoSuchFieldException> {
 
+    /* Those fields are used to modify the value of a static variable. Depending of the current Java version,
+     * one of them whill be used for this purpose.
+     */
     private static sun.misc.Unsafe sunMiscUnsafeInstance;
     private static Field modifiersFieldInFieldClass;
     static {
@@ -24,7 +27,7 @@ public final class ReflectField<T> extends ReflectMember<T, String, Field, NoSuc
         }
 
         try {
-            modifiersFieldInFieldClass = Reflect.ofClass(Field.class).field("modifiers").fetchFiltered();
+            modifiersFieldInFieldClass = Reflect.ofClass(Field.class).filteredField("modifiers").get();
         } catch (Exception e) {
             RuntimeException newEx = new RuntimeException("Cannot access " + Field.class + ".modifiers field.", e);
             if (ex != null)
