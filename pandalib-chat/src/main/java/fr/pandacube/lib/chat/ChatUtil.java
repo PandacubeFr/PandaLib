@@ -418,7 +418,7 @@ public class ChatUtil {
 	public static int charW(char c, boolean console, boolean bold) {
 		if (console)
 			return (c == '§') ? -1 : 1;
-		return CHAR_SIZES.getOrDefault(c, DEFAULT_CHAR_SIZE);
+		return CHAR_SIZES.getOrDefault(c, DEFAULT_CHAR_SIZE) + (bold ? 1 : 0);
 	}
 	
 	
