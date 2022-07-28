@@ -3,7 +3,6 @@ package fr.pandacube.lib.util;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.random.RandomGenerator;
 
 /**
  * Utility class to generate random things.
@@ -17,30 +16,29 @@ public class RandomUtil {
 
 	/**
 	 * Returns a randomly generated integer between {@code minInclu} included and {@code maxExclu} excluded.
+	 * This method is safer to use that Random#nextInt(int, int) because it does not check the validity of
+	 * the parameters.
 	 * @param minInclu the minimum value, included.
 	 * @param maxExclu the maximum value, excluded.
 	 * @return a random number between {@code minInclu} included and {@code maxExclu} excluded.
-	 * @see Random#nextInt(int, int) 
+	 * @see Random#nextInt(int, int)
 	 * @throws IllegalArgumentException if {@code minInclu} is greater than {@code maxExclu}.
-	 * @deprecated Use {@link Random#nextInt(int, int)} instead.
 	 */
-	@Deprecated(forRemoval = true)
 	public static int nextIntBetween(int minInclu, int maxExclu) {
-		return rand.nextInt(minInclu, maxExclu);
+		return minInclu + rand.nextInt(maxExclu - minInclu);
 	}
 
 	/**
 	 * Returns a randomly generated double between {@code minInclu} included and {@code maxExclu} excluded.
+	 * This method is safer to use that Random#nextDouble(double, double) because it does not check the validity of
+	 * the parameters
 	 * @param minInclu the minimum value, included.
 	 * @param maxExclu the maximum value, excluded.
 	 * @return a random number between {@code minInclu} included and {@code maxExclu} excluded.
 	 * @see Random#nextDouble(double, double)
-	 * @throws IllegalArgumentException if {@code minInclu} is greater than {@code maxExclu}.
-	 * @deprecated Use {@link Random#nextDouble(double, double)} instead.
 	 */
-	@Deprecated(forRemoval = true)
 	public static double nextDoubleBetween(double minInclu, double maxExclu) {
-		return rand.nextDouble(minInclu, maxExclu);
+		return minInclu + rand.nextDouble() * (maxExclu - minInclu);
 	}
 
 	/**
@@ -99,7 +97,7 @@ public class RandomUtil {
 	
 	/**
 	 * Return a value between 0 and the number of parameter minus 1, using the provided frequencies.
-	 * 
+	 * <p>
 	 * The probability of each value to be returned depends of the frequencies provided.
 	 * @param frequencies the frequencies of each entries
 	 * @return the index of an entry, or -1 if it is unable to pick anything (all the frequencies are 0 or there is no provided frequency)
@@ -152,7 +150,7 @@ public class RandomUtil {
 	public static final String PASSWORD_CHARSET_NO_ANBIGUITY = "abcdefghkmnpqrstwxyzACDEFGHKLMNPQRSTWXYZ2345679";
 
 	/**
-	 * Generate a random password of the provided length, using the characters listed in {@link #PASSWORD_CHARSET_NO_ANBIGUITY}
+	 * Generate a random password of the provided length, using the characters listed in {@link #PASSWORD_CHARSET_NO_ANBIGUITY}.
 	 * @param length the length of the generated password.
 	 * @return the generated password.
 	 */
