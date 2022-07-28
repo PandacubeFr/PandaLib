@@ -27,7 +27,11 @@ public final class ReflectField<T> extends ReflectMember<T, String, Field, NoSuc
         }
 
         try {
-            modifiersFieldInFieldClass = Reflect.ofClass(Field.class).filteredField("modifiers").get();
+            @SuppressWarnings("deprecation")
+            Field f = Runtime.version().feature() < 16
+                    ? Reflect.ofClass(Field.class).filteredField("modifiers").get()
+                    : null;
+            modifiersFieldInFieldClass = f;
         } catch (Exception e) {
             RuntimeException newEx = new RuntimeException("Cannot access " + Field.class + ".modifiers field.", e);
             if (ex != null)

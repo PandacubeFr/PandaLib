@@ -140,7 +140,10 @@ public class ReflectClass<T> {
      * @param name the name of the field.
      * @return a {@link ReflectField} wrapping the requested {@link Field}.
      * @throws NoSuchFieldException if the requested field doesn’t exists in the wrapped class.
+     * @deprecated on Java 17, does not work due to module encapsulation, it is impossible to bypass the Java reflection
+     *             API internal filtering.
      */
+    @Deprecated(since = "Java 17")
     public ReflectField<T> filteredField(String name) throws NoSuchFieldException {
         return field0(name, true);
     }
