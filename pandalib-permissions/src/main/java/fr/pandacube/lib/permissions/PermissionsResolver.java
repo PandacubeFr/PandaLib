@@ -18,8 +18,7 @@ import com.google.common.cache.CacheBuilder;
 import net.md_5.bungee.api.ChatColor;
 
 import fr.pandacube.lib.chat.Chat;
-import fr.pandacube.lib.chat.ChatUtil;
-import fr.pandacube.lib.chat.ChatUtil.DisplayTreeNode;
+import fr.pandacube.lib.chat.ChatTreeNode;
 import fr.pandacube.lib.permissions.PermissionsCachedBackendReader.CachedEntity;
 import fr.pandacube.lib.permissions.PermissionsCachedBackendReader.CachedGroup;
 import fr.pandacube.lib.permissions.PermissionsCachedBackendReader.CachedPlayer;
@@ -66,10 +65,10 @@ public class PermissionsResolver {
 		return getEffectiveData(name, type, DataType.SUFFIX);
 	}
 	
-	/* package */ DisplayTreeNode debugPrefix(String name, EntityType type) {
+	/* package */ ChatTreeNode debugPrefix(String name, EntityType type) {
 		return debugData(name, type, DataType.PREFIX);
 	}
-	/* package */ DisplayTreeNode debugSuffix(String name, EntityType type) {
+	/* package */ ChatTreeNode debugSuffix(String name, EntityType type) {
 		return debugData(name, type, DataType.SUFFIX);
 	}
 
@@ -89,7 +88,7 @@ public class PermissionsResolver {
 		}
 	}
 	
-	private DisplayTreeNode debugData(String name, EntityType type, DataType dataType) {
+	private ChatTreeNode debugData(String name, EntityType type, DataType dataType) {
 		CachedEntity entity = (type == EntityType.User)
 				? backendReader.getCachedPlayer(UUID.fromString(name))
 				: backendReader.getCachedGroup(name);
@@ -104,7 +103,7 @@ public class PermissionsResolver {
 		
 		if (resolutionResult.conflict) {
 			Log.warning("For data " + dataType + ":\n"
-					+ ChatUtil.treeView(resolutionResult.toDisplayTreeNode(), true).stream()
+					+ resolutionResult.toDisplayTreeNode().render(true).stream()
 					.map(Chat::getLegacyText)
 					.collect(Collectors.joining(ChatColor.RESET + "\n")));
 		}
@@ -163,7 +162,7 @@ public class PermissionsResolver {
 			conflict = c != null;
 		}
 		
-		public DisplayTreeNode toDisplayTreeNode() {
+		public ChatTreeNode toDisplayTreeNode() {
 			Chat c = Chat.text(entity.name);
 			if (result == null)
 				c.then(Chat.text(" (non défini)").gray());
@@ -171,11 +170,11 @@ public class PermissionsResolver {
 				c.thenLegacyText(" \"" + ChatColor.RESET + result + ChatColor.RESET + "\"");
 			if (conflictMessage != null)
 				c.thenFailure(" " + conflictMessage);
-			DisplayTreeNode node = new DisplayTreeNode(c);
+			ChatTreeNode node = new ChatTreeNode(c);
 			
 			if (result == null && !conflict && !inheritances.isEmpty()) {
 				// there is nothing interesting to show on current or subnode
-				node.children.add(new DisplayTreeNode(Chat.text("(Inheritances hidden for brevety)").darkGray().italic()));
+				node.children.add(new ChatTreeNode(Chat.text("(Inheritances hidden for brevety)").darkGray().italic()));
 				return node;
 			}
 			
@@ -290,7 +289,7 @@ public class PermissionsResolver {
 		}
 	}
 	
-	/* package */ DisplayTreeNode debugPermission(String name, EntityType type, String permission, String server, String world) {
+	/* package */ ChatTreeNode debugPermission(String name, EntityType type, String permission, String server, String world) {
 		CachedEntity entity = (type == EntityType.User)
 				? backendReader.getCachedPlayer(UUID.fromString(name))
 				: backendReader.getCachedGroup(name);
@@ -306,7 +305,7 @@ public class PermissionsResolver {
 		
 		if (resolutionResult.conflict) {
 			Log.warning("For permission " + permission + ":\n"
-					+ ChatUtil.treeView(resolutionResult.toDisplayTreeNode(), true).stream()
+					+ resolutionResult.toDisplayTreeNode().render(true).stream()
 					.map(Chat::getLegacyText)
 					.collect(Collectors.joining(ChatColor.RESET + "\n")));
 		}
@@ -484,7 +483,7 @@ public class PermissionsResolver {
 			conflict = c != null;
 		}
 		
-		public DisplayTreeNode toDisplayTreeNode() {
+		public ChatTreeNode toDisplayTreeNode() {
 			Chat c = Chat.chat()
 					.then(result == PermState.UNDEFINED ? Chat.dataText("■") : result == PermState.GRANTED ? Chat.successText("✔") : Chat.failureText("✘"))
 					.then(Chat.text(entity instanceof CachedPlayer cp ? Permissions.playerNameGetter.apply(cp.playerId) : entity.name)
@@ -496,13 +495,13 @@ public class PermissionsResolver {
 				c.thenData(" w=" + world);
 			if (conflictMessage != null)
 				c.then(Chat.failureText(" " + conflictMessage));
-			DisplayTreeNode node = new DisplayTreeNode(c);
+			ChatTreeNode node = new ChatTreeNode(c);
 			
 			selfPermissions.forEach(p -> node.children.add(p.toDisplayTreeNode()));
 			
 			if (result == PermState.UNDEFINED && !conflict && !inheritances.isEmpty()) {
 				// there is nothing interesting to show on current or subnode
-				node.children.add(new DisplayTreeNode(Chat.text("(Inheritances hidden for brevety)").darkGray().italic()));
+				node.children.add(new ChatTreeNode(Chat.text("(Inheritances hidden for brevety)").darkGray().italic()));
 				return node;
 			}
 			
@@ -521,8 +520,8 @@ public class PermissionsResolver {
 			result = r;
 			type = t;
 		}
-		public DisplayTreeNode toDisplayTreeNode() {
-			return new DisplayTreeNode(Chat.chat()
+		public ChatTreeNode toDisplayTreeNode() {
+			return new ChatTreeNode(Chat.chat()
 					.then(result ? Chat.successText("✔") : Chat.failureText("✘"))
 					.then(Chat.text(permission).color(type == PermType.WILDCARD ? ChatColor.YELLOW : type == PermType.SPECIAL ? ChatColor.LIGHT_PURPLE : ChatColor.WHITE)));
 		}

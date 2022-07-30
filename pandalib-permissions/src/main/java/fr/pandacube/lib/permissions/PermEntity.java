@@ -7,7 +7,7 @@ import java.util.OptionalLong;
 import java.util.Set;
 import java.util.stream.LongStream;
 
-import fr.pandacube.lib.chat.ChatUtil.DisplayTreeNode;
+import fr.pandacube.lib.chat.ChatTreeNode;
 import fr.pandacube.lib.permissions.PermissionsCachedBackendReader.CachedEntity;
 import fr.pandacube.lib.permissions.SQLPermissions.EntityType;
 import fr.pandacube.lib.util.Log;
@@ -50,7 +50,7 @@ public abstract class PermEntity {
 	}
 	
 	
-	public DisplayTreeNode debugPrefix() {
+	public ChatTreeNode debugPrefix() {
 		return Permissions.resolver.debugPrefix(name, type);
 	}
 	
@@ -69,7 +69,7 @@ public abstract class PermEntity {
 	}
 	
 	
-	public DisplayTreeNode debugSuffix() {
+	public ChatTreeNode debugSuffix() {
 		return Permissions.resolver.debugSuffix(name, type);
 	}
 	
@@ -159,15 +159,15 @@ public abstract class PermEntity {
 	}
 	
 	
-	public DisplayTreeNode debugPermission(String permission) {
+	public ChatTreeNode debugPermission(String permission) {
 		return debugPermission(permission, null, null);
 	}
 	
-	public DisplayTreeNode debugPermission(String permission, String server) {
+	public ChatTreeNode debugPermission(String permission, String server) {
 		return debugPermission(permission, server, null);
 	}
 	
-	public DisplayTreeNode debugPermission(String permission, String server, String world) {
+	public ChatTreeNode debugPermission(String permission, String server, String world) {
 		return Permissions.resolver.debugPermission(name, type, permission, server, world);
 	}
 	
