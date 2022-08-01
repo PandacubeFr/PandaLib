@@ -4,90 +4,90 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * A SQL {@code ORDER BY} expression builder.
+ * @param <E> the table type.
+ */
 public class SQLOrderBy<E extends SQLElement<E>> {
 
-	private final List<OBField> orderByFields = new ArrayList<>();
+    /**
+     * Creates a new SQL {@code ORDER BY} expression builder with the provided field to sort in the ascending order.
+     * @param field le field to order.
+     * @return a new SQL {@code ORDER BY} expression builder.
+     * @param <E> the type of the table declaring the field.
+     */
+    public static <E extends SQLElement<E>> SQLOrderBy<E> asc(SQLField<E, ?> field) {
+        return new SQLOrderBy<E>().thenAsc(field);
+    }
 
-	/**
-	 * Construit une nouvelle clause ORDER BY
-	 */
-	private SQLOrderBy() {}
+    /**
+     * Creates a new SQL {@code ORDER BY} expression builder with the provided field to sort in the descending order.
+     * @param field le field to order.
+     * @return a new SQL {@code ORDER BY} expression builder.
+     * @param <E> the type of the table declaring the field.
+     */
+    public static <E extends SQLElement<E>> SQLOrderBy<E> desc(SQLField<E, ?> field) {
+        return new SQLOrderBy<E>().thenDesc(field);
+    }
 
-	/**
-	 * Ajoute un champ dans la clause ORDER BY en construction
-	 *
-	 * @param field le champ SQL à ordonner
-	 * @param d le sens de tri (croissant ASC ou décroissant DESC)
-	 * @return l'objet courant (permet de chainer les ajouts de champs)
-	 */
-	private SQLOrderBy<E> add(SQLField<E, ?> field, Direction d) {
-		orderByFields.add(new OBField(field, d));
-		return this;
-	}
 
-	/**
-	 * Ajoute un champ dans la clause ORDER BY en construction avec pour direction ASC
-	 *
-	 * @param field le champ SQL à ordonner
-	 * @return l'objet courant (permet de chainer les ajouts de champs)
-	 */
-	public SQLOrderBy<E> thenAsc(SQLField<E, ?> field) {
-		return add(field, Direction.ASC);
-	}
 
-	/**
-	 * Ajoute un champ dans la clause ORDER BY en construction avec pour direction DESC
-	 *
-	 * @param field le champ SQL à ordonner
-	 * @return l'objet courant (permet de chainer les ajouts de champs)
-	 */
-	public SQLOrderBy<E> thenDesc(SQLField<E, ?> field) {
-		return add(field, Direction.DESC);
-	}
 
-	/* package */ String toSQL() {
-		return orderByFields.stream()
-				.map(f -> "`" + f.field.getName() + "` " + f.direction.name())
-				.collect(Collectors.joining(", "));
-	}
 
-	@Override
-	public String toString() {
-		return toSQL();
-	}
 
-	private class OBField {
-		public final SQLField<E, ?> field;
-		public final Direction direction;
+    private final List<OBField<E>> orderByFields = new ArrayList<>();
 
-		public OBField(SQLField<E, ?> f, Direction d) {
-			field = f;
-			direction = d;
-		}
+    private SQLOrderBy() {}
 
-	}
+    private SQLOrderBy<E> add(SQLField<E, ?> field, Direction d) {
+        orderByFields.add(new OBField<>(field, d));
+        return this;
+    }
 
-	private enum Direction {
-		ASC, DESC
-	}
-	
-	
-	
-	
-	
-	
-	
+    /**
+     * Adds the provided field to sort in the ascending order, in this {@code ORDER BY} expression builder.
+     * @param field le field to order.
+     * @return this.
+     */
+    public SQLOrderBy<E> thenAsc(SQLField<E, ?> field) {
+        return add(field, Direction.ASC);
+    }
 
-	
-	public static <E extends SQLElement<E>> SQLOrderBy<E> asc(SQLField<E, ?> field) {
-		return new SQLOrderBy<E>().thenAsc(field);
-	}
-	
-	public static <E extends SQLElement<E>> SQLOrderBy<E> desc(SQLField<E, ?> field) {
-		return new SQLOrderBy<E>().thenDesc(field);
-	}
-	
-	
-	
-	
+    /**
+     * Adds the provided field to sort in the descending order, in this {@code ORDER BY} expression builder.
+     * @param field le field to order.
+     * @return this.
+     */
+    public SQLOrderBy<E> thenDesc(SQLField<E, ?> field) {
+        return add(field, Direction.DESC);
+    }
+
+    /* package */ String toSQL() {
+        return orderByFields.stream()
+                .map(f -> "`" + f.field.getName() + "` " + f.direction.name())
+                .collect(Collectors.joining(", "));
+    }
+
+    @Override
+    public String toString() {
+        return toSQL();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    private record OBField<E extends SQLElement<E>>(SQLField<E, ?> field, Direction direction) { }
+
+    private enum Direction {
+        ASC, DESC
+    }
+
 }

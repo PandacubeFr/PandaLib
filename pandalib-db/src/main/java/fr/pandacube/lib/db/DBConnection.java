@@ -1,83 +1,60 @@
 package fr.pandacube.lib.db;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import fr.pandacube.lib.util.Log;
+import org.apache.commons.dbcp2.BasicDataSource;
 
+/**
+ * A class holding the connection to the database.
+ */
 public class DBConnection {
-	private static final long CONNECTION_CHECK_TIMEOUT = 30000; // in ms
-	
-	private Connection conn;
-	private final String url;
-	private final String login;
-	private final String pass;
-	
-	private long timeOfLastCheck = 0;
 
-	public DBConnection(String host, int port, String dbname, String l, String p)
-			throws SQLException {
-		url = "jdbc:mysql://" + host + ":" + port + "/" + dbname
-				+ "?autoReconnect=true"
-				+ "&useUnicode=true"
-				+ "&useSSL=false"
-				+ "&characterEncoding=utf8"
-				+ "&characterSetResults=utf8"
-				+ "&character_set_server=utf8mb4"
-				+ "&character_set_connection=utf8mb4";
-		login = l;
-		pass = p;
-		connect();
-	}
+    private final BasicDataSource connSource;
 
-	private void checkConnection() throws SQLException {
-		if (!isConnected()) {
-			Log.info("Connection to the database lost. Trying to reconnect...");
-			close();
-			connect();
-		}
-	}
-	
-	private boolean isConnected()
-    {
-        try {
-    		if (conn.isClosed())
-    			return false;
-
-    		// avoid checking the connection everytime we want to do a db request
-    		long now = System.currentTimeMillis();
-    		if (timeOfLastCheck + CONNECTION_CHECK_TIMEOUT > now)
-    			return true;
-    		
-			timeOfLastCheck = now;
-    		
-    		if (conn.isValid(1))
-    			return true;
-    		
-        	try (ResultSet rs = conn.createStatement().executeQuery("SELECT 1;")) {
-	            return rs != null && rs.next();
-            }
-        } catch (Exception e) {
-            return false;
-        }
+    /**
+     * Create a new connection with the provided settings.
+     * @param host the MySQL DB host.
+     * @param port the MySQL DB port.
+     * @param dbname the MySQL DB name.
+     * @param login the login/username.
+     * @param password the password.
+     */
+    public DBConnection(String host, int port, String dbname, String login, String password) {
+        this("jdbc:mysql://" + host + ":" + port + "/" + dbname
+                        + "?useUnicode=true"
+                        + "&useSSL=false"
+                        + "&characterEncoding=utf8"
+                        + "&characterSetResults=utf8"
+                        + "&character_set_server=utf8mb4"
+                        + "&character_set_connection=utf8mb4",
+                login, password);
     }
 
-	public Connection getNativeConnection() throws SQLException {
-		checkConnection();
-		return conn;
-	}
+    /**
+     * Create a new connection with the provided settings.
+     * @param url the JDBC URL.
+     * @param login the login/username.
+     * @param password the password.
+     */
+    public DBConnection(String url, String login, String password) {
+        connSource = new BasicDataSource();
+        connSource.setUrl(url);
+        connSource.setUsername(login);
+        connSource.setPassword(password);
+    }
 
-	private void connect() throws SQLException {
-		conn = DriverManager.getConnection(url, login, pass);
-		timeOfLastCheck = System.currentTimeMillis();
-	}
+    /* package */ Connection getConnection() throws SQLException {
+        return connSource.getConnection();
+    }
 
-	public void close() {
-		try {
-			conn.close();
-		} catch (Exception ignored) {}
-	}
+    /**
+     * Closes the connection.
+     */
+    public void close() {
+        try {
+            connSource.close();
+        } catch (SQLException ignored) {}
+    }
 
 }

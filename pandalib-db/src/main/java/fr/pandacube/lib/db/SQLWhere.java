@@ -6,304 +6,345 @@ import java.util.List;
 
 import fr.pandacube.lib.util.Log;
 
+/**
+ * A SQL {@code WHERE} expression.
+ * @param <E> the table type.
+ */
 public abstract class SQLWhere<E extends SQLElement<E>> {
 
-	public abstract ParameterizedSQLString toSQL() throws DBException;
+    /* package */ abstract ParameterizedSQLString toSQL() throws DBException;
 
-	@Override
-	public String toString() {
-		try {
-			return toSQL().sqlString();
-		} catch (DBException e) {
-			Log.warning(e);
-			return "[SQLWhere.toString() error (see logs)]";
-		}
-	}
-	
-	public SQLWhereAnd<E> and(SQLWhere<E> other) {
-		return new SQLWhereAnd<E>().and(this).and(other);
-	}
-	
-	public SQLWhereOr<E> or(SQLWhere<E> other) {
-		return new SQLWhereOr<E>().or(this).or(other);
-	}
-	
-	public static <E extends SQLElement<E>> SQLWhereAnd<E> and() {
-		return new SQLWhereAnd<>();
-	}
-	
-	public static <E extends SQLElement<E>> SQLWhereOr<E> or() {
-		return new SQLWhereOr<>();
-	}
-	
-	public static String escapeLike(String str) {
-		return str.replace("\\", "\\\\").replace("_", "\\_").replace("%", "\\%");
-	}
-	
-	
+    @Override
+    public String toString() {
+        try {
+            return toSQL().sqlString();
+        } catch (DBException e) {
+            Log.warning(e);
+            return "[SQLWhere.toString() error (see logs)]";
+        }
+    }
 
-	
-	
-	
-	
-	
-	public static abstract class SQLWhereChain<E extends SQLElement<E>> extends SQLWhere<E> {
 
-		private final SQLBoolOp operator;
-		private final List<SQLWhere<E>> conditions = new ArrayList<>();
+    /**
+     * Create a SQL {@code WHERE} expression that is true when this expression {@code AND} the provided expression is
+     * true.
+     * @param other the other expression.
+     * @return a SQL {@code WHERE} expression.
+     */
+    public SQLWhere<E> and(SQLWhere<E> other) {
+        return SQLWhere.<E>and().and(this).and(other);
+    }
 
-		private SQLWhereChain(SQLBoolOp op) {
-			if (op == null) throw new IllegalArgumentException("op can't be null");
-			operator = op;
-		}
+    /**
+     * Create a SQL {@code WHERE} expression that is true when this expression {@code OR} the provided expression is
+     * true.
+     * @param other the other expression.
+     * @return a SQL {@code WHERE} expression.
+     */
+    public SQLWhere<E> or(SQLWhere<E> other) {
+        return SQLWhere.<E>or().or(this).or(other);
+    }
 
-		protected void add(SQLWhere<E> sqlWhere) {
-			if (sqlWhere == null) throw new IllegalArgumentException("sqlWhere can't be null");
-			conditions.add(sqlWhere);
-		}
-		
-		public boolean isEmpty() {
-			return conditions.isEmpty();
-		}
-		
-		@Override
-		public ParameterizedSQLString toSQL() throws DBException {
-			if (conditions.isEmpty()) {
-				throw new DBException("SQLWhereChain needs at least one element inside !");
-			}
-			
-			StringBuilder sql = new StringBuilder();
-			List<Object> params = new ArrayList<>();
-			boolean first = true;
 
-			for (SQLWhere<E> w : conditions) {
-				if (!first)
-					sql.append(" ").append(operator.sql).append(" ");
-				first = false;
+    /**
+     * Create a SQL {@code WHERE} expression builder joining multiple expressions with the {@code AND} operator.
+     * @return a SQL {@code WHERE} expression.
+     * @param <E> the table type.
+     */
+    public static <E extends SQLElement<E>> SQLWhereAndBuilder<E> and() {
+        return new SQLWhereAndBuilder<>();
+    }
 
-				ParameterizedSQLString ret = w.toSQL();
-				sql.append("(").append(ret.sqlString()).append(")");
-				params.addAll(ret.parameters());
-			}
+    /**
+     * Create a SQL {@code WHERE} expression builder joining multiple expressions with the {@code OR} operator.
+     * @return a SQL {@code WHERE} expression.
+     * @param <E> the table type.
+     */
+    public static <E extends SQLElement<E>> SQLWhereOrBuilder<E> or() {
+        return new SQLWhereOrBuilder<>();
+    }
 
-			return new ParameterizedSQLString(sql.toString(), params);
-		}
 
-		protected enum SQLBoolOp {
-			/** Equivalent to SQL "<code>AND</code>" */
-			AND("AND"),
-			/** Equivalent to SQL "<code>OR</code>" */
-			OR("OR");
-			/* package */ final String sql;
+    /**
+     * A SQL {@code WHERE} expression builder joining multiple expressions with the {@code AND} or {@code OR} operator.
+     * @param <E> the table type.
+     */
+    public static abstract class SQLWhereChainBuilder<E extends SQLElement<E>> extends SQLWhere<E> {
 
-			SQLBoolOp(String s) {
-				sql = s;
-			}
+        private final SQLBoolOp operator;
+        private final List<SQLWhere<E>> conditions = new ArrayList<>();
 
-		}
+        private SQLWhereChainBuilder(SQLBoolOp op) {
+            if (op == null) throw new IllegalArgumentException("op can't be null");
+            operator = op;
+        }
 
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	public static class SQLWhereAnd<E extends SQLElement<E>> extends SQLWhereChain<E> {
+        /* package */ void add(SQLWhere<E> sqlWhere) {
+            if (sqlWhere == null) throw new IllegalArgumentException("sqlWhere can't be null");
+            conditions.add(sqlWhere);
+        }
 
-		private SQLWhereAnd() {
-			super(SQLBoolOp.AND);
-		}
-		
-		@Override
-		public SQLWhereAnd<E> and(SQLWhere<E> other) {
-			add(other);
-			return this;
-		}
+        /**
+         * Tells if this expression builder is empty.
+         * The builder must not be empty
+         * @return true if this expression builder is empty, false otherwise.
+         */
+        public boolean isEmpty() {
+            return conditions.isEmpty();
+        }
 
-	}
-	
-	
-	
-	
-	
-	
-	public static class SQLWhereOr<E extends SQLElement<E>> extends SQLWhereChain<E> {
+        @Override
+        /* package */ ParameterizedSQLString toSQL() throws DBException {
+            if (conditions.isEmpty()) {
+                throw new DBException("SQLWhereChainBuilder needs at least one element inside !");
+            }
 
-		private SQLWhereOr() {
-			super(SQLBoolOp.OR);
-		}
-		
-		@Override
-		public SQLWhereOr<E> or(SQLWhere<E> other) {
-			add(other);
-			return this;
-		}
+            StringBuilder sql = new StringBuilder();
+            List<Object> params = new ArrayList<>();
+            boolean first = true;
 
-	}
-	
-	
-	
-	
-	
-	
-	/* package */ static class SQLWhereComp<E extends SQLElement<E>> extends SQLWhere<E> {
+            for (SQLWhere<E> w : conditions) {
+                if (!first)
+                    sql.append(" ").append(operator.sql).append(" ");
+                first = false;
 
-		private final SQLField<E, ?> left;
-		private final SQLComparator comp;
-		private final Object right;
+                ParameterizedSQLString ret = w.toSQL();
+                sql.append("(").append(ret.sqlString()).append(")");
+                params.addAll(ret.parameters());
+            }
 
-		/**
-		 * Compare a field with a value
-		 *
-		 * @param l the field at left of the comparison operator. Can't be null
-		 * @param c the comparison operator, can't be null
-		 * @param r the value at right of the comparison operator. Can't be null
-		 */
-		/* package */ <T> SQLWhereComp(SQLField<E, T> l, SQLComparator c, T r) {
-			if (l == null || r == null || c == null)
-				throw new IllegalArgumentException("All arguments for SQLWhereComp constructor can't be null");
-			left = l;
-			comp = c;
-			right = r;
-		}
+            return new ParameterizedSQLString(sql.toString(), params);
+        }
 
-		@Override
-		public ParameterizedSQLString toSQL() throws DBException {
-			List<Object> params = new ArrayList<>();
-			SQLElement.addValueToSQLObjectList(params, left, right);
-			return new ParameterizedSQLString("`" + left.getName() + "` " + comp.sql + " ? ", params);
-		}
+        /* package */ enum SQLBoolOp {
+            /** Equivalent to SQL {@code "AND"}. */
+            AND("AND"),
+            /** Equivalent to SQL {@code "OR"}. */
+            OR("OR");
+            /* package */ final String sql;
 
-		/* package */ enum SQLComparator {
-			/** Equivalent to SQL "<code>=</code>" */
-			EQ("="),
-			/** Equivalent to SQL "<code>></code>" */
-			GT(">"),
-			/** Equivalent to SQL "<code>>=</code>" */
-			GEQ(">="),
-			/** Equivalent to SQL "<code>&lt;</code>" */
-			LT("<"),
-			/** Equivalent to SQL "<code>&lt;=</code>" */
-			LEQ("<="),
-			/** Equivalent to SQL "<code>!=</code>" */
-			NEQ("!=");
+            SQLBoolOp(String s) {
+                sql = s;
+            }
 
-			/* package */ final String sql;
+        }
 
-			SQLComparator(String s) {
-				sql = s;
-			}
+    }
 
-		}
 
-	}
-	
-	
-	
-	
-	
-	
-	/* package */ static class SQLWhereIn<E extends SQLElement<E>> extends SQLWhere<E> {
 
-		private final SQLField<E, ?> field;
-		private final Collection<?> values;
 
-		/* package */ <T> SQLWhereIn(SQLField<E, T> f, Collection<T> v) {
-			if (f == null || v == null)
-				throw new IllegalArgumentException("All arguments for SQLWhereIn constructor can't be null");
-			field = f;
-			values = v;
-		}
 
-		@Override
-		public ParameterizedSQLString toSQL() throws DBException {
-			List<Object> params = new ArrayList<>();
-			
-			if (values.isEmpty())
-				return new ParameterizedSQLString(" 1=0 ", params);
-			
-			for (Object v : values)
-				SQLElement.addValueToSQLObjectList(params, field, v);
-			
-			char[] questions = new char[values.size() == 0 ? 0 : (values.size() * 2 - 1)];
-			for (int i = 0; i < questions.length; i++)
-				questions[i] = i % 2 == 0 ? '?' : ',';
-			
-			return new ParameterizedSQLString("`" + field.getName() + "` IN (" + new String(questions) + ") ", params);
-		}
 
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	/* package */ static class SQLWhereLike<E extends SQLElement<E>> extends SQLWhere<E> {
 
-		private final SQLField<E, ?> field;
-		private final String likeExpr;
 
-		/**
-		 * Compare a field with a value
-		 *
-		 * @param f the field at left of the LIKE keyword. Can't be null
-		 * @param like the like expression.
-		 */
-		/* package */ SQLWhereLike(SQLField<E, ?> f, String like) {
-			if (f == null || like == null)
-				throw new IllegalArgumentException("All arguments for SQLWhereLike constructor can't be null");
-			field = f;
-			likeExpr = like;
-		}
+    /**
+     * A SQL {@code WHERE} expression builder joining multiple expressions with the {@code AND} operator.
+     * @param <E> the table type.
+     */
+    public static class SQLWhereAndBuilder<E extends SQLElement<E>> extends SQLWhereChainBuilder<E> {
 
-		@Override
-		public ParameterizedSQLString toSQL() {
-			ArrayList<Object> params = new ArrayList<>();
-			params.add(likeExpr);
-			return new ParameterizedSQLString("`" + field.getName() + "` LIKE ? ", params);
-		}
+        private SQLWhereAndBuilder() {
+            super(SQLBoolOp.AND);
+        }
 
-	}
-	
-	
-	
-	
-	
-	
-	
-	/* package */ static class SQLWhereNull<E extends SQLElement<E>> extends SQLWhere<E> {
+        @Override
+        public SQLWhereAndBuilder<E> and(SQLWhere<E> other) {
+            add(other);
+            return this;
+        }
 
-		private final SQLField<E, ?> field;
-		private final boolean isNull;
+    }
 
-		/**
-		 * Init a IS NULL / IS NOT NULL expression for a SQL WHERE condition.
-		 *
-		 * @param field the field to check null / not null state
-		 * @param isNull true if we want to ckeck if "IS NULL", or false to check if
-		 *        "IS NOT NULL"
-		 */
-		/* package */ SQLWhereNull(SQLField<E, ?> field, boolean isNull) {
-			if (field == null)
-				throw new IllegalArgumentException("field can't be null");
-			if (!field.canBeNull)
-				Log.warning("Useless : Trying to check IS [NOT] NULL on the field " + field.getSQLElementType().getName()
-						+ "#" + field.getName() + " which is declared in the ORM as 'can't be null'");
-			this.field = field;
-			this.isNull = isNull;
-		}
 
-		@Override
-		public ParameterizedSQLString toSQL() {
-			return new ParameterizedSQLString("`" + field.getName() + "` IS " + ((isNull) ? "NULL" : "NOT NULL"), new ArrayList<>());
-		}
 
-	}
+
+
+
+    /**
+     * A SQL {@code WHERE} expression builder joining multiple expressions with the {@code OR} operator.
+     * @param <E> the table type.
+     */
+    public static class SQLWhereOrBuilder<E extends SQLElement<E>> extends SQLWhereChainBuilder<E> {
+
+        private SQLWhereOrBuilder() {
+            super(SQLBoolOp.OR);
+        }
+
+        @Override
+        public SQLWhereOrBuilder<E> or(SQLWhere<E> other) {
+            add(other);
+            return this;
+        }
+
+    }
+
+
+
+
+
+
+    /* package */ static class SQLWhereComp<E extends SQLElement<E>> extends SQLWhere<E> {
+
+        private final SQLField<E, ?> left;
+        private final SQLComparator comp;
+        private final Object right;
+
+        /**
+         * Compare a field with a value.
+         *
+         * @param l the field at left of the comparison operator. Can't be null
+         * @param c the comparison operator, can't be null
+         * @param r the value at right of the comparison operator. Can't be null
+         */
+        /* package */ <T> SQLWhereComp(SQLField<E, T> l, SQLComparator c, T r) {
+            if (l == null || r == null || c == null)
+                throw new IllegalArgumentException("All arguments for SQLWhereComp constructor can't be null");
+            left = l;
+            comp = c;
+            right = r;
+        }
+
+        @Override
+        /* package */ ParameterizedSQLString toSQL() throws DBException {
+            List<Object> params = new ArrayList<>();
+            SQLElement.addValueToSQLObjectList(params, left, right);
+            return new ParameterizedSQLString("`" + left.getName() + "` " + comp.sql + " ? ", params);
+        }
+
+        /* package */ enum SQLComparator {
+            /** Equivalent to SQL {@code "="}. */
+            EQ("="),
+            /** Equivalent to SQL {@code ">"}. */
+            GT(">"),
+            /** Equivalent to SQL {@code ">="}. */
+            GEQ(">="),
+            /** Equivalent to SQL {@code "<"}. */
+            LT("<"),
+            /** Equivalent to SQL {@code "<="}. */
+            LEQ("<="),
+            /** Equivalent to SQL {@code "!="}. */
+            NEQ("!=");
+
+            /* package */ final String sql;
+
+            SQLComparator(String s) {
+                sql = s;
+            }
+
+        }
+
+    }
+
+
+
+
+
+
+    /* package */ static class SQLWhereIn<E extends SQLElement<E>> extends SQLWhere<E> {
+
+        private final SQLField<E, ?> field;
+        private final Collection<?> values;
+
+        /* package */ <T> SQLWhereIn(SQLField<E, T> f, Collection<T> v) {
+            if (f == null || v == null)
+                throw new IllegalArgumentException("All arguments for SQLWhereIn constructor can't be null");
+            field = f;
+            values = v;
+        }
+
+        @Override
+        /* package */ ParameterizedSQLString toSQL() throws DBException {
+            List<Object> params = new ArrayList<>();
+
+            if (values.isEmpty())
+                return new ParameterizedSQLString(" 1=0 ", params);
+
+            for (Object v : values)
+                SQLElement.addValueToSQLObjectList(params, field, v);
+
+            char[] questions = new char[values.size() == 0 ? 0 : (values.size() * 2 - 1)];
+            for (int i = 0; i < questions.length; i++)
+                questions[i] = i % 2 == 0 ? '?' : ',';
+
+            return new ParameterizedSQLString("`" + field.getName() + "` IN (" + new String(questions) + ") ", params);
+        }
+
+    }
+
+
+
+
+
+
+
+
+    /* package */ static class SQLWhereLike<E extends SQLElement<E>> extends SQLWhere<E> {
+
+        private final SQLField<E, ?> field;
+        private final String likeExpr;
+
+        /* package */ SQLWhereLike(SQLField<E, ?> f, String like) {
+            if (f == null || like == null)
+                throw new IllegalArgumentException("All arguments for SQLWhereLike constructor can't be null");
+            field = f;
+            likeExpr = like;
+        }
+
+        @Override
+        /* package */ ParameterizedSQLString toSQL() {
+            ArrayList<Object> params = new ArrayList<>();
+            params.add(likeExpr);
+            return new ParameterizedSQLString("`" + field.getName() + "` LIKE ? ", params);
+        }
+
+    }
+
+
+
+
+
+
+
+    /* package */ static class SQLWhereNull<E extends SQLElement<E>> extends SQLWhere<E> {
+
+        private final SQLField<E, ?> field;
+        private final boolean isNull;
+
+        /* package */ SQLWhereNull(SQLField<E, ?> field, boolean isNull) {
+            if (field == null)
+                throw new IllegalArgumentException("field can't be null");
+            if (!field.nullable)
+                Log.warning("Useless : Trying to check IS [NOT] NULL on the field " + field.getSQLElementType().getName()
+                        + "#" + field.getName() + " which is declared in the ORM as 'can't be null'");
+            this.field = field;
+            this.isNull = isNull;
+        }
+
+        @Override
+        /* package */ ParameterizedSQLString toSQL() {
+            return new ParameterizedSQLString("`" + field.getName() + "` IS " + ((isNull) ? "NULL" : "NOT NULL"), new ArrayList<>());
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+    /**
+     * Escapes the {@code \}, {@code _} and  {@code %} in the string to be used in a {@code WHERE ... LIKE} expression.
+     * @param str the string to escape.
+     * @return the escaped string.
+     */
+    public static String escapeLike(String str) {
+        return str.replace("\\", "\\\\")
+                .replace("_", "\\_")
+                .replace("%", "\\%");
+    }
 
 }

@@ -1,8 +1,7 @@
 package fr.pandacube.lib.db;
 
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,180 +10,200 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import fr.pandacube.lib.util.Log;
-
 /**
- *
- * @param <E>
+ * An {@link ArrayList} that provides special operations for the table entries it contains.
+ * @param <E> the table type.
  */
 public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 
-	private final Map<SQLField<E, ?>, Object> modifiedValues = new LinkedHashMap<>();
+    /**
+     * Stores all the values modified by {@link #setCommon(SQLField, Object)}.
+     */
+    private final Map<SQLField<E, ?>, Object> modifiedValues = new LinkedHashMap<>();
 
-	@Override
-	public synchronized boolean add(E e) {
-		if (e == null || !e.isStored()) return false;
-		return super.add(e);
-	}
+    @Override
+    public synchronized boolean add(E e) {
+        if (e == null || !e.isStored()) return false;
+        return super.add(e);
+    }
 
-	/**
-	 * Défini une valeur à un champ qui sera appliquée dans la base de données à
-	 * tous les
-	 * entrées présente dans cette liste lors de l'appel à {@link #saveCommon()}
-	 * .
-	 * Les valeurs stockés dans chaque élément de cette liste ne seront affectés
-	 * que lors de
-	 * l'appel à {@link #saveCommon()}
-	 *
-	 * @param field le champs à modifier
-	 * @param value la valeur à lui appliquer
-	 */
-	public synchronized <T> void setCommon(SQLField<E, T> field, T value) {
-		if (field == null)
-			throw new IllegalArgumentException("field can't be null");
-		if (Objects.equals(field.getName(), "id"))
-			throw new IllegalArgumentException("Can't modify id field in a SQLElementList");
-		
-		Class<E> elemClass = field.getSQLElementType();
-		try {
-			E emptyElement = elemClass.getConstructor().newInstance();
-			emptyElement.set(field, value, false);
-		} catch (Exception e) {
-			throw new IllegalArgumentException("Illegal field or value or can't instanciante an empty instance of "
-					+ elemClass.getName() + ". (the instance is only created to test validity of field and value)", e);
-		}
+    /**
+     * Sets the value of a field for all the entries.
+     * The changed value is stored in this {@link SQLElementList} itself, and does not modify the content of the entries.
+     * To apply the modification into the database and into the entries themselves, call {@link #saveCommon()}.
+     * @param field the field to set.
+     * @param value the new value for this field.
+     * @param <T> the Java type of the field.
+     */
+    public synchronized <T> void setCommon(SQLField<E, T> field, T value) {
+        if (field == null)
+            throw new IllegalArgumentException("field can't be null");
+        if (Objects.equals(field.getName(), "id"))
+            throw new IllegalArgumentException("Can't modify id field in a SQLElementList");
 
-		// ici, la valeur est bonne
-		modifiedValues.put(field, value);
+        Class<E> elemClass = field.getSQLElementType();
+        try {
+            E emptyElement = elemClass.getConstructor().newInstance();
+            emptyElement.set(field, value, false);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Illegal field or value or can't instanciante an empty instance of "
+                    + elemClass.getName() + ". (the instance is only created to test validity of field and value)", e);
+        }
 
-	}
+        // ici, la valeur est bonne
+        modifiedValues.put(field, value);
 
-	/**
-	 * Applique toutes les valeurs défini avec
-	 * {@link #setCommon(SQLField, Object)} à toutes
-	 * les entrées dans la base de données correspondants aux entrées de cette
-	 * liste. Les nouvelles
-	 * valeurs sont aussi mises à jour dans les objets contenus dans cette
-	 * liste, si la valeur n'a pas été modifiée individuellement avec
-	 * {@link SQLElement#set(SQLField, Object)}.<br/>
-	 * Les objets de cette liste qui n'ont pas leur données en base de données
-	 * sont ignorées.
-	 */
-	public synchronized int saveCommon() throws DBException {
-		List<E> storedEl = getStoredEl();
-		if (storedEl.isEmpty()) return 0;
-		
-		@SuppressWarnings("unchecked")
-		Class<E> classEl = (Class<E>)storedEl.get(0).getClass();
-		
-		int ret = DB.update(classEl,
-				storedEl.get(0).getFieldId().in(storedEl.stream().map(SQLElement::getId).collect(Collectors.toList())
-						),
-				modifiedValues);
+    }
 
-		applyNewValuesToElements(storedEl);
-		
-		return ret;
-	}
+    /**
+     * Apply all the changes made with {@link #setCommon(SQLField, Object)} to the entries currently present in this
+     * list.
+     * The change is applied in the database and into the entries in this list (except the fields that has already been
+     * modified in an entry (checked using {@link SQLElement#isModified(SQLField)})).
+     * The entries of this list that are not stored in database (using {@link SQLElement#isStored()}) are ignored.
+     * @return the value returned by {@link PreparedStatement#executeUpdate()}.
+     * @throws DBException if an error occurs when interacting with the database.
+     */
+    public synchronized int saveCommon() throws DBException {
+        List<E> storedEl = getStoredEl();
+        if (storedEl.isEmpty()) return 0;
 
-	@SuppressWarnings("unchecked")
-	private void applyNewValuesToElements(List<E> storedEl) {
-		// applique les valeurs dans chaques objets de la liste
-		for (E el : storedEl)
-			for (@SuppressWarnings("rawtypes")
-			SQLField entry : modifiedValues.keySet())
-				if (!el.isModified(entry)) el.set(entry, modifiedValues.get(entry), false);
-	}
+        @SuppressWarnings("unchecked")
+        Class<E> classEl = (Class<E>)storedEl.get(0).getClass();
 
-	private List<E> getStoredEl() {
-		return stream().filter(SQLElement::isStored).collect(Collectors.toCollection(ArrayList::new));
-	}
+        int ret = DB.update(classEl,
+                storedEl.get(0).getIdField().in(storedEl.stream().map(SQLElement::getId).collect(Collectors.toList())
+                ),
+                modifiedValues);
 
-	/**
-	 * @deprecated please use {@link DB#delete(Class, SQLWhere)} instead,
-	 * except if you really want to fetch the data before removing them from database.
-	 */
-	@Deprecated
-	public synchronized void removeFromDB() {
-		List<E> storedEl = getStoredEl();
-		if (storedEl.isEmpty()) return;
+        applyNewValuesToElements(storedEl);
 
-		try {
-			@SuppressWarnings("unchecked")
-			Class<E> classEl = (Class<E>)storedEl.get(0).getClass();
-			
-			DB.delete(classEl, 
-					storedEl.get(0).getFieldId().in(storedEl.stream().map(SQLElement::getId).collect(Collectors.toList()))
-			);
-			for (E el : storedEl)
-				el.markAsNotStored();
-		} catch (DBException e) {
-			Log.severe(e);
-		}
+        return ret;
+    }
 
-	}
-	
-	
-	
-	public <T, P extends SQLElement<P>> SQLElementList<P> getReferencedEntries(SQLFKField<E, T, P> foreignKey, SQLOrderBy<P> orderBy) throws DBException {
-		Set<T> values = new HashSet<>();
-		forEach(v -> {
-			T val = v.get(foreignKey);
-			if (val != null)
-				values.add(val);
-		});
-		
-		if (values.isEmpty()) {
-			return new SQLElementList<>();
-		}
-		
-		return DB.getAll(foreignKey.getForeignElementClass(), foreignKey.getPrimaryField().in(values), orderBy, null, null);
-		
-	}
+    @SuppressWarnings("unchecked")
+    private void applyNewValuesToElements(List<E> storedEl) {
+        // applique les valeurs dans chaques objets de la liste
+        for (E el : storedEl) {
+            for (@SuppressWarnings("rawtypes") SQLField entry : modifiedValues.keySet()) {
+                if (!el.isModified(entry)) {
+                    el.set(entry, modifiedValues.get(entry), false);
+                }
+            }
+        }
+    }
 
-	
-	public <T, P extends SQLElement<P>> Map<T, P> getReferencedEntriesInGroups(SQLFKField<E, T, P> foreignKey) throws DBException {
-		SQLElementList<P> foreignElemts = getReferencedEntries(foreignKey, null);
+    private List<E> getStoredEl() {
+        return stream().filter(SQLElement::isStored).collect(Collectors.toCollection(ArrayList::new));
+    }
 
-		return foreignElemts.stream()
-				.collect(Collectors.toMap(
-						foreignVal -> foreignVal.get(foreignKey.getPrimaryField()),
-						Function.identity(), (a, b) -> b)
-				);
-	}
-	
+    /**
+     * Removes all the entries of this list from the database.
+     * This method has the same effect as calling the {@link SQLElement#delete()} method individually on each element,
+     * but with only one SQL query to delete all of the entries.
+     * <p>
+     * If you intend to remove the entries from the database just after fetching them, call directly the
+     * {@link DB#delete(Class, SQLWhere)} method instead.
+     * @throws DBException if an error occurs when interacting with the database.
+     */
+    public synchronized void deleteFromDB() throws DBException {
+        List<E> storedEl = getStoredEl();
+        if (storedEl.isEmpty()) return;
 
-	
-	public <T, F extends SQLElement<F>> SQLElementList<F> getReferencingForeignEntries(SQLFKField<F, T, E> foreignKey, SQLOrderBy<F> orderBy, Integer limit, Integer offset) throws DBException {
-		Set<T> values = new HashSet<>();
-		forEach(v -> {
-			T val = v.get(foreignKey.getPrimaryField());
-			if (val != null)
-				values.add(val);
-		});
-		
-		if (values.isEmpty()) {
-			return new SQLElementList<>();
-		}
-		
-		return DB.getAll(foreignKey.getSQLElementType(), foreignKey.in(values), orderBy, limit, offset);
-		
-	}
+        @SuppressWarnings("unchecked")
+        Class<E> classEl = (Class<E>)storedEl.get(0).getClass();
 
-	
-	public <T, F extends SQLElement<F>> Map<T, SQLElementList<F>> getReferencingForeignEntriesInGroups(SQLFKField<F, T, E> foreignKey, SQLOrderBy<F> orderBy, Integer limit, Integer offset) throws DBException {
-		SQLElementList<F> foreignElements = getReferencingForeignEntries(foreignKey, orderBy, limit, offset);
-		
-		Map<T, SQLElementList<F>> map = new HashMap<>();
-		foreignElements.forEach(foreignVal -> {
-			SQLElementList<F> subList = map.getOrDefault(foreignVal.get(foreignKey), new SQLElementList<>());
-			subList.add(foreignVal);
-			map.put(foreignVal.get(foreignKey), subList);
-		});
-		
-		return map;
-	}
-	
+        DB.delete(classEl,
+                storedEl.get(0).getIdField().in(storedEl.stream().map(SQLElement::getId).collect(Collectors.toList()))
+        );
+        for (E el : storedEl)
+            el.markAsNotStored();
+
+    }
+
+
+    /**
+     * Get all the entries targeted by the foreign key of all the entries in this list.
+     * @param foreignKey a foreignkey of this table.
+     * @param orderBy the {@code ORDER BY} clause of the query.
+     * @return a list of foreign table entries targeted by the provided foreignkey of this table.
+     * @param <T> the field’s Java type.
+     * @param <P> the target table type.
+     * @throws DBException if an error occurs when interacting with the database.
+     */
+    public <T, P extends SQLElement<P>> SQLElementList<P> getReferencedEntries(SQLFKField<E, T, P> foreignKey, SQLOrderBy<P> orderBy) throws DBException {
+        Set<T> values = stream()
+                .map(v -> v.get(foreignKey))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        return values.isEmpty()
+                ? new SQLElementList<>()
+                : DB.getAll(foreignKey.getForeignElementClass(), foreignKey.getPrimaryField().in(values), orderBy, null, null);
+    }
+
+
+    /**
+     * Get all the entries targeted by the foreign key of all the entries in this list, mapped from the foreign key value.
+     * @param foreignKey a foreignkey of this table.
+     * @return a map of the foreign key values, mapped to the foreign table’s entries.
+     * @param <T> the field’s Java type.
+     * @param <P> the target table type.
+     * @throws DBException if an error occurs when interacting with the database.
+     */
+    public <T, P extends SQLElement<P>> Map<T, P> getReferencedEntriesInGroups(SQLFKField<E, T, P> foreignKey) throws DBException {
+        return getReferencedEntries(foreignKey, null).stream()
+                .collect(Collectors.toMap(
+                        foreignVal -> foreignVal.get(foreignKey.getPrimaryField()),
+                        Function.identity(),
+                        (a, b) -> b)
+                );
+    }
+
+
+    /**
+     * Gets all the original table’s entries which the provided foreign key is targeting the entries of this list, and
+     * following the provided {@code ORDER BY}, {@code LIMIT} and {@code OFFSET} clauses.
+     * @param foreignKey a foreignkey in the original table.
+     * @param orderBy the {@code ORDER BY} clause of the query.
+     * @param limit the {@code LIMIT} clause of the query.
+     * @param offset the {@code OFFSET} clause of the query.
+     * @param <T> the type of the foreignkey field.
+     * @param <F> the table class of the foreign key that reference a field of this entry.
+     * @return the original table’s entries which the provided foreign key is targeting the entries of this list.
+     * @throws DBException if an error occurs when interacting with the database.
+     */
+    public <T, F extends SQLElement<F>> SQLElementList<F> getReferencingForeignEntries(SQLFKField<F, T, E> foreignKey, SQLOrderBy<F> orderBy, Integer limit, Integer offset) throws DBException {
+        Set<T> values = stream()
+                .map(v -> v.get(foreignKey.getPrimaryField()))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        return values.isEmpty()
+                ? new SQLElementList<>()
+                : DB.getAll(foreignKey.getSQLElementType(), foreignKey.in(values), orderBy, limit, offset);
+    }
+
+
+    /**
+     * Gets all the original table’s entries which the provided foreign key is targeting the entries of this list,
+     * following the provided {@code ORDER BY}, {@code LIMIT} and {@code OFFSET} clauses, and mapped from the foreign
+     * key value.
+     * @param foreignKey a foreignkey in the original table.
+     * @param orderBy the {@code ORDER BY} clause of the query.
+     * @param limit the {@code LIMIT} clause of the query.
+     * @param offset the {@code OFFSET} clause of the query.
+     * @param <T> the type of the foreignkey field.
+     * @param <F> the table class of the foreign key that reference a field of this entry.
+     * @return a map of the foreign key values, mapped to the orignal table’s entries.
+     * @throws DBException if an error occurs when interacting with the database.
+     */
+    public <T, F extends SQLElement<F>> Map<T, SQLElementList<F>> getReferencingForeignEntriesInGroups(SQLFKField<F, T, E> foreignKey, SQLOrderBy<F> orderBy, Integer limit, Integer offset) throws DBException {
+        return getReferencingForeignEntries(foreignKey, orderBy, limit, offset).stream()
+                .collect(Collectors.groupingBy(
+                        e -> e.get(foreignKey),
+                        Collectors.toCollection(SQLElementList::new)
+                ));
+    }
+
 
 
 }
