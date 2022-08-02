@@ -1,4 +1,4 @@
-package fr.pandacube.lib.core.util;
+package fr.pandacube.lib.core.json;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -17,17 +17,48 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
+/**
+ * Provides pre-instanciated {@link Gson} instances, all with support for Java records.
+ */
 public class Json {
+
+	/**
+	 * {@link Gson} instance with {@link GsonBuilder#setLenient()} and support for Java records.
+	 */
 	public static final Gson gson = build(Function.identity());
+
+	/**
+	 * {@link Gson} instance with {@link GsonBuilder#setLenient()}, {@link GsonBuilder#setPrettyPrinting()}
+	 * and support for Java records.
+	 */
 	public static final Gson gsonPrettyPrinting = build(GsonBuilder::setPrettyPrinting);
+
+	/**
+	 * {@link Gson} instance with {@link GsonBuilder#setLenient()}, {@link GsonBuilder#serializeNulls()}
+	 * and support for Java records.
+	 */
 	public static final Gson gsonSerializeNulls = build(GsonBuilder::serializeNulls);
+
+	/**
+	 * {@link Gson} instance with {@link GsonBuilder#setLenient()}, {@link GsonBuilder#serializeNulls()},
+	 * {@link GsonBuilder#setPrettyPrinting()} and support for Java records.
+	 */
 	public static final Gson gsonSerializeNullsPrettyPrinting = build(b -> b.serializeNulls().setPrettyPrinting());
+
+
+
+
+
 
 
 	private static Gson build(Function<GsonBuilder, GsonBuilder> builderModifier) {
 		return builderModifier
 				.apply(new GsonBuilder().registerTypeAdapterFactory(new RecordAdapterFactory()).setLenient()).create();
 	}
+
+
+
+
 
 
 

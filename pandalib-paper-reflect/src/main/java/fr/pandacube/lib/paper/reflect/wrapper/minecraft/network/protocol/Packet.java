@@ -1,9 +1,9 @@
 package fr.pandacube.lib.paper.reflect.wrapper.minecraft.network.protocol;
 
 import fr.pandacube.lib.paper.reflect.NMSReflect;
-import fr.pandacube.lib.paper.reflect.wrapper.ConcreteWrapper;
-import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapper;
-import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapperI;
+import fr.pandacube.lib.reflect.wrapper.ConcreteWrapper;
+import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
+import fr.pandacube.lib.reflect.wrapper.ReflectWrapperI;
 
 import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 

@@ -1,7 +1,7 @@
 package fr.pandacube.lib.paper.reflect.wrapper.craftbukkit;
 
 import fr.pandacube.lib.paper.reflect.OBCReflect;
-import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapperTyped;
+import fr.pandacube.lib.reflect.wrapper.ReflectWrapperTyped;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerLevel;
 import fr.pandacube.lib.reflect.ReflectClass;
 import fr.pandacube.lib.reflect.ReflectMethod;

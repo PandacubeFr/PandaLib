@@ -1,7 +1,7 @@
 package fr.pandacube.lib.paper.reflect.wrapper.craftbukkit;
 
 import fr.pandacube.lib.paper.reflect.OBCReflect;
-import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapper;
+import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.core.BlockPos;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Vec3;
 import fr.pandacube.lib.reflect.ReflectClass;

@@ -15,9 +15,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 /**
- * Utility class to manage searching among a set of
- * SearchResult instances, using case insensitive
- * keywords.
+ * Utility class to manage searching among a set of {@link SearchResult} instances, using case insensitive keywords.
+ * The search engine is responsible for storing a database of entries ({@link SearchResult}) that can be searched using
+ * keywords. This class provides methods to returns a list of results for provided keywords, a list of keyword
+ * suggestions based on pre-typed keywords.
+ * @param <R> the type of search result.
  */
 public class SearchEngine<R extends SearchResult> {
 
@@ -30,13 +32,21 @@ public class SearchEngine<R extends SearchResult> {
 	private final Set<R> resultSet = new HashSet<>();
 	
 	private final Cache<Set<String>, List<String>> suggestionsCache;
-	
+
+	/**
+	 * Creates a new search engine.
+	 * @param suggestionsCacheSize the size of the cache for keyword suggestions (for optimization).
+	 */
 	public SearchEngine(int suggestionsCacheSize) {
 		suggestionsCache = CacheBuilder.newBuilder()
 				.maximumSize(suggestionsCacheSize)
 				.build();
 	}
-	
+
+	/**
+	 * Adds an entry in this search engine.
+	 * @param result the new entry.
+	 */
 	public synchronized void addResult(R result) {
 		if (result == null) 
 			throw new IllegalArgumentException("Provided result cannot be null.");
@@ -83,7 +93,11 @@ public class SearchEngine<R extends SearchResult> {
 		
 		suggestionsCache.invalidateAll();
 	}
-	
+
+	/**
+	 * Removes the provided entry from this search engine.
+	 * @param result the new entry.
+	 */
 	public synchronized void removeResult(R result) {
 		if (result == null || !resultSet.contains(result))
 			return;
@@ -118,7 +132,12 @@ public class SearchEngine<R extends SearchResult> {
 		
 		suggestionsCache.invalidateAll();
 	}
-	
+
+	/**
+	 * Provides all the search results that correspond to all the provided keywords.
+	 * @param searchTerms all the search terms (keywords).
+	 * @return all the search results that correspond to all the provided keywords.
+	 */
 	public synchronized Set<R> search(Set<String> searchTerms) {
 		if (searchTerms == null)
 			searchTerms = new HashSet<>();
@@ -130,7 +149,12 @@ public class SearchEngine<R extends SearchResult> {
 		
 		return retainedResults;
 	}
-	
+
+	/**
+	 * Provides all the search results that correspond to the provided keyword.
+	 * @param searchTerm the search term (keyword). If null, all the possible results are returned.
+	 * @return all the search results that correspond to the provided keyword.
+	 */
 	public synchronized Set<R> search(String searchTerm) {
 		if (searchTerm == null || searchTerm.isEmpty()) {
 			return new HashSet<>(resultSet);
@@ -145,7 +169,12 @@ public class SearchEngine<R extends SearchResult> {
 		
 		return retainedResults;
 	}
-	
+
+	/**
+	 * Provides the next keyword to suggest, based on the already typed keywords.
+	 * @param prevSearchTerms the already typed keywords.
+	 * @return the next keywords to suggest.
+	 */
 	public synchronized List<String> suggestKeywords(List<String> prevSearchTerms) {
 		if (prevSearchTerms == null || prevSearchTerms.isEmpty()) {
 			return new ArrayList<>(suggestionsKeywordsResultMap.keySet());

@@ -1,4 +1,4 @@
-package fr.pandacube.lib.paper.reflect.wrapper;
+package fr.pandacube.lib.reflect.wrapper;
 
 import com.google.common.collect.MapMaker;
 

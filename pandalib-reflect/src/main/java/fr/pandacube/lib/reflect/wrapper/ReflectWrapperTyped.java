@@ -1,4 +1,4 @@
-package fr.pandacube.lib.paper.reflect.wrapper;
+package fr.pandacube.lib.reflect.wrapper;
 
 public abstract class ReflectWrapperTyped<T> extends ReflectWrapper implements ReflectWrapperTypedI<T> {
 

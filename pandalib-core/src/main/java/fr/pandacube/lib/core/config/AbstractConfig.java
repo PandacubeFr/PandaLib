@@ -12,24 +12,23 @@ import fr.pandacube.lib.chat.ChatColorUtil;
 import fr.pandacube.lib.util.Log;
 
 /**
- * Class tht loads a specific config file or directory
- *
+ * Class that loads a specific config file or directory.
  */
 public abstract class AbstractConfig {
 	
 	/**
-	 * Correspond au dossier ou au fichier de configuration traité par la sous-classe
-	 * courante de {@link AbstractConfig}
+	 * The {@link File} corresponging to this config file or directory.
 	 */
 	protected final File configFile;
 	
 	/**
+	 * Creates a new {@link AbstractConfig}.
 	 * @param configDir the parent directory
 	 * @param fileOrDirName The name of the config file or folder
 	 * @param type if the provided name is a file or a directory
-	 * @throws IOException if we cannot create the file
+	 * @throws IOException if we cannot create the file or directory.
 	 */
-	public AbstractConfig(File configDir, String fileOrDirName, FileType type) throws IOException {
+	protected AbstractConfig(File configDir, String fileOrDirName, FileType type) throws IOException {
 		configFile = new File(configDir, fileOrDirName);
 		if (type == FileType.DIR)
 			configFile.mkdir();
@@ -38,14 +37,15 @@ public abstract class AbstractConfig {
 	}
 	
 	/**
-	 * Gets the lines from the config file
-	 * @param ignoreEmpty <code>true</code> if we ignore the empty lines
-	 * @param ignoreHashtagComment <code>true</code> if we ignore the comment lines (starting with {@code #})
-	 * @param trimOutput <code>true</code> if we want to trim all lines using {@link String#trim()}
-	 * @param f the file to read
-	 * @return the list of lines, filtered according to the parameters
+	 * Gets the lines from the provided file.
+	 * @param ignoreEmpty {@code true} if we ignore the empty lines.
+	 * @param ignoreHashtagComment {@code true} if we ignore the comment lines (starting with {@code #}).
+	 * @param trimOutput {@code true} if we want to trim all lines using {@link String#trim()}.
+	 * @param f the file to read.
+	 * @return the list of lines, filtered according to the parameters, or null if it’s not a regular file.
+	 * @throws IOException if an IO error occurs.
 	 */
-	protected List<String> getFileLines(boolean ignoreEmpty, boolean ignoreHashtagComment, boolean trimOutput, File f) throws IOException {
+	protected static List<String> getFileLines(boolean ignoreEmpty, boolean ignoreHashtagComment, boolean trimOutput, File f) throws IOException {
 		if (!f.isFile())
 			return null;
 		
@@ -74,26 +74,27 @@ public abstract class AbstractConfig {
 		
 		return lines;
 	}
-	
-	
+
+
 	/**
-	 * Retourne toutes les lignes du fichier de configuration
-	 * @param ignoreEmpty <code>true</code> si on doit ignorer les lignes vides
-	 * @param ignoreHashtagComment <code>true</code> si on doit ignorer les lignes commentés (commençant par un #)
-	 * @param trimOutput <code>true</code> si on doit appeller la méthode String.trim() sur chaque ligne retournée
-	 * @return la liste des lignes utiles
+	 * Gets the lines from the config file.
+	 * @param ignoreEmpty {@code true} if we ignore the empty lines.
+	 * @param ignoreHashtagComment {@code true} if we ignore the comment lines (starting with {@code #}).
+	 * @param trimOutput {@code true} if we want to trim all lines using {@link String#trim()}.
+	 * @return the list of lines, filtered according to the parameters, or null if it’s not a regular file.
+	 * @throws IOException if an IO error occurs.
 	 */
 	protected List<String> getFileLines(boolean ignoreEmpty, boolean ignoreHashtagComment, boolean trimOutput) throws IOException {
 		return getFileLines(ignoreEmpty, ignoreHashtagComment, trimOutput, configFile);
 	}
-	
-	
-	
+
+
+	/**
+	 * Gets the list of files in the config directory.
+	 * @return the list of files in the config directory, or null if this config is not a directory.
+	 */
 	protected List<File> getFileList() {
-		if (!configFile.isDirectory())
-			return null;
-		
-		return Arrays.asList(configFile.listFiles());
+		return configFile.isDirectory() ? Arrays.asList(configFile.listFiles()) : null;
 	}
 	
 	
@@ -101,43 +102,45 @@ public abstract class AbstractConfig {
 
 	
 	/**
-	 * Découpe une chaine de caractère contenant une série de noeuds
-	 * de permissions séparés par des point-virgules et la retourne sous forme d'une liste.
-	 * @param perms la chaine de permissions à traiter
-	 * @return <code>null</code> si le paramètre est nulle ou si <code>perms.equals("*")</code>, ou alors la chaine splittée.
+	 * Splits the provided string into a list of permission nodes.
+	 * The permission nodes must be separated by {@code ";"}.
+	 * @param perms one or more permissions nodes, separated by {@code ";"}.
+	 * @return {@code null} if the parameter is null or is equal to {@code "*"}, or the string splitted using {@code ";"}.
 	 */
 	public static List<String> splitPermissionsString(String perms) {
 		if (perms == null || perms.equals("*"))
 			return null;
-		return getSplittedString(perms, ";");
+		return List.of(perms.split(";"));
 	}
-	
-	
-	
-	
-	
-	public static List<String> getSplittedString(String value, String split) {
-		return List.of(value.split(split));
-	}
-	
 
 
+	/**
+	 * Utility method to that translate the {@code '&'} formated string to the legacy format.
+	 * @param string the string to convert.
+	 * @return a legacy formated string (using {@code '§'}).
+	 */
 	public static String getTranslatedColorCode(String string) {
 		return ChatColorUtil.translateAlternateColorCodes('&', string);
 	}
-	
-	
-	
-	
+
+
+	/**
+	 * Logs the message as a warning into console, prefixed with the context of this config.
+	 * @param message the message to log.
+	 */
 	protected void warning(String message) {
-		Log.warning("Erreur dans la configuration de '"+configFile.getName()+"' : "+message);
+		Log.warning("Error in configuration '"+configFile.getName()+"': " + message);
 	}
-	
-	
-	
-	
+
+
+	/**
+	 * The type of config.
+	 */
 	protected enum FileType {
-		FILE, DIR
+		/** A config file. */
+		FILE,
+		/** A config directory. */
+		DIR
 	}
 	
 }

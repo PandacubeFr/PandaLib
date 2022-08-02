@@ -1,4 +1,4 @@
-package fr.pandacube.lib.core.util;
+package fr.pandacube.lib.core.json;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,13 +8,16 @@ import java.util.Map;
 import com.google.gson.JsonElement;
 
 /**
- * Utility for conversion of basic Java types and JsonElements types
- * @author Marc
- *
+ * Provides conversion between Java types and {@link JsonElement} types.
  */
 public class TypeConverter {
-	
-	
+
+	/**
+	 * Converts the provided object to an {@link Integer}.
+	 * @param o the object to convert.
+	 * @return a the object converted to an {@link Integer}.
+	 * @throws ConvertionException is a conversion error occurs.
+	 */
 	public static Integer toInteger(Object o) {
 		if (o == null) {
 			return null;
@@ -44,14 +47,26 @@ public class TypeConverter {
 		
 		throw new ConvertionException("No integer convertion available for an instance of "+o.getClass());
 	}
-	
+
+	/**
+	 * Converts the provided object to a primitive int.
+	 * @param o the object to convert.
+	 * @return a the object converted to a primitive int.
+	 * @throws ConvertionException is a conversion error occurs.
+	 */
 	public static int toPrimInt(Object o) {
 		Integer val = toInteger(o);
 		if (val == null)
 			throw new ConvertionException("null values can't be converted to primitive int");
 		return val;
 	}
-	
+
+	/**
+	 * Converts the provided object to a {@link Double}.
+	 * @param o the object to convert.
+	 * @return a the object converted to a {@link Double}.
+	 * @throws ConvertionException is a conversion error occurs.
+	 */
 	public static Double toDouble(Object o) {
 		if (o == null) {
 			return null;
@@ -82,14 +97,26 @@ public class TypeConverter {
 		throw new ConvertionException("No double convertion available for an instance of "+o.getClass());
 		
 	}
-	
+
+	/**
+	 * Converts the provided object to a primitive double.
+	 * @param o the object to convert.
+	 * @return a the object converted to a primitive double.
+	 * @throws ConvertionException is a conversion error occurs.
+	 */
 	public static double toPrimDouble(Object o) {
 		Double val = toDouble(o);
 		if (val == null)
 			throw new ConvertionException("null values can't converted to primitive int");
 		return val;
 	}
-	
+
+	/**
+	 * Converts the provided object to a {@link String}.
+	 * @param o the object to convert.
+	 * @return a the object converted to a {@link String}.
+	 * @throws ConvertionException is a conversion error occurs.
+	 */
 	public static String toString(Object o) {
 		if (o == null) {
 			return null;
@@ -112,11 +139,13 @@ public class TypeConverter {
 	}
 	
 	/**
-	 * 
-	 * @param o the object to convert to good type
+	 * Converts the provided object to a {@link Map}.
+	 * @param o the object to convert.
 	 * @param mapIntKeys if the String key representing an int should be duplicated as integer type,
 	 * which map to the same value as the original String key. For example, if a key is "12" and map
-	 * to the object <i>o</i>, an integer key 12 will be added and map to the same object <i>o</i>
+	 * to the object <i>o</i>, an integer key 12 will be added and map to the same object <i>o</i>.
+	 * @return a the object converted to a {@link Map}.
+	 * @throws ConvertionException is a conversion error occurs.
 	 */
 	@SuppressWarnings("unchecked")
 	public static Map<Object, Object> toMap(Object o, boolean mapIntKeys) {
@@ -156,14 +185,17 @@ public class TypeConverter {
 			}
 			return map;
 		}
-		
 
 		throw new ConvertionException("No Map convertion available for an instance of "+o.getClass());
-		
-		
 	}
-	
-	
+
+
+	/**
+	 * Converts the provided object to a {@link List}.
+	 * @param o the object to convert.
+	 * @return a the object converted to a {@link List}.
+	 * @throws ConvertionException is a conversion error occurs.
+	 */
 	@SuppressWarnings("unchecked")
 	public static List<Object> toList(Object o) {
 		if (o == null) {
@@ -190,22 +222,18 @@ public class TypeConverter {
 		
 		
 	}
-	
-	
-	
-	
-	
-	
+
+
+	/**
+	 * Thrown when a convertion error occurs.
+	 */
 	public static class ConvertionException extends RuntimeException {
 		
-		public ConvertionException(String m) {
+		private ConvertionException(String m) {
 			super(m);
 		}
-		public ConvertionException(Throwable t) {
+		private ConvertionException(Throwable t) {
 			super(t);
-		}
-		public ConvertionException(String m, Throwable t) {
-			super(m, t);
 		}
 		
 	}

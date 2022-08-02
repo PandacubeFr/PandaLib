@@ -49,12 +49,12 @@
             <artifactId>bungeecord-config</artifactId>
             <version>${bungeecord.version}</version>
         </dependency>
-        
-		<dependency>
-		    <groupId>com.mojang</groupId>
-		    <artifactId>brigadier</artifactId>
-		    <version>1.0.17</version>
-		</dependency>
+
+      <dependency>
+          <groupId>fr.pandacube.lib</groupId>
+          <artifactId>pandalib-commands</artifactId>
+          <version>${project.version}</version>
+      </dependency>
 
   </dependencies>
 

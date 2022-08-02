@@ -7,7 +7,7 @@ import java.io.File;
 import fr.pandacube.lib.reflect.ReflectMethod;
 import fr.pandacube.lib.paper.reflect.NMSReflect;
 import fr.pandacube.lib.paper.reflect.NMSReflect.ClassMapping;
-import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapper;
+import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 
 public class NbtIo extends ReflectWrapper {
 	public static final ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.nbt.NbtIo"));

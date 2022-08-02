@@ -1,4 +1,4 @@
-package fr.pandacube.lib.paper.reflect.wrapper;
+package fr.pandacube.lib.reflect.wrapper;
 
 public interface ReflectWrapperTypedI<T> extends ReflectWrapperI {
     @SuppressWarnings("unchecked")

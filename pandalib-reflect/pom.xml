@@ -19,6 +19,16 @@
             <artifactId>classgraph</artifactId>
             <version>4.8.149</version>
         </dependency>
+        <dependency>
+            <groupId>fr.pandacube.lib</groupId>
+            <artifactId>pandalib-util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>31.0.1-jre</version> <!-- Match the version imported by Paper API/BungeeCord API if possible -->
+        </dependency>
     </dependencies>
 
     <build>

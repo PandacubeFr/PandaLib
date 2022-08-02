@@ -1,7 +1,7 @@
 package fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.block;
 
 import fr.pandacube.lib.paper.reflect.NMSReflect;
-import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapper;
+import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.VoxelShape;
 import fr.pandacube.lib.reflect.ReflectField;
 

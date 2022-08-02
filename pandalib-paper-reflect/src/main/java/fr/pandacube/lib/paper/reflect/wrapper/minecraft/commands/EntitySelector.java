@@ -3,8 +3,8 @@ package fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands;
 import com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource;
 
 import fr.pandacube.lib.paper.reflect.NMSReflect;
-import fr.pandacube.lib.paper.reflect.wrapper.ReflectListWrapper;
-import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapper;
+import fr.pandacube.lib.reflect.wrapper.ReflectListWrapper;
+import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerPlayer;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Entity;
 import fr.pandacube.lib.reflect.ReflectMethod;

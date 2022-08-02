@@ -4,7 +4,7 @@ import com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource;
 import com.mojang.brigadier.tree.CommandNode;
 
 import fr.pandacube.lib.paper.reflect.OBCReflect;
-import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapperTyped;
+import fr.pandacube.lib.reflect.wrapper.ReflectWrapperTyped;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Commands;
 import fr.pandacube.lib.reflect.ReflectClass;
 import fr.pandacube.lib.reflect.ReflectConstructor;

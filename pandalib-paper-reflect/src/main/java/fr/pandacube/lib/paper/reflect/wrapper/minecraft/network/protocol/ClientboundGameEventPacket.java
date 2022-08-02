@@ -1,7 +1,7 @@
 package fr.pandacube.lib.paper.reflect.wrapper.minecraft.network.protocol;
 
 import fr.pandacube.lib.paper.reflect.NMSReflect;
-import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapper;
+import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 import fr.pandacube.lib.reflect.ReflectConstructor;
 import fr.pandacube.lib.reflect.ReflectField;
 

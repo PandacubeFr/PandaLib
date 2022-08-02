@@ -11,7 +11,7 @@ import java.util.UUID;
 import fr.pandacube.lib.reflect.ReflectMethod;
 import fr.pandacube.lib.paper.reflect.NMSReflect;
 import fr.pandacube.lib.paper.reflect.NMSReflect.ClassMapping;
-import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapper;
+import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 
 public class CompoundTag extends ReflectWrapper implements Tag {
 	public static final ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.nbt.CompoundTag"));

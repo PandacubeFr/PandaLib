@@ -1,7 +1,7 @@
 package fr.pandacube.lib.paper.reflect.wrapper.paper;
 
 import fr.pandacube.lib.reflect.Reflect;
-import fr.pandacube.lib.paper.reflect.wrapper.ReflectWrapper;
+import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 import fr.pandacube.lib.reflect.ReflectClass;
 import fr.pandacube.lib.reflect.ReflectMethod;
 
