@@ -135,7 +135,7 @@ public enum Skull {
      * @return itemstack
      */
     public static ItemStack getFromSkinURL(String url, Chat name, List<Chat> lore) {
-        return getFromBase64String(Base64.getEncoder().encodeToString(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes()), name, lore);
+        return getFromBase64String(Base64.getEncoder().encodeToString(String.format("{\"textures\":{\"SKIN\":{\"url\":\"%s\"}}}", url).getBytes()), name, lore);
     }
     
     
