@@ -98,6 +98,56 @@ public class ThrowableUtil {
 
 
 
+
+	private static RuntimeException uncheck(Throwable t, boolean convertReflectionExceptionToError) {
+		if (t instanceof Error er) {
+			throw er;
+		}
+		if (t instanceof RuntimeException re)
+			return re;
+
+		if (convertReflectionExceptionToError) {
+			Error er = null;
+			if (t instanceof ClassNotFoundException ce) {
+				er = new NoClassDefFoundError();
+				er.initCause(ce);
+			}
+			else if (t instanceof IllegalAccessException ce) {
+				er = new IllegalAccessError();
+				er.initCause(ce);
+			}
+			else if (t instanceof NoSuchFieldException ce) {
+				er = new NoSuchFieldError();
+				er.initCause(ce);
+			}
+			else if (t instanceof NoSuchMethodException ce) {
+				er = new NoSuchMethodError();
+				er.initCause(ce);
+			}
+			else if (t instanceof InstantiationException ce) {
+				er = new InstantiationError();
+				er.initCause(ce);
+			}
+			if (er != null)
+				throw er;
+
+			if (t instanceof InvocationTargetException ce) {
+				Throwable cause = ce.getCause();
+				return uncheck(cause, false);
+			}
+		}
+
+		return new RuntimeException(t);
+	}
+
+
+
+
+
+
+
+
+
 	/**
 	 * A supplier that can possibly throw a checked exception.
 	 */
@@ -162,7 +212,7 @@ public class ThrowableUtil {
 	/**
 	 * A consumer that can possibly throw a checked exception.
 	 */
-	public interface BiConsumer<T, U, E extends Exception> {
+	public interface BiConsumerException<T, U, E extends Exception> {
 		/**
 		 * Run the consumer on the specified parameters.
 		 * @param t the first parameter of the consumer.
@@ -170,50 +220,6 @@ public class ThrowableUtil {
 		 * @throws E if the function fails.
 		 */
 		void accept(T t, U u) throws E;
-	}
-
-
-
-
-	private static RuntimeException uncheck(Throwable t, boolean convertReflectionExceptionToError) {
-		if (t instanceof Error er) {
-			throw er;
-		}
-		if (t instanceof RuntimeException re)
-			return re;
-
-		if (convertReflectionExceptionToError) {
-			Error er = null;
-			if (t instanceof ClassNotFoundException ce) {
-				er = new NoClassDefFoundError();
-				er.initCause(ce);
-			}
-			else if (t instanceof IllegalAccessException ce) {
-				er = new IllegalAccessError();
-				er.initCause(ce);
-			}
-			else if (t instanceof NoSuchFieldException ce) {
-				er = new NoSuchFieldError();
-				er.initCause(ce);
-			}
-			else if (t instanceof NoSuchMethodException ce) {
-				er = new NoSuchMethodError();
-				er.initCause(ce);
-			}
-			else if (t instanceof InstantiationException ce) {
-				er = new InstantiationError();
-				er.initCause(ce);
-			}
-			if (er != null)
-				throw er;
-
-			if (t instanceof InvocationTargetException ce) {
-				Throwable cause = ce.getCause();
-				return uncheck(cause, false);
-			}
-		}
-
-		return new RuntimeException(t);
 	}
 	
 }
