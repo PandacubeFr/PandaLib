@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
+import java.util.function.BiConsumer;
 
 /**
  * Utility class to easily manipulate {@link Throwable}s.
@@ -101,7 +102,7 @@ public class ThrowableUtil {
 	 * A supplier that can possibly throw a checked exception.
 	 */
 	@FunctionalInterface
-	public interface SupplierException<T> {
+	public interface SupplierException<T> { // TODO make exception type generic
 		/**
 		 * Gets a result.
 		 * @return a result.
@@ -116,12 +117,59 @@ public class ThrowableUtil {
 	 * A runnable that can possibly throw a checked exception.
 	 */
 	@FunctionalInterface
-	public interface RunnableException {
+	public interface RunnableException { // TODO make exception type generic
 		/**
 		 * Run any code implemented.
 		 * @throws Exception if implementation failed to run.
 		 */
 		void run() throws Exception;
+	}
+
+
+
+	/**
+	 * A predicate that can possibly throw a checked exception.
+	 */
+	@FunctionalInterface
+	public interface PredicateException<T, E extends Exception> {
+		/**
+		 * Test the predicate on the specified value.
+		 * @param value the value to test against.
+		 * @return the result of the test.
+		 * @throws E if implementation failed to run.
+		 */
+		boolean test(T value) throws E;
+	}
+
+
+
+	/**
+	 * A function that can possibly throw a checked exception.
+	 */
+	public interface ToIntBiFunctionException<T, U, E extends Exception> {
+		/**
+		 * Run on the specified parameters to return an int value.
+		 * @param t the first parameter of the function.
+		 * @param u the second parameter of the function.
+		 * @return the result of the function.
+		 * @throws E if the function fails.
+		 */
+		int applyAsInt(T t, U u) throws E;
+	}
+
+
+
+	/**
+	 * A consumer that can possibly throw a checked exception.
+	 */
+	public interface BiConsumer<T, U, E extends Exception> {
+		/**
+		 * Run the consumer on the specified parameters.
+		 * @param t the first parameter of the consumer.
+		 * @param u the second parameter of the consumer.
+		 * @throws E if the function fails.
+		 */
+		void accept(T t, U u) throws E;
 	}
 
 
