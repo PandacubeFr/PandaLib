@@ -32,10 +32,14 @@
           <artifactId>pandalib-core</artifactId>
           <version>${project.version}</version>
       </dependency>
-
       <dependency>
           <groupId>fr.pandacube.lib</groupId>
           <artifactId>pandalib-reflect</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>fr.pandacube.lib</groupId>
+          <artifactId>pandalib-commands</artifactId>
           <version>${project.version}</version>
       </dependency>
 
@@ -49,12 +53,6 @@
             <artifactId>bungeecord-config</artifactId>
             <version>${bungeecord.version}</version>
         </dependency>
-
-      <dependency>
-          <groupId>fr.pandacube.lib</groupId>
-          <artifactId>pandalib-commands</artifactId>
-          <version>${project.version}</version>
-      </dependency>
 
   </dependencies>
 

@@ -3,6 +3,8 @@ package fr.pandacube.lib.cli;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import fr.pandacube.lib.cli.commands.CLIBrigadierDispatcher;
+import fr.pandacube.lib.cli.log.CLILogger;
 import jline.console.ConsoleReader;
 import org.fusesource.jansi.AnsiConsole;
 
@@ -47,7 +49,7 @@ public class CLI {
 		reader = new ConsoleReader();
 		reader.setBellEnabled(false);
 		reader.setPrompt("\r>");
-		reader.addCompleter(BrigadierDispatcher.instance);
+		reader.addCompleter(CLIBrigadierDispatcher.instance);
 
 		// configuration du formatteur pour le logger
 		System.setProperty("net.md_5.bungee.log-date-format", "yyyy-MM-dd HH:mm:ss");
@@ -78,7 +80,7 @@ public class CLI {
 				if (line.trim().equals(""))
 					continue;
 				String cmdLine = line;
-				new Thread(() -> BrigadierDispatcher.instance.execute(cmdLine), "CLICmdThread #"+(i++)).start();
+				new Thread(() -> CLIBrigadierDispatcher.instance.execute(cmdLine), "CLICmdThread #"+(i++)).start();
 				
 			}
 		} catch (IOException e) {

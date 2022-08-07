@@ -1,4 +1,4 @@
-package fr.pandacube.lib.cli;
+package fr.pandacube.lib.cli.log;
 
 import java.io.BufferedWriter;
 import java.io.File;

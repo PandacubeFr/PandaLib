@@ -131,7 +131,7 @@ public enum Skull {
     /**
      * Return a skull that has a custom texture specified by url.
      *
-     * @param url skin url
+     * @param url the skin full url
      * @return itemstack
      */
     public static ItemStack getFromSkinURL(String url, Chat name, List<Chat> lore) {

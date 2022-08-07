@@ -8,6 +8,9 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class in which each wrapper classes must be registered, using {@link #initWrapper(Class, Class)}.
+ */
 public class WrapperRegistry {
 
     /* package */ static Class<? extends ReflectWrapperI> getWrapperOfRuntimeClass(Class<?> runtime) {
@@ -32,12 +35,11 @@ public class WrapperRegistry {
     private static final Map<Class<? extends ReflectWrapperI>, RegistryEntry> WRAPPER_DATA_BY_WRAPPER_CLASS = new HashMap<>();
 
 
-
-
-
-
-
-
+    /**
+     * Registers a new wrapper class.
+     * @param wrapper the wrapper class.
+     * @param runtime the runtime class, that will be accessed reflectively by the wrapper class.
+     */
     public static void initWrapper(Class<? extends ReflectWrapperI> wrapper, Class<?> runtime) {
         Class<? extends ReflectWrapperI> concreteWrapper = wrapper;
         ReflectConstructor<? extends ReflectWrapperI> objectWrapperConstructor;

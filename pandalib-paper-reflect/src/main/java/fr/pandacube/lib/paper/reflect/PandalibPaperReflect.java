@@ -66,8 +66,14 @@ import fr.pandacube.lib.paper.reflect.wrapper.paper.configuration.WorldConfigura
 
 import static fr.pandacube.lib.reflect.wrapper.WrapperRegistry.initWrapper;
 
+/**
+ * Initializer for all the reflect tools in {@code pandalib-paper-reflect} module.
+ */
 public class PandalibPaperReflect {
 
+    /**
+     * Initializes the reflect tools in {@code pandalib-paper-reflect} module.
+     */
     public static void init() {
         NMSReflect.init();
         initWrapperClasses();
