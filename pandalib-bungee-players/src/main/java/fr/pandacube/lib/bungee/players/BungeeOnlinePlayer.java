@@ -63,6 +63,21 @@ public interface BungeeOnlinePlayer extends BungeeOffPlayer, StandaloneOnlinePla
 
 
 
+    /*
+     * Permissions and groups
+     */
+
+    /**
+     * Tells if this online player has the specified permission.
+     */
+    default boolean hasPermission(String permission) {
+        return getBungeeProxiedPlayer().hasPermission(permission);
+    }
+
+
+
+
+
 
     /*
      * Sending packet and stuff to player

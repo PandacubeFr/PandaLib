@@ -62,6 +62,21 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, StandaloneOnlinePlaye
 
 
     /*
+     * Permissions and groups
+     */
+
+    /**
+     * Tells if this online player has the specified permission.
+     */
+    default boolean hasPermission(String permission) {
+        return getBukkitPlayer().hasPermission(permission);
+    }
+
+
+
+
+
+    /*
      * Sending packet and stuff to player
      */
 

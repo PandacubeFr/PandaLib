@@ -23,8 +23,9 @@
     <dependencies>
         <dependency>
             <groupId>fr.pandacube.lib</groupId>
-            <artifactId>pandalib-players-permissible</artifactId>
+            <artifactId>pandalib-players</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>fr.pandacube.lib</groupId>

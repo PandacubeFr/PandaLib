@@ -1,5 +1,8 @@
 package fr.pandacube.lib.bungee.permissions;
 
+import fr.pandacube.lib.permissions.Permissions;
+import fr.pandacube.lib.players.standalone.StandaloneOnlinePlayer;
+import fr.pandacube.lib.players.standalone.StandalonePlayerManager;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -8,10 +11,6 @@ import net.md_5.bungee.api.event.PermissionCheckEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
-
-import fr.pandacube.lib.permissions.Permissions;
-import fr.pandacube.lib.players.permissible.PermissibleOnlinePlayer;
-import fr.pandacube.lib.players.permissible.PermissiblePlayerManager;
 
 public class PandalibBungeePermissions implements Listener {
 
@@ -35,13 +34,14 @@ public class PandalibBungeePermissions implements Listener {
     private volatile boolean tryPermPlayerManager = true;
 
     private boolean hasPerm(ProxiedPlayer p, String permission) {
+        String world = null;
         if (tryPermPlayerManager) {
             try {
-                PermissiblePlayerManager<?, ?> pm = PermissiblePlayerManager.getInstance();
+                StandalonePlayerManager<?, ?> pm = StandalonePlayerManager.getInstance();
                 if (pm != null) {
-                    PermissibleOnlinePlayer op = pm.get(p.getUniqueId());
+                    StandaloneOnlinePlayer op = pm.get(p.getUniqueId());
                     if (op != null) {
-                        return op.hasPermission(permission);
+                        world = op.getWorldName();
                     }
                 }
             } catch (NoClassDefFoundError ignored) {
@@ -52,6 +52,6 @@ public class PandalibBungeePermissions implements Listener {
         // if not using player manager, fallback to directly call permissions API
         Server sv = p.getServer();
         String server = sv == null ? null : sv.getInfo().getName();
-        return Permissions.getPlayer(p.getUniqueId()).hasPermissionOr(permission, server, null, false);
+        return Permissions.getPlayer(p.getUniqueId()).hasPermissionOr(permission, server, world, false);
     }
 }

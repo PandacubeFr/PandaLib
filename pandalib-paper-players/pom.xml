@@ -23,7 +23,7 @@
     <dependencies>
         <dependency>
             <groupId>fr.pandacube.lib</groupId>
-            <artifactId>pandalib-players-standalone</artifactId>
+            <artifactId>pandalib-players</artifactId>
             <version>${project.version}</version>
         </dependency>
 

@@ -3,6 +3,7 @@ package fr.pandacube.lib.players.permissible;
 import java.util.OptionalLong;
 import java.util.stream.LongStream;
 
+import fr.pandacube.lib.permissions.PermissionExpressionParser;
 import fr.pandacube.lib.players.standalone.StandaloneOnlinePlayer;
 
 public interface PermissibleOnlinePlayer extends PermissibleOffPlayer, StandaloneOnlinePlayer {
@@ -45,7 +46,9 @@ public interface PermissibleOnlinePlayer extends PermissibleOffPlayer, Standalon
 	 * indirectly call the method {@link PermissibleOffPlayer#hasPermissionExpression(String)},
 	 * or it may result in a {@link StackOverflowError}.
 	 */
-	boolean hasPermissionExpression(String permission);
+	default boolean hasPermissionExpression(String permissionExpression) {
+		return PermissionExpressionParser.evaluate(permissionExpression, this::hasPermission);
+	}
 
 	/**
 	 * Lists all the values for a set of permission indicating an integer in a range.
@@ -60,12 +63,20 @@ public interface PermissibleOnlinePlayer extends PermissibleOffPlayer, Standalon
 	 * @param permissionPrefix the permission prefix to search for.
 	 * @return a LongStream containing all the values found for the specified permission prefix.
 	 */
-	LongStream getPermissionRangeValues(String permissionPrefix);
+	default LongStream getPermissionRangeValues(String permissionPrefix) {
+		String server = getServerName();
+		String world = server == null ? null : getWorldName();
+		return getPermissionUser().getPermissionRangeValues(permissionPrefix, server, world);
+	}
 	
 	/**
 	 * Returns the maximum value returned by {@link PermissibleOffPlayer#getPermissionRangeValues(String)}.
 	 */
-	OptionalLong getPermissionRangeMax(String permissionPrefix);
+	default OptionalLong getPermissionRangeMax(String permissionPrefix) {
+		String server = getServerName();
+		String world = server == null ? null : getWorldName();
+		return getPermissionUser().getPermissionRangeMax(permissionPrefix, server, world);
+	}
 	
 
 

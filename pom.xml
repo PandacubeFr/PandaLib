@@ -78,8 +78,8 @@
         <module>pandalib-paper-players</module>
         <module>pandalib-paper-reflect</module>
         <module>pandalib-permissions</module>
+        <module>pandalib-players</module>
         <module>pandalib-players-permissible</module>
-        <module>pandalib-players-standalone</module>
         <module>pandalib-reflect</module>
         <module>pandalib-util</module>
     </modules>

@@ -1,14 +1,13 @@
 package fr.pandacube.lib.players.standalone;
 
-import java.util.Locale;
-import java.util.UUID;
-
+import fr.pandacube.lib.chat.ChatStatic;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 
-import fr.pandacube.lib.chat.ChatStatic;
+import java.util.Locale;
+import java.util.UUID;
 
 public interface StandaloneOnlinePlayer extends StandaloneOffPlayer {
 	
@@ -28,14 +27,27 @@ public interface StandaloneOnlinePlayer extends StandaloneOffPlayer {
 	String getServerName();
 	
 	String getWorldName();
-	
-	
 
 
-	
+
+
+
+
+
+	/*
+	 * Permissions and groups
+	 */
+
+	/**
+	 * Tells if this online player has the specified permission.
+	 * @implSpec Implementation of this method should call the permission system of their environment (paper/bungee),
+	 * so this method will work independently of the usage of the 'pandalib-permissions' module.
+	 */
+	boolean hasPermission(String permission);
 	
 
 	
+
 	
 	
 
