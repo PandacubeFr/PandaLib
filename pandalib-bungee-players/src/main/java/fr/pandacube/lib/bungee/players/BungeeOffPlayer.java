@@ -5,6 +5,9 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
 
+/**
+ * Represents any player on a Bungeecord proxy, either offline or online.
+ */
 public interface BungeeOffPlayer extends AbstractOffPlayer {
 
     /*
@@ -12,8 +15,8 @@ public interface BungeeOffPlayer extends AbstractOffPlayer {
      */
 
     /**
-     * @return l'instance Bungee du joueur en ligne, ou null si il n'est pas en
-     *         ligne
+     * Returns the {@link ProxiedPlayer} instance of this player, or null if not available (offline).
+     * @return the {@link ProxiedPlayer} instance of this player, or null if not available (offline).
      */
     default ProxiedPlayer getBungeeProxiedPlayer() {
         return ProxyServer.getInstance().getPlayer(getUniqueId());

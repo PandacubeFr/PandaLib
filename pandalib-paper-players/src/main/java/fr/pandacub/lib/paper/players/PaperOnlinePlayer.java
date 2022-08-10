@@ -1,11 +1,9 @@
 package fr.pandacub.lib.paper.players;
 
-import java.util.Locale;
-import java.util.UUID;
-
 import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.ClientOption.ChatVisibility;
 import com.destroystokyo.paper.SkinParts;
+import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
@@ -18,11 +16,14 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.MainHand;
 
-import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
+import java.util.Locale;
+import java.util.UUID;
 
+/**
+ * Represents any online player on a paper server.
+ */
 public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer {
 
     /*
@@ -45,12 +46,6 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
     /*
      * Related class instances
      */
-
-    /**
-     * @return l'instance Bukkit du joueur en ligne, ou null si il n'est pas en
-     *         ligne
-     */
-    Player getBukkitPlayer();
 
     @Override
     default OfflinePlayer getBukkitOfflinePlayer() {
@@ -100,10 +95,23 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
         getBukkitPlayer().showTitle(Title.title(title, subtitle, Times.times(Ticks.duration(fadeIn), Ticks.duration(stay), Ticks.duration(fadeOut))));
     }
 
+    /**
+     * Play a sound on this player’s client, sourced at this player’s location.
+     * @param sound the sound to play
+     * @param volume the volume of the sound.
+     * @param pitch the pich in which the sound is played.
+     */
     default void playSound(Sound sound, float volume, float pitch) {
         playSound(sound, getBukkitPlayer().getLocation(), volume, pitch);
     }
 
+    /**
+     * Play a sound on this player’s client.
+     * @param sound the sound to play
+     * @param location the source location of the sound.
+     * @param volume the volume of the sound.
+     * @param pitch the pich in which the sound is played.
+     */
     default void playSound(Sound sound, Location location, float volume, float pitch) {
         getBukkitPlayer().playSound(location, sound, volume, pitch);
     }
@@ -119,11 +127,18 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
     @Override
     PaperClientOptions getClientOptions();
 
+    /**
+     * Provides various configuration values of the Minecraft client.
+     */
     abstract class PaperClientOptions implements AbstractOnlinePlayer.ClientOptions {
 
         private final PaperOnlinePlayer op;
 
-        public PaperClientOptions(PaperOnlinePlayer op) {
+        /**
+         * Create a new instance of {@link PaperClientOptions}.
+         * @param op the {@link PaperOnlinePlayer} instance.
+         */
+        protected PaperClientOptions(PaperOnlinePlayer op) {
             this.op = op;
         }
 
@@ -132,6 +147,10 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
             return op.getBukkitPlayer().getClientOption(ClientOption.CHAT_COLORS_ENABLED);
         }
 
+        /**
+         * Gets the chat visibility configuration.
+         * @return the chat visibility configuration.
+         */
         public ChatVisibility getChatVisibility() {
             return op.getBukkitPlayer().getClientOption(ClientOption.CHAT_VISIBILITY);
         }
@@ -162,6 +181,10 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
             return op.getBukkitPlayer().getClientViewDistance();
         }
 
+        /**
+         * Gets the player’s main hand.
+         * @return the player’s main hand.
+         */
         public MainHand getMainHand() {
             return op.getBukkitPlayer().getMainHand();
         }
@@ -177,13 +200,19 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
         }
 
         @Override
-        public abstract boolean isTextFilteringEnabled(); // needs reflection
+        public boolean isTextFilteringEnabled() { // needs reflection to get the actual value
+            return false;
+        }
 
         @Override
         public boolean allowsServerListing() {
             return op.getBukkitPlayer().isAllowingServerListings();
         }
 
+        /**
+         * Gets the player’s skin configuration.
+         * @return the player’s skin configuration.
+         */
         public SkinParts getSkinParts() {
             return op.getBukkitPlayer().getClientOption(ClientOption.SKIN_PARTS);
         }
@@ -231,10 +260,19 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
      * Custom damage
      */
 
+    /**
+     * Deals damages to this player.
+     * @param amount the amount of damage to deal.
+     */
     default void damage(double amount) {
         getBukkitPlayer().damage(amount); // uses DamageSource.GENERIC
     }
 
+    /**
+     * Deals damages to this player, from the provided entity.
+     * @param amount the amount of damage to deal.
+     * @param source the entity from which the damage comes from.
+     */
     default void damage(double amount, LivingEntity source) {
         getBukkitPlayer().damage(amount, source); // uses appropriate DamageSource according to provided player or entity
     }

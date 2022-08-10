@@ -7,6 +7,9 @@ import org.bukkit.scoreboard.Team;
 
 import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
 
+/**
+ * Represents any player on a paper server, either offline or online.
+ */
 public interface PaperOffPlayer extends AbstractOffPlayer {
 
     /*
@@ -15,7 +18,7 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
 
     @Override
     default boolean isOnline() {
-        return (getBukkitPlayer() != null);
+        return getBukkitPlayer() != null;
     }
 
 
@@ -29,8 +32,8 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
     PaperOnlinePlayer getOnlineInstance();
 
     /**
-     * @return l'instance Bukkit du joueur en ligne, ou null si il n'est pas en
-     *         ligne
+     * Returns the Bukkit online {@link Player} instance of this player, or null if not available (offline).
+     * @return the Bukkit online {@link Player} instance of this player, or null if not available (offline).
      */
     default Player getBukkitPlayer() {
         return Bukkit.getPlayer(getUniqueId());

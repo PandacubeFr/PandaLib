@@ -23,6 +23,9 @@ import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
 import fr.pandacube.lib.reflect.Reflect;
 import fr.pandacube.lib.util.MinecraftVersion;
 
+/**
+ * Represents any online player on a Bungeecord proxy.
+ */
 public interface BungeeOnlinePlayer extends BungeeOffPlayer, AbstractOnlinePlayer {
 
     /*
@@ -41,22 +44,22 @@ public interface BungeeOnlinePlayer extends BungeeOffPlayer, AbstractOnlinePlaye
         return getServer().getInfo().getName();
     }
 
+    /**
+     * Returns the server on which the player is.
+     * @return the server on which the player is.
+     */
     default Server getServer() {
         return getBungeeProxiedPlayer().getServer();
     }
 
+    /**
+     * Gets the minecraft version of this player’s client.
+     * @return the minecraft version of this player’s client.
+     */
     default MinecraftVersion getMinecraftVersion() {
         return MinecraftVersion.getVersion(getBungeeProxiedPlayer().getPendingConnection().getVersion());
     }
 
-
-
-    /*
-     * Related class instances
-     */
-
-    @Override
-    ProxiedPlayer getBungeeProxiedPlayer();
 
 
 
@@ -95,11 +98,17 @@ public interface BungeeOnlinePlayer extends BungeeOffPlayer, AbstractOnlinePlaye
 
     @Override
     default void sendMessage(Component message, Identified sender) {
-        getBungeeProxiedPlayer().sendMessage(sender.identity().uuid(), Chat.toBungee(message));
+        getBungeeProxiedPlayer().sendMessage(sender == null ? null : sender.identity().uuid(), Chat.toBungee(message));
     }
 
+    /**
+     * Display the provided message in the player’s chat, if they allows to display CHAT messages.
+     * @param message the message to send.
+     * @param sender the player causing the send of this message. Client side filtering may occur. May be null if we
+     *               don’t want client filtering, but still consider the message as CHAT message.
+     */
     default void sendMessage(ComponentLike message, ProxiedPlayer sender) {
-        getBungeeProxiedPlayer().sendMessage(sender.getUniqueId(), Chat.toBungee(message.asComponent()));
+        getBungeeProxiedPlayer().sendMessage(sender == null ? null : sender.getUniqueId(), Chat.toBungee(message.asComponent()));
     }
 
     @Override
@@ -134,9 +143,17 @@ public interface BungeeOnlinePlayer extends BungeeOffPlayer, AbstractOnlinePlaye
         return new BungeeClientOptions(this);
     }
 
+    /**
+     * Provides various configuration values of the Minecraft client.
+     */
     class BungeeClientOptions implements AbstractOnlinePlayer.ClientOptions {
 
         private final BungeeOnlinePlayer op;
+
+        /**
+         * Create a new instance of {@link BungeeClientOptions}.
+         * @param op the {@link BungeeOnlinePlayer} instance.
+         */
         public BungeeClientOptions(BungeeOnlinePlayer op) {
             this.op = op;
         }
@@ -155,6 +172,10 @@ public interface BungeeOnlinePlayer extends BungeeOffPlayer, AbstractOnlinePlaye
             return op.getBungeeProxiedPlayer().hasChatColors();
         }
 
+        /**
+         * Gets the chat visibility configuration.
+         * @return the chat visibility configuration.
+         */
         public ChatMode getChatMode() {
             return op.getBungeeProxiedPlayer().getChatMode();
         }
@@ -185,6 +206,10 @@ public interface BungeeOnlinePlayer extends BungeeOffPlayer, AbstractOnlinePlaye
             return op.getBungeeProxiedPlayer().getViewDistance();
         }
 
+        /**
+         * Gets the player’s main hand.
+         * @return the player’s main hand.
+         */
         public MainHand getMainHand() {
             return op.getBungeeProxiedPlayer().getMainHand();
         }
@@ -211,6 +236,10 @@ public interface BungeeOnlinePlayer extends BungeeOffPlayer, AbstractOnlinePlaye
             return settings != null && settings.isAllowServerListing();
         }
 
+        /**
+         * Gets the player’s skin configuration.
+         * @return the player’s skin configuration.
+         */
         public SkinConfiguration getSkinParts() {
             return op.getBungeeProxiedPlayer().getSkinParts();
         }

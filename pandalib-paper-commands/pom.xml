@@ -54,6 +54,13 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>fr.pandacube.lib</groupId>
+            <artifactId>pandalib-paper-permissions</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Paper -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
