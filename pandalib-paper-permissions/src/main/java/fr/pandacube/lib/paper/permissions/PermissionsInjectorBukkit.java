@@ -29,7 +29,7 @@ import fr.pandacube.lib.permissions.Permissions;
 import fr.pandacube.lib.reflect.Reflect;
 import fr.pandacube.lib.util.Log;
 
-public class PermissionsInjectorBukkit
+/* package */ class PermissionsInjectorBukkit
 {
 	
 	// to be called : onEnable for console, onPlayerLogin (not Join) (Priority LOWEST) for players

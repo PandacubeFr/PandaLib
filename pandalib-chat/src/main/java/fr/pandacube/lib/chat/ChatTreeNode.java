@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A tree structure of {@link Chat} component intended to be rendered using {@link #render(boolean)}.
+ * A tree structure of {@link Chat} component intended to be rendered in chat using {@link #render(boolean)}.
  */
 public class ChatTreeNode {
 

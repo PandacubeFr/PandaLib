@@ -65,13 +65,14 @@
                                         <exclude>META-INF/*.SF</exclude>
                                         <exclude>META-INF/*.DSA</exclude>
                                         <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>META-INF/MANIFEDT.MF</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
                             <relocations>
                                 <relocation>
                                     <pattern>com.fathzer.soft.javaluator</pattern>
-                                    <shadedPattern>fr.pandacube.shaded.javaluator</shadedPattern>
+                                    <shadedPattern>fr.pandacube.lib.permissions.shaded.javaluator</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

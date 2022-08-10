@@ -3,9 +3,9 @@ package fr.pandacube.lib.bungee.players;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-import fr.pandacube.lib.players.standalone.StandaloneOffPlayer;
+import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
 
-public interface BungeeOffPlayer extends StandaloneOffPlayer {
+public interface BungeeOffPlayer extends AbstractOffPlayer {
 
     /*
      * Related class instances

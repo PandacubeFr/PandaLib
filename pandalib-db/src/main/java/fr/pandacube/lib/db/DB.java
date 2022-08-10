@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import fr.pandacube.lib.reflect.Reflect;
 import fr.pandacube.lib.util.Log;
 
 /**
@@ -576,7 +577,7 @@ public final class DB {
     @SuppressWarnings("unchecked")
     private static <E extends SQLElement<E>> E getElementInstance(ResultSet set, Class<E> elemClass) throws DBException {
         try {
-            E instance = elemClass.getConstructor(int.class).newInstance(set.getInt("id"));
+            E instance = Reflect.ofClass(elemClass).constructor(int.class).instanciate(set.getInt("id"));
 
             int fieldCount = set.getMetaData().getColumnCount();
 

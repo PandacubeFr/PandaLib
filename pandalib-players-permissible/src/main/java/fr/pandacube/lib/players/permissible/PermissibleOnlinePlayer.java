@@ -4,9 +4,12 @@ import java.util.OptionalLong;
 import java.util.stream.LongStream;
 
 import fr.pandacube.lib.permissions.PermissionExpressionParser;
-import fr.pandacube.lib.players.standalone.StandaloneOnlinePlayer;
+import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
 
-public interface PermissibleOnlinePlayer extends PermissibleOffPlayer, StandaloneOnlinePlayer {
+/**
+ * Represents an online player, with extra methods related to the {@code pandalib-permissions} system.
+ */
+public interface PermissibleOnlinePlayer extends PermissibleOffPlayer, AbstractOnlinePlayer {
 
 
 
@@ -16,7 +19,7 @@ public interface PermissibleOnlinePlayer extends PermissibleOffPlayer, Standalon
 	 */
 
 	/**
-	 * @return The current name of this player
+	 * {@inheritDoc}
 	 * @implSpec The implementation is expected to call the environment API
 	 * (Bukkit/Bungee) to get the name of the player.
 	 */

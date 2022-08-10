@@ -8,6 +8,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import fr.pandacube.lib.db.DB;
+import fr.pandacube.lib.db.DBConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
@@ -23,12 +25,26 @@ import org.bukkit.plugin.java.JavaPlugin;
 import fr.pandacube.lib.permissions.Permissions;
 import fr.pandacube.lib.util.Log;
 
+/**
+ * Class that integrates the {@code pandalib-permissions} system into a Bukkit/Spigot/Paper instance.
+ * The integration is made when calling {@link #init(JavaPlugin, String)}.
+ * The permission system must be initialized first, using {@link Permissions#init(Function)}.
+ * Don’t forget that the permission system also needs a connection to a database, so don’t forget to call
+ * {@link DB#init(DBConnection, String)} with the appropriate parameters before anything.
+ */
 public class PandalibPaperPermissions implements Listener {
 
 	/* package */ static JavaPlugin plugin;
 	/* package */ static String serverName;
 	/* package */ static final Map<String, String> permissionMap = new HashMap<>();
 
+	/**
+	 * Integrates the {@code pandalib-permissions} system into the Bukkit server.
+	 * @param plugin a Bukkit plugin.
+	 * @param serverName the name of the current server, used to fetch server specific permissions. Cannot be null.
+	 *                   If this server in not in a multi-server configuration, use a dummy server name, like
+	 *                   {@code ""} (empty string).
+	 */
 	public static void init(JavaPlugin plugin, String serverName) {
 		PandalibPaperPermissions.plugin = plugin;
 		PandalibPaperPermissions.serverName = serverName;
@@ -58,6 +74,10 @@ public class PandalibPaperPermissions implements Listener {
 		}
 	}
 
+	/**
+	 * Player login event handler.
+	 * @param event the event.
+	 */
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerLogin(PlayerLoginEvent event) {
 		Permissions.clearPlayerCache(event.getPlayer().getUniqueId());
@@ -67,6 +87,10 @@ public class PandalibPaperPermissions implements Listener {
 	}
 
 
+	/**
+	 * Player quit event handler.
+	 * @param event the event.
+	 */
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		PermissionsInjectorBukkit.uninject(event.getPlayer());

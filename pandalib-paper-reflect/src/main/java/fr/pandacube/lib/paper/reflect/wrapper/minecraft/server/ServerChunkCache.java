@@ -16,6 +16,6 @@ public class ServerChunkCache extends ReflectWrapper {
     protected ServerChunkCache(Object obj) {
         super(obj);
 
-        chunkMap = wrap(wrapReflectEx(() -> FIELD_chunkMap.getValue(obj)));
+        chunkMap = wrap(wrapReflectEx(() -> FIELD_chunkMap.getValue(obj)), ChunkMap.class);
     }
 }

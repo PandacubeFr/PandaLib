@@ -12,5 +12,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConcreteWrapper {
+    /**
+     * The class representing a dummy implementation of the annotated wrapper interface.
+     * @return the class representing a dummy implementation of the annotated wrapper interface.
+     */
     Class<? extends ReflectWrapper> value();
 }

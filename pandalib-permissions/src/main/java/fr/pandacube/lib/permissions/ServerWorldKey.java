@@ -3,11 +3,14 @@ package fr.pandacube.lib.permissions;
 import java.util.Comparator;
 import java.util.Objects;
 
-public class ServerWorldKey implements Comparable<ServerWorldKey> {
-	public final String server, world;
-	ServerWorldKey(String s, String w) {
-		server = s; world = w;
-	}
+/**
+ * A pair of string representing a server and world name, used to organize and filter the permission data of a player or
+ * group.
+ * @param server the server name, can be null.
+ * @param world the world name, can be null.
+ */
+public record ServerWorldKey(String server, String world) implements Comparable<ServerWorldKey> {
+
 	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof ServerWorldKey o

@@ -13,13 +13,11 @@ import fr.pandacube.lib.permissions.PermPlayer;
 import fr.pandacube.lib.permissions.Permissions;
 import fr.pandacube.lib.util.Log;
 
-public class PermissionsInjectorWEPIF {
-	
-	public static PandaWEPIFPermissionsProvider permInstance;
+/* package */ class PermissionsInjectorWEPIF {
 	
 	public static void inject() {
 		try {
-			permInstance = new PandaWEPIFPermissionsProvider();
+			PandaWEPIFPermissionsProvider permInstance = new PandaWEPIFPermissionsProvider();
 			Bukkit.getServicesManager().register(com.sk89q.wepif.PermissionsProvider.class, permInstance,
 					PandalibPaperPermissions.plugin, ServicePriority.Highest);
 			Log.info("Providing permissions through WEPIF");
@@ -32,11 +30,11 @@ public class PermissionsInjectorWEPIF {
 		}
 	}
 
-	
-	
-	
-	
-	public static class PandaWEPIFPermissionsProvider implements com.sk89q.wepif.PermissionsProvider {
+
+
+
+
+	/* package */ static class PandaWEPIFPermissionsProvider implements com.sk89q.wepif.PermissionsProvider {
 		private PandaWEPIFPermissionsProvider() { }
 		
 		private PermPlayer getPlayer(OfflinePlayer player) {

@@ -5,9 +5,9 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 
-import fr.pandacube.lib.players.standalone.StandaloneOffPlayer;
+import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
 
-public interface PaperOffPlayer extends StandaloneOffPlayer {
+public interface PaperOffPlayer extends AbstractOffPlayer {
 
     /*
      * General data and state

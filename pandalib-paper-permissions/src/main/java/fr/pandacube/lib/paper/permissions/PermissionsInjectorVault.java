@@ -10,7 +10,7 @@ import fr.pandacube.lib.permissions.PermGroup;
 import fr.pandacube.lib.permissions.Permissions;
 import fr.pandacube.lib.util.Log;
 
-public class PermissionsInjectorVault {
+/* package */ class PermissionsInjectorVault {
 	
 	public static PandaVaultPermission permInstance;
 	
@@ -27,12 +27,12 @@ public class PermissionsInjectorVault {
 			Log.warning("Vault plugin not detected. Not using it to provide permissions and prefix/suffix." + e.getMessage());
 		}
 	}
-	
-	
-	
-	
-	
-	public static class PandaVaultPermission extends net.milkbowl.vault.permission.Permission {
+
+
+
+
+
+	/* package */ static class PandaVaultPermission extends net.milkbowl.vault.permission.Permission {
 		
 		private PandaVaultPermission() { }
 

@@ -19,11 +19,11 @@ import net.md_5.bungee.protocol.packet.ClientSettings;
 import net.md_5.bungee.protocol.packet.PluginMessage;
 
 import fr.pandacube.lib.chat.Chat;
-import fr.pandacube.lib.players.standalone.StandaloneOnlinePlayer;
+import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
 import fr.pandacube.lib.reflect.Reflect;
 import fr.pandacube.lib.util.MinecraftVersion;
 
-public interface BungeeOnlinePlayer extends BungeeOffPlayer, StandaloneOnlinePlayer {
+public interface BungeeOnlinePlayer extends BungeeOffPlayer, AbstractOnlinePlayer {
 
     /*
      * General data and state
@@ -134,7 +134,7 @@ public interface BungeeOnlinePlayer extends BungeeOffPlayer, StandaloneOnlinePla
         return new BungeeClientOptions(this);
     }
 
-    class BungeeClientOptions implements StandaloneOnlinePlayer.ClientOptions {
+    class BungeeClientOptions implements AbstractOnlinePlayer.ClientOptions {
 
         private final BungeeOnlinePlayer op;
         public BungeeClientOptions(BungeeOnlinePlayer op) {

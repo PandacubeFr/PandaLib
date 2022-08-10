@@ -10,10 +10,38 @@ import com.fathzer.soft.javaluator.Operator;
 import com.fathzer.soft.javaluator.Operator.Associativity;
 import com.fathzer.soft.javaluator.Parameters;
 
+/**
+ * Class that evaluates a permission string as if it was a boolean expression with permission nodes as variables.
+ * <p>
+ * A permission expression contains permission nodes, boolean operators ({@code "||"}, {@code "&&"} and {@code "!"}) and
+ * literal values {@code "true"} and {@code "false"}.
+ * Here are some example of permission expressions:
+ * <pre>{@code
+ * "p1.cmd"
+ * "!p1.toto"
+ * "p1.cmd!"
+ * "p1.cmd || p1.toto"
+ * "p1.cmd && p1.toto"
+ * "p1.cmd && !p1.toto  "
+ * "p1.cmd && true"
+ * "false || p2.cmd"
+ * }</pre>
+ * Notice that spaces around permission nodes and operators does not affect the results of the parsing.
+ */
 public class PermissionExpressionParser {
 	
 	private static final PermissionEvaluator PERMISSION_EVALUATOR = new PermissionEvaluator();
 
+	/**
+	 * Evaluate the provided permission expression, testing each permission with the provided permTester.
+	 *
+	 * @param permString the permission expression to evaluate.
+	 * @param permTester a function that gives the value of the provided permission node. It is usually a method
+	 *                   reference to the {@code hasPermission(String)} method the player we want to test the
+	 *                   permissions.
+	 * @throws IllegalArgumentException if the expression is not correct.
+	 * @return the result of the evaluation of the permission expression.
+	 */
 	public static boolean evaluate(String permString, LitteralPermissionTester permTester) {
 		try {
 			return PERMISSION_EVALUATOR.evaluate(permString, permTester);
@@ -22,6 +50,9 @@ public class PermissionExpressionParser {
 		}
 	}
 
+	/**
+	 * Functional interface that converts a string into a boolean.
+	 */
 	public interface LitteralPermissionTester extends Function<String, Boolean> { }
 	
 	
@@ -88,42 +119,5 @@ public class PermissionExpressionParser {
 			return super.evaluate(constant, evaluationContext);
 		}
 	}
-	
-	
-	/* TODO move to test code
-	public static void main(String[] args) {
-		java.util.List<String> pList = java.util.Arrays.asList("p1.cmd", "p1.toto", "p2.lol");
-		LitteralPermissionTester tester = p -> pList.contains(p);
-		
-		for (String permExpr : java.util.Arrays.asList(
-				"p1.cmd", // true
-				"p1.notexist", // false
-				"p2lol.lol", // false
-				"!p1.notexist", // true
-				"!p1.cmd", // false
-				"p1.cmd!", // false
-				"p1.cmd! p2.lol", // exception
-				"p1.cmd || p1.toto", // true || true == true
-				"p1.cmd || p1.notexist", // true || false == true
-				"p1.fefef || p2.lol", // false || true == true
-				"p1.fefef || p2.lolilol", // false || false == false
-				"p1.cmd && p1.toto", // true && true == true
-				"p1.cmd && p1.notexist", // true && false == false
-				"p1.fefef && p2.lol", // false && true == false
-				"p1.fefef && p2.lolilol", // false && false == false
-				"p1.cmd && !p1.toto  ", // true && !true == false
-				"   !p1.cmd &&    p1.toto", // !true && true == false
-				"!p1.cmd & p1.toto", // exception
-				"!p1.cmd | p1.toto", // exception
-				"p1.not exist" // exception
-				)) {
-			try {
-				System.out.println(permExpr + " -> " + evaluate(permExpr, tester));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	*/
 	
 }

@@ -1,16 +1,12 @@
 package fr.pandacube.lib.bungee.commands;
 
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.context.ParsedCommandNode;
 import com.mojang.brigadier.context.StringRange;
 import com.mojang.brigadier.suggestion.Suggestion;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
-import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import fr.pandacube.lib.commands.BrigadierCommand;
 import fr.pandacube.lib.commands.SuggestionsSupplier;
-import fr.pandacube.lib.reflect.Reflect;
 import fr.pandacube.lib.util.Log;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -18,18 +14,26 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+/**
+ * Abstract class that holds the logic of a specific command to be registered in {@link BungeeBrigadierDispatcher} and
+ * BungeeCord command API.
+ */
 public abstract class BungeeBrigadierCommand extends BrigadierCommand<CommandSender> {
 
+	/**
+	 * The command dispatcher.
+	 */
 	protected BungeeBrigadierDispatcher dispatcher;
-	
+
+	/**
+	 * Instanciate this command isntance.
+	 * @param d the dispatcher in which to register this command.
+	 */
 	public BungeeBrigadierCommand(BungeeBrigadierDispatcher d) {
 		if (d == null) {
 			throw new IllegalStateException("BungeeBrigadierDispatcher not provided.");
@@ -62,12 +66,14 @@ public abstract class BungeeBrigadierCommand extends BrigadierCommand<CommandSen
 					.redirect(commandNode)
 					.build()
 			);
-
 			ProxyServer.getInstance().getPluginManager().registerCommand(dispatcher.plugin, new CommandRelay(alias));
 		}
 		
 	}
-	
+
+
+
+
 	private class CommandRelay extends Command implements TabExecutor {
 		private final String alias;
 		public CommandRelay(String alias) {
@@ -117,9 +123,11 @@ public abstract class BungeeBrigadierCommand extends BrigadierCommand<CommandSen
 	}
 
 
-
-
-
+	/**
+	 * Wraps the provided {@link SuggestionsSupplier} into a Brigadier’s {@link SuggestionProvider}.
+	 * @param suggestions the suggestions to wrap.
+	 * @return a {@link SuggestionProvider} generating the suggestions from the provided {@link SuggestionsSupplier}.
+	 */
 	protected SuggestionProvider<CommandSender> wrapSuggestions(SuggestionsSupplier<CommandSender> suggestions) {
 		return wrapSuggestions(suggestions, Function.identity());
 	}

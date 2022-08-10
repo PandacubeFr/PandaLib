@@ -1,5 +1,6 @@
 package fr.pandacube.lib.commands;
 
+import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.context.CommandContextBuilder;
 import com.mojang.brigadier.context.StringRange;
@@ -22,7 +23,16 @@ import java.util.concurrent.CompletableFuture;
 public class BrigadierSuggestionsUtil {
 
 
-
+    /**
+     * Gets suggestions with the provided parsed command.
+     * <p>
+     * This is a reimplementation of {@link CommandDispatcher#getCompletionSuggestions(ParseResults, int)} that
+     * keeps the original ordering of the suggestions.
+     * @param parsed the parsed command.
+     * @return the suggestions.
+     * @param <S> the sender type.
+     * @see CommandDispatcher#getCompletionSuggestions(ParseResults, int)
+     */
     public static <S> CompletableFuture<Suggestions> buildSuggestionBrigadier(ParseResults<S> parsed) {
         int cursor = parsed.getReader().getTotalLength();
         final CommandContextBuilder<S> context = parsed.getContext();
@@ -55,7 +65,17 @@ public class BrigadierSuggestionsUtil {
         return result;
     }
 
-    // inspired from com.mojang.brigadier.suggestion.Suggestions#merge, but without the sorting part
+
+    /**
+     * Merges the provided {@link Suggestions}.
+     * <p>
+     * This is a reimplementation of {@link Suggestions#merge(String, Collection)} that keeps the original ordering of
+     * the suggestions.
+     * @param input the command on which are based the suggestions.
+     * @param suggestions the {@link Suggestions} to merge.
+     * @return a {@link Suggestions}.
+     * @see Suggestions#create(String, Collection)
+     */
     public static Suggestions mergeSuggestionsOriginalOrdering(String input, Collection<Suggestions> suggestions) {
         if (suggestions.isEmpty()) {
             return new Suggestions(StringRange.at(0), new ArrayList<>(0));
@@ -72,8 +92,16 @@ public class BrigadierSuggestionsUtil {
 
 
 
-
-    // inspired from com.mojang.brigadier.suggestion.Suggestions#create, but without the sorting part
+    /**
+     * Creates a {@link Suggestions} from the provided Collection of {@link Suggestion}.
+     * <p>
+     * This is a reimplementation of {@link Suggestions#create(String, Collection)} that keeps the original ordering of
+     * the suggestions.
+     * @param command the command on which are based the suggestions.
+     * @param suggestions the Collection of {@link Suggestion}.
+     * @return a {@link Suggestions}.
+     * @see Suggestions#create(String, Collection)
+     */
     public static Suggestions createSuggestionsOriginalOrdering(String command, Collection<Suggestion> suggestions) {
         if (suggestions.isEmpty()) {
             return new Suggestions(StringRange.at(0), new ArrayList<>(0));
@@ -96,7 +124,7 @@ public class BrigadierSuggestionsUtil {
 
 
 
-    public static CompletableFuture<Suggestions> completableFutureSuggestionsKeepsOriginalOrdering(SuggestionsBuilder builder) {
+    /* package */ static CompletableFuture<Suggestions> completableFutureSuggestionsKeepsOriginalOrdering(SuggestionsBuilder builder) {
         return CompletableFuture.completedFuture(
                 createSuggestionsOriginalOrdering(builder.getInput(), getSuggestionsFromSuggestionsBuilder(builder))
         );

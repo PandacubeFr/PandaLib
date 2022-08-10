@@ -25,7 +25,7 @@ import fr.pandacube.lib.permissions.PermissionsCachedBackendReader.CachedPlayer;
 import fr.pandacube.lib.permissions.SQLPermissions.EntityType;
 import fr.pandacube.lib.util.Log;
 
-public class PermissionsResolver {
+/* package */ class PermissionsResolver {
 
 	private final PermissionsCachedBackendReader backendReader;
 	
@@ -400,7 +400,7 @@ public class PermissionsResolver {
 			ParsedSelfPermission specialPerm = null;
 			
 			for (SpecialPermission spePerm : specialPermissions) {
-				if (spePerm.match().match(permission)) {
+				if (spePerm.matcher().match(permission)) {
 					boolean res = spePerm.tester().test(permP, permission, server, world);
 					specialPerm = new ParsedSelfPermission(permission, res, PermType.SPECIAL);
 					break;

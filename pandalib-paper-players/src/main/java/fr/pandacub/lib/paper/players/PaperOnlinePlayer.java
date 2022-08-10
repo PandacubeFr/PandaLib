@@ -21,9 +21,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.MainHand;
 
-import fr.pandacube.lib.players.standalone.StandaloneOnlinePlayer;
+import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
 
-public interface PaperOnlinePlayer extends PaperOffPlayer, StandaloneOnlinePlayer {
+public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer {
 
     /*
      * General data and state
@@ -119,7 +119,7 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, StandaloneOnlinePlaye
     @Override
     PaperClientOptions getClientOptions();
 
-    abstract class PaperClientOptions implements StandaloneOnlinePlayer.ClientOptions {
+    abstract class PaperClientOptions implements AbstractOnlinePlayer.ClientOptions {
 
         private final PaperOnlinePlayer op;
 
