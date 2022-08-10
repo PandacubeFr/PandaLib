@@ -11,14 +11,25 @@ import fr.pandacube.lib.util.Log;
 import jline.console.completer.Completer;
 import net.kyori.adventure.text.ComponentLike;
 
+/**
+ * Implementation of {@link BrigadierDispatcher} that integrates the commands into the JLine CLI interface.
+ */
 public class CLIBrigadierDispatcher extends BrigadierDispatcher<Object> implements Completer {
-	
+
+	/**
+	 * The instance of {@link CLIBrigadierDispatcher}.
+	 */
 	public static final CLIBrigadierDispatcher instance = new CLIBrigadierDispatcher();
 
 
 	private static final Object sender = new Object();
-	
 
+
+	/**
+	 * Executes the provided command.
+	 * @param commandWithoutSlash the command, without the eventual slash at the begining.
+	 * @return the value returned by the executed command.
+	 */
 	public int execute(String commandWithoutSlash) {
 		return execute(sender, commandWithoutSlash);
 	}
@@ -37,7 +48,12 @@ public class CLIBrigadierDispatcher extends BrigadierDispatcher<Object> implemen
 		
 		return completeResult.getRange().getStart();
 	}
-	
+
+	/**
+	 * Gets the suggestions for the currently being typed command.
+	 * @param buffer the command that is being typed.
+	 * @return the suggestions for the currently being typed command.
+	 */
 	public Suggestions getSuggestions(String buffer) {
 		return getSuggestions(sender, buffer);
 	}

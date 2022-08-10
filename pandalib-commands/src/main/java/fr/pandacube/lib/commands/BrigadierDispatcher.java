@@ -63,10 +63,10 @@ public abstract class BrigadierDispatcher<S> {
 
 
     /**
-     * Gets the suggestions for the currenlty being typed command.
+     * Gets the suggestions for the currently being typed command.
      * @param sender the command sender.
      * @param buffer the command that is being typed.
-     * @return the suggestions for the currenlty being typed command.
+     * @return the suggestions for the currently being typed command.
      */
     public Suggestions getSuggestions(S sender, String buffer) {
         ParseResults<S> parsed = dispatcher.parse(buffer, sender);

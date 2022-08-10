@@ -31,7 +31,7 @@ public abstract class BungeeBrigadierCommand extends BrigadierCommand<CommandSen
 	protected BungeeBrigadierDispatcher dispatcher;
 
 	/**
-	 * Instanciate this command isntance.
+	 * Instanciate this command instance.
 	 * @param d the dispatcher in which to register this command.
 	 */
 	public BungeeBrigadierCommand(BungeeBrigadierDispatcher d) {

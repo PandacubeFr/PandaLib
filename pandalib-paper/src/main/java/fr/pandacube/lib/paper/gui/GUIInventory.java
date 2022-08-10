@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import com.google.common.collect.ImmutableMap;
+import fr.pandacube.lib.paper.PandaLibPaper;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -18,13 +19,19 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 
 import fr.pandacube.lib.chat.Chat;
 import fr.pandacube.lib.paper.util.ItemStackBuilder;
 
+/**
+ * An inventory based GUI.
+ */
 public class GUIInventory implements Listener {
-	
+
+	/**
+	 * Used as parameter of {@link #buildButton(ItemStack, Integer, Chat, List, Map)} to indicate that a button should
+	 * shine like an enchanted object, without showing enchant informations in the hover text.
+	 */
 	public static final Map<Enchantment, Integer> FAKE_ENCHANT = ImmutableMap.of(Enchantment.DURABILITY, 1);
 
 	private final Player player;
@@ -33,8 +40,14 @@ public class GUIInventory implements Listener {
 	private boolean isOpened = false;
 	private final Map<Integer, Consumer<InventoryClickEvent>> onClickEvents;
 
-	public GUIInventory(Player p, int nbLines, Chat title, Consumer<InventoryCloseEvent> closeEventAction,
-			Plugin pl) {
+	/**
+	 * Create a new inventory based GUI.
+	 * @param p the player for which to create the GUI.
+	 * @param nbLines the number of invotory lines for the interface.
+	 * @param title the title of the GUI (title of the inventory)
+	 * @param closeEventAction the action to perform when the player closes the GUI inventory
+	 */
+	public GUIInventory(Player p, int nbLines, Chat title, Consumer<InventoryCloseEvent> closeEventAction) {
 		if (title == null)
 			inv = Bukkit.createInventory(null, nbLines * 9);
 		else
@@ -46,7 +59,7 @@ public class GUIInventory implements Listener {
 
 		player = p;
 
-		Bukkit.getPluginManager().registerEvents(this, pl);
+		Bukkit.getPluginManager().registerEvents(this, PandaLibPaper.getPlugin());
 
 	}
 	
@@ -55,9 +68,11 @@ public class GUIInventory implements Listener {
 	}
 
 	/**
-	 * @param clickEventActions (l'event passé en paramètre de la méthode done a
-	 *        été pré-annulée. Pour la rétablir, faites un
-	 *        event.setCancelled(false)).
+	 * Set a button on the provided slot, if this slot is still empty.
+	 * @param p the slot index.
+	 * @param iStack the item to put in the slot.
+	 * @param clickEventActions the action to perform when the user clicks that button. The event passed as a parameter
+	 *                         is already cancelled. It is possible to uncancel it if needed.
 	 */
 	public void setButtonIfEmpty(int p, ItemStack iStack, Consumer<InventoryClickEvent> clickEventActions) {
 		if (inv.getItem(p) == null)
@@ -65,9 +80,11 @@ public class GUIInventory implements Listener {
 	}
 
 	/**
-	 * @param clickEventActions (l'event passé en paramètre de la méthode done a
-	 *        été pré-annulée. Pour la rétablir, faites un
-	 *        event.setCancelled(false)).
+	 * Set a button on the provided slot.
+	 * @param p the slot index.
+	 * @param iStack the item to put in the slot.
+	 * @param clickEventActions the action to perform when the user clicks that button. The event passed as a parameter
+	 *                         is already cancelled. It is possible to uncancel it if needed.
 	 */
 	public void setButton(int p, ItemStack iStack, Consumer<InventoryClickEvent> clickEventActions) {
 		inv.setItem(p, iStack);
@@ -75,38 +92,63 @@ public class GUIInventory implements Listener {
 	}
 
 	/**
-	 * @param clickEventActions (l'event passé en paramètre de la méthode done a
-	 *        été pré-annulée. Pour la rétablir, faites un
-	 *        event.setCancelled(false)).
+	 * Update/replace the action to perform for a specific slot.
+	 * @param p the slot index.
+	 * @param clickEventActions the action to perform when the user clicks that button. The event passed as a parameter
+	 *                         is already cancelled. It is possible to uncancel it if needed.
 	 */
 	public void changeClickEventAction(int p, Consumer<InventoryClickEvent> clickEventActions) {
 		onClickEvents.put(p, clickEventActions);
 	}
 
+	/**
+	 * Returns the item that is in the provided slot.
+	 * @param p the slot index.
+	 * @return the item that is in the provided slot.
+	 */
 	public ItemStack getItemStack(int p) {
 		return inv.getItem(p);
 	}
 
+	/**
+	 * Makes the GUI inventory appears for the player.
+	 */
 	public void open() {
 		if (isOpened) return;
 		player.openInventory(inv);
 		isOpened = true;
 	}
-	
+
+	/**
+	 * Force this GUI to be closes, without the intervention of the player.
+	 * The bukkit API will call the {@link InventoryCloseEvent}, trigerring eventual actions associated with this event.
+	 */
 	public void forceClose() {
 		if (!isOpened) return;
 		player.closeInventory(); // internally calls the InventoryCloseEvent
 	}
-	
+
+	/**
+	 * Tells if this inventory is open for the player.
+	 * @return true if this inventory is open for the player, false otherwise.
+	 */
 	public boolean isOpen() {
 		return isOpened;
 	}
 
+	/**
+	 * Clears the content of the GUI and the click event actions.
+	 */
 	public void clear() {
 		onClickEvents.clear();
 		inv.clear();
 	}
 
+	/**
+	 * Clears a part of the GUI and the click event actions.
+	 * @param firstElement the first element to remove.
+	 * @param nbElement the number of element to remove.
+	 */
 	public void clear(int firstElement, int nbElement) {
 		for (int i = firstElement; i < firstElement + nbElement; i++) {
 			inv.setItem(i, null);
@@ -114,10 +156,18 @@ public class GUIInventory implements Listener {
 		}
 	}
 
+	/**
+	 * Gets the underlying inventory of this GUI.
+	 * @return the underlying inventory of this GUI.
+	 */
 	public Inventory getInventory() {
 		return inv;
 	}
 
+	/**
+	 * Inventory click event handler.
+	 * @param event the event.
+	 */
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
 		if (!event.getWhoClicked().equals(player)) return;
@@ -135,6 +185,10 @@ public class GUIInventory implements Listener {
 
 	}
 
+	/**
+	 * Inventory close event handler.
+	 * @param event the event.
+	 */
 	@EventHandler
 	public void onInventoryClose(InventoryCloseEvent event) {
 		if (!event.getPlayer().equals(player)) return;
@@ -183,9 +237,6 @@ public class GUIInventory implements Listener {
 	public static ItemStack buildButton(ItemStack base, Chat displayName, List<Chat> lores, Map<Enchantment, Integer> enchantments) {
 		return buildButton(base, null, displayName, lores, enchantments);
 	}
-	public static ItemStack buildButton(ItemStack base, Integer amount, Chat displayName, Map<Enchantment, Integer> enchantments) {
-		return buildButton(base, amount, displayName, null, enchantments);
-	}
 	public static ItemStack buildButton(ItemStack base, Chat displayName, Map<Enchantment, Integer> enchantments) {
 		return buildButton(base, null, displayName, null, enchantments);
 	}
@@ -195,45 +246,22 @@ public class GUIInventory implements Listener {
 	public static ItemStack buildButton(ItemStack base, Chat displayName, List<Chat> lores) {
 		return buildButton(base, null, displayName, lores, null);
 	}
-	public static ItemStack buildButton(ItemStack base, Integer amount, Chat displayName) {
-		return buildButton(base, amount, displayName, null, null);
-	}
 	public static ItemStack buildButton(ItemStack base, Chat displayName) {
 		return buildButton(base, null, displayName, null, null);
 	}
-	public static ItemStack buildButton(ItemStack base, Integer amount) {
-		return buildButton(base, amount, null, null, null);
-	}
-	
-	
-	
 
-	public static ItemStack buildButton(Material m, int amount, Chat displayName, List<Chat> lores, Map<Enchantment, Integer> enchantments) {
-		return buildButton(new ItemStack(m, amount), displayName, lores, enchantments);
-	}
+
 	public static ItemStack buildButton(Material m, Chat displayName, List<Chat> lores, Map<Enchantment, Integer> enchantments) {
-		return buildButton(m, 1, displayName, lores, enchantments);
-	}
-	public static ItemStack buildButton(Material m, int amount, Chat displayName, Map<Enchantment, Integer> enchantments) {
-		return buildButton(m, amount, displayName, null, enchantments);
+		return buildButton(new ItemStack(m), null, displayName, lores, enchantments);
 	}
 	public static ItemStack buildButton(Material m, Chat displayName, Map<Enchantment, Integer> enchantments) {
-		return buildButton(m, 1, displayName, null, enchantments);
-	}
-	public static ItemStack buildButton(Material m, int amount, Chat displayName, List<Chat> lores) {
-		return buildButton(m, amount, displayName, lores, null);
+		return buildButton(new ItemStack(m), null, displayName, null, enchantments);
 	}
 	public static ItemStack buildButton(Material m, Chat displayName, List<Chat> lores) {
-		return buildButton(m, 1, displayName, lores, null);
-	}
-	public static ItemStack buildButton(Material m, int amount, Chat displayName) {
-		return buildButton(m, amount, displayName, null, null);
+		return buildButton(new ItemStack(m), null, displayName, lores, null);
 	}
 	public static ItemStack buildButton(Material m, Chat displayName) {
-		return buildButton(m, 1, displayName, null, null);
-	}
-	public static ItemStack buildButton(Material m, int amount) {
-		return buildButton(m, amount, null, null, null);
+		return buildButton(new ItemStack(m), null, displayName, null, null);
 	}
 	
 	

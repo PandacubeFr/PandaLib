@@ -11,10 +11,18 @@ import net.md_5.bungee.log.ColouredWriter;
 import net.md_5.bungee.log.ConciseFormatter;
 import net.md_5.bungee.log.LoggingOutputStream;
 
+/**
+ * Initializer for the logging system of a CLI application.
+ */
 public class CLILogger {
 
 	private static Logger logger = null;
-	
+
+	/**
+	 * Initialize and return the logger for this application.
+	 * @param cli the CLI instance to use
+	 * @return the logger of this application.
+	 */
 	public static synchronized Logger getLogger(CLI cli) {
 		if (logger == null) {
 			logger = Logger.getGlobal();

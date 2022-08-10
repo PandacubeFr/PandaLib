@@ -129,7 +129,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<BukkitBriga
     private Set<String> registeredAliases;
 
     /**
-     * Instanciate this command isntance.
+     * Instanciate this command instance.
      *
      * @param pl the plugin instance.
      * @param regPolicy the registration policy for this command.

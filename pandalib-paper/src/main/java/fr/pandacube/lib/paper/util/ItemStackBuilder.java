@@ -24,10 +24,9 @@ public class ItemStackBuilder {
 
 	/**
 	 * Create a builder with a clone of the provided ItemStack.
-	 * 
+	 * <p>
 	 * The returned builder will not alter the provided ItemStack.
-	 * IF you want to modify the ItemStack with the builder, please use {@link #wrap(ItemStack)}.
-	 * 
+	 * If you want to modify the ItemStack with the builder, please use {@link #wrap(ItemStack)}.
 	 * @param base the original ItemStack.
 	 * @return the builder
 	 */
@@ -37,7 +36,6 @@ public class ItemStackBuilder {
 
 	/**
 	 * Create a builder of a new ItemStack with the specified Material.
-	 * 
 	 * @param mat the material of the new builded ItemStack
 	 * @return the builder
 	 */
@@ -47,11 +45,12 @@ public class ItemStackBuilder {
 
 	/**
 	 * Create a builder that will alter the data of the provided ItemStack.
-	 * 
-	 * The {@link #build()} method of thez returned builder will return the same instance
+	 * <p>
+	 * The {@link #build()} method of the returned builder will return the same instance
 	 * of ItemStack as the parameter of this method.
-	 * 
+	 * <p>
 	 * To create a builder that doesn’t modify the provided ItemStack, use {@link #of(ItemStack)}.
+	 * @param stack the wrapped itemstack.
 	 * @return the builder
 	 */
 	public static ItemStackBuilder wrap(ItemStack stack) {

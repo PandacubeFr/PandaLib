@@ -10,40 +10,20 @@ import org.fusesource.jansi.AnsiConsole;
 
 import fr.pandacube.lib.util.Log;
 
+/**
+ * Class to hangle general standard IO operation for a CLI application. It uses Jline’s {@link ConsoleReader} for the
+ * console rendering, a JUL {@link Logger} for logging, and Brigadier for the command management.
+ */
 public class CLI {
-	
-	
-	public static final String ANSI_RESET = "\u001B[0m";
-	
-	public static final String ANSI_BLACK = "\u001B[30m";
-	public static final String ANSI_DARK_RED = "\u001B[31m";
-	public static final String ANSI_DARK_GREEN = "\u001B[32m";
-	public static final String ANSI_GOLD = "\u001B[33m";
-	public static final String ANSI_DARK_BLUE = "\u001B[34m";
-	public static final String ANSI_DARK_PURPLE = "\u001B[35m";
-	public static final String ANSI_DARK_AQUA = "\u001B[36m";
-	public static final String ANSI_GRAY = "\u001B[37m";
-	
-	public static final String ANSI_DARK_GRAY = "\u001B[30;1m";
-	public static final String ANSI_RED = "\u001B[31;1m";
-	public static final String ANSI_GREEN = "\u001B[32;1m";
-	public static final String ANSI_YELLOW = "\u001B[33;1m";
-	public static final String ANSI_BLUE = "\u001B[34;1m";
-	public static final String ANSI_LIGHT_PURPLE = "\u001B[35;1m";
-	public static final String ANSI_AQUA = "\u001B[36;1m";
-	public static final String ANSI_WHITE = "\u001B[37;1m";
-	
-	public static final String ANSI_BOLD = "\u001B[1m";
-	
-	public static final String ANSI_CLEAR_SCREEN = "\u001B[2J\u001B[1;1H";
-	
-	
-	
 	
 	private final ConsoleReader reader;
 	private final Logger logger;
-	
-	
+
+
+	/**
+	 * Create a new instance of {@link CLI}.
+	 * @throws IOException if an IO error occurs.
+	 */
 	public CLI() throws IOException {
         AnsiConsole.systemInstall();
 		reader = new ConsoleReader();
@@ -55,22 +35,29 @@ public class CLI {
 		System.setProperty("net.md_5.bungee.log-date-format", "yyyy-MM-dd HH:mm:ss");
 		logger = CLILogger.getLogger(this);
 	}
-	
-	
-	
-	
+
+
+	/**
+	 * Gets the Jline {@link ConsoleReader} of this CLI instance.
+	 * @return the Jline {@link ConsoleReader} of this CLI instance.
+	 */
 	public ConsoleReader getConsoleReader() {
 		return reader;
 	}
-	
-	
+
+	/**
+	 * Gets the {@link Logger} of this CLI instance.
+	 * @return the {@link Logger} of this CLI instance.
+	 */
 	public Logger getLogger() {
 		return logger;
 	}
-	
-	
-	
-	
+
+
+	/**
+	 * Runs the main loop of the console interface. This method will not return until the input stream is closed.
+	 * Every command will be send to the command handler asynchronously.
+	 */
 	public void loop() {
 		
 		int i = 0;
@@ -81,7 +68,6 @@ public class CLI {
 					continue;
 				String cmdLine = line;
 				new Thread(() -> CLIBrigadierDispatcher.instance.execute(cmdLine), "CLICmdThread #"+(i++)).start();
-				
 			}
 		} catch (IOException e) {
 			Log.severe(e);
