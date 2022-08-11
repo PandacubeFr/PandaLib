@@ -410,6 +410,7 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	/**
 	 * Adds the provided permission node to this entity that apply on any server.
 	 * @param permission the permission node to add.
+	 * @throws IllegalStateException if the permission is already set.
 	 */
 	public void addSelfPermission(String permission) {
 		addSelfPermission(permission, null, null);
@@ -419,6 +420,7 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	 * Adds the provided permission node to this entity that apply on the provided server.
 	 * @param permission the permission node to add.
 	 * @param server the server in which to apply the permission.
+	 * @throws IllegalStateException if the permission is already set.
 	 */
 	public void addSelfPermission(String permission, String server) {
 		addSelfPermission(permission, server, null);
@@ -429,6 +431,7 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	 * @param permission the permission node to add.
 	 * @param server the server in which to apply the permission.
 	 * @param world the world in which to apply the permission.
+	 * @throws IllegalStateException if the permission is already set.
 	 */
 	public void addSelfPermission(String permission, String server, String world) {
 		Permissions.backendWriter.addSelfPermission(name, type, permission, server, world);
@@ -443,6 +446,7 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	/**
 	 * Removes the provided permission node from this entity that applied on any server.
 	 * @param permission the permission node to add.
+	 * @throws IllegalStateException if the permission was not set.
 	 */
 	public void removeSelfPermission(String permission) {
 		removeSelfPermission(permission, null, null);
@@ -452,6 +456,7 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	 * Removes the provided permission node from this entity that applied on the provided server.
 	 * @param permission the permission node to remove.
 	 * @param server the server from which to remove the permission.
+	 * @throws IllegalStateException if the permission was not set.
 	 */
 	public void removeSelfPermission(String permission, String server) {
 		removeSelfPermission(permission, server, null);
@@ -462,6 +467,7 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	 * @param permission the permission node to remove.
 	 * @param server the server from which to remove the permission.
 	 * @param world the world from which to remove the permission.
+	 * @throws IllegalStateException if the permission was not set.
 	 */
 	public void removeSelfPermission(String permission, String server, String world) {
 		Permissions.backendWriter.removeSelfPermission(name, type, permission, server, world);
