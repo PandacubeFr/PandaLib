@@ -2,6 +2,9 @@ package fr.pandacube.lib.util;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Provides various methods to manipulate Strings.
@@ -77,5 +80,40 @@ public class StringUtil {
 		char[] chars = new char[n];
 		Arrays.fill(chars, base);
 		return String.valueOf(chars);
+	}
+
+
+
+
+
+	private static final Pattern endingNumber = Pattern.compile("(\\d+)$");
+
+
+	/**
+	 * Generate a name based on the original name, but that does not conflit with anouther one, according to the
+	 * provided predicate.
+	 * It can be used to to add an entry in a map when the key already exists, and it is ok to modify the added key to
+	 * not erase the previous data.
+	 * This situation can be compared to when a file is added to a directory but another file with the same name exists,
+	 * so the new file have a suffix number to make the file name different.
+	 * <p>
+	 * Be aware that this method may run an infinite loop if the predicate continuously returns true.
+	 * @param originalName the original conflicting name.
+	 * @param conflictTester a predicate that test if a generated name stills conflict with a set of name
+	 * @return the original name, with a suffix number (ex: {@code "original1"}).
+	 */
+	public static String fixConflictName(String originalName, Predicate<String> conflictTester) {
+		int suffix = 1;
+		Matcher endingMatcher = endingNumber.matcher(originalName);
+		if (endingMatcher.find()) {
+			suffix = Integer.parseInt(endingMatcher.group(1)) + 1;
+			originalName = originalName.substring(0, endingMatcher.start());
+		}
+
+		for (;; suffix++) {
+			String newStr = originalName + suffix;
+			if (!conflictTester.test(newStr))
+				return newStr;
+		}
 	}
 }
