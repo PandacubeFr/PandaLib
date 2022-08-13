@@ -1,13 +1,11 @@
 package fr.pandacube.lib.paper.scheduler;
 
+import fr.pandacube.lib.paper.PandaLibPaper;
+import org.bukkit.Bukkit;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-
-import org.bukkit.Bukkit;
-
-import fr.pandacube.lib.util.Log;
-import fr.pandacube.lib.paper.PandaLibPaper;
 
 /**
  * Provides methods to easily manage synchronous and asynchronous operations with the server thread.
@@ -41,17 +39,15 @@ public class SchedulerUtil {
 	 * @throws InterruptedException – if the current thread was interrupted while waiting
 	 */
 	public static <T> T runOnServerThreadAndWait(Callable<T> task) throws Exception {
-		if (Bukkit.isPrimaryThread())
-			return task.call();
-		
-		return Bukkit.getScheduler().callSyncMethod(PandaLibPaper.getPlugin(), () -> {
+		if (Bukkit.isPrimaryThread()) {
 			try {
 				return task.call();
 			} catch (Exception e) {
-				Log.severe("Exception while running callback code on server Thread. The source exception is:", e);
-				throw e;
+				throw new ExecutionException(e);
 			}
-		}).get();
+		}
+
+		return Bukkit.getScheduler().callSyncMethod(PandaLibPaper.getPlugin(), task).get();
 	}
 
 	/**
