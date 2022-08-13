@@ -3,6 +3,7 @@ package fr.pandacube.lib.util;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -116,4 +117,26 @@ public class StringUtil {
 				return newStr;
 		}
 	}
+
+
+	/**
+	 * Wraps the provided {@link UnaryOperator} of integer into an {@link UnaryOperator} of String parsing the input
+	 * string to int and converting back the return value to String.
+	 * @param operator the {@link UnaryOperator} to warp.
+	 * @return an {@link UnaryOperator} of String.
+	 */
+	public static UnaryOperator<String> wrapParsingInt(UnaryOperator<Integer> operator) {
+		return s -> Integer.toString(operator.apply(Integer.parseInt(s)));
+	}
+
+	/**
+	 * Wraps the provided {@link UnaryOperator} of long into an {@link UnaryOperator} of String parsing the input
+	 * string to long and converting back the return value to String.
+	 * @param operator the {@link UnaryOperator} to warp.
+	 * @return an {@link UnaryOperator} of String.
+	 */
+	public static UnaryOperator<String> wrapParsingLong(UnaryOperator<Long> operator) {
+		return s -> Long.toString(operator.apply(Long.parseLong(s)));
+	}
+
 }
