@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import fr.pandacube.lib.chat.ChatStatic;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -94,11 +96,11 @@ public class ItemStackBuilder {
 		return this;
 	}
 	
-	public ItemStackBuilder displayName(Chat displayName) {
+	public ItemStackBuilder displayName(ComponentLike displayName) {
 		if (displayName != null) {
-			if (displayName.getAdv().style().decoration(TextDecoration.ITALIC) == State.NOT_SET)
+			if (displayName.asComponent().style().decoration(TextDecoration.ITALIC) == State.NOT_SET)
 				((FormatableChat)displayName).italic(false);
-			return rawDisplayName(displayName.getAdv());
+			return rawDisplayName(displayName.asComponent());
 		}
 		else
 			return rawDisplayName(null);
@@ -110,17 +112,17 @@ public class ItemStackBuilder {
 		return this;
 	}
 	
-	public ItemStackBuilder lore(List<Chat> lore) {
+	public ItemStackBuilder lore(List<? extends ComponentLike> lore) {
 		if (lore != null) {
 			return rawLore(lore.stream()
-					.map(line -> Chat.italicFalseIfNotSet(line).getAdv())
-					.collect(Collectors.toList()));
+					.map(line -> Chat.italicFalseIfNotSet(ChatStatic.chatComponent(line)).getAdv())
+					.toList());
 		}
 		else
 			return rawLore(Collections.emptyList());
 	}
 	
-	public ItemStackBuilder addLoreAfter(List<Chat> lores) {
+	public ItemStackBuilder addLoreAfter(List<? extends ComponentLike> lores) {
 		if (lores != null) {
 			List<Component> baseLore = getOrInitMeta().lore();
 			if (baseLore == null) baseLore = Collections.emptyList();
@@ -128,15 +130,15 @@ public class ItemStackBuilder {
 					Streams.concat(
 							baseLore.stream(),
 							lores.stream()
-							.map(line -> Chat.italicFalseIfNotSet(line).getAdv())
+							.map(line -> Chat.italicFalseIfNotSet(ChatStatic.chatComponent(line)).getAdv())
 					)
-					.collect(Collectors.toList()));
+					.toList());
 		}
 		else
 			return this;
 	}
 	
-	public ItemStackBuilder addLoreAfter(Chat... lores) {
+	public ItemStackBuilder addLoreAfter(ComponentLike... lores) {
 		if (lores == null || lores.length == 0)
 			return this;
 		return addLoreAfter(Arrays.asList(lores));

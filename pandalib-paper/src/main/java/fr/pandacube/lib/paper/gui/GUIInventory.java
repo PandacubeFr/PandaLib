@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 
 import com.google.common.collect.ImmutableMap;
 import fr.pandacube.lib.paper.PandaLibPaper;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -29,7 +30,7 @@ import fr.pandacube.lib.paper.util.ItemStackBuilder;
 public class GUIInventory implements Listener {
 
 	/**
-	 * Used as parameter of {@link #buildButton(ItemStack, Integer, Chat, List, Map)} to indicate that a button should
+	 * Used as parameter of {@link #buildButton(ItemStack, Integer, ComponentLike, List, Map)} to indicate that a button should
 	 * shine like an enchanted object, without showing enchant informations in the hover text.
 	 */
 	public static final Map<Enchantment, Integer> FAKE_ENCHANT = ImmutableMap.of(Enchantment.DURABILITY, 1);
@@ -211,8 +212,8 @@ public class GUIInventory implements Listener {
 	
 	
 
-	public static ItemStack buildButton(ItemStack base, Integer amount, Chat displayName,
-			List<Chat> lores, Map<Enchantment, Integer> enchantments) {
+	public static ItemStack buildButton(ItemStack base, Integer amount, ComponentLike displayName,
+										List<? extends ComponentLike> lores, Map<Enchantment, Integer> enchantments) {
 		
 		ItemStackBuilder iStackBuilder = ItemStackBuilder.of(base);
 		
@@ -234,33 +235,33 @@ public class GUIInventory implements Listener {
 		
 		return iStackBuilder.build();
 	}
-	public static ItemStack buildButton(ItemStack base, Chat displayName, List<Chat> lores, Map<Enchantment, Integer> enchantments) {
+	public static ItemStack buildButton(ItemStack base, ComponentLike displayName, List<? extends ComponentLike> lores, Map<Enchantment, Integer> enchantments) {
 		return buildButton(base, null, displayName, lores, enchantments);
 	}
-	public static ItemStack buildButton(ItemStack base, Chat displayName, Map<Enchantment, Integer> enchantments) {
+	public static ItemStack buildButton(ItemStack base, ComponentLike displayName, Map<Enchantment, Integer> enchantments) {
 		return buildButton(base, null, displayName, null, enchantments);
 	}
-	public static ItemStack buildButton(ItemStack base, Integer amount, Chat displayName, List<Chat> lores) {
+	public static ItemStack buildButton(ItemStack base, Integer amount, ComponentLike displayName, List<? extends ComponentLike> lores) {
 		return buildButton(base, amount, displayName, lores, null);
 	}
-	public static ItemStack buildButton(ItemStack base, Chat displayName, List<Chat> lores) {
+	public static ItemStack buildButton(ItemStack base, ComponentLike displayName, List<? extends ComponentLike> lores) {
 		return buildButton(base, null, displayName, lores, null);
 	}
-	public static ItemStack buildButton(ItemStack base, Chat displayName) {
+	public static ItemStack buildButton(ItemStack base, ComponentLike displayName) {
 		return buildButton(base, null, displayName, null, null);
 	}
 
 
-	public static ItemStack buildButton(Material m, Chat displayName, List<Chat> lores, Map<Enchantment, Integer> enchantments) {
+	public static ItemStack buildButton(Material m, ComponentLike displayName, List<? extends ComponentLike> lores, Map<Enchantment, Integer> enchantments) {
 		return buildButton(new ItemStack(m), null, displayName, lores, enchantments);
 	}
-	public static ItemStack buildButton(Material m, Chat displayName, Map<Enchantment, Integer> enchantments) {
+	public static ItemStack buildButton(Material m, ComponentLike displayName, Map<Enchantment, Integer> enchantments) {
 		return buildButton(new ItemStack(m), null, displayName, null, enchantments);
 	}
-	public static ItemStack buildButton(Material m, Chat displayName, List<Chat> lores) {
+	public static ItemStack buildButton(Material m, ComponentLike displayName, List<? extends ComponentLike> lores) {
 		return buildButton(new ItemStack(m), null, displayName, lores, null);
 	}
-	public static ItemStack buildButton(Material m, Chat displayName) {
+	public static ItemStack buildButton(Material m, ComponentLike displayName) {
 		return buildButton(new ItemStack(m), null, displayName, null, null);
 	}
 	
