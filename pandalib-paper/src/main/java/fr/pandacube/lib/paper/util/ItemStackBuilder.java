@@ -98,9 +98,10 @@ public class ItemStackBuilder {
 	
 	public ItemStackBuilder displayName(ComponentLike displayName) {
 		if (displayName != null) {
-			if (displayName.asComponent().style().decoration(TextDecoration.ITALIC) == State.NOT_SET)
-				((FormatableChat)displayName).italic(false);
-			return rawDisplayName(displayName.asComponent());
+			Component cmp = displayName.asComponent();
+			if (cmp.style().decoration(TextDecoration.ITALIC) == State.NOT_SET)
+				cmp.style().decoration(TextDecoration.ITALIC, State.FALSE);
+			return rawDisplayName(cmp);
 		}
 		else
 			return rawDisplayName(null);
