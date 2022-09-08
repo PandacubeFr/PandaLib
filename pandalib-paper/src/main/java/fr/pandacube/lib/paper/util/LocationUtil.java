@@ -24,7 +24,7 @@ public class LocationUtil {
 	
 	public static String conciseToString(Location loc) {
 		String world = loc.getWorld() == null ? "null" : loc.getWorld().getName();
-		return "(" + world + "," + loc.getBlockX() + "," + loc.getBlockY() + "," + loc.getBlockZ() + ")";
+		return "(" + world + ", " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + ")";
 	}
 	/**
 	 * Return a random secure location in the provided world, inside the current
