@@ -30,6 +30,10 @@ import net.fabricmc.mappingio.format.MappingFormat;
 import net.fabricmc.mappingio.tree.MappingTree;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
+/**
+ * Provides reflection tools related to Minecraft servers internals.
+ * It automatically deals with the obfuscated classes and methods.
+ */
 public class NMSReflect {
 	
 
@@ -42,7 +46,10 @@ public class NMSReflect {
 	private static Boolean IS_SERVER_OBFUSCATED;
 	
 	private static boolean isInit = false;
-	
+
+	/**
+	 * Initialize all the obfuscation mapping data.
+	 */
 	public static void init() {
 		
 		synchronized (NMSReflect.class) {
@@ -137,7 +144,9 @@ public class NMSReflect {
 	
 	
 	/**
+	 * Returns the class mapping instance for the provided class.
 	 * @param mojName the binary name of the desired class, on the mojang mapping.
+	 * @return the class mapping instance for the provided class.
 	 * @throws NullPointerException if there is no mapping for the provided Mojang mapped class.
 	 */
 	public static ClassMapping mojClass(String mojName) {
@@ -169,9 +178,12 @@ public class NMSReflect {
             return classes;
         }
     }
-	
-	
-	
+
+
+	/**
+	 * Prints an HTML rendering of the currently loaded obfuscation mapping, into the provided {@link PrintStream}.
+	 * @param out the stream in which to print the HTML content.
+	 */
 	public static void printHTMLMapping(PrintStream out) {
 		String title = "Obfuscation mapping - " + Bukkit.getName() + " version " + Bukkit.getVersion();
 		out.println("<!DOCTYPE html><html><head>\n"
@@ -275,12 +287,12 @@ public class NMSReflect {
 				+ " running on <a href='https://papermc.io/'>" + Bukkit.getName() + "</a> version " + Bukkit.getVersion() + "</p>"
 				+ "</body></html>");
 	}
-	
-	
-	
-	
-	
-    public static class ClassMapping {
+
+
+	/**
+	 * Represents the mapping between the obfuscated and mojang names of a class and all its members.
+	 */
+	public static class ClassMapping {
     	private static int nextID = 0;
     	
     	/* package */ final int id = nextID++;
@@ -317,14 +329,22 @@ public class NMSReflect {
 			if (runtimeReflectClass == null)
 				runtimeReflectClass = Reflect.ofClass(IS_SERVER_OBFUSCATED ? obfName : mojName);
 		}
-		
-		
-		
-		
+
+
+		/**
+		 * Returns the actual runtime {@link Class} represented by this {@link ClassMapping}, wrapped into a
+		 * {@link ReflectClass}.
+		 * @return the actual runtime {@link Class} represented by this {@link ClassMapping}, wrapped into a
+		 * 		 * {@link ReflectClass}.
+		 */
 		public ReflectClass<?> runtimeReflect() {
 			return runtimeReflectClass;
 		}
-		
+
+		/**
+		 * Returns the actual runtime Class represented by this {@link ClassMapping}.
+		 * @return the actual runtime Class represented by this {@link ClassMapping}.
+		 */
 		public Class<?> runtimeClass() {
 			return runtimeReflectClass.get();
 		}
@@ -333,11 +353,14 @@ public class NMSReflect {
 		
 		
 		/**
-		 * 
+		 * Returns the actual runtime Method that has the provided mojang name and parameter types, wrapped into a
+		 * {@link ReflectMethod}.
 		 * @param mojName the Mojang mapped name of the method.
 		 * @param mojParametersType the list of parameters of the method.
 		 * Each parameter type must be an instance of one of the following type:
 		 * {@link NMSTypeWrapper}, {@link Class}, {@link ReflectClass} or {@link ClassMapping}.
+		 * @return the actual runtime Method that has the provided mojang name and parameter types, wrapped into a
+		 *         {@link ReflectMethod}.
 		 * @throws IllegalArgumentException if one of the parameter has an invalid type
 		 * @throws NullPointerException if one of the parameter is null, or if there is no mapping for the provided Mojang mapped method.
 		 * @throws ClassNotFoundException if there is no runtime class to represent one of the provided parametersType.
@@ -364,10 +387,11 @@ public class NMSReflect {
 		
 
 		/**
-		 * 
+		 * Returns the actual runtime Field that has the provided mojang name, wrapped into a {@link ReflectField}.
 		 * @param mojName the Mojang mapped name of the field.
+		 * @return the actual runtime Field that has the provided mojang name, wrapped into a {@link ReflectField}.
 		 * @throws NullPointerException if there is no mapping for the provided Mojang mapped field.
-		 * @throws NoSuchFieldException if there is no runtime method to represent the provided method.
+		 * @throws NoSuchFieldException if there is no runtime field to represent the provided mojang field.
 		 */
 		public ReflectField<?> mojField(String mojName) throws NoSuchFieldException {
 			MemberMapping<String, ReflectField<?>> fm = fieldsByMoj.get(mojName);

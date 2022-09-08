@@ -70,11 +70,13 @@ import fr.pandacube.lib.util.Log;
 			return permission.startsWith("-");
 		}
 
+		@Deprecated
 		@Override
 		public boolean playerAdd(String world, String player, String permission) {
 			return false;
 		}
 
+		@Deprecated
 		@Override
 		public boolean playerRemove(String world, String player, String permission) {
 			return false;
@@ -114,11 +116,13 @@ import fr.pandacube.lib.util.Log;
 			return Permissions.getPlayer(player.getUniqueId()).isInGroup(group);
 		}
 
+		@Deprecated
 		@Override
 		public boolean playerAddGroup(String world, String player, String group) {
 			return false;
 		}
 
+		@Deprecated
 		@Override
 		public boolean playerRemoveGroup(String world, String player, String group) {
 			return false;
@@ -210,40 +214,50 @@ import fr.pandacube.lib.util.Log;
 			return Permissions.getGroup(group).getSuffix();
 		}
 
+		@Deprecated
 		@Override
 		public void setPlayerPrefix(String world, String player, String prefix) { /* unsupported */ }
+		@Deprecated
 		@Override
 		public void setPlayerSuffix(String world, String player, String suffix) { /* unsupported */ }
 		@Override
 		public void setGroupPrefix(String world, String group, String prefix) { /* unsupported */ }
 		@Override
 		public void setGroupSuffix(String world, String group, String suffix) { /* unsupported */ }
+		@Deprecated
 		@Override
 		public int getPlayerInfoInteger(String world, String player, String node, int defaultValue) { return defaultValue; }
+		@Deprecated
 		@Override
 		public void setPlayerInfoInteger(String world, String player, String node, int value) { /* unsupported */ }
 		@Override
 		public int getGroupInfoInteger(String world, String group, String node, int defaultValue) { return defaultValue; }
 		@Override
 		public void setGroupInfoInteger(String world, String group, String node, int value) { /* unsupported */ }
+		@Deprecated
 		@Override
 		public double getPlayerInfoDouble(String world, String player, String node, double defaultValue) { return defaultValue; }
+		@Deprecated
 		@Override
 		public void setPlayerInfoDouble(String world, String player, String node, double value) { /* unsupported */ }
 		@Override
 		public double getGroupInfoDouble(String world, String group, String node, double defaultValue) { return defaultValue; }
 		@Override
 		public void setGroupInfoDouble(String world, String group, String node, double value) { /* unsupported */ }
+		@Deprecated
 		@Override
 		public boolean getPlayerInfoBoolean(String world, String player, String node, boolean defaultValue) { return defaultValue; }
+		@Deprecated
 		@Override
 		public void setPlayerInfoBoolean(String world, String player, String node, boolean value) { /* unsupported */ }
 		@Override
 		public boolean getGroupInfoBoolean(String world, String group, String node, boolean defaultValue) { return defaultValue; }
 		@Override
 		public void setGroupInfoBoolean(String world, String group, String node, boolean value) { /* unsupported */ }
+		@Deprecated
 		@Override
 		public String getPlayerInfoString(String world, String player, String node, String defaultValue) { return defaultValue; }
+		@Deprecated
 		@Override
 		public void setPlayerInfoString(String world, String player, String node, String value) { /* unsupported */ }
 		@Override
