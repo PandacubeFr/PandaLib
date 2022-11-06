@@ -1,4 +1,4 @@
-package fr.pandacub.lib.paper.players;
+package fr.pandacube.lib.paper.players;
 
 import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.ClientOption.ChatVisibility;

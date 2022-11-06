@@ -1,4 +1,4 @@
-package fr.pandacub.lib.paper.players;
+package fr.pandacube.lib.paper.players;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
