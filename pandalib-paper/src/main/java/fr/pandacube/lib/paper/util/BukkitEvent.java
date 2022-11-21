@@ -58,7 +58,10 @@ public class BukkitEvent {
     // method retrieved from OB.plugin.SimplePluginManager#getEventListeners
     public static HandlerList getHandlerList(Class<? extends Event> type) {
         try {
-            return (HandlerList) Reflect.ofClass(getRegistrationClass(type)).method("getHandlerList").invokeStatic();
+			Class<? extends Event> actualClass = getRegistrationClass(type);
+			if (actualClass == null)
+				return null;
+            return (HandlerList) Reflect.ofClass(actualClass).method("getHandlerList").invokeStatic();
         }
         catch (ReflectiveOperationException e) {
             return null;
