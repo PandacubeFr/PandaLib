@@ -17,13 +17,21 @@ import fr.pandacube.lib.util.RandomUtil;
  * Represent the littelest cuboid selection of blocks that contains the bounding box
  * passed to the constructor.
  */
-public class AABBBlock implements Iterable<BlockVector> {
+public class AABBBlock implements Iterable<BlockVector>, Cloneable {
 	
 	public final Vector pos1, pos2;
 
 	private final Vector center;
 	
 	private final long volume;
+
+	private AABBBlock(AABBBlock original, int shiftX, int shiftY, int shiftZ) {
+		Vector shiftVect = new Vector(shiftX, shiftY, shiftZ);
+		pos1 = original.pos1.clone().add(shiftVect);
+		pos2 = original.pos2.clone().add(shiftVect);
+		center = original.center.clone().add(shiftVect);
+		volume = original.volume;
+	}
 	
 	public AABBBlock(Vector p1, Vector p2) {
 		this(p1.getBlockX(), p1.getBlockY(), p1.getBlockZ(), p2.getBlockX(), p2.getBlockY(), p2.getBlockZ());
@@ -55,7 +63,17 @@ public class AABBBlock implements Iterable<BlockVector> {
 		
 		volume = (long) Math.abs(p2x_ - p1x_) * Math.abs(p2x_ - p1x_) * Math.abs(p2x_ - p1x_);
 	}
-	
+
+	public AABBBlock shift(int x, int y, int z) {
+		return new AABBBlock(this, x, y, z);
+	}
+
+	@SuppressWarnings("MethodDoesntCallSuperMethod")
+	@Override
+	public AABBBlock clone() throws CloneNotSupportedException {
+		return new AABBBlock(this, 0, 0, 0);
+	}
+
 	public boolean overlaps(Entity e) {
 		return overlaps(e.getBoundingBox());
 	}
