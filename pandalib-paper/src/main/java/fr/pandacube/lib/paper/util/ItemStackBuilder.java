@@ -1,8 +1,10 @@
 package fr.pandacube.lib.paper.util;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import fr.pandacube.lib.chat.ChatStatic;
@@ -21,6 +23,8 @@ import fr.pandacube.lib.chat.Chat.FormatableChat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.format.TextDecoration.State;
+
+import static fr.pandacube.lib.chat.ChatStatic.chatComponent;
 
 public class ItemStackBuilder {
 
@@ -98,10 +102,7 @@ public class ItemStackBuilder {
 	
 	public ItemStackBuilder displayName(ComponentLike displayName) {
 		if (displayName != null) {
-			Component cmp = displayName.asComponent();
-			if (cmp.style().decoration(TextDecoration.ITALIC) == State.NOT_SET)
-				cmp.style().decoration(TextDecoration.ITALIC, State.FALSE);
-			return rawDisplayName(cmp);
+			return rawDisplayName(Chat.italicFalseIfNotSet(chatComponent(displayName)).asComponent());
 		}
 		else
 			return rawDisplayName(null);
@@ -116,7 +117,7 @@ public class ItemStackBuilder {
 	public ItemStackBuilder lore(List<? extends ComponentLike> lore) {
 		if (lore != null) {
 			return rawLore(lore.stream()
-					.map(line -> Chat.italicFalseIfNotSet(ChatStatic.chatComponent(line)).getAdv())
+					.map(line -> Chat.italicFalseIfNotSet(chatComponent(line)).getAdv())
 					.toList());
 		}
 		else
@@ -131,7 +132,7 @@ public class ItemStackBuilder {
 					Streams.concat(
 							baseLore.stream(),
 							lores.stream()
-							.map(line -> Chat.italicFalseIfNotSet(ChatStatic.chatComponent(line)).getAdv())
+							.map(line -> Chat.italicFalseIfNotSet(chatComponent(line)).getAdv())
 					)
 					.toList());
 		}
@@ -164,10 +165,28 @@ public class ItemStackBuilder {
 	public ItemStackBuilder hideAttributes() {
 		return flags(ItemFlag.HIDE_ATTRIBUTES);
 	}
-	
+
 	public ItemStackBuilder fakeEnchant() {
 		enchant(Enchantment.DURABILITY, 1);
 		return hideEnchants();
+	}
+
+	public ItemStackBuilder unbreakable() {
+		getOrInitMeta().setUnbreakable(true);
+		updateMeta();
+		return this;
+	}
+
+	public ItemStackBuilder canDestroy(Set<Material> destroyable) {
+		getOrInitMeta().setCanDestroy(destroyable);
+		updateMeta();
+		return this;
+	}
+
+	public ItemStackBuilder canPlaceOn(Set<Material> placeOn) {
+		getOrInitMeta().setCanPlaceOn(placeOn);
+		updateMeta();
+		return this;
 	}
 	
 	public ItemStackBuilder damage(int d) {
