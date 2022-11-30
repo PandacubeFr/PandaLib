@@ -1,5 +1,6 @@
 package fr.pandacube.lib.permissions;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,17 @@ public final class PermGroup extends PermEntity {
 		return getBackendEntity().inheritances.stream()
 				.map(cg -> cg.name)
 				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Gets all the groups that directly inherits from this group.
+	 * @return the groups that directly inherits from this group.
+	 */
+	public List<PermGroup> getInheritedGroups() {
+		CachedGroup thisCG = getBackendEntity();
+		return fromCachedGroups(Permissions.backendReader.getGroups().stream()
+				.filter(cg -> cg.inheritances.contains(thisCG))
+				.toList());
 	}
 
 	/**
