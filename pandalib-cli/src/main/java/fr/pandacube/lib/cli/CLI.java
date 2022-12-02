@@ -68,7 +68,8 @@ public class CLI extends Thread {
 			while((line = reader.readLine()) != null) {
 				if (line.trim().equals(""))
 					continue;
-				CLIBrigadierDispatcher.instance.execute(line);
+				String cmdLine = line;
+				new Thread(() -> CLIBrigadierDispatcher.instance.execute(cmdLine), "CLICmdThread #"+(i++)).start();
 			}
 		} catch (IOException e) {
 			Log.severe(e);
