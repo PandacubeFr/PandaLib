@@ -12,9 +12,9 @@ import fr.pandacube.lib.util.Log;
 
 /**
  * Class to hangle general standard IO operation for a CLI application. It uses Jline’s {@link ConsoleReader} for the
- * console rendering, a JUL {@link Logger} for logging, and Brigadier for the command management.
+ * console rendering, a JUL {@link Logger} for logging, and Brigadier to handle commands.
  */
-public class CLI {
+public class CLI extends Thread {
 	
 	private final ConsoleReader reader;
 	private final Logger logger;
@@ -25,9 +25,11 @@ public class CLI {
 	 * @throws IOException if an IO error occurs.
 	 */
 	public CLI() throws IOException {
+		super("Console Thread");
+		setDaemon(true);
+
         AnsiConsole.systemInstall();
 		reader = new ConsoleReader();
-		reader.setBellEnabled(false);
 		reader.setPrompt("\r>");
 		reader.addCompleter(CLIBrigadierDispatcher.instance);
 
@@ -56,9 +58,9 @@ public class CLI {
 
 	/**
 	 * Runs the main loop of the console interface. This method will not return until the input stream is closed.
-	 * Every command will be send to the command handler asynchronously.
 	 */
-	public void loop() {
+	@Override
+	public void run() {
 		
 		int i = 0;
 		String line;
@@ -66,8 +68,7 @@ public class CLI {
 			while((line = reader.readLine()) != null) {
 				if (line.trim().equals(""))
 					continue;
-				String cmdLine = line;
-				new Thread(() -> CLIBrigadierDispatcher.instance.execute(cmdLine), "CLICmdThread #"+(i++)).start();
+				CLIBrigadierDispatcher.instance.execute(line);
 			}
 		} catch (IOException e) {
 			Log.severe(e);
