@@ -98,7 +98,9 @@ public enum MinecraftVersion {
 	/** Minecraft version 1.19, protocol version 759. */
 	v1_19(759, "1.19"),
 	/** Minecraft versions 1.19.1 and 1.19.2, protocol version 760. */
-	v1_19_1_to_1_19_2(760, "1.19.1", "1.19.2");
+	v1_19_1_to_1_19_2(760, "1.19.1", "1.19.2"),
+	/** Minecraft versions 1.19.3, protocol version 761. */
+	v1_19_3(761, "1.19.3");
 
 	// IMPORTANT: don't forget to update the versionMergeDisplay value when adding a new version;
 	
@@ -195,8 +197,12 @@ public enum MinecraftVersion {
 		versionMergeDisplay.put(EnumSet.of(v1_18_to_1_18_1, v1_18_2),
 				List.of("1.18.x"));
 
-		versionMergeDisplay.put(EnumSet.of(v1_19, v1_19_1_to_1_19_2),
+		versionMergeDisplay.put(EnumSet.of(v1_19, v1_19_1_to_1_19_2, v1_19_3),
 				List.of("1.19.x"));
+		versionMergeDisplay.put(EnumSet.of(v1_19, v1_19_1_to_1_19_2),
+				List.of("1.19-1.19.2"));
+		versionMergeDisplay.put(EnumSet.of(v1_19_1_to_1_19_2, v1_19_3),
+				List.of("1.19.1-1.19.3"));
 	}
 
 
