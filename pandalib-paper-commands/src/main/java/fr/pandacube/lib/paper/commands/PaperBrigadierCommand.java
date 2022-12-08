@@ -78,7 +78,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<BukkitBriga
         Command bukkitCommand = bukkitCmdMap.getCommand(name);
         if (bukkitCommand != null) {
             if (VanillaCommandWrapper.REFLECT.get().isInstance(bukkitCommand)) {
-                Log.info("Command /" + name + " is already a vanilla command.");
+                //Log.info("Command /" + name + " is already a vanilla command.");
                 return;
             }
             Log.info("Removing Bukkit command /" + name + " (" + getCommandIdentity(bukkitCommand) + ")");
@@ -209,9 +209,13 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<BukkitBriga
                 nmsRegister = true;
                 Log.info("Overwriting Brigadier command /" + name);
             }
-            else {
+            else if (prefixed || !isAlias) {
                 Log.severe("/" + name + " already in NMS Brigadier instance."
-                        + " Wont replace it because registration is not forced.");
+                        + " Wont replace it because registration is not forced for prefixed or initial name of a command.");
+            }
+            else { // conflict, wont replace, not forced but only an alias anyway
+                Log.info("/" + name + " already in NMS Brigadier instance."
+                        + " Wont replace it because registration is not forced for a non-prefixed alias.");
             }
         }
         else {
@@ -243,10 +247,13 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<BukkitBriga
                     Log.info("Overwriting Bukkit command /" + name
                             + " (" + getCommandIdentity(bukkitConflicted) + ")");
                 }
+                else if (prefixed || !isAlias) {
+                    Log.severe("/" + name + " already in Bukkit dispatcher (" + getCommandIdentity(bukkitConflicted) + ")." +
+                            " Wont replace it because registration is not forced for prefixed or initial name of a command.");
+                }
                 else {
-                    Log.severe("/" + name + " already in Bukkit"
-                            + " dispatcher (" + getCommandIdentity(bukkitConflicted)
-                            + "). Wont replace it because registration is not forced.");
+                    Log.info("/" + name + " already in Bukkit dispatcher (" + getCommandIdentity(bukkitConflicted) + ")." +
+                            " Wont replace it because registration is not forced for a non-prefixed alias.");
                 }
             }
         }
