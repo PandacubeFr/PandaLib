@@ -15,5 +15,12 @@ public enum Type {
 			case WORKDIR -> cfg.workdirBackupEnabled;
 		};
 	}
+
+	public BackupCleaner backupCleaner(BackupConfig cfg) {
+		return switch (this) {
+			case WORLDS -> cfg.worldBackupCleaner;
+			case WORKDIR -> cfg.workdirBackupCleaner;
+		};
+	}
 	
 }

@@ -104,6 +104,12 @@ public abstract class CompressProcess implements Comparable<CompressProcess>, Ru
 				backupManager.persist.updateDirtyStatusAfterCompress(type, name);
 				
 				displayDirtynessStatus();
+
+				try {
+					type.backupCleaner(backupManager.config).cleanupArchives(targetDir);
+				} catch (Exception e) {
+					Log.severe(e);
+				}
 			}
 			catch (final Exception e) {
 				Log.severe("[Backup] Failed: " + sourceDir + " -> " + target, e);
