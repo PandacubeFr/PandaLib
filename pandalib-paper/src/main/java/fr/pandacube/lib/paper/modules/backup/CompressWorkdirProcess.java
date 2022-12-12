@@ -1,7 +1,6 @@
 package fr.pandacube.lib.paper.modules.backup;
 
 import java.io.File;
-import java.util.List;
 import java.util.function.BiPredicate;
 
 public class CompressWorkdirProcess extends CompressProcess {
@@ -12,9 +11,6 @@ public class CompressWorkdirProcess extends CompressProcess {
 	
 	
 	public BiPredicate<File, String> getFilenameFilter() {
-		List<String> ignoreList = backupManager.config.workdirIgnoreList;
-		if (ignoreList == null)
-			return null;
 		return new SourceFileFilter();
 	}
 	
