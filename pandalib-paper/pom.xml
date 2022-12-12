@@ -53,6 +53,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>fr.pandacube.lib</groupId>
+            <artifactId>pandalib-players</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Paper -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
