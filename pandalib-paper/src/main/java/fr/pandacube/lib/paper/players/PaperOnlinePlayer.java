@@ -3,6 +3,7 @@ package fr.pandacube.lib.paper.players;
 import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.ClientOption.ChatVisibility;
 import com.destroystokyo.paper.SkinParts;
+import fr.pandacube.lib.paper.players.PlayerNonPersistentConfig.Expiration;
 import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identified;
@@ -275,6 +276,32 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
      */
     default void damage(double amount, LivingEntity source) {
         getBukkitPlayer().damage(amount, source); // uses appropriate DamageSource according to provided player or entity
+    }
+
+
+
+
+
+
+
+    /*
+     * Player config
+     */
+
+    default String getNonPersistentConfig(String key) {
+        return PlayerNonPersistentConfig.getData(getUniqueId(), key);
+    }
+
+    default String getNonPersistentConfig(String key, String deflt) {
+        return PlayerNonPersistentConfig.getData(getUniqueId(), key);
+    }
+
+    default void setNonPersistentConfig(String key, String value, Expiration expiration) {
+        PlayerNonPersistentConfig.setData(getUniqueId(), key, value, expiration);
+    }
+
+    default void unsetNonPersistentConfig(String key) {
+        PlayerNonPersistentConfig.unsetData(getUniqueId(), key);
     }
 
 
