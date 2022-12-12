@@ -13,6 +13,11 @@ public class PandaLibPaper {
 		PerformanceAnalysisManager.getInstance(); // initialize
 		
 	}
+
+
+	public static void disable() {
+		PerformanceAnalysisManager.getInstance().cancelInternalBossBar();
+	}
 	
 	public static Plugin getPlugin() {
 		return plugin;
