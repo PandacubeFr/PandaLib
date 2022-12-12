@@ -7,6 +7,8 @@ import org.bukkit.scoreboard.Team;
 
 import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
 
+import java.util.function.UnaryOperator;
+
 /**
  * Represents any player on a paper server, either offline or online.
  */
@@ -92,6 +94,39 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
         String teamColor = team.getColor().toString();
 
         return teamPrefix + teamColor + name + teamSuffix;
+    }
+
+
+
+
+
+    /*
+     * Player config
+     */
+
+    @Override
+    default String getConfig(String key) throws Exception {
+        return PaperPlayerConfigStorage.get(getUniqueId(), key);
+    }
+
+    @Override
+    default String getConfig(String key, String deflt) throws Exception {
+        return PaperPlayerConfigStorage.get(getUniqueId(), key, deflt);
+    }
+
+    @Override
+    default void setConfig(String key, String value) throws Exception {
+        PaperPlayerConfigStorage.set(getUniqueId(), key, value);
+    }
+
+    @Override
+    default void updateConfig(String key, String deflt, UnaryOperator<String> updater) throws Exception {
+        PaperPlayerConfigStorage.update(getUniqueId(), key, deflt, updater);
+    }
+
+    @Override
+    default void unsetConfig(String key) throws Exception {
+        PaperPlayerConfigStorage.unset(getUniqueId(), key);
     }
 
 }

@@ -1,6 +1,7 @@
 package fr.pandacube.lib.players.standalone;
 
 import java.util.UUID;
+import java.util.function.UnaryOperator;
 
 /**
  * Represents any player, either offline or online.
@@ -64,6 +65,24 @@ public interface AbstractOffPlayer {
 	 * @return the display name of the player.
 	 */
 	String getDisplayName();
+
+
+
+
+
+	/*
+	 * Player config
+	 */
+
+	String getConfig(String key) throws Exception;
+
+	String getConfig(String key, String deflt) throws Exception;
+
+	void setConfig(String key, String value) throws Exception;
+
+	void updateConfig(String key, String deflt, UnaryOperator<String> updater) throws Exception;
+
+	void unsetConfig(String key) throws Exception;
 
 	
 
