@@ -75,7 +75,6 @@
         <module>pandalib-paper</module>
         <module>pandalib-paper-commands</module>
         <module>pandalib-paper-permissions</module>
-        <module>pandalib-paper-players</module>
         <module>pandalib-paper-reflect</module>
         <module>pandalib-permissions</module>
         <module>pandalib-players</module>
