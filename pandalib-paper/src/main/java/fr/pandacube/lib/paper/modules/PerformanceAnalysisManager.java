@@ -77,11 +77,11 @@ public class PerformanceAnalysisManager implements Listener {
 	private final LinkedList<Long> tpsCPUTimes = new LinkedList<>();
 	private final LinkedList<Long> interTPSDurations = new LinkedList<>();
 
-	
-	
-	
-	private final AutoUpdatedBossBar tpsBar;
-	private final AutoUpdatedBossBar memoryBar;
+
+
+
+	public final AutoUpdatedBossBar tpsBar;
+	public final AutoUpdatedBossBar memoryBar;
 	private final List<Player> barPlayers = new ArrayList<>();
 	private final List<BossBar> relatedBossBars = new ArrayList<>();
 	
@@ -213,11 +213,13 @@ public class PerformanceAnalysisManager implements Listener {
 	
 
 	
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 			@SuppressWarnings("unchecked")
 			AbstractPlayerManager<PaperOnlinePlayer, PaperOffPlayer> playerManager = (AbstractPlayerManager<PaperOnlinePlayer, PaperOffPlayer>) AbstractPlayerManager.getInstance();
+			if (playerManager == null)
+				return;
 			PaperOffPlayer offP = playerManager.getOffline(event.getPlayer().getUniqueId());
 			try {
 				if ("true".equals(offP.getConfig("system.bar", "false"))) {
@@ -231,7 +233,7 @@ public class PerformanceAnalysisManager implements Listener {
 	}
 
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		removePlayerToBars(event.getPlayer());
 	}
