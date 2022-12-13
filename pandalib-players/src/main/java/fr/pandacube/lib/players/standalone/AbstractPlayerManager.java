@@ -118,7 +118,32 @@ public abstract class AbstractPlayerManager<OP extends AbstractOnlinePlayer, OF 
 	}
 
 	/**
+	 * Get all the players that the provided player can see.
+	 * The default implementation returns all the players.
+	 * Concrete subclasses should override this method, especially
+	 * on Paper server, using the {@code Player.canSee(Player)} API.
+	 * @return the players that the provided player can see.
+	 */
+	public List<OP> getOnlyVisibleFor(OF viewer) {
+		return getAll();
+	}
+
+	/**
+	 * Get all the players that the provided player can see.
+	 * The default implementation returns all the players.
+	 * Concrete subclasses should override this method, especially
+	 * on Paper server, using the {@code Player.canSee(Player)} API.
+	 * @return the players that the provided player can see.
+	 */
+	public List<String> getNamesOnlyVisible(OF viewer) {
+		return getOnlyVisibleFor(viewer).stream()
+				.map(AbstractOnlinePlayer::getName)
+				.toList();
+	}
+
+	/**
 	 * Returns an instance of {@link AbstractOffPlayer} corresponding to a player with the provided {@link UUID}.
+	 *
 	 * @param p the UUID of the player.
 	 * @return an instance of {@link AbstractOffPlayer}. It can be a new instance, an {@link AbstractOnlinePlayer}
 	 * instance if the player is online, or a cached instance of {@link AbstractOffPlayer}.

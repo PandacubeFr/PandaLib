@@ -26,6 +26,9 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Vec3Argument;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.core.BlockPos;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerPlayer;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.PaperAdventure;
+import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
+import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
+import fr.pandacube.lib.players.standalone.AbstractPlayerManager;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 import fr.pandacube.lib.util.Log;
 import net.kyori.adventure.text.Component;
@@ -52,6 +55,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * Abstract class to hold a command to be integrated into a Paper server vanilla command dispatcher.
@@ -408,6 +412,20 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<BukkitBriga
         return VanillaCommandWrapper.getListener(sender);
     }
 
+
+    /**
+     * A suggestions supplier that suggests the names of the currently connected players (that the command sender can see).
+     */
+    public static final SuggestionsSupplier<CommandSender> TAB_PLAYER_CURRENT_SERVER =  (sender, ti, token, a) -> {
+        @SuppressWarnings("unchecked")
+        AbstractPlayerManager<AbstractOnlinePlayer, AbstractOffPlayer> pm = (AbstractPlayerManager<AbstractOnlinePlayer, AbstractOffPlayer>) AbstractPlayerManager.getInstance();
+        Stream<String> plStream;
+        if (pm == null)
+            plStream = Bukkit.getOnlinePlayers().stream().filter(p -> !(sender instanceof Player senderP) || senderP.canSee(p)).map(Player::getName);
+        else
+            plStream = pm.getNamesOnlyVisible(sender instanceof Player senderP ? pm.getOffline(senderP.getUniqueId()) : null).stream();
+        return SuggestionsSupplier.collectFilteredStream(plStream, token);
+    };
 
     /**
      * A suggestions supplier that suggests the names of the worlds currently loaded on this server.
