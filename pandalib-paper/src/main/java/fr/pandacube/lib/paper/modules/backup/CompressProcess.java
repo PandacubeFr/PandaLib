@@ -18,7 +18,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.function.BiPredicate;
 
@@ -153,9 +152,11 @@ public abstract class CompressProcess implements Comparable<CompressProcess>, Ru
 	
 	
 	static DateTimeFormatter dateFileNameFormatter = new DateTimeFormatterBuilder()
-			.append(DateTimeFormatter.BASIC_ISO_DATE)
+			.appendValue(ChronoField.YEAR, 4)
+			.appendValue(ChronoField.MONTH_OF_YEAR, 2)
+			.appendValue(ChronoField.DAY_OF_MONTH, 2)
 			.appendLiteral('-')
-			.appendValue(ChronoField.HOUR_OF_DAY, 2) // there is no DateTimeFormatter.BASIC_ISO_TIME
+			.appendValue(ChronoField.HOUR_OF_DAY, 2)
 			.appendValue(ChronoField.MINUTE_OF_HOUR, 2)
 			.appendValue(ChronoField.SECOND_OF_MINUTE, 2)
 			.toFormatter();

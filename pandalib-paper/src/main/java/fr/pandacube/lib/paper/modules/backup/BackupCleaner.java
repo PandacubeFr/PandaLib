@@ -2,6 +2,7 @@ package fr.pandacube.lib.paper.modules.backup;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -80,7 +81,13 @@ public abstract class BackupCleaner implements UnaryOperator<TreeSet<LocalDateTi
             }
 
             String dateTimeStr = filename.substring(0, filename.length() - 4);
-            LocalDateTime ldt = LocalDateTime.parse(dateTimeStr, CompressProcess.dateFileNameFormatter);
+            LocalDateTime ldt;
+            try {
+                ldt = LocalDateTime.parse(dateTimeStr, CompressProcess.dateFileNameFormatter);
+            } catch (DateTimeParseException e) {
+                Log.warning("Unable to parse file name to a date-time: " + file, e);
+                continue;
+            }
 
             datedFiles.put(ldt, file);
         }
