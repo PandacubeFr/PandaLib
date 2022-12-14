@@ -14,6 +14,7 @@ import org.bukkit.ChatColor;
 
 import java.io.File;
 import java.text.DateFormat;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
@@ -161,8 +162,7 @@ public abstract class CompressProcess implements Comparable<CompressProcess>, Ru
 
 
 	private String getDateFileName() {
-		Calendar calendar = Calendar.getInstance();
-		return dateFileNameFormatter.format(calendar.toInstant());
+		return dateFileNameFormatter.format(ZonedDateTime.now());
 	}
 
 
