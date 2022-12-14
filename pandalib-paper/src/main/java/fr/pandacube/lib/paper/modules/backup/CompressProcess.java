@@ -51,102 +51,107 @@ public abstract class CompressProcess implements Comparable<CompressProcess>, Ru
 	protected abstract void onCompressEnd(boolean success);
 
 	protected abstract File getTargetDir();
-	
+
+	protected abstract String getDisplayName();
 	
 	@Override
 	public void run() {
 		backupManager.compressRunning.set(this);
 
-		BiPredicate<File, String> filter = getFilenameFilter();
-		File sourceDir = getSourceDir();
-		
-		if (!sourceDir.exists()) {
-			Log.warning(String.format("%% unable to compress %s (check path: %s)", name, sourceDir.getPath()));
+		try {
+			BiPredicate<File, String> filter = getFilenameFilter();
+			File sourceDir = getSourceDir();
+
+			if (!sourceDir.exists()) {
+				Log.warning("[Backup] Unable to compress " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET + ": source directory " + sourceDir + " doesn’t exist");
+				return;
+			}
+
+			File targetDir = getTargetDir();
+			File target = new File(targetDir, getDateFileName() + ".zip");
+
+
+			BossBar bossBar = BossBar.bossBar(Chat.text("Archivage"), 0, Color.YELLOW, Overlay.NOTCHED_20);
+			AutoUpdatedBossBar auBossBar = new AutoUpdatedBossBar(bossBar, (bar) -> {
+				bar.setTitle(Chat.infoText("Archivage ")
+						.thenData(getDisplayName())
+						.thenText(" : ")
+						.then(compressor == null
+								? Chat.text("Démarrage...")
+								: compressor.getState()
+						)
+				);
+				bar.setProgress(compressor == null ? 0 : compressor.getProgress());
+			});
+			auBossBar.scheduleUpdateTimeSyncThreadAsync(100, 100);
+
+			onCompressStart();
+
+			Bukkit.getScheduler().runTaskAsynchronously(PandaLibPaper.getPlugin(), () -> {
+				Log.info("[Backup] Starting for " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET + " ...");
+
+				compressor = new ZipCompressor(sourceDir, target, 9, filter);
+
+				PerformanceAnalysisManager.getInstance().addBossBar(bossBar);
+
+				boolean success = false;
+				try {
+					compressor.compress();
+
+					success = true;
+
+					Log.info("[Backup] Finished for " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET);
+
+					backupManager.persist.updateDirtyStatusAfterCompress(type, name);
+
+					displayDirtynessStatus();
+
+					try {
+						type.backupCleaner(backupManager.config).cleanupArchives(targetDir, getDisplayName());
+					} catch (Exception e) {
+						Log.severe(e);
+					}
+				}
+				catch (final Exception e) {
+					Log.severe("[Backup] Failed: " + sourceDir + " -> " + target, e);
+
+					FileUtils.delete(target);
+					if (target.exists())
+						Log.warning("unable to delete: " + target);
+				} finally {
+
+					backupManager.compressRunning.set(null);
+					boolean successF = success;
+					Bukkit.getScheduler().runTask(PandaLibPaper.getPlugin(), () -> onCompressEnd(successF));
+
+					try {
+						Thread.sleep(2000);
+					} catch(InterruptedException e) {
+						Thread.currentThread().interrupt();
+					}
+
+					PerformanceAnalysisManager.getInstance().removeBossBar(bossBar);
+				}
+			});
+		} finally {
 			backupManager.compressRunning.set(null);
-			return;
 		}
 
-		File targetDir = getTargetDir();
-		File target = new File(targetDir, getDateFileName() + ".zip");
-		
-		
-		BossBar bossBar = BossBar.bossBar(Chat.text("Archivage"), 0, Color.YELLOW, Overlay.NOTCHED_20);
-		AutoUpdatedBossBar auBossBar = new AutoUpdatedBossBar(bossBar, (bar) -> {
-			bar.setTitle(Chat.infoText("Archivage ")
-					.thenData(type + "\\" + name)
-					.thenText(" : ")
-					.then(compressor == null
-							? Chat.text("Démarrage...")
-							: compressor.getState()
-					)
-			);
-			bar.setProgress(compressor == null ? 0 : compressor.getProgress());
-		});
-		auBossBar.scheduleUpdateTimeSyncThreadAsync(100, 100);
-		
-		onCompressStart();
-		
-		Bukkit.getScheduler().runTaskAsynchronously(PandaLibPaper.getPlugin(), () -> {
-			Log.info("[Backup] starting for " + ChatColor.GRAY + type + "\\" + name + ChatColor.RESET + " ...");
-			
-			compressor = new ZipCompressor(sourceDir, target, 9, filter);
-
-			PerformanceAnalysisManager.getInstance().addBossBar(bossBar);
-			
-			boolean success = false;
-			try {
-				compressor.compress();
-				
-				success = true;
-				
-				Log.info("[Backup] finished for " + ChatColor.GRAY + type + "\\" + name + ChatColor.RESET);
-				
-				backupManager.persist.updateDirtyStatusAfterCompress(type, name);
-				
-				displayDirtynessStatus();
-
-				try {
-					type.backupCleaner(backupManager.config).cleanupArchives(targetDir);
-				} catch (Exception e) {
-					Log.severe(e);
-				}
-			}
-			catch (final Exception e) {
-				Log.severe("[Backup] Failed: " + sourceDir + " -> " + target, e);
-				
-				FileUtils.delete(target);
-				if (target.exists())
-					Log.warning("unable to delete: " + target);
-			} finally {
-				
-				backupManager.compressRunning.set(null);
-				boolean successF = success;
-				Bukkit.getScheduler().runTask(PandaLibPaper.getPlugin(), () -> onCompressEnd(successF));
-				
-				try {
-					Thread.sleep(2000);
-				} catch(InterruptedException e) {
-					Thread.currentThread().interrupt();
-				}
-
-				PerformanceAnalysisManager.getInstance().removeBossBar(bossBar);
-			}
-		});
 	}
 	
 	
 
 	public void displayDirtynessStatus() {
 		if (hasNextScheduled() && type == Type.WORLDS) {
-			Log.info("[Backup] " + ChatColor.GRAY + type + "\\" + name + ChatColor.RESET + " is dirty. Next backup on "
+			Log.info("[Backup] " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET + " is dirty. Next backup on "
 					+ DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG).format(new Date(getNext())));
 		}
 		else if (hasNextScheduled()) {
-			Log.info("[Backup] " + ChatColor.GRAY + type + "\\" + name + ChatColor.RESET + " next backup on "
+			Log.info("[Backup] " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET + " next backup on "
 					+ DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG).format(new Date(getNext())));
 		}
 		else {
-			Log.info("[Backup] " + ChatColor.GRAY + type + "\\" + name + ChatColor.RESET + " is clean. Next backup not scheduled.");
+			Log.info("[Backup] " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET + " is clean. Next backup not scheduled.");
 		}
 	}
 	
@@ -170,7 +175,7 @@ public abstract class CompressProcess implements Comparable<CompressProcess>, Ru
 	public void logProgress() {
 		if (compressor == null)
 			return;
-		Log.info("[Backup] " + ChatColor.GRAY + type + "\\" + name + ChatColor.RESET + ": " + compressor.getState().getLegacyText());
+		Log.info("[Backup] " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET + ": " + compressor.getState().getLegacyText());
 	}
 	
 	

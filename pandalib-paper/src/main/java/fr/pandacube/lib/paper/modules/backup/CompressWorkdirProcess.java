@@ -64,6 +64,11 @@ public class CompressWorkdirProcess extends CompressProcess {
 
 	@Override
 	protected File getTargetDir() {
-		return new File(backupManager.config.backupDirectory, "workdir");
+		return new File(backupManager.config.backupDirectory, type.toString());
+	}
+
+	@Override
+	protected String getDisplayName() {
+		return type.toString();
 	}
 }

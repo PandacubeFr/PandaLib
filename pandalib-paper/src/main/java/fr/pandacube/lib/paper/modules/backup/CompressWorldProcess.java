@@ -49,6 +49,11 @@ public class CompressWorldProcess extends CompressProcess {
 
 	@Override
 	protected File getTargetDir() {
-		return new File(backupManager.config.backupDirectory, type.toString() + "/" + name);
+		return new File(backupManager.config.backupDirectory, type + "/" + name);
+	}
+
+	@Override
+	protected String getDisplayName() {
+		return type + "/" + name;
 	}
 }

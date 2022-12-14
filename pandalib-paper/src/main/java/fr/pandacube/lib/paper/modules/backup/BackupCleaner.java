@@ -1,5 +1,9 @@
 package fr.pandacube.lib.paper.modules.backup;
 
+import fr.pandacube.lib.chat.Chat;
+import fr.pandacube.lib.util.Log;
+import org.bukkit.ChatColor;
+
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -10,9 +14,11 @@ import java.util.TreeSet;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
-import fr.pandacube.lib.util.Log;
+import static fr.pandacube.lib.chat.ChatStatic.text;
 
 public abstract class BackupCleaner implements UnaryOperator<TreeSet<LocalDateTime>> {
+
+    private static final boolean testOnly = true; // if true, no files are deleted
 
     public static BackupCleaner KEEPING_N_LAST(int n) {
         return new BackupCleaner() {
@@ -66,17 +72,17 @@ public abstract class BackupCleaner implements UnaryOperator<TreeSet<LocalDateTi
 
 
 
-    public void cleanupArchives(File archiveDir) {
+    public void cleanupArchives(File archiveDir, String compressDisplayName) {
         String[] files = archiveDir.list();
 
-        Log.info("[Backup] Cleaning up backup directory " + archiveDir + "...");
+        Log.info("[Backup] Cleaning up backup directory " + ChatColor.GRAY + compressDisplayName + ChatColor.RESET + "...");
 
         TreeMap<LocalDateTime, File> datedFiles = new TreeMap<>();
 
         for (String filename : files) {
             File file = new File(archiveDir, filename);
             if (!filename.matches("\\d{8}-\\d{6}\\.zip")) {
-                Log.warning("[Backup] Invalid file in backup directory: " + file);
+                Log.warning("[Backup] " + ChatColor.GRAY + compressDisplayName + ChatColor.RESET + " Invalid file in backup directory: " + filename);
                 continue;
             }
 
@@ -85,7 +91,7 @@ public abstract class BackupCleaner implements UnaryOperator<TreeSet<LocalDateTi
             try {
                 ldt = LocalDateTime.parse(dateTimeStr, CompressProcess.dateFileNameFormatter);
             } catch (DateTimeParseException e) {
-                Log.warning("Unable to parse file name to a date-time: " + file, e);
+                Log.warning("[Backup] " + ChatColor.GRAY + compressDisplayName + ChatColor.RESET + " Unable to parse file name to a date-time: " + filename, e);
                 continue;
             }
 
@@ -94,14 +100,31 @@ public abstract class BackupCleaner implements UnaryOperator<TreeSet<LocalDateTi
 
         TreeSet<LocalDateTime> keptFiles = apply(new TreeSet<>(datedFiles.keySet()));
 
+        Chat c = text("[Backup] ")
+                .then(text(compressDisplayName).gray())
+                .thenText(testOnly ? " Archive cleanup debug (no files are actually deleted):" : "Deleted archive files:\n");
+        boolean oneDeleted = false;
         for (Entry<LocalDateTime, File> datedFile : datedFiles.entrySet()) {
-            if (keptFiles.contains(datedFile.getKey()))
+            if (keptFiles.contains(datedFile.getKey())) {
+                if (testOnly)
+                    c.thenText("- " + datedFile.getValue().getName() + " ")
+                            .thenSuccess("kept")
+                            .thenText(".\n");
                 continue;
-            // datedFile.getValue().delete(); // TODO check if the filtering is ok before actually removing files
-            Log.info("[Backup] Removed expired backup file " + datedFile.getValue());
+            }
+            oneDeleted = true;
+            c.thenText("- " + datedFile.getValue().getName() + " ");
+            if (testOnly)
+                c.thenFailure("deleted")
+                        .thenText(".\n");
+            else
+                datedFile.getValue().delete();
         }
 
-        Log.info("[Backup] Backup directory " + archiveDir + " cleaned.");
+        if (testOnly || oneDeleted)
+            Log.warning(c.getLegacyText());
+
+        Log.info("[Backup] Backup directory " + ChatColor.GRAY + compressDisplayName + ChatColor.RESET + " cleaned.");
     }
 
 

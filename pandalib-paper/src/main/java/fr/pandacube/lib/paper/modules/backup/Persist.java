@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
 
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -74,7 +75,7 @@ public class Persist extends YamlConfiguration {
 			return;
 		if (!isDirty(Type.WORLDS, world.getName())) { // don't set dirty if it is already
 			setDirtySinceNow(Type.WORLDS, world.getName());
-			Log.info("[Backup] " + Type.WORLDS + "\\" + world.getName() + " was saved and is now dirty. Next backup on "
+			Log.info("[Backup] " + ChatColor.GRAY + Type.WORLDS + "/" + world.getName() + ChatColor.RESET + " was saved and is now dirty. Next backup on "
 					+ DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG)
 							.format(new Date(backupManager.getNextCompress(System.currentTimeMillis())))
 					);
