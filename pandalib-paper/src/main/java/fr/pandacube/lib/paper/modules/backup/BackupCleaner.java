@@ -33,7 +33,7 @@ public abstract class BackupCleaner implements UnaryOperator<TreeSet<LocalDateTi
                 return localDateTimes.stream()
                         .collect(Collectors.groupingBy(
                                 ldt -> {
-                                    return ldt.getYear() * 4 + ldt.getMonthValue() / 2;
+                                    return ldt.getYear() * 4 + ldt.getMonthValue() / n;
                                 },
                                 TreeMap::new,
                                 Collectors.minBy(LocalDateTime::compareTo))
