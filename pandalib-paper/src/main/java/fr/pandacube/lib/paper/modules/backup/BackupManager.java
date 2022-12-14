@@ -15,6 +15,7 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -143,10 +144,9 @@ public class BackupManager implements Runnable, Listener {
 			return 0;
 		}
 
-		ZonedDateTime ldt = parsedScheduling.nextTimeAfter(ZonedDateTime.from(Instant.ofEpochMilli(dirtySince)));
-		// Log.info("Compress config: " + compressConfig + " - interval: " + interval);
-
-		return ldt.toInstant().toEpochMilli();
+		return parsedScheduling.nextTimeAfter(ZonedDateTime.ofInstant(Instant.ofEpochMilli(dirtySince), ZoneId.systemDefault()))
+				.toInstant()
+				.toEpochMilli();
 	}
 	
 	
