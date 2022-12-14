@@ -42,6 +42,8 @@ public class CompressWorkdirProcess extends CompressProcess {
 				return true;
 			if (new File(getSourceDir(), "logs").equals(file))
 				return true;
+			if (file.isFile() && file.getName().endsWith(".lck"))
+				return true;
 			return false;
 		}
 
