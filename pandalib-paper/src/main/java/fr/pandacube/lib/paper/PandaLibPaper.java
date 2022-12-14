@@ -7,11 +7,12 @@ public class PandaLibPaper {
 	
 	private static Plugin plugin;
 	
-	public static void init(Plugin plugin) {
+	public static void onLoad(Plugin plugin) {
 		PandaLibPaper.plugin = plugin;
+	}
 
+	public static void onEnable() {
 		PerformanceAnalysisManager.getInstance(); // initialize
-		
 	}
 
 

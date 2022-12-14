@@ -71,11 +71,18 @@ import static fr.pandacube.lib.reflect.wrapper.WrapperRegistry.initWrapper;
  */
 public class PandalibPaperReflect {
 
+    private static boolean isInit = false;
+
     /**
      * Initializes the reflect tools in {@code pandalib-paper-reflect} module.
      */
     public static void init() {
         NMSReflect.init();
+        synchronized (PandalibPaperReflect.class) {
+            if (isInit)
+                return;
+            isInit = true;
+        }
         initWrapperClasses();
     }
 

@@ -13,6 +13,7 @@ import fr.pandacube.lib.chat.Chat;
 import fr.pandacube.lib.commands.BrigadierCommand;
 import fr.pandacube.lib.commands.SuggestionsSupplier;
 import fr.pandacube.lib.paper.permissions.PandalibPaperPermissions;
+import fr.pandacube.lib.paper.reflect.PandalibPaperReflect;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftServer;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftVector;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.VanillaCommandWrapper;
@@ -66,6 +67,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<BukkitBriga
     private static final CommandDispatcher<BukkitBrigadierCommandSource> nmsDispatcher;
 
     static {
+        PandalibPaperReflect.init();
         vanillaCommandDispatcher = ReflectWrapper.wrapTyped(Bukkit.getServer(), CraftServer.class)
                 .getServer()
                 .vanillaCommandDispatcher();
