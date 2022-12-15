@@ -102,7 +102,7 @@ public abstract class BackupCleaner implements UnaryOperator<TreeSet<LocalDateTi
 
         Chat c = text("[Backup] ")
                 .then(text(compressDisplayName).gray())
-                .thenText(testOnly ? " Archive cleanup debug (no files are actually deleted):" : "Deleted archive files:\n");
+                .thenText(testOnly ? " Archive cleanup debug (no files are actually deleted):\n" : " Deleted archive files:\n");
         boolean oneDeleted = false;
         for (Entry<LocalDateTime, File> datedFile : datedFiles.entrySet()) {
             if (keptFiles.contains(datedFile.getKey())) {

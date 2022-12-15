@@ -133,8 +133,9 @@ public abstract class CompressProcess implements Comparable<CompressProcess>, Ru
 					PerformanceAnalysisManager.getInstance().removeBossBar(bossBar);
 				}
 			});
-		} finally {
+		} catch (Throwable t) {
 			backupManager.compressRunning.set(null);
+			throw t;
 		}
 
 	}
