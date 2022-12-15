@@ -51,10 +51,12 @@ public class PaperPlayerConfigStorage {
 
     private static synchronized void load() throws IOException, InvalidConfigurationException {
         YamlConfiguration config = new YamlConfiguration();
-        config.load(storageFile);
         data.clear();
         playerSortedData.clear();
         keySortedData.clear();
+        if (!storageFile.exists())
+            return;
+        config.load(storageFile);
         for (String pIdStr : config.getKeys(false)) {
             UUID pId;
             try {
