@@ -1,4 +1,4 @@
-package fr.pandacube.lib.paper.modules.backup;
+package fr.pandacube.lib.core.backup;
 
 import java.io.BufferedOutputStream;
 import java.io.File;

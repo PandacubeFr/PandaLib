@@ -59,6 +59,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>fr.pandacube.lib</groupId>
+            <artifactId>pandalib-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Paper -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
@@ -69,13 +75,6 @@
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-mojangapi</artifactId>
             <version>${paper.version}-SNAPSHOT</version>
-        </dependency>
-
-        <!-- Cron expression interpreter -->
-        <dependency>
-            <groupId>ch.eitchnet</groupId>
-            <artifactId>cron</artifactId>
-            <version>1.6.2</version>
         </dependency>
     </dependencies>
 

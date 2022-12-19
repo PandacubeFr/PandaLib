@@ -36,5 +36,12 @@
             <artifactId>pandalib-chat</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!-- Cron expression interpreter -->
+        <dependency>
+            <groupId>ch.eitchnet</groupId>
+            <artifactId>cron</artifactId>
+            <version>1.6.2</version>
+        </dependency>
     </dependencies>
 </project>

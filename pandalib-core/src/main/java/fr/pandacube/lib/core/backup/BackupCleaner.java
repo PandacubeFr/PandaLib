@@ -1,8 +1,8 @@
-package fr.pandacube.lib.paper.modules.backup;
+package fr.pandacube.lib.core.backup;
 
 import fr.pandacube.lib.chat.Chat;
 import fr.pandacube.lib.util.Log;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -89,7 +89,7 @@ public abstract class BackupCleaner implements UnaryOperator<TreeSet<LocalDateTi
             String dateTimeStr = filename.substring(0, filename.length() - 4);
             LocalDateTime ldt;
             try {
-                ldt = LocalDateTime.parse(dateTimeStr, CompressProcess.dateFileNameFormatter);
+                ldt = LocalDateTime.parse(dateTimeStr, BackupProcess.dateFileNameFormatter);
             } catch (DateTimeParseException e) {
                 Log.warning("[Backup] " + ChatColor.GRAY + compressDisplayName + ChatColor.RESET + " Unable to parse file name to a date-time: " + filename, e);
                 continue;
