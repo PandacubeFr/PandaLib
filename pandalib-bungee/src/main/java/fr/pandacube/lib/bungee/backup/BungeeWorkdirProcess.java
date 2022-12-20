@@ -1,30 +1,35 @@
-package fr.pandacube.lib.paper.backup;
+package fr.pandacube.lib.bungee.backup;
 
+import fr.pandacube.lib.core.backup.BackupProcess;
 import fr.pandacube.lib.util.Log;
+import net.md_5.bungee.api.ChatColor;
 
 import java.io.File;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.function.BiPredicate;
 
-public class PaperWorkdirProcess extends PaperBackupProcess {
+public class BungeeWorkdirProcess extends BackupProcess {
 	
-	protected PaperWorkdirProcess(PaperBackupManager bm) {
+	protected BungeeWorkdirProcess(BungeeBackupManager bm) {
 		super(bm, "workdir");
 	}
 
-
+	@Override
+	public BungeeBackupManager getBackupManager() {
+		return (BungeeBackupManager) super.getBackupManager();
+	}
+	
+	
 	public BiPredicate<File, String> getFilenameFilter() {
 		return new BiPredicate<File, String>() {
 			@Override
 			public boolean test(File file, String path) {
-				if (file.isDirectory() && new File(file, "level.dat").exists())
-					return false;
 				if (new File(getSourceDir(), "logs").equals(file))
 					return false;
 				if (file.isFile() && file.getName().endsWith(".lck"))
 					return false;
-				return PaperWorkdirProcess.super.getFilenameFilter().test(file, path);
+				return BungeeWorkdirProcess.super.getFilenameFilter().test(file, path);
 			}
 		};
 	}
@@ -35,12 +40,14 @@ public class PaperWorkdirProcess extends PaperBackupProcess {
 	public File getSourceDir() {
 		return new File(".");
 	}
+
+	@Override
+	protected void onBackupStart() { }
 	
 	@Override
 	protected void onBackupEnd(boolean success) {
 		if (success)
 			setDirtySinceNow();
-		super.onBackupEnd(success);
 	}
 
 	@Override
@@ -56,7 +63,7 @@ public class PaperWorkdirProcess extends PaperBackupProcess {
 
 
 	public void displayNextSchedule() {
-		Log.info("[Backup] " + net.md_5.bungee.api.ChatColor.GRAY + getDisplayName() + net.md_5.bungee.api.ChatColor.RESET + " next backup on "
+		Log.info("[Backup] " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET + " next backup on "
 				+ DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG).format(new Date(getNext())));
 	}
 }

@@ -26,41 +26,48 @@ public class PaperBackupManager extends BackupManager implements Listener {
 
 	private final Map<String, PaperWorldProcess> compressWorlds = new HashMap<>();
 
-	BackupConfig config;
+	PaperBackupConfig config;
 	
-	public PaperBackupManager(BackupConfig config) {
+	public PaperBackupManager(PaperBackupConfig config) {
 		super(config.backupDirectory);
 		setConfig(config);
 
-		
+
 		for (final World world : Bukkit.getWorlds()) {
 			initWorldProcess(world.getName());
 		}
-		
-		initWorkdirProcess();
-
+		addProcess(new PaperWorkdirProcess(this));
 		addProcess(new RotatedLogsBackupProcess(this, true, new File("logs"), "[0-9]{4}-[0-9]{2}-[0-9]{2}(-[0-9]+)?\\.log\\.gz"));
 
 		Bukkit.getServer().getPluginManager().registerEvents(this, PandaLibPaper.getPlugin());
-		
 	}
 
-	public void setConfig(BackupConfig config) {
+	@Override
+	protected void addProcess(BackupProcess process) {
+		updateProcessConfig(process);
+		super.addProcess(process);
+	}
+
+	public void setConfig(PaperBackupConfig config) {
 		this.config = config;
-		for (BackupProcess process : backupQueue) {
-			if (process instanceof PaperWorkdirProcess) {
-				process.setEnabled(config.workdirBackupEnabled);
-				process.setBackupCleaner(config.workdirBackupCleaner);
-				process.setScheduling(config.scheduling);
-			}
-			else if (process instanceof PaperWorldProcess) {
-				process.setEnabled(config.worldBackupEnabled);
-				process.setBackupCleaner(config.worldBackupCleaner);
-				process.setScheduling(config.scheduling);
-			}
-			else if (process instanceof RotatedLogsBackupProcess) {
-				process.setEnabled(config.logsBackupEnabled);
-			}
+		backupQueue.forEach(this::updateProcessConfig);
+	}
+
+
+	public void updateProcessConfig(BackupProcess process) {
+		if (process instanceof PaperWorkdirProcess) {
+			process.setEnabled(config.workdirBackupEnabled);
+			process.setBackupCleaner(config.workdirBackupCleaner);
+			process.setScheduling(config.scheduling);
+			process.setIgnoreList(config.workdirIgnoreList);
+		}
+		else if (process instanceof PaperWorldProcess) {
+			process.setEnabled(config.worldBackupEnabled);
+			process.setBackupCleaner(config.worldBackupCleaner);
+			process.setScheduling(config.scheduling);
+		}
+		else if (process instanceof RotatedLogsBackupProcess) {
+			process.setEnabled(config.logsBackupEnabled);
 		}
 	}
 
@@ -90,20 +97,10 @@ public class PaperBackupManager extends BackupManager implements Listener {
 		if (compressWorlds.containsKey(worldName))
 			return;
 		PaperWorldProcess process = new PaperWorldProcess(this, worldName);
-		process.setEnabled(config.worldBackupEnabled);
-		process.setBackupCleaner(config.worldBackupCleaner);
-		process.setScheduling(config.scheduling);
 		addProcess(process);
 		compressWorlds.put(worldName, process);
 	}
 
-	private void initWorkdirProcess() {
-		PaperWorkdirProcess process = new PaperWorkdirProcess(this);
-		process.setEnabled(config.workdirBackupEnabled);
-		process.setBackupCleaner(config.workdirBackupCleaner);
-		process.setScheduling(config.scheduling);
-		addProcess(process);
-	}
 
 
 

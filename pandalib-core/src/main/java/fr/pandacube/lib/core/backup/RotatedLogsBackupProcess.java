@@ -27,7 +27,7 @@ public class RotatedLogsBackupProcess extends BackupProcess {
 
     @Override
     public void run() {
-        // do not call super. We override the zip archive process, we just want to copy log files, here
+        // do not call super. We override the zip archive process, we just want to copy already-zipped log files.
         if (inNewThread) {
             new Thread(this::actuallyRun, "Backup Thread " + identifier).start();
         }
@@ -39,6 +39,9 @@ public class RotatedLogsBackupProcess extends BackupProcess {
 
 
     private void actuallyRun() {
+
+        if (!getSourceDir().isDirectory())
+            return;
 
         Log.info("[Backup] Starting for " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET + " ...");
 

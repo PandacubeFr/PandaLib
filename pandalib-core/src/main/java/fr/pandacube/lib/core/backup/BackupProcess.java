@@ -59,7 +59,22 @@ public abstract class BackupProcess implements Comparable<BackupProcess>, Runnab
 
 
 
-    public abstract BiPredicate<File, String> getFilenameFilter();
+    public BiPredicate<File, String> getFilenameFilter() {
+        return (file, path) -> {
+            for (String exclude : ignoreList) {
+                if (exclude.startsWith("/")) { // relative to source of workdir
+                    if (path.matches(exclude.substring(1)))
+                        return false;
+                }
+                else {
+                    String name = path.substring(path.lastIndexOf("/") + 1);
+                    if (name.matches(exclude))
+                        return false;
+                }
+            }
+            return true;
+        };
+    }
 
     public abstract File getSourceDir();
 
@@ -98,6 +113,13 @@ public abstract class BackupProcess implements Comparable<BackupProcess>, Runnab
         this.backupCleaner = backupCleaner;
     }
 
+    public List<String> getIgnoreList() {
+        return ignoreList;
+    }
+
+    public void setIgnoreList(List<String> ignoreList) {
+        this.ignoreList = ignoreList;
+    }
 
 
 

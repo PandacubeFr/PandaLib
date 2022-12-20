@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BackupConfig {
+public class PaperBackupConfig {
     public boolean worldBackupEnabled = true;
     public boolean workdirBackupEnabled = true;
     public boolean logsBackupEnabled = true;

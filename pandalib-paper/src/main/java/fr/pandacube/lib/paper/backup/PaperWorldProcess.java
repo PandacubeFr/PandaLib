@@ -27,11 +27,6 @@ public class PaperWorldProcess extends PaperBackupProcess {
 	}
 	
 	
-	public BiPredicate<File, String> getFilenameFilter() {
-		return (f, s) -> true;
-	}
-	
-	
 	@Override
 	public File getSourceDir() {
 		return WorldUtil.worldDir(worldName);
