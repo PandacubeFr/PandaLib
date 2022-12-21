@@ -18,8 +18,6 @@ that are detailed in their respective Readme file (if any).
 - `pandalib-paper-permissions` Integration of the permission system `pandalib-permissions` into Bukkit, Vault and WEPIF permission systems;
 - `pandalib-players` A library to handle classes representing online or offline players;
 - `pandalib-players-permissible` An extension of `pandalib-players` with support for the permission system `pandalib-permissions`;
-- `pandalib-bungee-players` A partial extension and implementation of `pandalib-players` for Bungeecord plugin;
-- `pandalib-paper-players` A partial extension and implementation of `pandalib-players` for Paper plugin;
 - `pandalib-netapi` A poorly designed, but working TCP network library;
 - `pandalib-net` A better-designed, packet-based TCP network library (_still in development_);
 - `pandalib-commands` An abstract command manager working on top of [Brigadier](https://github.com/Mojang/brigadier);

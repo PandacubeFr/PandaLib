@@ -64,7 +64,6 @@
         <module>pandalib-bungee</module>
         <module>pandalib-bungee-commands</module>
         <module>pandalib-bungee-permissions</module>
-        <module>pandalib-bungee-players</module>
         <module>pandalib-chat</module>
         <module>pandalib-cli</module>
         <module>pandalib-commands</module>

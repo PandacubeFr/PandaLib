@@ -1,4 +1,4 @@
-package fr.pandacube.lib.bungee;
+package fr.pandacube.lib.bungee.util;
 
 import java.util.ArrayList;
 import java.util.Collections;

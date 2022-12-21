@@ -22,16 +22,43 @@
 
     <dependencies>
         <dependency>
+            <groupId>fr.pandacube.lib</groupId>
+            <artifactId>pandalib-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fr.pandacube.lib</groupId>
+            <artifactId>pandalib-util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fr.pandacube.lib</groupId>
+            <artifactId>pandalib-players</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fr.pandacube.lib</groupId>
+            <artifactId>pandalib-reflect</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-protocol</artifactId>
+            <version>${bungeecord.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
             <version>${bungeecord.version}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
-            <groupId>fr.pandacube.lib</groupId>
-            <artifactId>pandalib-core</artifactId>
-            <version>${project.version}</version>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-log</artifactId>
+            <version>${bungeecord.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
