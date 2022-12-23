@@ -42,6 +42,10 @@ public class Persist {
 		catch (final JsonParseException e) {
 			Log.severe("cannot load " + file, e);
 		}
+		finally {
+			if (dirtySince == null)
+				dirtySince = new HashMap<>();
+		}
 
 		if (!loaded) {
 			save();
