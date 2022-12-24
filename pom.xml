@@ -62,7 +62,6 @@
 	
     <modules>
         <module>pandalib-bungee</module>
-        <module>pandalib-bungee-commands</module>
         <module>pandalib-bungee-permissions</module>
         <module>pandalib-chat</module>
         <module>pandalib-cli</module>
@@ -72,9 +71,7 @@
         <module>pandalib-net</module>
         <module>pandalib-netapi</module>
         <module>pandalib-paper</module>
-        <module>pandalib-paper-commands</module>
         <module>pandalib-paper-permissions</module>
-        <module>pandalib-paper-reflect</module>
         <module>pandalib-permissions</module>
         <module>pandalib-players</module>
         <module>pandalib-players-permissible</module>

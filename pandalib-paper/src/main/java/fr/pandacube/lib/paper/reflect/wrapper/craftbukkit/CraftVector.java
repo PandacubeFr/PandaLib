@@ -7,6 +7,7 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Vec3;
 import fr.pandacube.lib.reflect.ReflectClass;
 import fr.pandacube.lib.reflect.ReflectMethod;
 
+import fr.pandacube.lib.util.ThrowableUtil;
 import org.bukkit.util.Vector;
 
 import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
@@ -14,8 +15,8 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class CraftVector extends ReflectWrapper {
     public static final ReflectClass<?> REFLECT = wrapEx(() -> OBCReflect.ofClass("util.CraftVector"));
-    public static final ReflectMethod<?> toBukkit_Vec3 = wrapEx(() -> REFLECT.method("toBukkit", Vec3.MAPPING.runtimeClass()));
-    public static final ReflectMethod<?> toBukkit_BlockPos = wrapEx(() -> REFLECT.method("toBukkit", BlockPos.MAPPING.runtimeClass()));
+    public static final ReflectMethod<?> toBukkit_Vec3 = ThrowableUtil.wrapEx(() -> REFLECT.method("toBukkit", Vec3.MAPPING.runtimeClass()));
+    public static final ReflectMethod<?> toBukkit_BlockPos = ThrowableUtil.wrapEx(() -> REFLECT.method("toBukkit", BlockPos.MAPPING.runtimeClass()));
     public static final ReflectMethod<?> toNMS = wrapEx(() -> REFLECT.method("toNMS", Vector.class));
     public static final ReflectMethod<?> toBlockPos = wrapEx(() -> REFLECT.method("toNMS", Vector.class));
 

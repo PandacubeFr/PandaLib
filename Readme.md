@@ -9,10 +9,9 @@ that are detailed in their respective Readme file (if any).
 - `pandalib-util` General purpose utility and helper classes;
 - `pandalib-chat` A chat API working on top of the Adventure API;
 - `pandalib-db` An ORM working with a MySQL server through JDBC;
-- `pandalib-bungee` Utility and helper classes to use in Bungeecord plugins;
-- `pandalib-paper` Utility and helper classes to use in Spigot/Paper plugins;
+- `pandalib-bungee` Utility and helper classes to use in Bungeecord plugins. Also provides platform implementation for `pandalib-players` and `pandalib-commands`;
+- `pandalib-paper` Utility and helper classes to use in Spigot/Paper plugins. Also provides platform implementation for `pandalib-players` and `pandalib-commands`;
 - `pandalib-reflect` A reflection wrapper to make reflective operation easier;
-- `pandalib-paper-reflect` A reflection API to ease access to NMS and OBS stuff in Paper server;
 - `pandalib-permissions` A general purpose permission system;
 - `pandalib-bungee-permissions` Integration of the permission system `pandalib-permissions` into Bungeecord;
 - `pandalib-paper-permissions` Integration of the permission system `pandalib-permissions` into Bukkit, Vault and WEPIF permission systems;
@@ -21,8 +20,6 @@ that are detailed in their respective Readme file (if any).
 - `pandalib-netapi` A poorly designed, but working TCP network library;
 - `pandalib-net` A better-designed, packet-based TCP network library (_still in development_);
 - `pandalib-commands` An abstract command manager working on top of [Brigadier](https://github.com/Mojang/brigadier);
-- `pandalib-bungee-commands` Integrates Brigadier commands into Bungeecord, extending `pandalib-commands`;
-- `pandalib-paper-commands` Integrates Brigadier commands into the Paper server, extending `pandalib-commands`;
 - `pandalib-cli` Utility and helper classes for a standalone CLI Java application.
 - `pandalib-core` A catch-all module for some helper classes that didn’t have their own module yet;
 
