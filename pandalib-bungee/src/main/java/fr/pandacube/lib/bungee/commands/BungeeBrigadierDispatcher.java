@@ -1,5 +1,6 @@
 package fr.pandacube.lib.bungee.commands;
 
+import fr.pandacube.lib.bungee.PandaLibBungee;
 import fr.pandacube.lib.chat.Chat;
 import fr.pandacube.lib.commands.BrigadierDispatcher;
 import net.kyori.adventure.text.ComponentLike;
@@ -18,6 +19,13 @@ import net.md_5.bungee.event.EventHandler;
 public class BungeeBrigadierDispatcher extends BrigadierDispatcher<CommandSender> implements Listener {
 
 
+	private static BungeeBrigadierDispatcher instance = null;
+
+	public static synchronized BungeeBrigadierDispatcher getInstance() {
+		return instance;
+	}
+
+
 
 
 	/* package */ final Plugin plugin;
@@ -27,6 +35,9 @@ public class BungeeBrigadierDispatcher extends BrigadierDispatcher<CommandSender
 	 * @param pl the plugin that creates this dispatcher.
 	 */
 	public BungeeBrigadierDispatcher(Plugin pl) {
+		if (instance != null)
+			throw new IllegalStateException("Cannot instanciante more than one BungeeBrigadierDispatcher");
+		instance = this;
 		plugin = pl;
 		ProxyServer.getInstance().getPluginManager().registerListener(plugin, this);
 	}

@@ -28,18 +28,12 @@ public abstract class BungeeBrigadierCommand extends BrigadierCommand<CommandSen
 	/**
 	 * The command dispatcher.
 	 */
-	protected BungeeBrigadierDispatcher dispatcher;
+	protected BungeeBrigadierDispatcher dispatcher = BungeeBrigadierDispatcher.getInstance();
 
 	/**
 	 * Instanciate this command instance.
-	 * @param d the dispatcher in which to register this command.
 	 */
-	public BungeeBrigadierCommand(BungeeBrigadierDispatcher d) {
-		if (d == null) {
-			throw new IllegalStateException("BungeeBrigadierDispatcher not provided.");
-		}
-		dispatcher = d;
-		
+	public BungeeBrigadierCommand() {
 		LiteralCommandNode<CommandSender> commandNode;
 		String[] aliases;
 		
