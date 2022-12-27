@@ -5,9 +5,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import fr.pandacube.lib.chat.ChatStatic;
+import fr.pandacube.lib.util.Log;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -88,6 +90,23 @@ public class ItemStackBuilder {
 	private void updateMeta() {
 		stack.setItemMeta(cachedMeta);
 	}
+
+	public ItemStackBuilder meta(Consumer<ItemMeta> metaUpdater) {
+		metaUpdater.accept(getOrInitMeta());
+		updateMeta();
+		return this;
+	}
+
+	public <T extends ItemMeta> ItemStackBuilder meta(Consumer<T> metaUpdater, Class<T> metaType) {
+		ItemMeta m = getOrInitMeta();
+		if (!metaType.isInstance(m)) {
+			Log.warning("Item meta of " + stack.getType() + " is not of type " + metaType.getSimpleName(), new Throwable());
+			return this;
+		}
+		metaUpdater.accept(metaType.cast(m));
+		updateMeta();
+		return this;
+	}
 	
 	public ItemStackBuilder amount(int a) {
 		stack.setAmount(a);
@@ -95,9 +114,7 @@ public class ItemStackBuilder {
 	}
 
 	public ItemStackBuilder rawDisplayName(Component displayName) {
-		getOrInitMeta().displayName(displayName);
-		updateMeta();
-		return this;
+		return meta(m -> m.displayName(displayName));
 	}
 	
 	public ItemStackBuilder displayName(ComponentLike displayName) {
@@ -109,9 +126,7 @@ public class ItemStackBuilder {
 	}
 	
 	public ItemStackBuilder rawLore(List<Component> lore) {
-		getOrInitMeta().lore(lore);
-		updateMeta();
-		return this;
+		return meta(m -> m.lore(lore));
 	}
 	
 	public ItemStackBuilder lore(List<? extends ComponentLike> lore) {
@@ -147,15 +162,11 @@ public class ItemStackBuilder {
 	}
 	
 	public ItemStackBuilder enchant(Enchantment ench, int level) {
-		getOrInitMeta().addEnchant(ench, level, true);
-		updateMeta();
-		return this;
+		return meta(m -> m.addEnchant(ench, level, true));
 	}
 	
 	public ItemStackBuilder flags(ItemFlag... flags) {
-		getOrInitMeta().addItemFlags(flags);
-		updateMeta();
-		return this;
+		return meta(m -> m.addItemFlags(flags));
 	}
 	
 	public ItemStackBuilder hideEnchants() {
@@ -172,29 +183,19 @@ public class ItemStackBuilder {
 	}
 
 	public ItemStackBuilder unbreakable() {
-		getOrInitMeta().setUnbreakable(true);
-		updateMeta();
-		return this;
+		return meta(m -> m.setUnbreakable(true));
 	}
 
 	public ItemStackBuilder canDestroy(Set<Material> destroyable) {
-		getOrInitMeta().setCanDestroy(destroyable);
-		updateMeta();
-		return this;
+		return meta(m -> m.setCanDestroy(destroyable));
 	}
 
 	public ItemStackBuilder canPlaceOn(Set<Material> placeOn) {
-		getOrInitMeta().setCanPlaceOn(placeOn);
-		updateMeta();
-		return this;
+		return meta(m -> m.setCanPlaceOn(placeOn));
 	}
 	
 	public ItemStackBuilder damage(int d) {
-		ItemMeta m = getOrInitMeta();
-		if (m instanceof Damageable)
-			((Damageable)m).setDamage(d);
-		updateMeta();
-		return this;
+		return meta(m -> m.setDamage(d), Damageable.class);
 	}
 	
 	
