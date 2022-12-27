@@ -35,11 +35,11 @@ public class GeometryUtil {
 	 * from the ground where the player is standing on, to the above of the first layer of the head skin.
 	 * It doesn't correspond to the player hitbox height.<br/>
 	 * <br/>
-	 * <code>1.88</code> is an approximated value, estimated by ingame tests.
+	 * The value is provided in Minecraft Wiki.
 	 */
-	public static final double PLAYER_SKIN_HEIGHT = 1.88;
+	public static final double PLAYER_SKIN_HEIGHT = 1.85;
 	/**
-	 * Value provided by Craftbukkit's {@code CraftPlayer#getEyeHeight(boolean)} source code
+	 * Value provided by net.minecraft.world.entity.player.Player#getStandingEyeHeight
 	 */
 	public static final double PLAYER_EYE_HEIGHT = 1.62;
 	/**
@@ -50,11 +50,11 @@ public class GeometryUtil {
 	 * The current value is the height of the player's hitbox when sneaking. Even if this
 	 * is close to the real value (tested in game), this is not the exact value.
 	 */
-	public static final double PLAYER_SKIN_HEIGHT_SNEAK = 1.65;
+	public static final double PLAYER_SKIN_HEIGHT_SNEAK = 1.50;
 	/**
-	 * Value provided by Craftbukkit's {@code CraftPlayer#getEyeHeight(boolean)} source code
+	 * Value provided by net.minecraft.world.entity.player.Player#getStandingEyeHeight
 	 */
-	public static final double PLAYER_EYE_HEIGHT_SNEAK = 1.54;
+	public static final double PLAYER_EYE_HEIGHT_SNEAK = 1.27;
 	public static final double PLAYER_SKIN_PIXEL_SIZE = PLAYER_SKIN_HEIGHT / 32;
 	public static final double PLAYER_HEAD_ROTATION_HEIGHT = PLAYER_SKIN_PIXEL_SIZE * 24;
 	public static final double PLAYER_HEAD_ROTATION_HEIGHT_SNEAK = PLAYER_HEAD_ROTATION_HEIGHT - (PLAYER_SKIN_HEIGHT - PLAYER_SKIN_HEIGHT_SNEAK);
