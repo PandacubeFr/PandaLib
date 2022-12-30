@@ -18,7 +18,7 @@ import static fr.pandacube.lib.chat.ChatStatic.text;
 
 public abstract class BackupCleaner implements UnaryOperator<TreeSet<LocalDateTime>> {
 
-    private static final boolean testOnly = true; // if true, no files are deleted
+    private static final boolean testOnly = false; // if true, no files are deleted
 
     public static BackupCleaner KEEPING_N_LAST(int n) {
         return new BackupCleaner() {
