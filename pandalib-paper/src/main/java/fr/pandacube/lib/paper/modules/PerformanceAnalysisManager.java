@@ -92,7 +92,7 @@ public class PerformanceAnalysisManager implements Listener {
 			.add(5, NamedTextColor.RED)
 			.add(10, NamedTextColor.GOLD)
 			.add(14, NamedTextColor.YELLOW)
-			.add(20, PandaTheme.CHAT_DECORATION_COLOR)
+			.add(20, PandaTheme.CHAT_GREEN_1_NORMAL)
 			.add(26, NamedTextColor.BLUE);
 
 
@@ -101,7 +101,7 @@ public class PerformanceAnalysisManager implements Listener {
 			.add(5, NamedTextColor.RED)
 			.add(10, NamedTextColor.GOLD)
 			.add(14, NamedTextColor.YELLOW)
-			.add(18, PandaTheme.CHAT_DECORATION_COLOR);
+			.add(18, PandaTheme.CHAT_GREEN_1_NORMAL);
 
 
 	public final ChatColorGradient tps1mGradient = new ChatColorGradient()
@@ -109,10 +109,10 @@ public class PerformanceAnalysisManager implements Listener {
 			.add(8, NamedTextColor.RED)
 			.add(12, NamedTextColor.GOLD)
 			.add(16, NamedTextColor.YELLOW)
-			.add(20, PandaTheme.CHAT_DECORATION_COLOR);
+			.add(20, PandaTheme.CHAT_GREEN_1_NORMAL);
 
 	public final ChatColorGradient memoryUsageGradient = new ChatColorGradient()
-			.add(.60f, PandaTheme.CHAT_DECORATION_COLOR)
+			.add(.60f, PandaTheme.CHAT_GREEN_1_NORMAL)
 			.add(.70f, NamedTextColor.YELLOW)
 			.add(.80f, NamedTextColor.GOLD)
 			.add(.90f, NamedTextColor.RED)
@@ -326,14 +326,14 @@ public class PerformanceAnalysisManager implements Listener {
 						float avgTickDuration1s = getAvgNano(tpsDurations, nbTick1s)/1_000_000;
 						
 						float avgTickCPUTime1s = getAvgNano(tpsCPUTimes, nbTick1s)/1_000_000;
-						TextColor avgTickCPUTime1sColor = (avgTickDuration1s < 46 || avgTickCPUTime1s < 20) ? PandaTheme.CHAT_DECORATION_COLOR
+						TextColor avgTickCPUTime1sColor = (avgTickDuration1s < 46 || avgTickCPUTime1s < 20) ? PandaTheme.CHAT_GREEN_1_NORMAL
 								: (avgTickCPUTime1s < 30) ? NamedTextColor.YELLOW
 								: (avgTickCPUTime1s < 40) ? NamedTextColor.GOLD
 								: (avgTickCPUTime1s < 50) ? NamedTextColor.RED
 								: NamedTextColor.DARK_RED;
 						
 						float avgTickWaitingTime1s = avgTickDuration1s - avgTickCPUTime1s;
-						TextColor avgTickWaitingTime1sColor = (avgTickDuration1s < 46 || avgTickWaitingTime1s < 20) ? PandaTheme.CHAT_DECORATION_COLOR
+						TextColor avgTickWaitingTime1sColor = (avgTickDuration1s < 46 || avgTickWaitingTime1s < 20) ? PandaTheme.CHAT_GREEN_1_NORMAL
 								: (avgTickWaitingTime1s < 30) ? NamedTextColor.YELLOW
 								: (avgTickWaitingTime1s < 40) ? NamedTextColor.GOLD
 								: (avgTickWaitingTime1s < 50) ? NamedTextColor.RED
@@ -342,7 +342,7 @@ public class PerformanceAnalysisManager implements Listener {
 						
 						
 						float avgInterTickDuration1s = getAvgNano(interTPSDurations, nbTick1s)/1_000_000;
-						TextColor avgInterTickDuration1sColor = (avgInterTickDuration1s > 10) ? PandaTheme.CHAT_DECORATION_COLOR
+						TextColor avgInterTickDuration1sColor = (avgInterTickDuration1s > 10) ? PandaTheme.CHAT_GREEN_1_NORMAL
 								: (avgInterTickDuration1s > 4) ? NamedTextColor.YELLOW
 								: (avgTickDuration1s < 46) ? NamedTextColor.GOLD
 								: NamedTextColor.RED;
