@@ -1,27 +1,24 @@
 package fr.pandacube.lib.bungee.util;
 
+import com.google.common.io.Files;
+import fr.pandacube.lib.bungee.PandaLibBungee;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.log.ConciseFormatter;
+
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.ThreadFactory;
 import java.util.logging.ErrorManager;
 import java.util.logging.Filter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.zip.GZIPOutputStream;
-
-import com.google.common.io.Files;
-import fr.pandacube.lib.bungee.PandaLibBungee;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.log.ConciseFormatter;
 
 public class DailyLogRotateFileHandler extends Handler {
 

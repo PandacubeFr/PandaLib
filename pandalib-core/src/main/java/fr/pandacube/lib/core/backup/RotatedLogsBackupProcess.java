@@ -72,7 +72,7 @@ public class RotatedLogsBackupProcess extends BackupProcess {
             success = true;
 
             Log.info("[Backup] Finished for " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             Log.severe("[Backup] Failed for : " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET, e);
         } finally {
             onBackupEnd(success);
