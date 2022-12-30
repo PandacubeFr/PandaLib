@@ -6,7 +6,6 @@ import fr.pandacube.lib.core.json.Json;
 import fr.pandacube.lib.util.Log;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -24,7 +23,7 @@ public class Persist {
 	
 	public Persist(BackupManager bm) {
 		backupManager = bm;
-		file = new File(bm.getBackupDirectory(), "source-dirty-since.yml");
+		file = new File(bm.getBackupDirectory(), "source-dirty-since.json");
 		load();
 	}
 
@@ -34,11 +33,11 @@ public class Persist {
 
 	protected void load() {
 		boolean loaded = false;
-		try {
-			dirtySince = Json.gson.fromJson(new FileReader(file), new TypeToken<Map<String, Long>>(){}.getType());
+		try (FileReader reader = new FileReader(file)) {
+			dirtySince = Json.gson.fromJson(reader, new TypeToken<Map<String, Long>>(){}.getType());
 			loaded = true;
 		}
-		catch (final FileNotFoundException ignored) { }
+		catch (final IOException ignored) { }
 		catch (final JsonParseException e) {
 			Log.severe("cannot load " + file, e);
 		}
@@ -53,10 +52,9 @@ public class Persist {
 	}
 	
 	public void save() {
-		try {
-			Json.gsonPrettyPrinting.toJson(dirtySince, new FileWriter(file, false));
+		try (FileWriter writer = new FileWriter(file, false)) {
+			Json.gsonPrettyPrinting.toJson(dirtySince, writer);
 		}
-		catch (final FileNotFoundException ignored) { }
 		catch (final JsonParseException | IOException e) {
 			Log.severe("could not save " + file, e);
 		}
