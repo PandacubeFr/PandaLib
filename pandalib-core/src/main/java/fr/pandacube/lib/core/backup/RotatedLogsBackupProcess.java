@@ -57,6 +57,7 @@ public class RotatedLogsBackupProcess extends BackupProcess {
         boolean success = false;
 
         File targetDir = getTargetDir();
+        targetDir.mkdirs();
 
         try {
             List<File> filesToMove = getFilesToMove();
@@ -65,7 +66,7 @@ public class RotatedLogsBackupProcess extends BackupProcess {
                 try {
                     Files.move(source, new File(targetDir, source.getName()));
                 } catch (IOException e) {
-                    Log.severe("Unable to move file " + source + " into " + targetDir);
+                    Log.severe("Unable to move file " + source + " into " + targetDir, e);
                 }
             }
 
