@@ -11,7 +11,7 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class ItemStack extends ReflectWrapper {
     public static final NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.world.item.ItemStack"));
-    private static final ReflectMethod<?> of = wrapEx(() -> MAPPING.mojMethod("of", CompoundTag.class));
+    private static final ReflectMethod<?> of = wrapEx(() -> MAPPING.mojMethod("of", CompoundTag.MAPPING));
 
     public static ItemStack of(CompoundTag nbt) {
         return wrap(wrapReflectEx(() -> of.invokeStatic(unwrap(nbt))), ItemStack.class);
