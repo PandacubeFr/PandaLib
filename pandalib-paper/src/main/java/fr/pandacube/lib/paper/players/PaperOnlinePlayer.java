@@ -4,7 +4,10 @@ import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.ClientOption.ChatVisibility;
 import com.destroystokyo.paper.SkinParts;
 import fr.pandacube.lib.paper.players.PlayerNonPersistentConfig.Expiration;
+import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftPlayer;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
 import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
+import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
@@ -17,6 +20,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MainHand;
 
 import java.util.Locale;
@@ -51,6 +55,14 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
     @Override
     default OfflinePlayer getBukkitOfflinePlayer() {
         return getBukkitPlayer();
+    }
+
+    /**
+     * Returns the OBC.CraftPlayer instance wrapped into the {@link CraftPlayer} reflection wrapper.
+     * @return the OBC.CraftPlayer instance wrapped into the {@link CraftPlayer} reflection wrapper.
+     */
+    default CraftPlayer getWrappedCraftPlayer() {
+        return ReflectWrapper.wrapTyped(getBukkitPlayer(), CraftPlayer.class);
     }
 
 
@@ -302,6 +314,30 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
 
     default void unsetNonPersistentConfig(String key) {
         PlayerNonPersistentConfig.unsetData(getUniqueId(), key);
+    }
+
+
+
+
+    /*
+     * Player data
+     */
+
+    @Override
+    default CompoundTag getPlayerData() {
+        CompoundTag tag = new CompoundTag();
+        getWrappedCraftPlayer().getHandle().serializeEntity(tag);
+        return tag;
+    }
+
+    @Override
+    default ItemStack[] getInventoryContent() {
+        return getBukkitPlayer().getInventory().getContents();
+    }
+
+    @Override
+    default ItemStack[] getEnderchestContent() {
+        return getBukkitPlayer().getEnderChest().getContents();
     }
 
 

@@ -1,11 +1,17 @@
 package fr.pandacube.lib.paper.players;
 
+import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftItemStack;
+import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftServer;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.ListTag;
+import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
+import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Team;
-
-import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
 
 import java.util.function.UnaryOperator;
 
@@ -127,6 +133,70 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
     @Override
     default void unsetConfig(String key) throws Exception {
         PaperPlayerConfigStorage.unset(getUniqueId(), key);
+    }
+
+
+
+
+    /*
+     * Player data
+     */
+
+    default CompoundTag getPlayerData() {
+        return ReflectWrapper.wrapTyped(Bukkit.getServer(), CraftServer.class)
+                .getServer()
+                .getPlayerList()
+                .playerIo()
+                .getPlayerData(getUniqueId().toString());
+    }
+
+    default ItemStack[] getInventoryContent() {
+        ItemStack[] content = new ItemStack[InventoryType.PLAYER.getDefaultSize()];
+        CompoundTag playerData = getPlayerData();
+        if (playerData == null)
+            return content;
+        ListTag nbttaglist = playerData.getList("Inventory", 10); // type of list element 10 is CompoundTag
+        if (nbttaglist == null)
+            return content;
+        // cat   nbEl NBTslot   bukkitSlot NBT->Bukkit
+        // items 36el           0-35       ==
+        // armor  4el start 100 36-39      -100 + 36
+        // offhnd 1el start 150 40         -150 + 40
+        for (int i = 0; i < nbttaglist.size(); i++) {
+            CompoundTag itemTag = nbttaglist.getCompound(i);
+            ItemStack is = CraftItemStack.asCraftMirror(itemTag);
+            if (is != null && !is.getType().isAir()) {
+                int nbtSlot = itemTag.getByte("Slot") & 255;
+                int bukkitSlot =  nbtSlot < 36              ? nbtSlot
+                        : (nbtSlot >= 100 && nbtSlot < 104) ? nbtSlot - 100 + 36
+                        :  nbtSlot == 150                   ? 40
+                        : -1;
+                if (bukkitSlot >= 0)
+                    content[bukkitSlot] = is;
+            }
+        }
+
+        return content;
+    }
+
+    default ItemStack[] getEnderchestContent() {
+        ItemStack[] content = new ItemStack[InventoryType.ENDER_CHEST.getDefaultSize()];
+        CompoundTag playerData = getPlayerData();
+        if (playerData == null || !playerData.contains("EnderItems", 9)) // type 9 is list
+            return content;
+        ListTag nbtList = playerData.getList("EnderItems", 10); // type of list element 10 is CompoundTag
+        if (nbtList == null)
+            return content;
+        for (int i = 0; i < nbtList.size(); i++) {
+            CompoundTag itemTag = nbtList.getCompound(i);
+            int nbtSlot = itemTag.getByte("Slot") & 255;
+            ItemStack is = CraftItemStack.asCraftMirror(itemTag);
+            if (nbtSlot < content.length && is != null && !is.getType().isAir()) {
+                content[nbtSlot] = CraftItemStack.asCraftMirror(itemTag);
+            }
+        }
+
+        return content;
     }
 
 }

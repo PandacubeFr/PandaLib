@@ -1,6 +1,7 @@
 package fr.pandacube.lib.paper.reflect;
 
 import fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode;
+import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftItemStack;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftMapView;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftNamespacedKey;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftPlayer;
@@ -24,7 +25,9 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.ResourceLocatio
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Vec3Argument;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.core.BlockPos;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.core.Vec3i;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CollectionTag;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.ListTag;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.NbtIo;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.StringTag;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.Tag;
@@ -39,6 +42,7 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.DedicatedPlayerLi
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.DedicatedServer;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.DedicatedServerProperties;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.MinecraftServer;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.PlayerList;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerChunkCache;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerGamePacketListenerImpl;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerLevel;
@@ -50,8 +54,10 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ChunkPos;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ChunkStorage;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.DamageSource;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Entity;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ItemStack;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Level;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.MapItemSavedData;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.PlayerDataStorage;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.SavedData;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Vec3;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.VoxelShape;
@@ -91,6 +97,7 @@ public class PandalibPaperReflect {
         initWrapper(CommandNode.class, CommandNode.REFLECT.get());
 
         // craftbukkit
+        initWrapper(CraftItemStack.class, CraftItemStack.REFLECT.get());
         initWrapper(CraftMapView.class, CraftMapView.REFLECT.get());
         initWrapper(CraftNamespacedKey.class, CraftNamespacedKey.REFLECT.get());
         initWrapper(CraftPlayer.class, CraftPlayer.REFLECT.get());
@@ -115,7 +122,9 @@ public class PandalibPaperReflect {
         initWrapper(BlockPos.class, BlockPos.MAPPING.runtimeClass());
         initWrapper(Vec3i.class, Vec3i.MAPPING.runtimeClass());
         // minecraft.nbt
+        initWrapper(CollectionTag.class, CollectionTag.MAPPING.runtimeClass());
         initWrapper(CompoundTag.class, CompoundTag.MAPPING.runtimeClass());
+        initWrapper(ListTag.class, ListTag.MAPPING.runtimeClass());
         initWrapper(NbtIo.class, NbtIo.MAPPING.runtimeClass());
         initWrapper(StringTag.class, StringTag.MAPPING.runtimeClass());
         initWrapper(Tag.class, Tag.MAPPING.runtimeClass());
@@ -136,6 +145,7 @@ public class PandalibPaperReflect {
         initWrapper(DedicatedServer.class, DedicatedServer.MAPPING.runtimeClass());
         initWrapper(DedicatedServerProperties.class, DedicatedServerProperties.MAPPING.runtimeClass());
         initWrapper(MinecraftServer.class, MinecraftServer.MAPPING.runtimeClass());
+        initWrapper(PlayerList.class, PlayerList.MAPPING.runtimeClass());
         initWrapper(ServerChunkCache.class, ServerChunkCache.MAPPING.runtimeClass());
         initWrapper(ServerGamePacketListenerImpl.class, ServerGamePacketListenerImpl.MAPPING.runtimeClass());
         initWrapper(ServerLevel.class, ServerLevel.MAPPING.runtimeClass());
@@ -151,8 +161,10 @@ public class PandalibPaperReflect {
         initWrapper(ChunkStorage.class, ChunkStorage.MAPPING.runtimeClass());
         initWrapper(DamageSource.class, DamageSource.MAPPING.runtimeClass());
         initWrapper(Entity.class, Entity.MAPPING.runtimeClass());
+        initWrapper(ItemStack.class, ItemStack.MAPPING.runtimeClass());
         initWrapper(Level.class, Level.MAPPING.runtimeClass());
         initWrapper(MapItemSavedData.class, MapItemSavedData.MAPPING.runtimeClass());
+        initWrapper(PlayerDataStorage.class, PlayerDataStorage.MAPPING.runtimeClass());
         initWrapper(SavedData.class, SavedData.MAPPING.runtimeClass());
         initWrapper(Vec3.class, Vec3.MAPPING.runtimeClass());
         initWrapper(VoxelShape.class, VoxelShape.MAPPING.runtimeClass());

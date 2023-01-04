@@ -5,7 +5,7 @@ import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 
 import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 
-public class DedicatedPlayerList extends ReflectWrapper {
+public class DedicatedPlayerList extends PlayerList {
     public static final NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.server.dedicated.DedicatedPlayerList"));
 
     protected DedicatedPlayerList(Object obj) {

@@ -10,7 +10,7 @@ public class StringTag extends ReflectWrapper implements Tag {
 	public static final ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.nbt.StringTag"));
 
 
-	public StringTag(Object nms) {
+	protected StringTag(Object nms) {
 		super(nms);
 	}
 	

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import fr.pandacube.lib.reflect.ReflectConstructor;
 import fr.pandacube.lib.reflect.ReflectMethod;
 import fr.pandacube.lib.paper.reflect.NMSReflect;
 import fr.pandacube.lib.paper.reflect.NMSReflect.ClassMapping;
@@ -15,6 +16,7 @@ import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 
 public class CompoundTag extends ReflectWrapper implements Tag {
 	public static final ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.nbt.CompoundTag"));
+	public static final ReflectConstructor<?> CONSTRUCTOR = wrapEx(() -> MAPPING.runtimeReflect().constructor());
 	private static final ReflectMethod<?> putBoolean = wrapEx(() -> MAPPING.mojMethod("putBoolean", String.class, boolean.class));
 	private static final ReflectMethod<?> putByte = wrapEx(() -> MAPPING.mojMethod("putByte", String.class, byte.class));
 	private static final ReflectMethod<?> putByteArray = wrapEx(() -> MAPPING.mojMethod("putByteArray", String.class, byte[].class));
@@ -45,14 +47,20 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 	private static final ReflectMethod<?> getLongArray = wrapEx(() -> MAPPING.mojMethod("getLongArray", String.class));
 	private static final ReflectMethod<?> getCompound = wrapEx(() -> MAPPING.mojMethod("getCompound", String.class));
 	private static final ReflectMethod<?> getBoolean = wrapEx(() -> MAPPING.mojMethod("getBoolean", String.class));
+	private static final ReflectMethod<?> getList = wrapEx(() -> MAPPING.mojMethod("getList", String.class, int.class));
 
 	private static final ReflectMethod<?> get = wrapEx(() -> MAPPING.mojMethod("get", String.class));
 	private static final ReflectMethod<?> getAllKeys = wrapEx(() -> MAPPING.mojMethod("getAllKeys"));
 	private static final ReflectMethod<?> entries = wrapEx(() -> MAPPING.mojMethod("entries"));
 	private static final ReflectMethod<?> size = wrapEx(() -> MAPPING.mojMethod("size"));
 	private static final ReflectMethod<?> contains = wrapEx(() -> MAPPING.mojMethod("contains", String.class));
+	private static final ReflectMethod<?> containsStringInt = wrapEx(() -> MAPPING.mojMethod("contains", String.class, int.class));
 
-	public CompoundTag(Object nms) {
+	public CompoundTag() {
+		this(wrapReflectEx(() -> CONSTRUCTOR.instanciate()));
+	}
+
+	protected CompoundTag(Object nms) {
 		super(nms);
 	}
 	
@@ -143,6 +151,9 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 	public boolean getBoolean(String key) {
 		return (boolean) wrapReflectEx(() -> getBoolean.invoke(__getRuntimeInstance(), key));
 	}
+	public ListTag getList(String key, int type) {
+		return wrap(wrapReflectEx(() -> getList.invoke(__getRuntimeInstance(), key, type)), ListTag.class);
+	}
 	public Tag get(String key) {
 		return wrap(wrapReflectEx(() -> get.invoke(__getRuntimeInstance(), key)), Tag.class);
 	}
@@ -164,6 +175,9 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 	}
 	public boolean contains(String key) {
 		return (boolean) wrapReflectEx(() -> contains.invoke(__getRuntimeInstance(), key));
+	}
+	public boolean contains(String key, int type) {
+		return (boolean) wrapReflectEx(() -> containsStringInt.invoke(__getRuntimeInstance(), key, type));
 	}
 
 }

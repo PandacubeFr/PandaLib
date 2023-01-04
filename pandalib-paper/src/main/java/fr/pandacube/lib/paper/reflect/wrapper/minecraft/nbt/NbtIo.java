@@ -21,8 +21,9 @@ public class NbtIo extends ReflectWrapper {
 
 	
 	public static CompoundTag readCompressed(File f) {
-		return new CompoundTag(wrapEx(() -> readCompressed.invokeStatic(f)));
+		return wrap(wrapEx(() -> readCompressed.invokeStatic(f)), CompoundTag.class);
 	}
+
 	public static void writeCompressed(CompoundTag tag, File f) {
 		Object nmsTag = ReflectWrapper.unwrap(tag);
 		wrapEx(() -> writeCompressed.invokeStatic(nmsTag, f));
