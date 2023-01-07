@@ -141,7 +141,7 @@ public class AutoUpdatedBossBar implements Listener {
 	
 	public synchronized void cancel() {
 		if (!scheduled)
-			throw new IllegalStateException("Can't cancel a not scheduled bossbar update");
+			return;
 		scheduled = false;
 		if (timer != null) {
 			timer.cancel();
