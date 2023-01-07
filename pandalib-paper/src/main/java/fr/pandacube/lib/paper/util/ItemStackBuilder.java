@@ -92,19 +92,14 @@ public class ItemStackBuilder {
 	}
 
 	public ItemStackBuilder meta(Consumer<ItemMeta> metaUpdater) {
-		metaUpdater.accept(getOrInitMeta());
-		updateMeta();
-		return this;
+		return meta(metaUpdater, ItemMeta.class);
 	}
 
 	public <T extends ItemMeta> ItemStackBuilder meta(Consumer<T> metaUpdater, Class<T> metaType) {
-		ItemMeta m = getOrInitMeta();
-		if (!metaType.isInstance(m)) {
-			Log.warning("Item meta of " + stack.getType() + " is not of type " + metaType.getSimpleName(), new Throwable());
-			return this;
-		}
-		metaUpdater.accept(metaType.cast(m));
-		updateMeta();
+		stack.editMeta(metaType, m -> {
+			metaUpdater.accept(m);
+			cachedMeta = m;
+		});
 		return this;
 	}
 	
