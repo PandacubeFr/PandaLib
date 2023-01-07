@@ -1,11 +1,14 @@
 package fr.pandacube.lib.permissions;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import fr.pandacube.lib.db.DBException;
 import fr.pandacube.lib.permissions.PermissionsCachedBackendReader.CachedGroup;
 import fr.pandacube.lib.permissions.SQLPermissions.EntityType;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Represents an group in the permission system.
@@ -45,6 +48,23 @@ public final class PermGroup extends PermEntity {
 		return fromCachedGroups(Permissions.backendReader.getGroups().stream()
 				.filter(cg -> cg.inheritances.contains(thisCG))
 				.toList());
+	}
+
+	/**
+	 * Gets all the players that inherits from this group.
+	 * This method does not use cached data.
+	 * @param recursive true to include players that are in inherited groups.
+	 * @return the players that inherits from this group.
+	 * @throws DBException if a database error occurs.
+	 */
+	public Set<UUID> getInheritedPlayers(boolean recursive) throws DBException {
+		Set<UUID> players = new HashSet<>(getBackendEntity().getPlayersInGroup());
+		if (recursive) {
+			for (PermGroup inheritedGroups : getInheritedGroups()) {
+				players.addAll(inheritedGroups.getInheritedPlayers(true));
+			}
+		}
+		return players;
 	}
 
 	/**

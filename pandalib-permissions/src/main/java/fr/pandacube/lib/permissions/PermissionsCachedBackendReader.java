@@ -1,6 +1,7 @@
 package fr.pandacube.lib.permissions;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,6 +116,13 @@ import fr.pandacube.lib.util.Log;
 		
 		return player;
 	}
+
+
+
+
+
+
+
 	
 	
 	
@@ -298,6 +306,19 @@ import fr.pandacube.lib.util.Log;
 				boolean dflt, Map<ServerWorldKey, List<String>> perms) {
 			super(n, p, s, perms);
 			deflt = dflt;
+		}
+
+
+
+		/* package */ Set<UUID> getPlayersInGroup() throws DBException {
+			Set<UUID> ids = new HashSet<>();
+			DB.forEach(SQLPermissions.class,
+					SQLPermissions.type.eq(EntityType.User.getCode())
+							.and(SQLPermissions.key.eq("groups"))
+							.and(SQLPermissions.value.eq(name)),
+					e -> ids.add(UUID.fromString(e.get(SQLPermissions.name)))
+			);
+			return ids;
 		}
 	}
     
