@@ -1,14 +1,16 @@
 package fr.pandacube.lib.netapi.server;
 
+import fr.pandacube.lib.util.Log;
+
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import fr.pandacube.lib.util.Log;
-
 public class NetworkAPIListener implements Runnable {
 
+	private final InetAddress host;
 	private final int port;
 	final String pass;
 	private ServerSocket serverSocket;
@@ -16,30 +18,42 @@ public class NetworkAPIListener implements Runnable {
 	private final String name;
 
 	/**
-	 * Instencie le côté serveur du NetworkAPI
+	 * Instencie le côté serveur du NetworkAPI.
 	 *
 	 * @param n nom du networkAPI (permet l'identification dans les logs)
 	 * @param p le port d'écoute
 	 * @param pa le mot de passe réseau
 	 */
 	public NetworkAPIListener(String n, int p, String pa) {
+		this(n, null, p, pa);
+	}
+
+	/**
+	 * Instencie le côté serveur du NetworkAPI.
+	 *
+	 * @param n nom du networkAPI (permet l'identification dans les logs)
+	 * @param p le port d'écoute
+	 * @param pa le mot de passe réseau
+	 */
+	public NetworkAPIListener(String n, InetAddress h, int p, String pa) {
+		name = n;
+		host = h;
 		port = p;
 		pass = pa;
-		name = n;
 	}
 
 	@Override
 	public void run() {
 		synchronized (this) {
 			try {
-				serverSocket = new ServerSocket(port);
+				serverSocket = host == null ? new ServerSocket(port) : new ServerSocket(port, 50, host);
 			} catch (IOException e) {
 				System.err.println(e.getMessage());
 				return;
 			}
 		}
 
-		Log.info("NetworkAPI '" + name + "' à l'écoute sur le port " + port);
+		Log.info("NetworkAPI '" + name + "' à l'écoute sur le socket " + serverSocket.getLocalSocketAddress());
 
 		try {
 			// réception des connexion client
