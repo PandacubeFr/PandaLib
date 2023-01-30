@@ -1,13 +1,12 @@
 package fr.pandacube.lib.core.backup;
 
 import fc.cron.CronExpression;
+import fr.pandacube.lib.core.cron.CronScheduler;
 import fr.pandacube.lib.util.FileUtils;
 import fr.pandacube.lib.util.Log;
 import net.md_5.bungee.api.ChatColor;
 
 import java.io.File;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -285,8 +284,6 @@ public abstract class BackupProcess implements Comparable<BackupProcess>, Runnab
             return 0;
         }
 
-        return parsedScheduling.nextTimeAfter(ZonedDateTime.ofInstant(Instant.ofEpochMilli(dirtySince), ZoneId.systemDefault()))
-                .toInstant()
-                .toEpochMilli();
+        return CronScheduler.getNextTime(parsedScheduling, dirtySince);
     }
 }
