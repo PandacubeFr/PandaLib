@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Persist {
-	protected final BackupManager backupManager;
 
 	private Map<String, Long> dirtySince = new HashMap<>();
 
@@ -22,7 +21,6 @@ public class Persist {
 	// private final Set<String> dirtyWorldsSave = new HashSet<>();
 	
 	public Persist(BackupManager bm) {
-		backupManager = bm;
 		file = new File(bm.getBackupDirectory(), "source-dirty-since.json");
 		load();
 	}

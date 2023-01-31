@@ -1,8 +1,15 @@
 package fr.pandacube.lib.core.cron;
 
+import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 import fc.cron.CronExpression;
+import fr.pandacube.lib.core.json.Json;
 import fr.pandacube.lib.util.Log;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -143,24 +150,67 @@ public class CronScheduler {
 
 
 
+
+
+
+
+
     private static final Map<String, Long> savedLastRun = new LinkedHashMap<>();
+    private static final File lastRunFile = new File("cron-last-run.json");
 
     private static void saveLastRuns() {
-        // TODO
+        try (FileWriter writer = new FileWriter(lastRunFile, false)) {
+            synchronized (lock) {
+                Json.gsonPrettyPrinting.toJson(savedLastRun, writer);
+            }
+        }
+        catch (JsonParseException | IOException e) {
+            Log.severe("could not save " + lastRunFile, e);
+        }
     }
 
     private static void loadLastRuns() {
-        // TODO
+        boolean loaded = false;
+        try (FileReader reader = new FileReader(lastRunFile)) {
+            Map<String, Long> newData = Json.gson.fromJson(reader, new TypeToken<Map<String, Long>>(){}.getType());
+            if (newData != null) {
+                loaded = true;
+                synchronized (lock) {
+                    savedLastRun.clear();
+                    savedLastRun.putAll(newData);
+                }
+            }
+        }
+        catch (final IOException ignored) { }
+        catch (final JsonParseException e) {
+            Log.severe("cannot load " + lastRunFile, e);
+        }
+        finally {
+        }
+
+        if (!loaded) {
+            saveLastRuns();
+        }
     }
 
     /* package */ static void setLastRun(String taskId, long lastRun) {
-        savedLastRun.put(taskId, lastRun);
-        saveLastRuns();
+        synchronized (lock) {
+            savedLastRun.put(taskId, lastRun);
+            saveLastRuns();
+        }
     }
 
     private static long getLastRun(String taskId) {
-        return savedLastRun.getOrDefault(taskId, System.currentTimeMillis());
+        synchronized (lock) {
+            return savedLastRun.getOrDefault(taskId, System.currentTimeMillis());
+        }
     }
+
+
+
+
+
+
 
 
     /**
