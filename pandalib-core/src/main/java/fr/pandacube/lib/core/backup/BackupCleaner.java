@@ -16,10 +16,19 @@ import java.util.stream.Collectors;
 
 import static fr.pandacube.lib.chat.ChatStatic.text;
 
+/**
+ * Cleanup a backup directory (i.e. removes old backup archives).
+ * It is possible to combine differents instances to affect which archive to keep or delete.
+ */
 public abstract class BackupCleaner implements UnaryOperator<TreeSet<LocalDateTime>> {
 
     private static final boolean testOnly = false; // if true, no files are deleted
 
+    /**
+     * Creates a {@link BackupCleaner} that keeps the n last archives in the backup directory.
+     * @param n the number of last archives to keep.
+     * @return a {@link BackupCleaner} that keeps the n last archives in the backup directory.
+     */
     public static BackupCleaner KEEPING_N_LAST(int n) {
         return new BackupCleaner() {
             @Override
@@ -32,15 +41,23 @@ public abstract class BackupCleaner implements UnaryOperator<TreeSet<LocalDateTi
     }
 
 
+    /**
+     * Creates a {@link BackupCleaner} that keeps one archive every n month.
+     * <p>
+     * This cleaner divides each year into sections of n month. For each month, its compute a section id using the
+     * formula <code><i>YEAR</i> * (12 / <i>n</i>) + <i>MONTH</i> / <i>n</i></code>. It then keeps the first archive
+     * found in each section.
+     *
+     * @param n the interval in month between each kept archives. Must be a dividor of 12 (1, 2, 3, 4, 6 or 12).
+     * @return a {@link BackupCleaner} that keeps one archive every n month.
+     */
     public static BackupCleaner KEEPING_1_EVERY_N_MONTH(int n) {
         return new BackupCleaner() {
             @Override
             public TreeSet<LocalDateTime> apply(TreeSet<LocalDateTime> localDateTimes) {
                 return localDateTimes.stream()
                         .collect(Collectors.groupingBy(
-                                ldt -> {
-                                    return ldt.getYear() * 4 + ldt.getMonthValue() / n;
-                                },
+                                ldt -> ldt.getYear() * (12 / n) + ldt.getMonthValue() / n,
                                 TreeMap::new,
                                 Collectors.minBy(LocalDateTime::compareTo))
                         )
@@ -54,8 +71,13 @@ public abstract class BackupCleaner implements UnaryOperator<TreeSet<LocalDateTi
     }
 
 
-
-
+    /**
+     * Creates a new {@link BackupCleaner} that keeps the archives kept by this {@link BackupCleaner} or by the provided
+     * one.
+     * In other word, it makes a union operation with the set of archives kept by both original {@link BackupCleaner}.
+     * @param other the other {@link BackupCleaner} to merge with.
+     * @return a new {@link BackupCleaner}. The original ones are not affected.
+     */
     public BackupCleaner merge(BackupCleaner other) {
         BackupCleaner self = this;
         return new BackupCleaner() {
@@ -70,8 +92,11 @@ public abstract class BackupCleaner implements UnaryOperator<TreeSet<LocalDateTi
     }
 
 
-
-
+    /**
+     * Performs the cleanup operation on the provided directory.
+     * @param archiveDir the backup directory to cleanup.
+     * @param compressDisplayName the displayname of the backup process that manages the backup directory. Used for logs.
+     */
     public void cleanupArchives(File archiveDir, String compressDisplayName) {
         String[] files = archiveDir.list();
 

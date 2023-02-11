@@ -53,10 +53,4 @@ public class PaperWorkdirProcess extends PaperBackupProcess {
 		return "workdir";
 	}
 
-
-
-	public void displayNextSchedule() {
-		Log.info("[Backup] " + net.md_5.bungee.api.ChatColor.GRAY + getDisplayName() + net.md_5.bungee.api.ChatColor.RESET + " next backup on "
-				+ DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG).format(new Date(getNext())));
-	}
 }

@@ -120,10 +120,4 @@ public class RotatedLogsBackupProcess extends BackupProcess {
     protected void onBackupEnd(boolean success) {
         setDirtySinceNow();
     }
-
-    @Override
-    public void displayNextSchedule() {
-        Log.info("[Backup] " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET + " next backup on "
-                + DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG).format(new Date(getNext())));
-    }
 }

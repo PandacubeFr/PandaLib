@@ -12,6 +12,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Handles the data stored used for backup manager, like dirty status of data to be backed up.
+ * The data is stored using JSON format, in a file in the root backup directory.
+ * The file is updated on disk on every call to a {@code set*(...)} method.
+ */
 public class Persist {
 
 	private Map<String, Long> dirtySince = new HashMap<>();
@@ -19,17 +24,18 @@ public class Persist {
 	private final File file;
 	
 	// private final Set<String> dirtyWorldsSave = new HashSet<>();
-	
+
+	/**
+	 * Creates a new instance, immediatly loading the data from the file if it exists, or creating an empty one if not.
+	 * @param bm the associated backup manager.
+	 */
 	public Persist(BackupManager bm) {
 		file = new File(bm.getBackupDirectory(), "source-dirty-since.json");
 		load();
 	}
 
-	public void reload() {
-		load();
-	}
 
-	protected void load() {
+	private void load() {
 		boolean loaded = false;
 		try (FileReader reader = new FileReader(file)) {
 			dirtySince = Json.gson.fromJson(reader, new TypeToken<Map<String, Long>>(){}.getType());
@@ -48,8 +54,8 @@ public class Persist {
 			save();
 		}
 	}
-	
-	public void save() {
+
+	private void save() {
 		try (FileWriter writer = new FileWriter(file, false)) {
 			Json.gsonPrettyPrinting.toJson(dirtySince, writer);
 		}
@@ -57,27 +63,32 @@ public class Persist {
 			Log.severe("could not save " + file, e);
 		}
 	}
-	
-	
 
-	
-	
-	public void setDirtySinceNow(String id) {
+
+	/**
+	 * Sets the backup process with the provided id as dirty.
+	 * @param id the id of the backup process.
+	 */
+	public synchronized void setDirtySinceNow(String id) {
 		dirtySince.put(id, System.currentTimeMillis());
 		save();
 	}
 
-	public void setNotDirty(String id) {
+	/**
+	 * Sets the backup process with the provided id as not dirty.
+	 * @param id the id of the backup process.
+	 */
+	public synchronized void setNotDirty(String id) {
 		dirtySince.put(id, -1L);
 		save();
 	}
-	
-	
-	public boolean isDirty(String id) {
+
+
+	public synchronized boolean isDirty(String id) {
 		return isDirtySince(id) != -1;
 	}
 	
-	public long isDirtySince(String id) {
+	public synchronized long isDirtySince(String id) {
 		if (!dirtySince.containsKey(id))
 			setDirtySinceNow(id);
 		return dirtySince.get(id);

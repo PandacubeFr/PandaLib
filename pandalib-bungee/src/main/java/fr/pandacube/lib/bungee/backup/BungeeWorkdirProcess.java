@@ -60,10 +60,4 @@ public class BungeeWorkdirProcess extends BackupProcess {
 		return "workdir";
 	}
 
-
-
-	public void displayNextSchedule() {
-		Log.info("[Backup] " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET + " next backup on "
-				+ DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG).format(new Date(getNext())));
-	}
 }

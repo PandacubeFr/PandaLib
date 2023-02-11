@@ -1,11 +1,8 @@
 package fr.pandacube.lib.core.backup;
 
-import fc.cron.CronExpression;
 import fr.pandacube.lib.util.Log;
 
 import java.io.File;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,20 +10,32 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.LongStream;
 
+/**
+ * Handles the backup processes.
+ */
 public class BackupManager extends TimerTask {
 
     private final File backupDirectory;
 
+    /**
+     * The {@link Persist} instance of this {@link BackupManager}.
+     */
     protected final Persist persist;
 
+    /**
+     * The list of backup processes that are scheduled.
+     */
     protected final List<BackupProcess> backupQueue = new ArrayList<>();
 
     /* package */ final AtomicReference<BackupProcess> runningBackup = new AtomicReference<>();
 
     private final Timer schedulerTimer = new Timer();
 
+    /**
+     * Instanciate a new backup manager.
+     * @param backupDirectory the root backup directory.
+     */
     public BackupManager(File backupDirectory) {
         this.backupDirectory = backupDirectory;
         persist = new Persist(this);
@@ -37,16 +46,25 @@ public class BackupManager extends TimerTask {
         schedulerTimer.scheduleAtFixedRate(this, new Date(nextMinute), 60_000);
     }
 
-
+    /**
+     * Add a new backup process to the queue.
+     * @param process the backup process to add.
+     */
     protected void addProcess(BackupProcess process) {
         process.displayNextSchedule();
         backupQueue.add(process);
     }
 
-
+    /**
+     * Gets the backup root directory.
+     * @return the backup root directory.
+     */
     public File getBackupDirectory() {
         return backupDirectory;
     }
+
+
+
 
     public synchronized void run() {
         BackupProcess tmp;
@@ -65,7 +83,10 @@ public class BackupManager extends TimerTask {
     }
 
 
-
+    /**
+     * Disables this backup manager, canceling scheduled backups.
+     * It will wait for a currently running backup to finish before returning.
+     */
     public synchronized void onDisable() {
 
         schedulerTimer.cancel();
@@ -88,8 +109,6 @@ public class BackupManager extends TimerTask {
                 }
             }
         }
-
-        persist.save();
     }
 
 

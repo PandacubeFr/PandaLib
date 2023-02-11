@@ -20,7 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-// TODO Add support for persisted last execution timestamps
 /**
  * Application wide task scheduler using Cron expression.
  */
@@ -78,8 +77,10 @@ public class CronScheduler {
 
     /**
      * Schedule a task.
+     * If a task with the provided taskId already exists, it will be replaced.
      * @param taskId the id of the task.
-     * @param cronExpression the scheduling of the task. May use seconds (6 values) or not (5 values)
+     * @param cronExpression the scheduling of the task. May use seconds (6 values) or not (5 values).
+     *                       See {@link CronExpression} for the format.
      * @param task the task to run.
      */
     public static void schedule(String taskId, String cronExpression, Runnable task) {
@@ -184,8 +185,6 @@ public class CronScheduler {
         catch (final IOException ignored) { }
         catch (final JsonParseException e) {
             Log.severe("cannot load " + lastRunFile, e);
-        }
-        finally {
         }
 
         if (!loaded) {
