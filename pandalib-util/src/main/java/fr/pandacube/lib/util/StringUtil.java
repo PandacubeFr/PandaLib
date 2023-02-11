@@ -139,4 +139,24 @@ public class StringUtil {
 		return s -> Long.toString(operator.apply(Long.parseLong(s)));
 	}
 
+
+	/**
+	 * Generate a {@link Pattern} with extra wrapping regex around the provided one to consider a sentense (like a chat
+	 * message). For instance, the returned pattern will only match the expression at the beginning or end of sentence,
+	 * or separated by the rest of it with space or another non-letter character.
+	 * @param wordPattern the regex pattern to wrap.
+	 * @param caseInsensitive if the pattern must match ignoring case.
+	 * @return a {@link Pattern}. The matching will match 3 groups. The first group is the eventual non-letter separator
+	 * before the matched word, the second one is the actual word, and the last one is the eventual non-letter separator
+	 * after the matched word. Any additionnal pattern group between the 2nd and the last one are thoses provided in the
+	 * wordPattern.
+	 */
+	public static Pattern asPatternInSentense(String wordPattern, boolean caseInsensitive) {
+		return Pattern.compile((caseInsensitive ? "(?i)" : "") + "(\\P{L}|^)(" + wordPattern + ")(\\P{L}|$)");
+	}
+
+
+
+
+
 }
