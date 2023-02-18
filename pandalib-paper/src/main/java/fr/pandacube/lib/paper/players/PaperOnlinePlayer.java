@@ -5,7 +5,6 @@ import com.destroystokyo.paper.ClientOption.ChatVisibility;
 import com.destroystokyo.paper.SkinParts;
 import fr.pandacube.lib.paper.players.PlayerNonPersistentConfig.Expiration;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftPlayer;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
 import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 import net.kyori.adventure.audience.MessageType;
@@ -20,8 +19,9 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.MainHand;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.Locale;
 import java.util.UUID;
@@ -324,20 +324,13 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
      */
 
     @Override
-    default CompoundTag getPlayerData() {
-        CompoundTag tag = new CompoundTag();
-        getWrappedCraftPlayer().getHandle().serializeEntity(tag);
-        return tag;
+    default PlayerInventory getInventory() {
+        return getBukkitPlayer().getInventory();
     }
 
     @Override
-    default ItemStack[] getInventoryContent() {
-        return getBukkitPlayer().getInventory().getContents();
-    }
-
-    @Override
-    default ItemStack[] getEnderchestContent() {
-        return getBukkitPlayer().getEnderChest().getContents();
+    default Inventory getEnderChest() {
+        return getBukkitPlayer().getEnderChest();
     }
 
 

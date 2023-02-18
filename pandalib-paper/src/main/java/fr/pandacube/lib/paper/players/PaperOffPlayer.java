@@ -2,19 +2,18 @@ package fr.pandacube.lib.paper.players;
 
 import com.google.common.io.Files;
 import fr.pandacube.lib.paper.reflect.util.PrimaryWorlds;
-import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftItemStack;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftServer;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.ListTag;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.NbtIo;
+import fr.pandacube.lib.paper.util.PlayerDataWrapper;
 import fr.pandacube.lib.paper.util.WorldUtil;
 import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scoreboard.Team;
 
 import java.io.File;
@@ -165,20 +164,30 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
     }
 
     /**
+     * Gets a wrapper for the NBT data from the playerdata file.
+     * It will not work if the player is online, because the data on the file are not synchronized with real-time values.
+     * @return the NBT data from the playerdata file.
+     * @throws IllegalStateException if the player is online.
+     */
+    default PlayerDataWrapper getPlayerDataWrapper() {
+        return new PlayerDataWrapper(getPlayerData());
+    }
+
+    /**
      * Saves the provided NBT data to the playerdata file.
      * It will not work if the player is online, because the provided data will be lost when the player disconnects.
      * @param data the data to save.
      * @throws IllegalStateException if the player is online.
      * @throws IOException if an IO error occurs.
      */
-    default void savePlayerData(CompoundTag data) throws IOException {
+    default void savePlayerData(PlayerDataWrapper data) throws IOException {
         if (isOnline())
             throw new IllegalStateException("Cannot write data file of " + getName() + " because they’re online.");
         File file = getPlayerDataFile(false);
         File old = getPlayerDataFile(true);
         old.delete();
         Files.move(file, old);
-        NbtIo.writeCompressed(data, file);
+        NbtIo.writeCompressed(data.data, file);
     }
 
     /**
@@ -192,60 +201,19 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
     }
 
     /**
-     * Gets the content of the player’s inventory.
-     * @return the content of the player’s inventory.
+     * Gets the player’s inventory.
+     * @return the player’s inventory.
      */
-    default ItemStack[] getInventoryContent() {
-        ItemStack[] content = new ItemStack[InventoryType.PLAYER.getDefaultSize()];
-        CompoundTag playerData = getPlayerData();
-        if (playerData == null)
-            return content;
-        ListTag nbttaglist = playerData.getList("Inventory", 10); // type of list element 10 is CompoundTag
-        if (nbttaglist == null)
-            return content;
-        // cat   nbEl NBTslot   bukkitSlot NBT->Bukkit
-        // items 36el           0-35       ==
-        // armor  4el start 100 36-39      -100 + 36
-        // offhnd 1el start 150 40         -150 + 40
-        for (int i = 0; i < nbttaglist.size(); i++) {
-            CompoundTag itemTag = nbttaglist.getCompound(i);
-            ItemStack is = CraftItemStack.asCraftMirror(itemTag);
-            if (is != null && !is.getType().isAir()) {
-                int nbtSlot = itemTag.getByte("Slot") & 255;
-                int bukkitSlot =  nbtSlot < 36              ? nbtSlot
-                        : (nbtSlot >= 100 && nbtSlot < 104) ? nbtSlot - 100 + 36
-                        :  nbtSlot == 150                   ? 40
-                        : -1;
-                if (bukkitSlot >= 0)
-                    content[bukkitSlot] = is;
-            }
-        }
-
-        return content;
+    default PlayerInventory getInventory() {
+        return getPlayerDataWrapper().getInventory();
     }
 
     /**
-     * Gets the content of the player’s enderchest.
-     * @return the content of the player’s enderchest.
+     * Gets the player’s enderchest.
+     * @return the player’s enderchest.
      */
-    default ItemStack[] getEnderchestContent() {
-        ItemStack[] content = new ItemStack[InventoryType.ENDER_CHEST.getDefaultSize()];
-        CompoundTag playerData = getPlayerData();
-        if (playerData == null || !playerData.contains("EnderItems", 9)) // type 9 is list
-            return content;
-        ListTag nbtList = playerData.getList("EnderItems", 10); // type of list element 10 is CompoundTag
-        if (nbtList == null)
-            return content;
-        for (int i = 0; i < nbtList.size(); i++) {
-            CompoundTag itemTag = nbtList.getCompound(i);
-            int nbtSlot = itemTag.getByte("Slot") & 255;
-            ItemStack is = CraftItemStack.asCraftMirror(itemTag);
-            if (nbtSlot < content.length && is != null && !is.getType().isAir()) {
-                content[nbtSlot] = CraftItemStack.asCraftMirror(itemTag);
-            }
-        }
-
-        return content;
+    default Inventory getEnderChest() {
+        return getPlayerDataWrapper().getEnderChest();
     }
 
 }
