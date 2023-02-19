@@ -91,20 +91,6 @@ public class PlayerDataWrapper {
 
 
 
-
-
-    private int getHeldItemSlot() {
-        if (!data.contains("SelectedItemSlot"))
-            return 0;
-        return data.getInt("SelectedItemSlot");
-    }
-
-    private void setHeldItemSlot(int slot) {
-        data.putInt("SelectedItemSlot", slot);
-    }
-
-
-
     private Inventory getBukkitInventory(String nbtKey, InventoryType bukkitType, IntUnaryOperator nbtToBukkitSlotConverter) {
         Map<Integer, ItemStack> stacks = getRawInvontoryContent(nbtKey);
         Inventory inv = Bukkit.createInventory(null, bukkitType);
@@ -162,6 +148,56 @@ public class PlayerDataWrapper {
         }
         data.put(key, list);
     }
+
+
+
+
+
+
+
+
+    private int getHeldItemSlot() {
+        if (!data.contains("SelectedItemSlot"))
+            return 0;
+        return data.getInt("SelectedItemSlot");
+    }
+
+    private void setHeldItemSlot(int slot) {
+        data.putInt("SelectedItemSlot", slot);
+    }
+
+
+
+
+
+    public int getScore() {
+        if (!data.contains("Score"))
+            return 0;
+        return data.getInt("Score");
+
+    }
+
+    public void setScore(int score) {
+        data.putInt("Score", score);
+    }
+
+
+
+    public int getTotalExperience() {
+        if (!data.contains("XpTotal"))
+            return 0;
+        return data.getInt("XpTotal");
+    }
+
+    public void setTotalExperience(int xp) {
+        data.putInt("XpTotal", xp);
+        double levelAndExp = ExperienceUtil.getLevelFromExp(xp);
+        int level = (int) levelAndExp;
+        double expProgress = levelAndExp - level;
+        data.putInt("XPLevel", level);
+        data.putFloat("XpP", (float) expProgress);
+    }
+
 
 
 

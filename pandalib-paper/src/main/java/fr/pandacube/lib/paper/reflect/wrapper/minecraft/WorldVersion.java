@@ -9,7 +9,7 @@ import fr.pandacube.lib.reflect.wrapper.ReflectWrapperI;
 import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 
 @ConcreteWrapper(WorldVersion.__concrete.class)
-public interface WorldVersion extends ReflectWrapperI {
+public interface WorldVersion extends GameVersion {
     ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.WorldVersion"));
 
 

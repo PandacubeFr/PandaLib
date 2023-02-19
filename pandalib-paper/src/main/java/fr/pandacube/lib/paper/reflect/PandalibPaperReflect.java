@@ -10,7 +10,11 @@ import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftVector;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftWorld;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.RenderData;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.VanillaCommandWrapper;
+import fr.pandacube.lib.paper.reflect.wrapper.dataconverter.MCDataConverter;
+import fr.pandacube.lib.paper.reflect.wrapper.dataconverter.MCDataType;
+import fr.pandacube.lib.paper.reflect.wrapper.dataconverter.MCTypeRegistry;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.DetectedVersion;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.GameVersion;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.SharedConstants;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.WorldVersion;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.BlockPosArgument;
@@ -107,6 +111,11 @@ public class PandalibPaperReflect {
         initWrapper(RenderData.class, RenderData.REFLECT.get());
         initWrapper(VanillaCommandWrapper.class, VanillaCommandWrapper.REFLECT.get());
 
+        // dataconverter
+        initWrapper(MCDataConverter.class, MCDataConverter.REFLECT.get());
+        initWrapper(MCDataType.class, MCDataType.REFLECT.get());
+        initWrapper(MCTypeRegistry.class, MCTypeRegistry.REFLECT.get());
+
         // minecraft.commands
         initWrapper(BlockPosArgument.class, BlockPosArgument.MAPPING.runtimeClass());
         initWrapper(Commands.class, Commands.MAPPING.runtimeClass());
@@ -170,6 +179,7 @@ public class PandalibPaperReflect {
         initWrapper(VoxelShape.class, VoxelShape.MAPPING.runtimeClass());
         // minecraft
         initWrapper(DetectedVersion.class, DetectedVersion.MAPPING.runtimeClass());
+        initWrapper(GameVersion.class, GameVersion.REFLECT.get());
         initWrapper(SharedConstants.class, SharedConstants.MAPPING.runtimeClass());
         initWrapper(WorldVersion.class, WorldVersion.MAPPING.runtimeClass());
 

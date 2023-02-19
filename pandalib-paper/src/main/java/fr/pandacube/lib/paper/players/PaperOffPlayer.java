@@ -3,6 +3,9 @@ package fr.pandacube.lib.paper.players;
 import com.google.common.io.Files;
 import fr.pandacube.lib.paper.reflect.util.PrimaryWorlds;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftServer;
+import fr.pandacube.lib.paper.reflect.wrapper.dataconverter.MCDataConverter;
+import fr.pandacube.lib.paper.reflect.wrapper.dataconverter.MCTypeRegistry;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.SharedConstants;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.NbtIo;
 import fr.pandacube.lib.paper.util.PlayerDataWrapper;
@@ -150,17 +153,23 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
     /**
      * Gets the NBT data from the playerdata file.
      * It will not work if the player is online, because the data on the file are not synchronized with real-time values.
+     * @param convertTag true to convert the data to the current MC version, false to keep the saved version
      * @return the NBT data from the playerdata file.
      * @throws IllegalStateException if the player is online.
      */
-    default CompoundTag getPlayerData() {
+    default CompoundTag getPlayerData(boolean convertTag) {
         if (isOnline())
             throw new IllegalStateException("Cannot access data file of " + getName() + " because they’re online.");
-        return ReflectWrapper.wrapTyped(Bukkit.getServer(), CraftServer.class)
+        CompoundTag data = ReflectWrapper.wrapTyped(Bukkit.getServer(), CraftServer.class)
                 .getServer()
                 .getPlayerList()
                 .playerIo()
                 .getPlayerData(getUniqueId().toString());
+        if (convertTag) {
+            int i = data.contains("DataVersion", 3) ? data.getInt("DataVersion") : -1;
+            data = MCDataConverter.convertTag(MCTypeRegistry.PLAYER(), data, i, SharedConstants.getCurrentVersion().getWorldVersion());
+        }
+        return data;
     }
 
     /**
@@ -170,7 +179,7 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
      * @throws IllegalStateException if the player is online.
      */
     default PlayerDataWrapper getPlayerDataWrapper() {
-        return new PlayerDataWrapper(getPlayerData());
+        return new PlayerDataWrapper(getPlayerData(true));
     }
 
     /**
