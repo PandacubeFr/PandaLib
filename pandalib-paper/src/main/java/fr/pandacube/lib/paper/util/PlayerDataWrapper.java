@@ -113,8 +113,8 @@ public class PlayerDataWrapper {
         for (int i = 0; i < list.size(); i++) {
             CompoundTag itemTag = list.getCompound(i);
             int nbtSlot = itemTag.getByte("Slot") & 255;
-            ItemStack is = CraftItemStack.asCraftMirror(itemTag);
-            if (is != null && !is.getType().isAir()) {
+            ItemStack is = filterStack(CraftItemStack.asCraftMirror(itemTag));
+            if (is != null) {
                 stacks.put(nbtSlot, CraftItemStack.asCraftMirror(itemTag));
             }
         }
@@ -131,7 +131,9 @@ public class PlayerDataWrapper {
             setRawInventoryContent(nbtKey, stacks);
         }
         for (int bukkitSlot = 0; bukkitSlot < inv.getSize(); bukkitSlot++) {
-            ItemStack is = inv.getItem(bukkitSlot);
+            ItemStack is = filterStack(inv.getItem(bukkitSlot));
+            if (is == null)
+                continue;
             int nbtSlot = bukkitToNBTSlotconverter.applyAsInt(bukkitSlot);
             stacks.put(nbtSlot, is);
         }
@@ -141,12 +143,20 @@ public class PlayerDataWrapper {
     private void setRawInventoryContent(String key, Map<Integer, ItemStack> stacks) {
         ListTag list = new ListTag();
         for (Map.Entry<Integer, ItemStack> is : stacks.entrySet()) {
+            ItemStack stack = filterStack(is.getValue());
+            if (stack == null)
+                continue;
             CompoundTag itemTag = new CompoundTag();
             CraftItemStack.asNMSCopy(is.getValue()).save(itemTag);
             itemTag.putByte("Slot", is.getKey().byteValue());
             list.add(list.size(), itemTag);
         }
         data.put(key, list);
+    }
+
+
+    private ItemStack filterStack(ItemStack is) {
+        return is == null || is.getType().isEmpty() || is.getAmount() == 0 ? null : is;
     }
 
 
@@ -194,7 +204,7 @@ public class PlayerDataWrapper {
         double levelAndExp = ExperienceUtil.getLevelFromExp(xp);
         int level = (int) levelAndExp;
         double expProgress = levelAndExp - level;
-        data.putInt("XPLevel", level);
+        data.putInt("XpLevel", level);
         data.putFloat("XpP", (float) expProgress);
     }
 
