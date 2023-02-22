@@ -74,14 +74,46 @@ public interface AbstractOffPlayer {
 	 * Player config
 	 */
 
+	/**
+	 * Gets the value of the provided configuration key of this player.
+	 * @param key the configuration key.
+	 * @return the value of the configuration, or null if the configuration is not set.
+	 * @throws Exception if an error occurs fetching the configuration value.
+	 */
 	String getConfig(String key) throws Exception;
 
+	/**
+	 * Gets the value of the provided configuration key of this player.
+	 * @param key the configuration key.
+	 * @param deflt the default value if the configuration is not set.
+	 * @return the value of the configuration, or {@code deflt} if the configuration is not set.
+	 * @throws Exception if an error occurs fetching the configuration value.
+	 */
 	String getConfig(String key, String deflt) throws Exception;
 
+	/**
+	 * Sets the value of the provided configuration key for this player.
+	 * @param key the configuration key to set.
+	 * @param value the new value.
+	 * @throws Exception if an error occurs updating the configuration value.
+	 */
 	void setConfig(String key, String value) throws Exception;
 
+	/**
+	 * Updates the value of the provided configuration key for this player, using the provided updater.
+	 * @param key the configuration key to update.
+	 * @param deflt the default value to use if the configuration is not already set.
+	 * @param updater the unary operator to use to update th value. The old value is used as the parameter of the updater,
+	 *                and it returns the new value of the configuration.
+	 * @throws Exception if an error occurs updating the configuration value.
+	 */
 	void updateConfig(String key, String deflt, UnaryOperator<String> updater) throws Exception;
 
+	/**
+	 * Unsets the value of the provided configuration key for this player.
+	 * @param key the configuration key to update.
+	 * @throws Exception if an error occurs deleting the configuration value.
+	 */
 	void unsetConfig(String key) throws Exception;
 
 	

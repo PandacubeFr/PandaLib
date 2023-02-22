@@ -6,17 +6,26 @@ import net.md_5.bungee.api.ChatColor;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.function.BiPredicate;
 
+/**
+ * A special backup process that handle the backup of rotated log files.
+ */
 public class RotatedLogsBackupProcess extends BackupProcess {
     final String logFileRegexPattern;
     final File sourceLogDirectory;
     final boolean inNewThread;
 
+    /**
+     * Create a new instance of this backup process.
+     * @param bm the backup manager.
+     * @param inNewThread tells if this process should be run in a separate thread (true) or in the same thread handling
+     *                    the backup manager (false).
+     * @param sourceLogDir the directory where the rotated log files are stored, usually {@code ./logs/}.
+     * @param logFileRegexPattern the pattern to match the rotated log files (usually dated log files, excuding the current log file).
+     */
     public RotatedLogsBackupProcess(BackupManager bm, boolean inNewThread, File sourceLogDir, String logFileRegexPattern) {
         super(bm, "logs");
         this.logFileRegexPattern = logFileRegexPattern;
@@ -84,7 +93,7 @@ public class RotatedLogsBackupProcess extends BackupProcess {
 
 
 
-    public List<File> getFilesToMove() {
+    private List<File> getFilesToMove() {
         List<File> ret = new ArrayList<>();
         for (File f : getSourceDir().listFiles()) {
             if (f.getName().matches(logFileRegexPattern))

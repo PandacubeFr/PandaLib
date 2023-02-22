@@ -122,6 +122,7 @@ public abstract class AbstractPlayerManager<OP extends AbstractOnlinePlayer, OF 
 	 * The default implementation returns all the players.
 	 * Concrete subclasses should override this method, especially
 	 * on Paper server, using the {@code Player.canSee(Player)} API.
+	 * @param viewer the player to test visibility on.
 	 * @return the players that the provided player can see.
 	 */
 	public List<OP> getOnlyVisibleFor(OF viewer) {
@@ -130,10 +131,10 @@ public abstract class AbstractPlayerManager<OP extends AbstractOnlinePlayer, OF 
 
 	/**
 	 * Get all the players that the provided player can see.
-	 * The default implementation returns all the players.
-	 * Concrete subclasses should override this method, especially
-	 * on Paper server, using the {@code Player.canSee(Player)} API.
+	 * Uses {@link #getOnlyVisibleFor(AbstractOffPlayer)}.
+	 * @param viewer the player to test visibility on.
 	 * @return the players that the provided player can see.
+	 * @see #getOnlyVisibleFor(AbstractOffPlayer)
 	 */
 	public List<String> getNamesOnlyVisible(OF viewer) {
 		return getOnlyVisibleFor(viewer).stream()

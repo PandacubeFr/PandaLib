@@ -83,11 +83,20 @@ public class Persist {
 		save();
 	}
 
-
+	/**
+	 * Tells if the backup process with the provided id is dirty.
+	 * @param id the id of the backup process.
+	 * @return true if the process is marked as dirty, false otherwise.
+	 */
 	public synchronized boolean isDirty(String id) {
 		return isDirtySince(id) != -1;
 	}
-	
+
+	/**
+	 * Tells since when the backup process with the provided id is dirty.
+	 * @param id the id of the backup process.
+	 * @return the millis-timestamp of when the backup process has been marked dirty.
+	 */
 	public synchronized long isDirtySince(String id) {
 		if (!dirtySince.containsKey(id))
 			setDirtySinceNow(id);
