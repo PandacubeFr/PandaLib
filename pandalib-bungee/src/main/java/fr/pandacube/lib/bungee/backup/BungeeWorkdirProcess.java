@@ -1,12 +1,8 @@
 package fr.pandacube.lib.bungee.backup;
 
 import fr.pandacube.lib.core.backup.BackupProcess;
-import fr.pandacube.lib.util.Log;
-import net.md_5.bungee.api.ChatColor;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.function.BiPredicate;
 
 public class BungeeWorkdirProcess extends BackupProcess {
@@ -22,7 +18,7 @@ public class BungeeWorkdirProcess extends BackupProcess {
 	
 	
 	public BiPredicate<File, String> getFilenameFilter() {
-		return new BiPredicate<File, String>() {
+		return new BiPredicate<>() {
 			@Override
 			public boolean test(File file, String path) {
 				if (new File(getSourceDir(), "logs").equals(file))

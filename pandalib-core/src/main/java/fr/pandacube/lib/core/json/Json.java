@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.RecordComponent;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -18,30 +20,35 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 /**
- * Provides pre-instanciated {@link Gson} instances, all with support for Java records.
+ * Provides pre-instanciated {@link Gson} instances, all with support for Java records and additionnal
+ * {@link TypeAdapterFactory} provided with {@link #registerTypeAdapterFactory(TypeAdapterFactory)}.
  */
 public class Json {
 
 	/**
-	 * {@link Gson} instance with {@link GsonBuilder#setLenient()} and support for Java records.
+	 * {@link Gson} instance with {@link GsonBuilder#setLenient()} and support for Java records and additionnal
+	 * {@link TypeAdapterFactory} provided with {@link #registerTypeAdapterFactory(TypeAdapterFactory)}.
 	 */
 	public static final Gson gson = build(Function.identity());
 
 	/**
-	 * {@link Gson} instance with {@link GsonBuilder#setLenient()}, {@link GsonBuilder#setPrettyPrinting()}
-	 * and support for Java records.
+	 * {@link Gson} instance with {@link GsonBuilder#setLenient()}, {@link GsonBuilder#setPrettyPrinting()} and support
+	 * for Java records and additionnal {@link TypeAdapterFactory} provided with
+	 * {@link #registerTypeAdapterFactory(TypeAdapterFactory)}.
 	 */
 	public static final Gson gsonPrettyPrinting = build(GsonBuilder::setPrettyPrinting);
 
 	/**
-	 * {@link Gson} instance with {@link GsonBuilder#setLenient()}, {@link GsonBuilder#serializeNulls()}
-	 * and support for Java records.
+	 * {@link Gson} instance with {@link GsonBuilder#setLenient()}, {@link GsonBuilder#serializeNulls()} and support for
+	 * Java records and additionnal {@link TypeAdapterFactory} provided with
+	 * {@link #registerTypeAdapterFactory(TypeAdapterFactory)}.
 	 */
 	public static final Gson gsonSerializeNulls = build(GsonBuilder::serializeNulls);
 
 	/**
 	 * {@link Gson} instance with {@link GsonBuilder#setLenient()}, {@link GsonBuilder#serializeNulls()},
-	 * {@link GsonBuilder#setPrettyPrinting()} and support for Java records.
+	 * {@link GsonBuilder#setPrettyPrinting()} and support for Java records and additionnal {@link TypeAdapterFactory}
+	 * provided with {@link #registerTypeAdapterFactory(TypeAdapterFactory)}.
 	 */
 	public static final Gson gsonSerializeNullsPrettyPrinting = build(b -> b.serializeNulls().setPrettyPrinting());
 
@@ -52,8 +59,41 @@ public class Json {
 
 
 	private static Gson build(Function<GsonBuilder, GsonBuilder> builderModifier) {
-		return builderModifier
-				.apply(new GsonBuilder().registerTypeAdapterFactory(new RecordAdapterFactory()).setLenient()).create();
+		GsonBuilder base = new GsonBuilder()
+				.registerTypeAdapterFactory(new CustomAdapterFactory())
+				.setLenient();
+		return builderModifier.apply(base).create();
+	}
+
+
+	/**
+	 * Adds the provided {@link TypeAdapterFactory} to all the static Gson instances of this class.
+	 * @param factory the factory to add to the
+	 */
+	public static void registerTypeAdapterFactory(TypeAdapterFactory factory) {
+		synchronized (customTypeAdapterFactories) {
+			customTypeAdapterFactories.add(factory);
+		}
+	}
+
+
+
+	private static final List<TypeAdapterFactory> customTypeAdapterFactories = new ArrayList<>();
+
+
+
+	private static class CustomAdapterFactory implements TypeAdapterFactory {
+		@Override
+		public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
+			synchronized (customTypeAdapterFactories) {
+				for (TypeAdapterFactory actualFactory : customTypeAdapterFactories) {
+					TypeAdapter<T> adapter = actualFactory.create(gson, type);
+					if (adapter != null)
+						return adapter;
+				}
+			}
+			return null;
+		}
 	}
 
 
@@ -62,6 +102,9 @@ public class Json {
 
 
 
+	static {
+		registerTypeAdapterFactory(new RecordAdapterFactory());
+	}
 
 	// from https://github.com/google/gson/issues/1794#issuecomment-812964421
 	private static class RecordAdapterFactory implements TypeAdapterFactory {

@@ -1,6 +1,5 @@
 package fr.pandacube.lib.bungee.commands;
 
-import fr.pandacube.lib.bungee.PandaLibBungee;
 import fr.pandacube.lib.chat.Chat;
 import fr.pandacube.lib.commands.BrigadierDispatcher;
 import net.kyori.adventure.text.ComponentLike;
@@ -21,6 +20,10 @@ public class BungeeBrigadierDispatcher extends BrigadierDispatcher<CommandSender
 
 	private static BungeeBrigadierDispatcher instance = null;
 
+	/**
+	 * Gets the instance of {@link BungeeBrigadierDispatcher}.
+	 * @return the instance of {@link BungeeBrigadierDispatcher}.
+	 */
 	public static synchronized BungeeBrigadierDispatcher getInstance() {
 		return instance;
 	}
