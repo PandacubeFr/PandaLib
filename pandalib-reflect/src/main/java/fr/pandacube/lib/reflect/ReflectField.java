@@ -10,7 +10,7 @@ import java.lang.reflect.Modifier;
 public final class ReflectField<T> extends ReflectMember<T, String, Field, NoSuchFieldException> {
 
     /* Those fields are used to modify the value of a static variable. Depending of the current Java version,
-     * one of them whill be used for this purpose.
+     * one of them will be used for this purpose.
      */
     private static sun.misc.Unsafe sunMiscUnsafeInstance;
     private static Field modifiersFieldInFieldClass;

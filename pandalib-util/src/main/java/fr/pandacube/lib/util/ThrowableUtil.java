@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
-import java.util.function.BiConsumer;
 
 /**
  * Utility class to easily manipulate {@link Throwable}s.
@@ -43,7 +42,7 @@ public class ThrowableUtil {
 	 * @throws RuntimeException if the provided {@link SupplierException} throws a checked exception.
 	 * @param <T> the type of the returned object
 	 */
-	public static <T> T wrapEx(SupplierException<T> supp) {
+	public static <T> T wrapEx(SupplierException<T, Exception> supp) {
 		try {
 			return supp.get();
 		} catch (Exception e) {
@@ -56,7 +55,7 @@ public class ThrowableUtil {
 	 * @param run the {@link RunnableException} to run.
 	 * @throws RuntimeException if the provided {@link RunnableException} throws a checked exception.
 	 */
-	public static void wrapEx(RunnableException run) {
+	public static void wrapEx(RunnableException<Exception> run) {
 		try {
 			run.run();
 		} catch (Exception e) {
@@ -74,7 +73,7 @@ public class ThrowableUtil {
 	 * @throws RuntimeException if the provided {@link SupplierException} throws a checked exception.
 	 * @param <T> the type of the returned object
 	 */
-	public static <T> T wrapReflectEx(SupplierException<T> supp) {
+	public static <T> T wrapReflectEx(SupplierException<T, Exception> supp) {
 		try {
 			return supp.get();
 		} catch (Exception e) {
@@ -88,7 +87,7 @@ public class ThrowableUtil {
 	 * @param run the {@link RunnableException} to run.
 	 * @throws RuntimeException if the provided {@link RunnableException} throws a checked exception.
 	 */
-	public static void wrapReflectEx(RunnableException run) {
+	public static void wrapReflectEx(RunnableException<Exception> run) {
 		try {
 			run.run();
 		} catch (Exception e) {
@@ -152,13 +151,13 @@ public class ThrowableUtil {
 	 * A supplier that can possibly throw a checked exception.
 	 */
 	@FunctionalInterface
-	public interface SupplierException<T> { // TODO make exception type generic
+	public interface SupplierException<T, E extends Exception> {
 		/**
 		 * Gets a result.
 		 * @return a result.
-		 * @throws Exception if implementation failed to run.
+		 * @throws E if implementation failed to run.
 		 */
-		T get() throws Exception;
+		T get() throws E;
 	}
 
 
@@ -167,12 +166,12 @@ public class ThrowableUtil {
 	 * A runnable that can possibly throw a checked exception.
 	 */
 	@FunctionalInterface
-	public interface RunnableException { // TODO make exception type generic
+	public interface RunnableException<E extends Exception> {
 		/**
 		 * Run any code implemented.
-		 * @throws Exception if implementation failed to run.
+		 * @throws E if implementation failed to run.
 		 */
-		void run() throws Exception;
+		void run() throws E;
 	}
 
 
