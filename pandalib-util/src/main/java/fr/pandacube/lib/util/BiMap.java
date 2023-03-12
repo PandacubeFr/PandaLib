@@ -13,6 +13,7 @@ import java.util.function.Supplier;
  * A bi-direction map storing in a synchronized way a {@code forwardMap} that store the key to value mapping, and a
  * {@code backwardMap} that store the value to key mapping.
  * All the keys and value are always unique in this bi-directional map.
+ * This class is fully thread safe.
  * @param <K> the type of the "key"
  * @param <V> the type of the "value"
  */

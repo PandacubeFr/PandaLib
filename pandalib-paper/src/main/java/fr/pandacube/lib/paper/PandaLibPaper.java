@@ -1,5 +1,6 @@
 package fr.pandacube.lib.paper;
 
+import fr.pandacube.lib.paper.json.PaperJson;
 import fr.pandacube.lib.paper.modules.PerformanceAnalysisManager;
 import org.bukkit.plugin.Plugin;
 
@@ -9,6 +10,7 @@ public class PandaLibPaper {
 	
 	public static void onLoad(Plugin plugin) {
 		PandaLibPaper.plugin = plugin;
+		PaperJson.init();
 	}
 
 	public static void onEnable() {
