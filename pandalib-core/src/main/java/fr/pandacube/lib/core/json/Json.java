@@ -1,15 +1,15 @@
 package fr.pandacube.lib.core.json;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
-import com.google.gson.internal.bind.ReflectiveTypeAdapterFactory;
+import com.google.gson.internal.reflect.ReflectionHelper;
 import com.google.gson.reflect.TypeToken;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Provides pre-instanciated {@link Gson} instances, all with support for Java records and additionnal
@@ -91,11 +91,12 @@ public class Json {
 
 
 	private static boolean hasGsonNativeRecordSupport() {
-		for (Class<?> innerClasses : ReflectiveTypeAdapterFactory.class.getDeclaredClasses()) {
-			if (innerClasses.getSimpleName().equals("RecordAdapter"))
-				return true;
+		try {
+			ReflectionHelper.class.getDeclaredField("RECORD_HELPER");
+			return true;
+		} catch (NoSuchFieldException e) {
+			return false;
 		}
-		return false;
 	}
 
 
