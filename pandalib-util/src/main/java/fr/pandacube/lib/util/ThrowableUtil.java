@@ -96,9 +96,14 @@ public class ThrowableUtil {
 	}
 
 
-
-
-	private static RuntimeException uncheck(Throwable t, boolean convertReflectionExceptionToError) {
+	/**
+	 * Makes the provided Throwable unckecked if necessary.
+	 * @param t the throwable to eventually wrap into a {@link RuntimeException}.
+	 * @param convertReflectionExceptionToError true to convert reflection related exception to their error counterpart.
+	 * @return a {@link RuntimeException}
+	 * @throws Error if one is passed as the parameter.
+	 */
+	public static RuntimeException uncheck(Throwable t, boolean convertReflectionExceptionToError) {
 		if (t instanceof Error er) {
 			throw er;
 		}
