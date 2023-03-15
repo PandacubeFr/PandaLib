@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
-import com.google.gson.internal.reflect.ReflectionHelper;
 import com.google.gson.reflect.TypeToken;
+import fr.pandacube.lib.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,8 +92,11 @@ public class Json {
 
 	private static boolean hasGsonNativeRecordSupport() {
 		try {
-			ReflectionHelper.class.getDeclaredField("RECORD_HELPER");
+			com.google.gson.internal.reflect.ReflectionHelper.class.getDeclaredField("RECORD_HELPER");
 			return true;
+		} catch (NoClassDefFoundError e) {
+			Log.warning("Unable to check Gson supporting records. Assuming it does not. " + e);
+			return false;
 		} catch (NoSuchFieldException e) {
 			return false;
 		}
