@@ -5,6 +5,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 
 import java.io.IOException;
+import java.time.Duration;
 
 /**
  * Minimal implementation of a Websocket server endpoint using the Jetty Websocket API.
@@ -15,6 +16,7 @@ public abstract class AbstractServerWS extends WebSocketAdapter implements Abstr
 	public final void onWebSocketConnect(Session sess)
 	{
 		super.onWebSocketConnect(sess);
+		sess.setIdleTimeout(Duration.ofDays(1000)); // practically infinite
 		onConnect();
 	}
 
