@@ -107,6 +107,8 @@ public class Json {
 	static {
 		if (!hasGsonNativeRecordSupport())
 			registerTypeAdapterFactory(RecordTypeAdapter.FACTORY);
+		registerTypeAdapterFactory(StackTraceElementAdapter.FACTORY);
+		registerTypeAdapterFactory(ThrowableAdapter.FACTORY);
 	}
 
 }
