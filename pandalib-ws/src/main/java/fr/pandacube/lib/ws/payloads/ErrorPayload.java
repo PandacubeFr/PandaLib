@@ -1,5 +1,7 @@
 package fr.pandacube.lib.ws.payloads;
 
+import fr.pandacube.lib.util.ThrowableUtil;
+
 /**
  * Error message payload.
  */
@@ -11,7 +13,7 @@ public class ErrorPayload extends Payload {
     /**
      * The error Throwable, may be null.
      */
-    public Throwable throwable;
+    public String exception;
 
     /**
      * Initialize an error payload with a message but not throwable.
@@ -28,7 +30,7 @@ public class ErrorPayload extends Payload {
      */
     public ErrorPayload(String message, Throwable throwable) {
         this.message = message;
-        this.throwable = throwable;
+        this.exception = ThrowableUtil.stacktraceToString(throwable);
     }
 
     @SuppressWarnings("unused")

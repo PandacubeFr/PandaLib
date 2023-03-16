@@ -110,7 +110,7 @@ public abstract class AbstractClientWS implements AbstractWS {
     public final void sendClose(int code, String reason) throws IOException {
         synchronized (socket) {
             autoReconnect = false; // if we ask for closing connection, dont reconnect automatically
-            socket.get().sendClose(code, reason);
+            socket.get().sendClose(code, reason).join();
         }
     }
 
