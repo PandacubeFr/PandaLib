@@ -1,5 +1,6 @@
 package fr.pandacube.lib.ws;
 
+import com.google.gson.JsonParseException;
 import fr.pandacube.lib.util.Log;
 import fr.pandacube.lib.util.ThrowableUtil.RunnableException;
 import fr.pandacube.lib.ws.payloads.ErrorPayload;
@@ -104,9 +105,10 @@ public interface AbstractWS {
      * @param obj the object to Jsonify.
      * @param serializeNulls if null propreties must be included in the json object.
      * @throws IOException if an IO error occurs when sending the data.
+     * @throws JsonParseException if the json is invalid.
      * @see PayloadRegistry#arbitraryToString(String, Object, boolean)
      */
-    default void sendAsJson(String type, Object obj, boolean serializeNulls) throws IOException {
+    default void sendAsJson(String type, Object obj, boolean serializeNulls) throws IOException, JsonParseException {
         sendString(PayloadRegistry.arbitraryToString(type, obj, serializeNulls));
     }
 
@@ -127,9 +129,10 @@ public interface AbstractWS {
      * Send the provided {@link Payload} to the remote endpoint.
      * @param payload the {@link Payload} to send.
      * @throws IOException if an IO error occurs when sending the data.
+     * @throws JsonParseException if the json is invalid.
      * @see PayloadRegistry#toString(Payload)
      */
-    default void sendAsJson(Payload payload) throws IOException {
+    default void sendAsJson(Payload payload) throws IOException, JsonParseException {
         sendString(PayloadRegistry.toString(payload));
     }
 
@@ -208,7 +211,7 @@ public interface AbstractWS {
         try {
             run.run();
             return true;
-        } catch (IOException e) {
+        } catch (IOException|JsonParseException e) {
             logError(errorMessage, e);
             return false;
         }
