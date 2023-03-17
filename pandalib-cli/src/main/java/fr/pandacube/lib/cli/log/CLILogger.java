@@ -1,15 +1,18 @@
 package fr.pandacube.lib.cli.log;
 
+import fr.pandacube.lib.cli.CLI;
+import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.ThrowableUtil;
+import net.md_5.bungee.log.ColouredWriter;
+import net.md_5.bungee.log.ConciseFormatter;
+
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.io.PrintStream;
+import java.util.Scanner;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import fr.pandacube.lib.cli.CLI;
-import fr.pandacube.lib.util.Log;
-import net.md_5.bungee.log.ColouredWriter;
-import net.md_5.bungee.log.ConciseFormatter;
-import net.md_5.bungee.log.LoggingOutputStream;
 
 /**
  * Initializer for the logging system of a CLI application.
@@ -38,12 +41,33 @@ public class CLILogger {
 			fileHandler.setFormatter(new ConciseFormatter(false));
 			logger.addHandler(fileHandler);
 			
-	        System.setErr(new PrintStream(new LoggingOutputStream(logger, Level.SEVERE), true));
-	        System.setOut(new PrintStream(new LoggingOutputStream(logger, Level.INFO), true));
+	        System.setErr(newRedirector(logger, Level.SEVERE));
+	        System.setOut(newRedirector(logger, Level.INFO));
 
 			Log.setLogger(logger);
 		}
 		return logger;
+	}
+
+
+
+
+	private static PrintStream newRedirector(Logger logger, Level level) {
+		PipedOutputStream pos = new PipedOutputStream();
+		PrintStream ps = new PrintStream(pos);
+		PipedInputStream pis = new PipedInputStream();
+		ThrowableUtil.wrapEx(() -> pos.connect(pis));
+		Scanner s = new Scanner(pis);
+
+		Thread t = new Thread(() -> {
+			while(s.hasNextLine()) {
+				logger.logp(level, "", "", s.nextLine());
+			}
+			s.close();
+		}, "Logging Redirector Thread (" + level + ")");
+		t.setDaemon(true);
+		t.start();
+		return ps;
 	}
 	
 }
