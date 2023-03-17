@@ -4,41 +4,32 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.internal.bind.TreeTypeAdapter;
-import com.google.gson.stream.MalformedJsonException;
+import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.ThrowableUtil;
 
-import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletionException;
-import java.util.concurrent.ExecutionException;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-/* package */ class ThrowableAdapter implements JsonSerializer<Throwable>, JsonDeserializer<Throwable> {
+/**
+ * Gson Adapter that handles serialization and deserialization of {@link Throwable} instances properly.
+ */
+public class ThrowableAdapter implements JsonSerializer<Throwable>, JsonDeserializer<Throwable> {
 
-    public static final TypeAdapterFactory FACTORY = TreeTypeAdapter.newTypeHierarchyFactory(Throwable.class, new ThrowableAdapter());
+    /* package */ static final TypeAdapterFactory FACTORY = TreeTypeAdapter.newTypeHierarchyFactory(Throwable.class, new ThrowableAdapter());
 
-
-    private static final Map<Class<? extends Throwable>, ThrowableSubAdapter<?>> subAdapters = Collections.synchronizedMap(new HashMap<>());
-
-    public static <T extends Throwable> void registerSubAdapter(Class<T> clazz, ThrowableSubAdapter<T> subAdapter) {
-        subAdapters.put(clazz, subAdapter);
-    }
 
     @Override
     public Throwable deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -52,18 +43,7 @@ import java.util.function.Function;
         // handle types
         Throwable t = null;
         if (obj.has("types") && obj.get("types").isJsonArray()) {
-            for (JsonElement clNameEl : obj.getAsJsonArray("types")) {
-                String clName = clNameEl.getAsString();
-                try {
-                    Class<?> cl = Class.forName(clName);
-                    synchronized (subAdapters) {
-                        if (subAdapters.containsKey(cl)) {
-                            t = subAdapters.get(cl).constructor.apply(message, cause);
-                            break;
-                        }
-                    }
-                } catch (ReflectiveOperationException ignore) { }
-            }
+            t = instanciate(obj.getAsJsonArray("types"), message, cause);
         }
         if (t == null) {
             t = new Throwable(message, cause);
@@ -136,13 +116,91 @@ import java.util.function.Function;
 
 
 
-    public static class ThrowableSubAdapter<T extends Throwable> {
-        public final BiFunction<String, Throwable, T> constructor;
 
+
+
+    private static final Map<Class<? extends Throwable>, ThrowableSubAdapter<?>> subAdapters = Collections.synchronizedMap(new HashMap<>());
+
+    /**
+     * Register a new adapter for a specific {@link Throwable} subclass.
+     * @param clazz the type handled by the specified sub-adapter.
+     * @param subAdapter the sub-adapter.
+     * @param <T> the type.
+     */
+    public static <T extends Throwable> void registerSubAdapter(Class<T> clazz, ThrowableSubAdapter<T> subAdapter) {
+        subAdapters.put(clazz, subAdapter);
+    }
+
+    private static <T extends Throwable> ThrowableSubAdapter<T> defaultSubAdapter(Class<T> clazz) {
+        BiFunction<String, Throwable, T> constructor = null;
+
+        // try (String, Throwable) constructor
+        try {
+            Constructor<T> constr = clazz.getConstructor(String.class, Throwable.class);
+            if (constr.canAccess(null)) {
+                constructor = (m, t) -> ThrowableUtil.wrapReflectEx(() -> constr.newInstance(m, t));
+            }
+        } catch (ReflectiveOperationException ignore) { }
+
+        // try (String) constructor
+        try {
+            Constructor<T> constr = clazz.getConstructor(String.class);
+            if (constr.canAccess(null)) {
+                constructor = ThrowableSubAdapter.messageOnly((m) -> ThrowableUtil.wrapReflectEx(() -> constr.newInstance(m)));
+            }
+        } catch (ReflectiveOperationException ignore) { }
+
+        if (constructor == null) {
+            Log.warning("Provided Throwable class '" + clazz + "' does not have any of those constructors or are not accessible: (String, Throwable), (String).");
+            return null;
+        }
+
+        return new ThrowableSubAdapter<>(constructor);
+    }
+
+
+    private Throwable instanciate(JsonArray types, String message, Throwable cause) {
+        Throwable t = null;
+        for (JsonElement clNameEl : types) {
+            String clName = clNameEl.getAsString();
+            try {
+                @SuppressWarnings("unchecked")
+                Class<? extends Throwable> cl = (Class<? extends Throwable>) Class.forName(clName);
+                ThrowableSubAdapter<? extends Throwable> subAdapter = subAdapters.get(cl);
+                if (subAdapter == null)
+                    subAdapter = defaultSubAdapter(cl);
+
+                if (subAdapter != null) {
+                    t = subAdapter.constructor.apply(message, cause);
+                    break;
+                }
+            } catch (ReflectiveOperationException ignore) { }
+        }
+        return t;
+    }
+
+
+    /**
+     * Adapter for specific subclasses of {@link Throwable}.
+     * @param <T> the type handled by this adapter.
+     */
+    public static class ThrowableSubAdapter<T extends Throwable> {
+        private final BiFunction<String, Throwable, T> constructor;
+
+        /**
+         * Creates a new adapter for a {@link Throwable}.
+         * @param constructor function that will construct a new throwable of the handled type, with prefilled message and cause if possible.
+         */
         protected ThrowableSubAdapter(BiFunction<String, Throwable, T> constructor) {
             this.constructor = constructor;
         }
 
+        /**
+         * Utiliy method to use on {@link Throwable} class that only have a message (no cause) constructor.
+         * @param constructorWithMessage function that will construct a new throwable, with prefilled message.
+         * @return a function that will construct a throwable using the provided function, then will try to init the cause of the throwable.
+         * @param <T> the type of the constructed {@link Throwable}.
+         */
         public static <T extends Throwable> BiFunction<String, Throwable, T> messageOnly(Function<String, T> constructorWithMessage) {
             return (m, t) -> {
                 T inst = constructorWithMessage.apply(m);
@@ -152,45 +210,6 @@ import java.util.function.Function;
                 return inst;
             };
         }
-    }
-
-
-    static {
-        // java.lang
-        registerSubAdapter(Throwable.class, new ThrowableSubAdapter<>(Throwable::new));
-        registerSubAdapter(Error.class, new ThrowableSubAdapter<>(Error::new));
-        registerSubAdapter(OutOfMemoryError.class, new ThrowableSubAdapter<>(ThrowableSubAdapter.messageOnly(OutOfMemoryError::new)));
-        registerSubAdapter(StackOverflowError.class, new ThrowableSubAdapter<>(ThrowableSubAdapter.messageOnly(StackOverflowError::new)));
-        registerSubAdapter(Exception.class, new ThrowableSubAdapter<>(Exception::new));
-        registerSubAdapter(RuntimeException.class, new ThrowableSubAdapter<>(RuntimeException::new));
-        registerSubAdapter(NullPointerException.class, new ThrowableSubAdapter<>(ThrowableSubAdapter.messageOnly(NullPointerException::new)));
-        registerSubAdapter(IndexOutOfBoundsException.class, new ThrowableSubAdapter<>(ThrowableSubAdapter.messageOnly(IndexOutOfBoundsException::new)));
-        registerSubAdapter(IllegalArgumentException.class, new ThrowableSubAdapter<>(IllegalArgumentException::new));
-        registerSubAdapter(IllegalStateException.class, new ThrowableSubAdapter<>(IllegalStateException::new));
-        registerSubAdapter(SecurityException.class, new ThrowableSubAdapter<>(SecurityException::new));
-        registerSubAdapter(ReflectiveOperationException.class, new ThrowableSubAdapter<>(ReflectiveOperationException::new));
-        registerSubAdapter(UnsupportedOperationException.class, new ThrowableSubAdapter<>(UnsupportedOperationException::new));
-        registerSubAdapter(InterruptedException.class, new ThrowableSubAdapter<>(ThrowableSubAdapter.messageOnly(InterruptedException::new)));
-
-        // java.io
-        registerSubAdapter(IOException.class, new ThrowableSubAdapter<>(IOException::new));
-
-        // java.sql
-        registerSubAdapter(SQLException.class, new ThrowableSubAdapter<>(SQLException::new));
-
-        // java.util
-        registerSubAdapter(NoSuchElementException.class, new ThrowableSubAdapter<>(NoSuchElementException::new));
-
-        // java.util.concurrent
-        registerSubAdapter(CancellationException.class, new ThrowableSubAdapter<>(ThrowableSubAdapter.messageOnly(CancellationException::new)));
-        registerSubAdapter(ExecutionException.class, new ThrowableSubAdapter<>(ExecutionException::new));
-        registerSubAdapter(CompletionException.class, new ThrowableSubAdapter<>(CompletionException::new));
-
-        // gson
-        registerSubAdapter(JsonIOException.class, new ThrowableSubAdapter<>(JsonIOException::new));
-        registerSubAdapter(JsonParseException.class, new ThrowableSubAdapter<>(JsonParseException::new));
-        registerSubAdapter(JsonSyntaxException.class, new ThrowableSubAdapter<>(JsonSyntaxException::new));
-        registerSubAdapter(MalformedJsonException.class, new ThrowableSubAdapter<>(MalformedJsonException::new));
     }
 
 
