@@ -5,12 +5,15 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 
 import java.io.IOException;
+import java.nio.channels.ClosedChannelException;
 import java.time.Duration;
 
 /**
  * Minimal implementation of a Websocket server endpoint using the Jetty Websocket API.
  */
 public abstract class AbstractServerWS extends WebSocketAdapter implements AbstractWS {
+
+	private boolean isClosed = false;
 	
 	@Override
 	public final void onWebSocketConnect(Session sess)
@@ -37,6 +40,8 @@ public abstract class AbstractServerWS extends WebSocketAdapter implements Abstr
 
 	@Override
 	public final void onWebSocketError(Throwable cause) {
+		if (isClosed && cause instanceof ClosedChannelException)
+			return; // ignore because this exception is expected when we just sent a close packet.
 		onError(cause);
 	}
 
@@ -53,6 +58,7 @@ public abstract class AbstractServerWS extends WebSocketAdapter implements Abstr
 	@Override
 	public final void sendClose(int code, String reason) throws IOException {
 		getSession().close(code, reason);
+		isClosed = true;
 	}
 
 	@Override
