@@ -32,15 +32,26 @@ public interface AbstractWS {
             return;
         }
 
-        try {
-            onReceivePayload(payload);
-        } catch (Throwable t) {
-            trySendAsJson(new ErrorPayload("Error handling payload: " + t));
-            if (t instanceof Exception)
-                logError("Error handling payload", t);
-            else
-                throw t;
+        if (payload instanceof ErrorPayload errorPayload) {
+            try {
+                onReceiveErrorPayload(errorPayload);
+            } catch(Exception e) {
+                logError("Error while handling received error payload", e);
+            }
         }
+        else {
+            try {
+                onReceivePayload(payload);
+            } catch (Throwable t) {
+                trySendAsJson(new ErrorPayload("Error while handling your payload: " + t));
+                if (t instanceof Exception)
+                    logError("Error while handling received payload", t);
+                else
+                    throw t;
+            }
+        }
+
+
     }
 
     /**
@@ -61,6 +72,15 @@ public interface AbstractWS {
      * @param payload the received {@link Payload}.
      */
     void onReceivePayload(Payload payload);
+
+    /**
+     * Called on reception of a valid {@link ErrorPayload}.
+     * @param error the received {@link ErrorPayload}.
+     * @implNote default implementation will log the received error.
+     */
+    default void onReceiveErrorPayload(ErrorPayload error) {
+        logError("Received the following error from the remote side: " + error.message, error.throwable);
+    }
 
     /**
      * Called on reception of a websocket Close packet.

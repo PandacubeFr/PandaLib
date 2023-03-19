@@ -49,12 +49,12 @@ public class PayloadRegistry {
     public static Payload fromString(String message) {
         String[] split = message.split(Pattern.quote(PAYLOAD_TYPE_SEPARATOR), 2);
         if (split.length != 2) {
-            throw new IllegalArgumentException("Malformed message: does not respect format '<type>" + PAYLOAD_TYPE_SEPARATOR + "<jsonObject>'.");
+            throw new IllegalArgumentException("Malformed message: does not respect format ‘<type>" + PAYLOAD_TYPE_SEPARATOR + "<jsonObject>’.");
         }
 
         Class<? extends Payload> detectedClass = payloadClasses.get(split[0]);
         if (detectedClass == null) {
-            throw new IllegalArgumentException("Unrecognized data type '" + split[0] + "'.");
+            throw new IllegalArgumentException("Unrecognized data type ‘" + split[0] + "’.");
         }
 
         try {
