@@ -106,13 +106,15 @@ public abstract class AbstractClientWS implements AbstractWS {
                             isConnecting = false;
                             if (ws != null) {
                                 socket.set(ws);
+                                return;
                             }
                         }
                         if (ex instanceof IOException) {
                             reconnectIfNecessary();
                         }
                         else {
-                            logError("Error connecting (not trying to reconnect even if asked): ", ex);
+                            autoReconnect = false;
+                            logError("Error connecting (not trying to reconnect even if asked)", ex);
                         }
                     });
         }
