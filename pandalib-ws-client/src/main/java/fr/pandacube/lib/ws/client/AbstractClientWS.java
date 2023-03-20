@@ -29,19 +29,37 @@ public abstract class AbstractClientWS implements AbstractWS {
     private final Listener receiveListener = new Listener() {
         @Override
         public void onOpen(WebSocket webSocket) {
-            AbstractClientWS.this.onConnect();
+            // this method is actually called before the CompletableFuture from the WS Builder is completed, so
+            // we have to affect socket reference before doing anything
+            synchronized (socket) {
+                socket.set(webSocket);
+                isConnecting = false;
+            }
+            try {
+                AbstractClientWS.this.onConnect();
+            } catch (Exception e) {
+                logError("Error handling connection opening.", e);
+            }
             Listener.super.onOpen(webSocket);
         }
 
         @Override
         public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
-            AbstractClientWS.this.handleReceivedMessage(data.toString());
+            try {
+                AbstractClientWS.this.handleReceivedMessage(data.toString());
+            } catch (Exception e) {
+                logError("Error handling reception of text.", e);
+            }
             return Listener.super.onText(webSocket, data, last);
         }
 
         @Override
         public CompletionStage<?> onBinary(WebSocket webSocket, ByteBuffer data, boolean last) {
-            AbstractClientWS.this.handleReceivedBinary();
+            try {
+                AbstractClientWS.this.handleReceivedBinary();
+            } catch (Exception e) {
+                logError("Error handling reception of binary.", e);
+            }
             return Listener.super.onBinary(webSocket, data, last);
         }
 
@@ -105,6 +123,8 @@ public abstract class AbstractClientWS implements AbstractWS {
                         synchronized (socket) {
                             isConnecting = false;
                             if (ws != null) {
+                                // the value may already been set by the onOpen method of the receiveListener
+                                // but just in case, we do it here too
                                 socket.set(ws);
                                 return;
                             }
