@@ -129,6 +129,8 @@ public abstract class AbstractClientWS implements AbstractWS {
                                 return;
                             }
                         }
+                        if (ex instanceof CompletionException)
+                            ex = ex.getCause();
                         if (ex instanceof IOException) {
                             reconnectIfNecessary();
                         }
