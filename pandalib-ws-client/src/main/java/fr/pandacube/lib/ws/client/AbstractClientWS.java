@@ -133,6 +133,7 @@ public abstract class AbstractClientWS implements AbstractWS {
                             ex = ex.getCause();
                         if (ex instanceof IOException) {
                             reconnectIfNecessary();
+                            log("Unable to connect. Trying again...: " + ex);
                         }
                         else {
                             autoReconnect = false;
