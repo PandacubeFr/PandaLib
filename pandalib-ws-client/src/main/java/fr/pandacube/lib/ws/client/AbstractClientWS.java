@@ -106,6 +106,11 @@ public abstract class AbstractClientWS implements AbstractWS {
     private void reconnectIfNecessary() {
         synchronized (socket) {
             if (autoReconnect && !isConnecting && socket.get() == null) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ignored) {
+                    Thread.currentThread().interrupt();
+                }
                 connect();
             }
         }
