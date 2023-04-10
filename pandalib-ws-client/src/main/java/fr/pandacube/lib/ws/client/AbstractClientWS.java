@@ -43,13 +43,20 @@ public abstract class AbstractClientWS implements AbstractWS {
             Listener.super.onOpen(webSocket);
         }
 
+        StringBuilder partialData = new StringBuilder();
+
         @Override
         public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
-            try {
-                AbstractClientWS.this.handleReceivedMessage(data.toString());
-            } catch (Exception e) {
-                logError("Error handling reception of text.", e);
+            partialData.append(data.toString());
+            if (last) {
+                try {
+                    AbstractClientWS.this.handleReceivedMessage(partialData.toString());
+                } catch (Exception e) {
+                    logError("Error handling reception of text.", e);
+                }
+                partialData = new StringBuilder();
             }
+
             return Listener.super.onText(webSocket, data, last);
         }
 
