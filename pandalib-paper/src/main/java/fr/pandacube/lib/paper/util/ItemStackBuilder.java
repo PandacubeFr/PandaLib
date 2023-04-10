@@ -1,15 +1,9 @@
 package fr.pandacube.lib.paper.util;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
-import fr.pandacube.lib.chat.ChatStatic;
-import fr.pandacube.lib.util.Log;
+import com.destroystokyo.paper.Namespaced;
+import com.google.common.collect.Streams;
+import fr.pandacube.lib.chat.Chat;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -18,13 +12,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.google.common.collect.Streams;
-
-import fr.pandacube.lib.chat.Chat;
-import fr.pandacube.lib.chat.Chat.FormatableChat;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.format.TextDecoration.State;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
 
 import static fr.pandacube.lib.chat.ChatStatic.chatComponent;
 
@@ -182,11 +175,19 @@ public class ItemStackBuilder {
 	}
 
 	public ItemStackBuilder canDestroy(Set<Material> destroyable) {
-		return meta(m -> m.setCanDestroy(destroyable));
+		return canDestroy(destroyable.stream().map(m -> (Namespaced) m.getKey()).toList());
 	}
 
 	public ItemStackBuilder canPlaceOn(Set<Material> placeOn) {
-		return meta(m -> m.setCanPlaceOn(placeOn));
+		return canPlaceOn(placeOn.stream().map(m -> (Namespaced) m.getKey()).toList());
+	}
+
+	public ItemStackBuilder canDestroy(Collection<Namespaced> destroyable) {
+		return meta(m -> m.setDestroyableKeys(destroyable));
+	}
+
+	public ItemStackBuilder canPlaceOn(Collection<Namespaced> placeOn) {
+		return meta(m -> m.setPlaceableKeys(placeOn));
 	}
 	
 	public ItemStackBuilder damage(int d) {
