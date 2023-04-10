@@ -30,7 +30,7 @@ public class CLI extends Thread {
 
         AnsiConsole.systemInstall();
 		reader = new ConsoleReader();
-		reader.setPrompt("\r>");
+		reader.setPrompt(">");
 		reader.addCompleter(CLIBrigadierDispatcher.instance);
 
 		// configuration du formatteur pour le logger
