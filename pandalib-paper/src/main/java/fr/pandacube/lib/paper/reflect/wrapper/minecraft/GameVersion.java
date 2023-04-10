@@ -12,8 +12,8 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 @ConcreteWrapper(GameVersion.__concrete.class)
 public interface GameVersion extends ReflectWrapperI {
-    public static final ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("com.mojang.bridge.game.GameVersion"));
-    public static final ReflectMethod<?> getWorldVersion = wrapEx(() -> REFLECT.method("getWorldVersion"));
+    ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("com.mojang.bridge.game.GameVersion"));
+    ReflectMethod<?> getWorldVersion = wrapEx(() -> REFLECT.method("getWorldVersion"));
 
     default int getWorldVersion() {
         return (int) wrapReflectEx(() -> getWorldVersion.invoke(__getRuntimeInstance()));

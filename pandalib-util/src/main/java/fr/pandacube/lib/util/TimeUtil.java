@@ -179,7 +179,7 @@ public class TimeUtil {
 		/**
 		 * Seconds precision for relative display.
 		 */
-		SECONDS;
+		SECONDS
 	}
 
 	/**

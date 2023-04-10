@@ -310,9 +310,7 @@ public abstract class BackupProcess implements Comparable<BackupProcess>, Runnab
             return false;
         if (!isDirty())
             return false;
-        if (getNext() > System.currentTimeMillis())
-            return false;
-        return true;
+        return getNext() <= System.currentTimeMillis();
     }
 
 

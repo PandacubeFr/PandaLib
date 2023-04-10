@@ -20,10 +20,12 @@ public class CollectionTag extends ReflectWrapperTyped<AbstractList<?>> implemen
 		return wrap(__getRuntimeInstance().get(i), Tag.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Tag set(int i, Tag t) {
 		return wrap(((AbstractList<Object>)__getRuntimeInstance()).set(i, unwrap(t)), Tag.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void add(int i, Tag t) {
 		((AbstractList<Object>)__getRuntimeInstance()).add(i, unwrap(t));
 	}

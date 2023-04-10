@@ -336,7 +336,7 @@ public interface SuggestionsSupplier<S> {
 	/**
 	 * List of all possible duration unit symbols for suggestions.
 	 */
-	public static final List<String> DURATION_SUFFIXES = List.of("y", "mo", "w", "d", "h", "m", "s");
+	List<String> DURATION_SUFFIXES = List.of("y", "mo", "w", "d", "h", "m", "s");
 
 
 	private static void scanAndRemovePastSuffixes(List<String> suffixes, String foundSuffix) {
