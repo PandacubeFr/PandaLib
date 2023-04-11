@@ -276,9 +276,9 @@ public interface AbstractWS {
 
     private String formatLogMessage(String message) {
         String remote = getRemoteIdentifier();
-        String fullText = "[WS/" + getClass().getSimpleName() + "]";
+        String fullText = "[WS/" + getClass().getSimpleName() + "] ";
         if (remote != null) {
-            fullText += " [" + remote + "]";
+            fullText += "[" + remote + "] ";
         }
         fullText += message;
         return fullText;
