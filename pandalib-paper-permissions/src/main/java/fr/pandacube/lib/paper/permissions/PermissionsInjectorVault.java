@@ -1,14 +1,13 @@
 package fr.pandacube.lib.paper.permissions;
 
-import java.util.List;
-
+import fr.pandacube.lib.permissions.PermGroup;
+import fr.pandacube.lib.permissions.Permissions;
+import fr.pandacube.lib.util.Log;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.ServicePriority;
 
-import fr.pandacube.lib.permissions.PermGroup;
-import fr.pandacube.lib.permissions.Permissions;
-import fr.pandacube.lib.util.Log;
+import java.util.List;
 
 /* package */ class PermissionsInjectorVault {
 	
@@ -73,13 +72,29 @@ import fr.pandacube.lib.util.Log;
 		@Deprecated
 		@Override
 		public boolean playerAdd(String world, String player, String permission) {
-			return false;
+			return playerAdd(world, Bukkit.getOfflinePlayer(player), permission);
+		}
+
+		@Override
+		public boolean playerAdd(String world, OfflinePlayer player, String permission) {
+			String server = PandalibPaperPermissions.serverName;
+			Permissions.getPlayer(player.getUniqueId()).addSelfPermission(permission, server, world);
+			Log.info("A plugin added permission " + permission + " (server=" + server + ",world=" + world + ") to player " + player.getName() + " through Vault.");
+			return true;
 		}
 
 		@Deprecated
 		@Override
 		public boolean playerRemove(String world, String player, String permission) {
-			return false;
+			return playerRemove(world, Bukkit.getOfflinePlayer(player), permission);
+		}
+
+		@Override
+		public boolean playerRemove(String world, OfflinePlayer player, String permission) {
+			String server = PandalibPaperPermissions.serverName;
+			Permissions.getPlayer(player.getUniqueId()).removeSelfPermission(permission, server, world);
+			Log.info("A plugin removed permission " + permission + " (server=" + server + ",world=" + world + ") to player " + player.getName() + " through Vault.");
+			return true;
 		}
 
 		@Override
@@ -97,11 +112,15 @@ import fr.pandacube.lib.util.Log;
 
 		@Override
 		public boolean groupAdd(String world, String group, String permission) {
+			Log.warning(new Throwable("A plugin tried to add to group " + group + " (world=" + world + ") the permission " + permission
+					+ " through Vault but Pandalib does not support it."));
 			return false;
 		}
 
 		@Override
 		public boolean groupRemove(String world, String group, String permission) {
+			Log.warning(new Throwable("A plugin tried to remove from group " + group + " (world=" + world + ") the permission " + permission
+					+ " through Vault but Pandalib does not support it."));
 			return false;
 		}
 
@@ -119,12 +138,16 @@ import fr.pandacube.lib.util.Log;
 		@Deprecated
 		@Override
 		public boolean playerAddGroup(String world, String player, String group) {
+			Log.warning(new Throwable("A plugin tried to add player " + player + " (world=" + world + ") to permission group " + group
+					+ " through Vault but Pandalib does not support it."));
 			return false;
 		}
 
 		@Deprecated
 		@Override
 		public boolean playerRemoveGroup(String world, String player, String group) {
+			Log.warning(new Throwable("A plugin tried to remove player " + player + " (world=" + world + ") from permission group " + group
+					+ " through Vault but Pandalib does not support it."));
 			return false;
 		}
 
