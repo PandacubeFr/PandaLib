@@ -12,13 +12,13 @@ import java.util.function.Predicate;
 /**
  * Abstract class that holds the logic of a specific command to be registered in {@link CLIBrigadierDispatcher}.
  */
-public abstract class CLIBrigadierCommand extends BrigadierCommand<Object> {
+public abstract class CLIBrigadierCommand extends BrigadierCommand<CLICommandSender> {
 
 	/**
 	 * Instanciate this command instance.
 	 */
 	public CLIBrigadierCommand() {
-		LiteralCommandNode<Object> commandNode = buildCommand().build();
+		LiteralCommandNode<CLICommandSender> commandNode = buildCommand().build();
 		postBuildCommand(commandNode);
 		String[] aliases = getAliases();
 		if (aliases == null)
@@ -37,7 +37,7 @@ public abstract class CLIBrigadierCommand extends BrigadierCommand<Object> {
 		}
 	}
 	
-	protected abstract LiteralArgumentBuilder<Object> buildCommand();
+	protected abstract LiteralArgumentBuilder<CLICommandSender> buildCommand();
 	
 	protected String[] getAliases() {
 		return new String[0];
@@ -47,16 +47,16 @@ public abstract class CLIBrigadierCommand extends BrigadierCommand<Object> {
 
 
 
-	public boolean isPlayer(Object sender) {
-		return false;
+	public boolean isPlayer(CLICommandSender sender) {
+		return sender.isPlayer();
 	}
 
-	public boolean isConsole(Object sender) {
-		return true;
+	public boolean isConsole(CLICommandSender sender) {
+		return sender.isConsole();
 	}
 
-	public Predicate<Object> hasPermission(String permission) {
-		return sender -> true;
+	public Predicate<CLICommandSender> hasPermission(String permission) {
+		return sender -> sender.hasPermission(permission);
 	}
 
 
@@ -68,7 +68,7 @@ public abstract class CLIBrigadierCommand extends BrigadierCommand<Object> {
 	 * @param suggestions the suggestions to wrap.
 	 * @return a {@link SuggestionProvider} generating the suggestions from the provided {@link SuggestionsSupplier}.
 	 */
-	protected SuggestionProvider<Object> wrapSuggestions(SuggestionsSupplier<Object> suggestions) {
+	protected SuggestionProvider<CLICommandSender> wrapSuggestions(SuggestionsSupplier<CLICommandSender> suggestions) {
 		return wrapSuggestions(suggestions, Function.identity());
 	}
 

@@ -1,20 +1,17 @@
 package fr.pandacube.lib.cli.commands;
 
-import java.util.List;
-
 import com.mojang.brigadier.suggestion.Suggestion;
 import com.mojang.brigadier.suggestion.Suggestions;
-
-import fr.pandacube.lib.chat.Chat;
 import fr.pandacube.lib.commands.BrigadierDispatcher;
-import fr.pandacube.lib.util.Log;
 import jline.console.completer.Completer;
 import net.kyori.adventure.text.ComponentLike;
+
+import java.util.List;
 
 /**
  * Implementation of {@link BrigadierDispatcher} that integrates the commands into the JLine CLI interface.
  */
-public class CLIBrigadierDispatcher extends BrigadierDispatcher<Object> implements Completer {
+public class CLIBrigadierDispatcher extends BrigadierDispatcher<CLICommandSender> implements Completer {
 
 	/**
 	 * The instance of {@link CLIBrigadierDispatcher}.
@@ -22,16 +19,16 @@ public class CLIBrigadierDispatcher extends BrigadierDispatcher<Object> implemen
 	public static final CLIBrigadierDispatcher instance = new CLIBrigadierDispatcher();
 
 
-	private static final Object sender = new Object();
+	private static final CLICommandSender CLI_CONSOLE_COMMAND_SENDER = new CLIConsoleCommandSender();
 
 
 	/**
-	 * Executes the provided command.
+	 * Executes the provided command as the console.
 	 * @param commandWithoutSlash the command, without the eventual slash at the begining.
 	 * @return the value returned by the executed command.
 	 */
 	public int execute(String commandWithoutSlash) {
-		return execute(sender, commandWithoutSlash);
+		return execute(CLI_CONSOLE_COMMAND_SENDER, commandWithoutSlash);
 	}
 	
 	
@@ -50,17 +47,17 @@ public class CLIBrigadierDispatcher extends BrigadierDispatcher<Object> implemen
 	}
 
 	/**
-	 * Gets the suggestions for the currently being typed command.
+	 * Gets the suggestions for the currently being typed command, as the console.
 	 * @param buffer the command that is being typed.
 	 * @return the suggestions for the currently being typed command.
 	 */
 	public Suggestions getSuggestions(String buffer) {
-		return getSuggestions(sender, buffer);
+		return getSuggestions(CLI_CONSOLE_COMMAND_SENDER, buffer);
 	}
 
 
 	@Override
-	protected void sendSenderMessage(Object sender, ComponentLike message) {
-		Log.info(Chat.chatComponent(message).getLegacyText());
+	protected void sendSenderMessage(CLICommandSender sender, ComponentLike message) {
+		sender.sendMessage(message);
 	}
 }
