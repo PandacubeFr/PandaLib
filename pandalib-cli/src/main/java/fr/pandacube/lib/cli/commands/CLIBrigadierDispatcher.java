@@ -19,7 +19,10 @@ public class CLIBrigadierDispatcher extends BrigadierDispatcher<CLICommandSender
 	public static final CLIBrigadierDispatcher instance = new CLIBrigadierDispatcher();
 
 
-	private static final CLICommandSender CLI_CONSOLE_COMMAND_SENDER = new CLIConsoleCommandSender();
+	/**
+	 * The sender for the console itself.
+	 */
+	public static final CLICommandSender CLI_CONSOLE_COMMAND_SENDER = new CLIConsoleCommandSender();
 
 
 	/**
