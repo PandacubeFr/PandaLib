@@ -57,6 +57,7 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.AABB;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ChunkPos;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ChunkStorage;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.DamageSource;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.DamageSources;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Entity;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ItemStack;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Level;
@@ -169,6 +170,7 @@ public class PandalibPaperReflect {
         initWrapper(ChunkPos.class, ChunkPos.MAPPING.runtimeClass());
         initWrapper(ChunkStorage.class, ChunkStorage.MAPPING.runtimeClass());
         initWrapper(DamageSource.class, DamageSource.MAPPING.runtimeClass());
+        initWrapper(DamageSources.class, DamageSources.MAPPING.runtimeClass());
         initWrapper(Entity.class, Entity.MAPPING.runtimeClass());
         initWrapper(ItemStack.class, ItemStack.MAPPING.runtimeClass());
         initWrapper(Level.class, Level.MAPPING.runtimeClass());
