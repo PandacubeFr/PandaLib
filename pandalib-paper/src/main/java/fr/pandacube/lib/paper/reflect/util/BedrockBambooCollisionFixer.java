@@ -2,7 +2,7 @@ package fr.pandacube.lib.paper.reflect.util;
 
 import fr.pandacube.lib.paper.PandaLibPaper;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.AABB;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.block.BambooBlock;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.block.BambooStalkBlock;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.AABBVoxelShape;
 import fr.pandacube.lib.util.Log;
 import org.bukkit.Bukkit;
@@ -21,7 +21,7 @@ public final class BedrockBambooCollisionFixer implements Listener {
     public BedrockBambooCollisionFixer() {
         // Make the bamboo block have zero collision.
         try {
-            BambooBlock.COLLISION_SHAPE(new AABBVoxelShape(new AABB(0.5, 0, 0.5, 0.5, 0, 0.5)));
+            BambooStalkBlock.COLLISION_SHAPE(new AABBVoxelShape(new AABB(0.5, 0, 0.5, 0.5, 0, 0.5)));
             Log.info("Bamboo block collision box removed succesfully.");
         } catch (Exception e) {
             Log.severe("Unable to remove the collision box of the Bamboo block.", e);

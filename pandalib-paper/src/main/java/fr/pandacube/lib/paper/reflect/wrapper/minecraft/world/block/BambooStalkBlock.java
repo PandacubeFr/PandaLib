@@ -8,8 +8,8 @@ import fr.pandacube.lib.reflect.ReflectField;
 import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
-public class BambooBlock extends ReflectWrapper {
-    public static final NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.world.level.block.BambooBlock"));
+public class BambooStalkBlock extends ReflectWrapper {
+    public static final NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.world.level.block.BambooStalkBlock"));
     public static final ReflectField<?> COLLISION_SHAPE = wrapEx(() -> MAPPING.mojField("COLLISION_SHAPE"));
 
     public static VoxelShape COLLISION_SHAPE() {
@@ -20,7 +20,7 @@ public class BambooBlock extends ReflectWrapper {
         wrapReflectEx(() -> COLLISION_SHAPE.setStaticValue(unwrap(shape)));
     }
 
-    protected BambooBlock(Object obj) {
+    protected BambooStalkBlock(Object obj) {
         super(obj);
     }
 }

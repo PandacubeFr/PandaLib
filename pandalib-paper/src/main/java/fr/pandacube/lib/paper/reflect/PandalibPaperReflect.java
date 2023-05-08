@@ -66,7 +66,7 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.PlayerDataStorage;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.SavedData;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Vec3;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.VoxelShape;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.block.BambooBlock;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.block.BambooStalkBlock;
 import fr.pandacube.lib.paper.reflect.wrapper.netty.ByteBuf;
 import fr.pandacube.lib.paper.reflect.wrapper.netty.Unpooled;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.AABBVoxelShape;
@@ -164,7 +164,7 @@ public class PandalibPaperReflect {
         // minecraft.util
         initWrapper(ProgressListener.class, ProgressListener.MAPPING.runtimeClass());
         // minecraft.world.block
-        initWrapper(BambooBlock.class, BambooBlock.MAPPING.runtimeClass());
+        initWrapper(BambooStalkBlock.class, BambooStalkBlock.MAPPING.runtimeClass());
         // minecraft.world
         initWrapper(AABB.class, AABB.MAPPING.runtimeClass());
         initWrapper(ChunkPos.class, ChunkPos.MAPPING.runtimeClass());
