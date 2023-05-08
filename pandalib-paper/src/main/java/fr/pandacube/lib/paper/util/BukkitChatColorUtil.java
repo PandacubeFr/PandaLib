@@ -45,19 +45,22 @@ public class BukkitChatColorUtil {
 	}
 	
 
-	
+	@SuppressWarnings("deprecation")
 	public static ChatColor toBukkit(net.md_5.bungee.api.ChatColor color) {
 		return ChatColor.valueOf(color.getName().toUpperCase());
 	}
-	
+
+	@SuppressWarnings("deprecation")
 	public static ChatColor toBukkit(TextColor color) {
 		return toBukkit(NamedTextColor.nearestTo(color));
 	}
-	
+
+	@SuppressWarnings("deprecation")
 	public static ChatColor toBukkit(NamedTextColor color) {
 		return ChatColor.valueOf(color.toString().toUpperCase());
 	}
 
+	@SuppressWarnings("deprecation")
 	public static NamedTextColor toAdventure(ChatColor color) {
 		return NamedTextColor.NAMES.value(color.name().toLowerCase());
 	}
