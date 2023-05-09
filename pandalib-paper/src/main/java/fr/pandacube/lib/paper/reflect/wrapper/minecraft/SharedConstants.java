@@ -1,8 +1,8 @@
 package fr.pandacube.lib.paper.reflect.wrapper.minecraft;
 
 import fr.pandacube.lib.paper.reflect.NMSReflect;
-import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 import fr.pandacube.lib.reflect.ReflectMethod;
+import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 
 import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;

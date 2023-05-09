@@ -14,7 +14,6 @@ import fr.pandacube.lib.paper.reflect.wrapper.dataconverter.MCDataConverter;
 import fr.pandacube.lib.paper.reflect.wrapper.dataconverter.MCDataType;
 import fr.pandacube.lib.paper.reflect.wrapper.dataconverter.MCTypeRegistry;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.DetectedVersion;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.GameVersion;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.SharedConstants;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.WorldVersion;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.BlockPosArgument;
@@ -58,6 +57,7 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ChunkPos;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ChunkStorage;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.DamageSource;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.DamageSources;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.DataVersion;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Entity;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ItemStack;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Level;
@@ -176,6 +176,7 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(ChunkStorage.class, ChunkStorage.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(DamageSource.class, DamageSource.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(DamageSources.class, DamageSources.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(DataVersion.class, DataVersion.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(Entity.class, Entity.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(ItemStack.class, ItemStack.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(Level.class, Level.MAPPING.runtimeClass()));
@@ -186,7 +187,6 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(VoxelShape.class, VoxelShape.MAPPING.runtimeClass()));
         // minecraft
         thAcc.catchThrowable(() -> initWrapper(DetectedVersion.class, DetectedVersion.MAPPING.runtimeClass()));
-        thAcc.catchThrowable(() -> initWrapper(GameVersion.class, GameVersion.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(SharedConstants.class, SharedConstants.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(WorldVersion.class, WorldVersion.MAPPING.runtimeClass()));
 
