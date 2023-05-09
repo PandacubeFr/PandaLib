@@ -7,9 +7,9 @@ import java.util.function.ToIntBiFunction;
 /**
  * Implementation of the <a href="https://en.wikipedia.org/wiki/Levenshtein_distance">Levenshtein distance algorithm</a>
  * that operate on characters. Its purpose is to compute a "distance" between two strings of characters, that represents
- * how many edition operation it is needed to perform on the first string ({@code initialString}) to optain the second
+ * how many edition operations must be performed on the first string ({@code initialString}) to optain the second
  * one ({@code finalString}).
- *
+ * <p>
  * All the parameters of the algorithm are configurable:
  * <ul>
  *     <li>The score of adding a character</li>
@@ -21,15 +21,13 @@ import java.util.function.ToIntBiFunction;
  * ToIntBiFunction)} (for a full control of the parameters) or {@link #LevenshteinDistance(String, String)} (to keep the
  * default parameters value); then to call the method {@link #getCurrentDistance()} to compute the Levenshtein distance
  * between the two strings.
- *
+ * <p>
  * A more advanced usage offer the possibility to progressively compute a distance from a predefined
  * {@code initialString} to a {@code finalString} that is feeded progressively using {@link #add(char)} or
  * {@link #add(String)}. This is useful if the {@code finalString} is an input that is currently being typed by the
  * user, so the application can progressively update a list of suggested words based on the distance.
  * For this usage, you can use those constructors to avoid initializing the {@code finalString}:
  * {@link #LevenshteinDistance(String, int, int, ToIntBiFunction)} or {@link #LevenshteinDistance(String)}.
- *
- *
  */
 public class LevenshteinDistance {
 	

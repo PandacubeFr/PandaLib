@@ -58,6 +58,8 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
+
 /**
  * Abstract class to hold a command to be integrated into a Paper server vanilla command dispatcher.
  */
@@ -67,7 +69,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<BukkitBriga
     private static final CommandDispatcher<BukkitBrigadierCommandSource> nmsDispatcher;
 
     static {
-        PandalibPaperReflect.init();
+        wrapEx(PandalibPaperReflect::init);
         vanillaCommandDispatcher = ReflectWrapper.wrapTyped(Bukkit.getServer(), CraftServer.class)
                 .getServer()
                 .vanillaCommandDispatcher();

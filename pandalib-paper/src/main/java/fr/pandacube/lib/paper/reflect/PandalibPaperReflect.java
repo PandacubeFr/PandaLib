@@ -74,6 +74,7 @@ import fr.pandacube.lib.paper.reflect.wrapper.paper.PaperAdventure;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.QueuedChangesMapLong2Object;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.configuration.FallbackValue_Int;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.configuration.WorldConfiguration;
+import fr.pandacube.lib.util.ThrowableAccumulator;
 
 import static fr.pandacube.lib.reflect.wrapper.WrapperRegistry.initWrapper;
 
@@ -86,8 +87,9 @@ public class PandalibPaperReflect {
 
     /**
      * Initializes the reflect tools in {@code pandalib-paper-reflect} module.
+     * @throws Exception if a problem occurs when initializing wrapper classes.
      */
-    public static void init() {
+    public static void init() throws Exception {
         NMSReflect.init();
         synchronized (PandalibPaperReflect.class) {
             if (isInit)
@@ -97,105 +99,112 @@ public class PandalibPaperReflect {
         initWrapperClasses();
     }
 
-    private static void initWrapperClasses() {
+    private static void initWrapperClasses() throws Exception {
+
+        ThrowableAccumulator<Throwable> thAcc = new ThrowableAccumulator<>(Throwable.class);
+
         // brigadier
-        initWrapper(CommandNode.class, CommandNode.REFLECT.get());
+        thAcc.catchThrowable(() -> initWrapper(CommandNode.class, CommandNode.REFLECT.get()));
 
         // craftbukkit
-        initWrapper(CraftItemStack.class, CraftItemStack.REFLECT.get());
-        initWrapper(CraftMapView.class, CraftMapView.REFLECT.get());
-        initWrapper(CraftNamespacedKey.class, CraftNamespacedKey.REFLECT.get());
-        initWrapper(CraftPlayer.class, CraftPlayer.REFLECT.get());
-        initWrapper(CraftServer.class, CraftServer.REFLECT.get());
-        initWrapper(CraftVector.class, CraftVector.REFLECT.get());
-        initWrapper(CraftWorld.class, CraftWorld.REFLECT.get());
-        initWrapper(RenderData.class, RenderData.REFLECT.get());
-        initWrapper(VanillaCommandWrapper.class, VanillaCommandWrapper.REFLECT.get());
+        thAcc.catchThrowable(() -> initWrapper(CraftItemStack.class, CraftItemStack.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(CraftMapView.class, CraftMapView.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(CraftNamespacedKey.class, CraftNamespacedKey.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(CraftPlayer.class, CraftPlayer.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(CraftServer.class, CraftServer.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(CraftVector.class, CraftVector.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(CraftWorld.class, CraftWorld.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(RenderData.class, RenderData.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(VanillaCommandWrapper.class, VanillaCommandWrapper.REFLECT.get()));
 
         // dataconverter
-        initWrapper(MCDataConverter.class, MCDataConverter.REFLECT.get());
-        initWrapper(MCDataType.class, MCDataType.REFLECT.get());
-        initWrapper(MCTypeRegistry.class, MCTypeRegistry.REFLECT.get());
+        thAcc.catchThrowable(() -> initWrapper(MCDataConverter.class, MCDataConverter.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(MCDataType.class, MCDataType.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(MCTypeRegistry.class, MCTypeRegistry.REFLECT.get()));
 
         // minecraft.commands
-        initWrapper(BlockPosArgument.class, BlockPosArgument.MAPPING.runtimeClass());
-        initWrapper(Commands.class, Commands.MAPPING.runtimeClass());
-        initWrapper(CommandSourceStack.class, CommandSourceStack.MAPPING.runtimeClass());
-        initWrapper(ComponentArgument.class, ComponentArgument.MAPPING.runtimeClass());
-        initWrapper(Coordinates.class, Coordinates.MAPPING.runtimeClass());
-        initWrapper(EntityArgument.class, EntityArgument.MAPPING.runtimeClass());
-        initWrapper(EntitySelector.class, EntitySelector.MAPPING.runtimeClass());
-        initWrapper(GameProfileArgument.class, GameProfileArgument.MAPPING.runtimeClass());
-        initWrapper(ResourceLocationArgument.class, ResourceLocationArgument.MAPPING.runtimeClass());
-        initWrapper(Vec3Argument.class, Vec3Argument.MAPPING.runtimeClass());
+        thAcc.catchThrowable(() -> initWrapper(BlockPosArgument.class, BlockPosArgument.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(Commands.class, Commands.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(CommandSourceStack.class, CommandSourceStack.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(ComponentArgument.class, ComponentArgument.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(Coordinates.class, Coordinates.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(EntityArgument.class, EntityArgument.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(EntitySelector.class, EntitySelector.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(GameProfileArgument.class, GameProfileArgument.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(ResourceLocationArgument.class, ResourceLocationArgument.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(Vec3Argument.class, Vec3Argument.MAPPING.runtimeClass()));
         // minecraft.core
-        initWrapper(BlockPos.class, BlockPos.MAPPING.runtimeClass());
-        initWrapper(Vec3i.class, Vec3i.MAPPING.runtimeClass());
+        thAcc.catchThrowable(() -> initWrapper(BlockPos.class, BlockPos.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(Vec3i.class, Vec3i.MAPPING.runtimeClass()));
         // minecraft.nbt
-        initWrapper(CollectionTag.class, CollectionTag.MAPPING.runtimeClass());
-        initWrapper(CompoundTag.class, CompoundTag.MAPPING.runtimeClass());
-        initWrapper(ListTag.class, ListTag.MAPPING.runtimeClass());
-        initWrapper(NbtIo.class, NbtIo.MAPPING.runtimeClass());
-        initWrapper(StringTag.class, StringTag.MAPPING.runtimeClass());
-        initWrapper(Tag.class, Tag.MAPPING.runtimeClass());
+        thAcc.catchThrowable(() -> initWrapper(CollectionTag.class, CollectionTag.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(CompoundTag.class, CompoundTag.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(ListTag.class, ListTag.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(NbtIo.class, NbtIo.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(StringTag.class, StringTag.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(Tag.class, Tag.MAPPING.runtimeClass()));
         // minecraft.network.chat
-        initWrapper(Component.class, Component.MAPPING.runtimeClass());
+        thAcc.catchThrowable(() -> initWrapper(Component.class, Component.MAPPING.runtimeClass()));
         // minecraft.network.protocol
-        initWrapper(ClientboundCustomPayloadPacket.class, ClientboundCustomPayloadPacket.MAPPING.runtimeClass());
-        initWrapper(ClientboundGameEventPacket.class, ClientboundGameEventPacket.MAPPING.runtimeClass());
-        initWrapper(ClientboundGameEventPacket.Type.class, ClientboundGameEventPacket.Type.MAPPING.runtimeClass());
-        initWrapper(Packet.class, Packet.MAPPING.runtimeClass());
+        thAcc.catchThrowable(() -> initWrapper(ClientboundCustomPayloadPacket.class, ClientboundCustomPayloadPacket.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(ClientboundGameEventPacket.class, ClientboundGameEventPacket.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(ClientboundGameEventPacket.Type.class, ClientboundGameEventPacket.Type.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(Packet.class, Packet.MAPPING.runtimeClass()));
         // minecraft.network
-        initWrapper(FriendlyByteBuf.class, FriendlyByteBuf.MAPPING.runtimeClass());
+        thAcc.catchThrowable(() -> initWrapper(FriendlyByteBuf.class, FriendlyByteBuf.MAPPING.runtimeClass()));
         // minecraft.resources
-        initWrapper(ResourceLocation.class, ResourceLocation.MAPPING.runtimeClass());
+        thAcc.catchThrowable(() -> initWrapper(ResourceLocation.class, ResourceLocation.MAPPING.runtimeClass()));
         // minecraft.server
-        initWrapper(ChunkMap.class, ChunkMap.MAPPING.runtimeClass());
-        initWrapper(DedicatedPlayerList.class, DedicatedPlayerList.MAPPING.runtimeClass());
-        initWrapper(DedicatedServer.class, DedicatedServer.MAPPING.runtimeClass());
-        initWrapper(DedicatedServerProperties.class, DedicatedServerProperties.MAPPING.runtimeClass());
-        initWrapper(MinecraftServer.class, MinecraftServer.MAPPING.runtimeClass());
-        initWrapper(PlayerList.class, PlayerList.MAPPING.runtimeClass());
-        initWrapper(ServerChunkCache.class, ServerChunkCache.MAPPING.runtimeClass());
-        initWrapper(ServerGamePacketListenerImpl.class, ServerGamePacketListenerImpl.MAPPING.runtimeClass());
-        initWrapper(ServerLevel.class, ServerLevel.MAPPING.runtimeClass());
-        initWrapper(ServerPlayer.class, ServerPlayer.MAPPING.runtimeClass());
-        initWrapper(Settings.class, Settings.MAPPING.runtimeClass());
+        thAcc.catchThrowable(() -> initWrapper(ChunkMap.class, ChunkMap.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(DedicatedPlayerList.class, DedicatedPlayerList.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(DedicatedServer.class, DedicatedServer.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(DedicatedServerProperties.class, DedicatedServerProperties.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(MinecraftServer.class, MinecraftServer.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(PlayerList.class, PlayerList.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(ServerChunkCache.class, ServerChunkCache.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(ServerGamePacketListenerImpl.class, ServerGamePacketListenerImpl.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(ServerLevel.class, ServerLevel.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(ServerPlayer.class, ServerPlayer.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(Settings.class, Settings.MAPPING.runtimeClass()));
         // minecraft.util
-        initWrapper(ProgressListener.class, ProgressListener.MAPPING.runtimeClass());
+        thAcc.catchThrowable(() -> initWrapper(ProgressListener.class, ProgressListener.MAPPING.runtimeClass()));
         // minecraft.world.block
-        initWrapper(BambooStalkBlock.class, BambooStalkBlock.MAPPING.runtimeClass());
+        thAcc.catchThrowable(() -> initWrapper(BambooStalkBlock.class, BambooStalkBlock.MAPPING.runtimeClass()));
         // minecraft.world
-        initWrapper(AABB.class, AABB.MAPPING.runtimeClass());
-        initWrapper(ChunkPos.class, ChunkPos.MAPPING.runtimeClass());
-        initWrapper(ChunkStorage.class, ChunkStorage.MAPPING.runtimeClass());
-        initWrapper(DamageSource.class, DamageSource.MAPPING.runtimeClass());
-        initWrapper(DamageSources.class, DamageSources.MAPPING.runtimeClass());
-        initWrapper(Entity.class, Entity.MAPPING.runtimeClass());
-        initWrapper(ItemStack.class, ItemStack.MAPPING.runtimeClass());
-        initWrapper(Level.class, Level.MAPPING.runtimeClass());
-        initWrapper(MapItemSavedData.class, MapItemSavedData.MAPPING.runtimeClass());
-        initWrapper(PlayerDataStorage.class, PlayerDataStorage.MAPPING.runtimeClass());
-        initWrapper(SavedData.class, SavedData.MAPPING.runtimeClass());
-        initWrapper(Vec3.class, Vec3.MAPPING.runtimeClass());
-        initWrapper(VoxelShape.class, VoxelShape.MAPPING.runtimeClass());
+        thAcc.catchThrowable(() -> initWrapper(AABB.class, AABB.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(ChunkPos.class, ChunkPos.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(ChunkStorage.class, ChunkStorage.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(DamageSource.class, DamageSource.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(DamageSources.class, DamageSources.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(Entity.class, Entity.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(ItemStack.class, ItemStack.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(Level.class, Level.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(MapItemSavedData.class, MapItemSavedData.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(PlayerDataStorage.class, PlayerDataStorage.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(SavedData.class, SavedData.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(Vec3.class, Vec3.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(VoxelShape.class, VoxelShape.MAPPING.runtimeClass()));
         // minecraft
-        initWrapper(DetectedVersion.class, DetectedVersion.MAPPING.runtimeClass());
-        initWrapper(GameVersion.class, GameVersion.REFLECT.get());
-        initWrapper(SharedConstants.class, SharedConstants.MAPPING.runtimeClass());
-        initWrapper(WorldVersion.class, WorldVersion.MAPPING.runtimeClass());
+        thAcc.catchThrowable(() -> initWrapper(DetectedVersion.class, DetectedVersion.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(GameVersion.class, GameVersion.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(SharedConstants.class, SharedConstants.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(WorldVersion.class, WorldVersion.MAPPING.runtimeClass()));
 
         // netty
-        initWrapper(ByteBuf.class, ByteBuf.REFLECT.get());
-        initWrapper(Unpooled.class, Unpooled.REFLECT.get());
+        thAcc.catchThrowable(() -> initWrapper(ByteBuf.class, ByteBuf.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(Unpooled.class, Unpooled.REFLECT.get()));
 
         // paper.configuration
-        initWrapper(FallbackValue_Int.class, FallbackValue_Int.REFLECT.get());
-        initWrapper(WorldConfiguration.class, WorldConfiguration.REFLECT.get());
-        initWrapper(WorldConfiguration.Chunks.class, WorldConfiguration.Chunks.REFLECT.get());
+        thAcc.catchThrowable(() -> initWrapper(FallbackValue_Int.class, FallbackValue_Int.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(WorldConfiguration.class, WorldConfiguration.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(WorldConfiguration.Chunks.class, WorldConfiguration.Chunks.REFLECT.get()));
         // paper
-        initWrapper(AABBVoxelShape.class, AABBVoxelShape.REFLECT.get());
-        initWrapper(PaperAdventure.class, PaperAdventure.REFLECT.get());
-        initWrapper(QueuedChangesMapLong2Object.class, QueuedChangesMapLong2Object.REFLECT.get());
+        thAcc.catchThrowable(() -> initWrapper(AABBVoxelShape.class, AABBVoxelShape.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(PaperAdventure.class, PaperAdventure.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(QueuedChangesMapLong2Object.class, QueuedChangesMapLong2Object.REFLECT.get()));
+
+
+        thAcc.throwCatched();
+
     }
 }
