@@ -167,7 +167,7 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
                 .getPlayerData(getUniqueId().toString());
         if (convertTag) {
             int i = data.contains("DataVersion", 3) ? data.getInt("DataVersion") : -1;
-            data = MCDataConverter.convertTag(MCTypeRegistry.PLAYER(), data, i, SharedConstants.getCurrentVersion().getWorldVersion());
+            data = MCDataConverter.convertTag(MCTypeRegistry.PLAYER(), data, i, SharedConstants.getCurrentVersion().getDataVersion().getVersion());
         }
         return data;
     }
