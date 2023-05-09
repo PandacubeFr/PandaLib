@@ -9,6 +9,7 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.internal.bind.TreeTypeAdapter;
 import com.google.gson.reflect.TypeToken;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Type;
@@ -24,7 +25,22 @@ import java.util.Map;
 
     @Override
     public ItemStack deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        return ItemStack.deserialize(context.deserialize(json, MAP_STR_OBJ_TYPE.getType()));
+        Map<String, Object> deserializedMap = context.deserialize(json, MAP_STR_OBJ_TYPE.getType());
+        int itemStackVersion = deserializedMap.containsKey("v") ? ((Number)deserializedMap.get("v")).intValue() : -1;
+        if (itemStackVersion >= 0) {
+            int currentDataVersion = Bukkit.getUnsafe().getDataVersion();
+            if (itemStackVersion > currentDataVersion) {
+                /* The itemStack we are deserializing is from a newer MC version, so Bukkit will refuse it.
+                 * We decide to ignore the provided version and consider that the received itemstack is from current
+                 * version. We let Bukkit handles the deserialization with the data it can interpret, throwing an error
+                 * only if it can't.
+                 */
+                deserializedMap.put("v", currentDataVersion);
+                return ItemStack.deserialize(deserializedMap);
+            }
+        }
+
+        return ItemStack.deserialize(deserializedMap);
     }
 
     @Override
