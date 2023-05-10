@@ -38,6 +38,9 @@ public class BackupManager extends TimerTask {
      */
     public BackupManager(File backupDirectory) {
         this.backupDirectory = backupDirectory;
+        if (!backupDirectory.exists()) {
+            backupDirectory.mkdirs();
+        }
         persist = new Persist(this);
 
 
