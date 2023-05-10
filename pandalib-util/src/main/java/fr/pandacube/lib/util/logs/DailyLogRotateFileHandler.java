@@ -1,18 +1,30 @@
-package fr.pandacube.lib.cli.log;
+package fr.pandacube.lib.util.logs;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.ErrorManager;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
+import java.util.zip.GZIPOutputStream;
 
-class DailyLogRotateFileHandler extends Handler {
-	private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+/**
+ * A log handler that log file rotation in a specified folder.
+ * The current log file is latest.log, and the logs from previous days
+ * are in dated gzipped files in the same folder.
+ */
+public class DailyLogRotateFileHandler extends Handler {
+
+	/**
+	 * The format of the date to name the file.
+	 */
+	protected static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 	private BufferedWriter currentFile = null;
 	private String currentFileDate = getCurrentDay();
@@ -38,12 +50,14 @@ class DailyLogRotateFileHandler extends Handler {
 
 	@Override
 	public synchronized void publish(LogRecord record) {
-		if (closed) return;
-		if (!isLoggable(record)) return;
+		if (closed || !isLoggable(record))
+			return;
 
-		if (currentFile == null || !currentFileDate.equals(getCurrentDay())) changeFile();
+		if (currentFile == null || !currentFileDate.equals(getCurrentDay()))
+			changeFile();
 
-		if (currentFile == null) return;
+		if (currentFile == null)
+			return;
 
 		String formattedMessage;
 
@@ -59,7 +73,6 @@ class DailyLogRotateFileHandler extends Handler {
 			currentFile.flush();
 		} catch (Exception ex) {
 			reportError(null, ex, ErrorManager.WRITE_FAILURE);
-
 		}
 	}
 
@@ -69,7 +82,9 @@ class DailyLogRotateFileHandler extends Handler {
 				currentFile.flush();
 				currentFile.close();
 			} catch (IOException ignored) {}
-			new File("logs/latest.log").renameTo(new File("logs/" + currentFileDate + ".log"));
+			File fileNewName = new File("logs/" + currentFileDate + ".log");
+			new File("logs/latest.log").renameTo(fileNewName);
+			new Thread(() -> compress(fileNewName), "Log compress Thread").start();
 		}
 
 		currentFileDate = getCurrentDay();
@@ -86,5 +101,20 @@ class DailyLogRotateFileHandler extends Handler {
 
 	private String getCurrentDay() {
 		return dateFormat.format(new Date());
+	}
+
+
+	private void compress(File sourceFile) {
+		File destFile = new File(sourceFile.getParentFile(), sourceFile.getName() + ".gz");
+		if (destFile.exists())
+			destFile.delete();
+		try (GZIPOutputStream os = new GZIPOutputStream(new FileOutputStream(destFile))) {
+			Files.copy(sourceFile.toPath(), os);
+		} catch (IOException e) {
+			if (destFile.exists())
+				destFile.delete();
+			throw new RuntimeException(e);
+		}
+		sourceFile.delete();
 	}
 }

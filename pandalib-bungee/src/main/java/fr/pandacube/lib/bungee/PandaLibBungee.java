@@ -1,6 +1,6 @@
 package fr.pandacube.lib.bungee;
 
-import fr.pandacube.lib.bungee.util.DailyLogRotateFileHandler;
+import fr.pandacube.lib.bungee.util.BungeeDailyLogRotateFileHandler;
 import fr.pandacube.lib.bungee.util.PluginMessagePassthrough;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -15,7 +15,7 @@ public class PandaLibBungee {
 
     public static void onEnable() {
         PluginMessagePassthrough.init(plugin);
-        DailyLogRotateFileHandler.init(true);
+        BungeeDailyLogRotateFileHandler.init(true);
     }
 
 
