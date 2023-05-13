@@ -23,10 +23,18 @@ public interface AbstractOnlinePlayer extends AbstractOffPlayer {
 
 	/**
 	 * Returns the name of the current server the player is in.
-	 * The returned value is used by the 'pandalib-permissions' system.
 	 * @return the name of the current server the player is in.
 	 */
 	String getServerName();
+
+	/**
+	 * Returns the name of the current server as used by the permission system.
+	 * The returned value is used by the 'pandalib-permissions' system.
+	 * @return the permission name of the current server.
+	 */
+	default String getServerPermissionName() {
+		return getServerName();
+	}
 
 	/**
 	 * Returns the name of the current world the player is in.

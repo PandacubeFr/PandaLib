@@ -67,7 +67,7 @@ public interface PermissibleOnlinePlayer extends PermissibleOffPlayer, AbstractO
 	 * @return a LongStream containing all the values found for the specified permission prefix.
 	 */
 	default LongStream getPermissionRangeValues(String permissionPrefix) {
-		String server = getServerName();
+		String server = getServerPermissionName();
 		String world = server == null ? null : getWorldName();
 		return getPermissionUser().getPermissionRangeValues(permissionPrefix, server, world);
 	}
@@ -76,7 +76,7 @@ public interface PermissibleOnlinePlayer extends PermissibleOffPlayer, AbstractO
 	 * Returns the maximum value returned by {@link PermissibleOffPlayer#getPermissionRangeValues(String)}.
 	 */
 	default OptionalLong getPermissionRangeMax(String permissionPrefix) {
-		String server = getServerName();
+		String server = getServerPermissionName();
 		String world = server == null ? null : getWorldName();
 		return getPermissionUser().getPermissionRangeMax(permissionPrefix, server, world);
 	}
