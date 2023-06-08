@@ -159,18 +159,27 @@ public abstract class AbstractClientWS implements AbstractWS {
     @Override
     public final void sendString(String message) throws IOException {
         try {
-            synchronized (socket) {
-                WebSocket ws = socket.get();
-                if (ws != null)
-                    ws.sendText(message, true).join();
-                else
-                    throw new IOException("Connection is currently closed");
+            try {
+                synchronized (socket) {
+                    WebSocket ws = socket.get();
+                    if (ws != null)
+                        ws.sendText(message, true).join();
+                    else
+                        throw new IOException("Connection is currently closed");
+                }
+            } catch (CompletionException ce) {
+                if (ce.getCause() instanceof IOException ioe)
+                    throw ioe;
+                throw ThrowableUtil.uncheck(ce.getCause(), false);
             }
-        } catch (CompletionException ce) {
-            if (ce.getCause() instanceof IOException ioe)
-                throw ioe;
-            throw ThrowableUtil.uncheck(ce.getCause(), false);
+        } catch (IOException ioe) {
+            synchronized (socket) {
+                socket.set(null);
+                reconnectIfNecessary();
+            }
+            throw ioe;
         }
+
     }
 
     @Override
