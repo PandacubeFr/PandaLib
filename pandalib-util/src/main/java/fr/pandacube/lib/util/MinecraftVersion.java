@@ -104,8 +104,8 @@ public enum MinecraftVersion {
 	/** Minecraft versions 1.19.4, protocol version 762. */
 	v1_19_4(762, "1.19.4"),
 
-	/** Minecraft version 1.20, protocol version 763. */
-	v1_20(763, "1.20");
+	/** Minecraft version 1.20 and 1.20.1, protocol version 763. */
+	v1_20(763, "1.20", "1.20.1");
 
 	// IMPORTANT: don't forget to update the versionMergeDisplay value when adding a new version;
 	
