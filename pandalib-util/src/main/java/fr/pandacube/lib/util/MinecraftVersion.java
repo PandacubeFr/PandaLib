@@ -15,15 +15,17 @@ import java.util.Set;
  * "1.16-1.16.3", "1.8.x and 1.9", "1.18.1 or 1.18.2")
  * <p>
  * Note that this enum uses one value to represent every Minecraft version using the same protocol version number.
+ * @deprecated This class may not be updated. Use the class ProtocolVersion in pandalib-core module instead.
  */
+@Deprecated
 public enum MinecraftVersion {
 	/** Minecraft versions 1.7.2 to 1.7.5, protocol version 4. */
-	v1_7_2_to_1_7_5(4, "1.7.2-1.7.5"),
+	v1_7_2_to_1_7_5(4, "1.7.2", "1.7.3", "1.7.4", "1.7.5"),
 	/** Minecraft versions 1.7.6 to 1.7.10, protocol version 5. */
-	v1_7_6_to_1_7_10(5, "1.7.6-1.7.10"),
+	v1_7_6_to_1_7_10(5, "1.7.6", "1.7.7", "1.7.8", "1.7.9", "1.7.10"),
 
 	/** Minecraft versions 1.8.x, protocol version 47. */
-	v1_8(47, "1.8.x"),
+	v1_8(47, "1.8", "1.8.1", "1.8.2", "1.8.3", "1.8.4", "1.8.5", "1.8.6", "1.8.7", "1.8.8", "1.8.9"),
 
 	/** Minecraft version 1.9, protocol version 107. */
 	v1_9(107, "1.9"),
@@ -35,7 +37,7 @@ public enum MinecraftVersion {
 	v1_9_3_to_1_9_4(110, "1.9.3", "1.9.4"),
 
 	/** Minecraft versions 1.10.x, protocol version 210. */
-	v1_10(210, "1.10.x"),
+	v1_10(210, "1.10", "1.10.1", "1.10.2"),
 
 	/** Minecraft version 1.11, protocol version 315. */
 	v1_11(315, "1.11"),
