@@ -57,7 +57,7 @@ public class CronScheduler {
                     CronTask next = tasks.get(0);
                     if (next.nextRun <= now) {
                         next.runAsync();
-                        setLastRun(next.taskId, next.nextRun);
+                        setLastRun(next.taskId, now);
                         onTaskUpdate(false);
                         continue;
                     }
