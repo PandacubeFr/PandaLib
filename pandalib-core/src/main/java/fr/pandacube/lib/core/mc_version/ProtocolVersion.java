@@ -2,7 +2,6 @@ package fr.pandacube.lib.core.mc_version;
 
 import fr.pandacube.lib.core.json.Json;
 import fr.pandacube.lib.util.Log;
-import fr.pandacube.lib.util.MinecraftVersion;
 import fr.pandacube.lib.util.StringUtil;
 
 import java.io.InputStream;

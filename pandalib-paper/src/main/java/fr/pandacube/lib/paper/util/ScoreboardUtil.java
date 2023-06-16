@@ -50,7 +50,8 @@ public class ScoreboardUtil {
 				obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 			}
 		}
-		
+
+		@SuppressWarnings("deprecation")
 		ChatColor[] colors = ChatColor.values();
 		
 		/*

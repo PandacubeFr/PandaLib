@@ -7,11 +7,7 @@ import fr.pandacube.lib.paper.players.PlayerNonPersistentConfig.Expiration;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftPlayer;
 import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
-import net.kyori.adventure.audience.MessageType;
-import net.kyori.adventure.identity.Identified;
-import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.title.Title.Times;
 import net.kyori.adventure.util.Ticks;
@@ -24,7 +20,6 @@ import org.bukkit.inventory.MainHand;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.Locale;
-import java.util.UUID;
 
 /**
  * Represents any online player on a paper server.
@@ -91,16 +86,6 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
     @Override
     default void sendMessage(Component message) {
         getBukkitPlayer().sendMessage(message);
-    }
-
-    @Override
-    default void sendMessage(ComponentLike message, UUID sender) {
-        getBukkitPlayer().sendMessage(sender == null ? Identity.nil() : Identity.identity(sender), message, MessageType.CHAT);
-    }
-
-    @Override
-    default void sendMessage(Component message, Identified sender) {
-        getBukkitPlayer().sendMessage(sender == null ? Identity.nil() : sender.identity(), message, MessageType.CHAT);
     }
 
     @Override

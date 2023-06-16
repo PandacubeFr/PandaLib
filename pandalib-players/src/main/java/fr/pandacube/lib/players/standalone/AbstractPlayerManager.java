@@ -184,36 +184,48 @@ public abstract class AbstractPlayerManager<OP extends AbstractOnlinePlayer, OF 
 
 
 	/**
-	 * Broadcast a message to some or all players, and eventually to the console.
+	 * Broadcast a SYSTEM message to some or all players, and eventually to the console.
 	 *
 	 * @param message the message to send.
 	 * @param prefix if the server prefix will be prepended to the message.
 	 * @param console if the message must be displayed in the console.
 	 * @param permission if not null, the message is only sent to player with this permission.
-	 * @param sourcePlayer specifiy the eventual player that is the source of the message.
-	 * 			If null, the message will be sent as a SYSTEM chat message.
-	 * 			If not null, the message will be sent as a CHAT message, and will not be sent
-	 * 			to players ignoring the provided player (if implemented).
-	 * @throws IllegalArgumentException if message is null.
 	 * @implSpec subclasses may override this method, for instance to restrict the players being able to see the message
 	 * (like /ignored players).
 	 */
-	public void broadcastMessage(ComponentLike message, boolean prefix, boolean console, String permission, UUID sourcePlayer) {
+	public void broadcastMessage(ComponentLike message, boolean prefix, boolean console, String permission) {
 		Objects.requireNonNull(message, "message cannot be null");
 
 		if (prefix)
 			message = ChatStatic.prefixedAndColored(message.asComponent());
 
 		for (OP op : getAll()) {
-			if (permission != null && !(op.hasPermission(permission))) continue;
-
-			if (sourcePlayer != null)
-				op.sendMessage(message, sourcePlayer); // CHAT message with UUID
-			else
-				op.sendMessage(message); // SYSTEM message
+			if (permission != null && !(op.hasPermission(permission)))
+				continue;
+			op.sendMessage(message);
 		}
 		if (console)
 			sendMessageToConsole(message.asComponent());
+	}
+
+
+
+	/**
+	 * Broadcast a message to some or all players, and eventually to the console.
+	 *
+	 * @param message the message to send.
+	 * @param prefix if the server prefix will be prepended to the message.
+	 * @param console if the message must be displayed in the console.
+	 * @param permission if not null, the message is only sent to player with this permission.
+	 * @param sourcePlayer specify the eventual player that is the source of the message. Default implementation of this
+	 *                     method does not use this parameter due to the Minecraft client not handling unsigned CHAT
+	 *                     messages.
+	 * @throws IllegalArgumentException if message is null.
+	 * @implSpec subclasses may override this method, for instance to restrict the players being able to see the message
+	 * (like /ignored players).
+	 */
+	public void broadcastMessage(ComponentLike message, boolean prefix, boolean console, String permission, UUID sourcePlayer) {
+		broadcastMessage(message, prefix, console, permission);
 	}
 	
 	

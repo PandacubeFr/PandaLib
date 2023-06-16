@@ -17,7 +17,7 @@ import java.util.Set;
  * Note that this enum uses one value to represent every Minecraft version using the same protocol version number.
  * @deprecated This class may not be updated. Use the class ProtocolVersion in pandalib-core module instead.
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public enum MinecraftVersion {
 	/** Minecraft versions 1.7.2 to 1.7.5, protocol version 4. */
 	v1_7_2_to_1_7_5(4, "1.7.2", "1.7.3", "1.7.4", "1.7.5"),

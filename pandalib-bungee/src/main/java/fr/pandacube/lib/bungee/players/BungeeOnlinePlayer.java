@@ -1,13 +1,13 @@
 package fr.pandacube.lib.bungee.players;
 
-import java.util.Locale;
-import java.util.UUID;
-
+import fr.pandacube.lib.chat.Chat;
+import fr.pandacube.lib.core.mc_version.ProtocolVersion;
+import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
+import fr.pandacube.lib.reflect.Reflect;
+import fr.pandacube.lib.util.MinecraftVersion;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentLike;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.SkinConfiguration;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -18,10 +18,7 @@ import net.md_5.bungee.protocol.DefinedPacket;
 import net.md_5.bungee.protocol.packet.ClientSettings;
 import net.md_5.bungee.protocol.packet.PluginMessage;
 
-import fr.pandacube.lib.chat.Chat;
-import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
-import fr.pandacube.lib.reflect.Reflect;
-import fr.pandacube.lib.util.MinecraftVersion;
+import java.util.Locale;
 
 /**
  * Represents any online player on a Bungeecord proxy.
@@ -55,9 +52,19 @@ public interface BungeeOnlinePlayer extends BungeeOffPlayer, AbstractOnlinePlaye
     /**
      * Gets the minecraft version of this player’s client.
      * @return the minecraft version of this player’s client.
+     * @deprecated use {@link #getProtocolVersion()} instead.
      */
+    @Deprecated(forRemoval = true)
     default MinecraftVersion getMinecraftVersion() {
         return MinecraftVersion.getVersion(getBungeeProxiedPlayer().getPendingConnection().getVersion());
+    }
+
+    /**
+     * Gets the protocol version of this player’s client.
+     * @return the protocol version of this player’s client.
+     */
+    default ProtocolVersion getProtocolVersion() {
+        return ProtocolVersion.ofProtocol(getBungeeProxiedPlayer().getPendingConnection().getVersion());
     }
 
 
@@ -89,26 +96,6 @@ public interface BungeeOnlinePlayer extends BungeeOffPlayer, AbstractOnlinePlaye
     @Override
     default void sendMessage(Component message) {
         getBungeeProxiedPlayer().sendMessage(Chat.toBungee(message));
-    }
-
-    @Override
-    default void sendMessage(ComponentLike message, UUID sender) {
-        getBungeeProxiedPlayer().sendMessage(sender, Chat.toBungee(message.asComponent()));
-    }
-
-    @Override
-    default void sendMessage(Component message, Identified sender) {
-        getBungeeProxiedPlayer().sendMessage(sender == null ? null : sender.identity().uuid(), Chat.toBungee(message));
-    }
-
-    /**
-     * Display the provided message in the player’s chat, if they allows to display CHAT messages.
-     * @param message the message to send.
-     * @param sender the player causing the send of this message. Client side filtering may occur. May be null if we
-     *               don’t want client filtering, but still consider the message as CHAT message.
-     */
-    default void sendMessage(ComponentLike message, ProxiedPlayer sender) {
-        getBungeeProxiedPlayer().sendMessage(sender == null ? null : sender.getUniqueId(), Chat.toBungee(message.asComponent()));
     }
 
     @Override

@@ -1,13 +1,10 @@
 package fr.pandacube.lib.players.standalone;
 
 import fr.pandacube.lib.chat.ChatStatic;
-import net.kyori.adventure.identity.Identified;
-import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 
 import java.util.Locale;
-import java.util.UUID;
 
 /**
  * Represents any online player.
@@ -86,30 +83,6 @@ public interface AbstractOnlinePlayer extends AbstractOffPlayer {
 	 */
 	default void sendMessage(ComponentLike message) {
 		sendMessage(message.asComponent());
-	}
-
-	/**
-	 * Display the provided message in the player’s chat, if they allows to display CHAT messages.
-	 * @param message the message to display.
-	 * @param sender the player causing the send of this message. Client side filtering may occur.
-	 * May be null if we don’t want client filtering, but still consider the message as CHAT message.
-	 * @implNote implementation of this method should not filter the send of the message, based on
-	 * the sender. This parameter is only there to be transmitted to the client, so client side filtering can
-	 * be processed.
-	 */
-	void sendMessage(Component message, Identified sender);
-
-	/**
-	 * Display the provided message in the player’s chat, if they allows to display CHAT messages.
-	 * @param message the message to display
-	 * @param sender the player causing the send of this message. Client side filtering may occur.
-	 * May be null if we don’t want client filtering, but still consider the message as CHAT message.
-	 * @implNote implementation of this method should not filter the send of the message, based on
-	 * the sender. This parameter is only there to be transmitted to the client, so client side filtering can
-	 * be processed.
-	 */
-	default void sendMessage(ComponentLike message, UUID sender) {
-		sendMessage(message.asComponent(), () -> sender == null ? Identity.nil() : Identity.identity(sender));
 	}
 	
 	/**
