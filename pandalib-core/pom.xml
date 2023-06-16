@@ -85,6 +85,27 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.7.0</version>
+                <executions>
+                    <execution>
+                        <id>mcversion-download</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <url>https://api.pandacube.fr/rest/mcversion</url>
+                    <outputDirectory>${project.basedir}/src/main/resources/fr/pandacube/lib/core/mc_version</outputDirectory>
+                    <outputFileName>mcversion.json</outputFileName>
+                    <skipCache>true</skipCache>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

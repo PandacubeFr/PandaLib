@@ -4,15 +4,23 @@ import fr.pandacube.lib.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * Utility class to manipulate {@link String}s representing Minecraft versions.
+ */
 public class MinecraftVersionUtil {
 
 
-
+    /**
+     * Compare two Minecraft version strings. It uses the rules of semantic
+     * versionning to compare the versions.
+     * @param v1 the first version to compare.
+     * @param v2 the second version to compare.
+     * @return 0 if they are equal, &lt;0 if v1&lt;v2 and vice-versa.
+     */
     public static int compareVersions(String v1, String v2) {
         int[] v1Int = decomposedVersion(v1);
         int[] v2Int = decomposedVersion(v2);
@@ -27,7 +35,11 @@ public class MinecraftVersionUtil {
     }
 
 
-
+    /**
+     * Decompose a version string into a series of integers.
+     * @param v a string representation of a version (eg. 1.19.1).
+     * @return an array of int representing the provided version (eg. [1, 19, 1]).
+     */
     public static int[] decomposedVersion(String v) {
         try {
             return Arrays.stream(v.split("\\.")).mapToInt(Integer::parseInt).toArray();
@@ -36,7 +48,20 @@ public class MinecraftVersionUtil {
         }
     }
 
-
+    /**
+     * Tells if the two provided Minecraft versions are consecutives.
+     * <p>
+     * Two versions are consecutives if (considering {@code 1.X[.Y]}):
+     * <ul>
+     *     <li>They are part of the same main version (X value)</li>
+     *     <li>v1 has no Y value, and v2 has Y = 1 (eg. 1.19 and 1.19.1) OR
+     *         both v1 and v2 has a Y value and those values are consecutives.
+     *     </li>
+     * </ul>
+     * @param v1 the first version.
+     * @param v2 the second version.
+     * @return thue if the second version is consecutive to the first one.
+     */
     public static boolean areConsecutives(String v1, String v2) {
         int[] v1Int = decomposedVersion(v1);
         int[] v2Int = decomposedVersion(v2);
@@ -62,6 +87,17 @@ public class MinecraftVersionUtil {
 
 
 
+    /**
+     * Generate a string representation of the provided list of version, with
+     * merged consecutive versions and using
+     * {@link StringUtil#joinGrammatically(CharSequence, CharSequence, List)}.
+     *
+     * @param versions the minecraft versions list to use.
+     * @param finalWordSeparator the word separator between the two last versions in the returned string, like "and",
+     *                           "or" or any other word of any language. The spaces before and after are already
+     *                           concatenated.
+     * @return a string representation of the provided list of version.
+     */
     public static String toString(List<String> versions, String finalWordSeparator) {
         if (versions.isEmpty())
             return "";
