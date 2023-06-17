@@ -3,6 +3,7 @@ package fr.pandacube.lib.core.mc_version;
 import fr.pandacube.lib.core.json.Json;
 import fr.pandacube.lib.util.Log;
 import fr.pandacube.lib.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,7 +14,6 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * An instance of this class provides information related to a protocol version
  * (the protocol version number and all the corresponding Minecraft versions).
  */
-public class ProtocolVersion {
+public class ProtocolVersion implements Comparable<ProtocolVersion> {
 
     private static final String ONLINE_DATA_URL = "https://api.pandacube.fr/rest/mcversion";
 
@@ -214,5 +214,10 @@ public class ProtocolVersion {
     @Override
     public int hashCode() {
         return protocolVersionNumber;
+    }
+
+    @Override
+    public int compareTo(@NotNull ProtocolVersion o) {
+        return Integer.compare(protocolVersionNumber, o.protocolVersionNumber);
     }
 }
