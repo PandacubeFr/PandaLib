@@ -141,6 +141,17 @@ public class ProtocolVersion {
     }
 
 
+    /**
+     * Returns all the {@link ProtocolVersion} currently known by this class.
+     * @return all the {@link ProtocolVersion} currently known by this class.
+     */
+    public static List<ProtocolVersion> allKnownProtocolVersions() {
+        return versionList.get().versionsOfProtocol().keySet().stream()
+                .map(ProtocolVersion::ofProtocol)
+                .toList();
+    }
+
+
 
 
     /**
