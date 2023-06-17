@@ -72,17 +72,30 @@ public interface AbstractOnlinePlayer extends AbstractOffPlayer {
 	 */
 	
 	/**
-	 * Display the provided message in the player’s chat, if the chat is activated.
+	 * Display the provided message in the player’s chat, if SYSTEM messages are activated.
 	 * @param message the message to display.
 	 */
 	void sendMessage(Component message);
 	
 	/**
-	 * Display the provided message in the player’s chat, if the chat is activated.
+	 * Display the provided message in the player’s chat, if SYSTEM messages are activated.
 	 * @param message the message to display.
 	 */
 	default void sendMessage(ComponentLike message) {
 		sendMessage(message.asComponent());
+	}
+
+	/**
+	 * Display the provided message in the player’s chat, if CHAT messages are activated on the client.
+	 * <p>
+	 * This method differs from {@link #sendMessage(ComponentLike)} with the fact that this method sends the message
+	 * only if {@link #canChat()} returns true.
+	 * The message sent to the client is still a SYSTEM messge, due to CHAT messages required to be signed.
+	 * @param message the message to display as CHAT message.
+	 */
+	default void sendChatMessage(ComponentLike message) {
+		if (canChat())
+			sendMessage(message.asComponent());
 	}
 	
 	/**
