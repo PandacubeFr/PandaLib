@@ -13,6 +13,7 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -152,6 +153,25 @@ public class ProtocolVersion {
     }
 
 
+    /**
+     * Generate a string representation of the provided list of version, using
+     * {@link StringUtil#joinGrammatically(CharSequence, CharSequence, List)}.
+     *
+     * @param versions the minecraft versions to list
+     * @param finalWordSeparator the word separator between the two last versions in the returned string, like "and",
+     *                           "or" or any other word of any language. The spaces before and after are already
+     *                           concatenated.
+     * @return a string representation of the provided list of version.
+     */
+    public static String displayOptimizedListOfVersions(List<ProtocolVersion> versions, String finalWordSeparator) {
+        return MinecraftVersionUtil.toString(versions.stream().flatMap(pv -> pv.versions.stream()).toList(), finalWordSeparator);
+    }
+
+
+
+
+
+
 
 
     /**
@@ -186,21 +206,13 @@ public class ProtocolVersion {
         return displayOptimizedListOfVersions(List.of(this), finalWordSeparator);
     }
 
-
-    /**
-     * Generate a string representation of the provided list of version, using
-     * {@link StringUtil#joinGrammatically(CharSequence, CharSequence, List)}.
-     *
-     * @param versions the minecraft versions to list
-     * @param finalWordSeparator the word separator between the two last versions in the returned string, like "and",
-     *                           "or" or any other word of any language. The spaces before and after are already
-     *                           concatenated.
-     * @return a string representation of the provided list of version.
-     */
-    public static String displayOptimizedListOfVersions(List<ProtocolVersion> versions, String finalWordSeparator) {
-        return MinecraftVersionUtil.toString(versions.stream().flatMap(pv -> pv.versions.stream()).toList(), finalWordSeparator);
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof ProtocolVersion pv && protocolVersionNumber == pv.protocolVersionNumber;
     }
 
-
-
+    @Override
+    public int hashCode() {
+        return protocolVersionNumber;
+    }
 }
