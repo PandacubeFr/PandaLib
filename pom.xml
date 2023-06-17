@@ -68,7 +68,6 @@
         <module>pandalib-commands</module>
         <module>pandalib-core</module>
         <module>pandalib-db</module>
-        <module>pandalib-net</module>
         <module>pandalib-netapi</module>
         <module>pandalib-paper</module>
         <module>pandalib-paper-permissions</module>
