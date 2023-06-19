@@ -188,9 +188,9 @@ public abstract class AbstractClientWS implements AbstractWS {
     }
 
     @Override
-    public final void sendClose(int code, String reason) throws IOException {
+    public final void sendClose(int code, String reason) {
         synchronized (socket) {
-            autoReconnect = false; // if we ask for closing connection, dont reconnect automatically
+            autoReconnect = false; // if we ask for closing connection, don't reconnect automatically
             WebSocket ws = socket.get();
             if (ws != null)
                 ws.sendClose(code, reason).join();

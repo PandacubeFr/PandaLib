@@ -10,7 +10,7 @@ public class MessagePayload extends Payload {
     public String message;
 
     /**
-     * Initialite a new MessagePayload with the provided message.
+     * Initialize a new MessagePayload with the provided message.
      * @param message the message.
      */
     public MessagePayload(String message) {

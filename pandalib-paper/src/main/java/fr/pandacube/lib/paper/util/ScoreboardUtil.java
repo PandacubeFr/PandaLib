@@ -1,17 +1,20 @@
 package fr.pandacube.lib.paper.util;
 
-import java.util.List;
-
+import fr.pandacube.lib.chat.Chat;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
+import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import fr.pandacube.lib.chat.Chat;
-import net.kyori.adventure.text.Component;
+import java.util.List;
 
+/**
+ * Utility class to manipulate scoreboards.
+ */
 public class ScoreboardUtil {
 	
 
@@ -29,7 +32,7 @@ public class ScoreboardUtil {
 	public static void updateScoreboardSidebar(Scoreboard scBrd, Component title, Component[] lines) {
 		
 		Objective obj = scBrd.getObjective("sidebar_autogen");
-		if (obj != null && !obj.getCriteria().equalsIgnoreCase("dummy")) {
+		if (obj != null && !obj.getTrackedCriteria().equals(Criteria.DUMMY)) {
 			// objective present but with wrong criteria, removing it
 			obj.unregister();
 			obj = null;
@@ -37,7 +40,7 @@ public class ScoreboardUtil {
 		
 		
 		if (obj == null) {
-			obj = scBrd.registerNewObjective("sidebar_autogen", "dummy", title);
+			obj = scBrd.registerNewObjective("sidebar_autogen", Criteria.DUMMY, title);
 			obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 		}
 		else {

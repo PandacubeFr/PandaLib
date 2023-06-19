@@ -11,9 +11,9 @@ public abstract class AbstractRequestExecutor {
 
 	public final String command;
 
-	public AbstractRequestExecutor(String cmd, NetworkAPIListener napiListener) {
+	public AbstractRequestExecutor(String cmd, NetworkAPIListener nAPIListener) {
 		command = cmd.toLowerCase();
-		napiListener.registerRequestExecutor(command, this);
+		nAPIListener.registerRequestExecutor(command, this);
 	}
 
 	public void execute(String data, Socket socket) throws IOException {
@@ -34,9 +34,8 @@ public abstract class AbstractRequestExecutor {
 
 	/**
 	 *
-	 * @param data La représentation sous forme de String des données envoyés
-	 *        dans la requête
-	 * @return La réponse à retourner au client
+	 * @param data The String representation of the request data.
+	 * @return The response to send back to the client.
 	 */
 	protected abstract Response run(InetAddress source, String data);
 

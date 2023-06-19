@@ -15,35 +15,35 @@ public class RandomUtil {
 	public static final Random rand = new Random();
 
 	/**
-	 * Returns a randomly generated integer between {@code minInclu} included and {@code maxExclu} excluded.
+	 * Returns a randomly generated integer between {@code minInclusive} included and {@code maxExclusive} excluded.
 	 * This method is safer to use that Random#nextInt(int, int) because it does not check the validity of
 	 * the parameters.
-	 * @param minInclu the minimum value, included.
-	 * @param maxExclu the maximum value, excluded.
-	 * @return a random number between {@code minInclu} included and {@code maxExclu} excluded.
+	 * @param minInclusive the minimum value, included.
+	 * @param maxExclusive the maximum value, excluded.
+	 * @return a random number between {@code minInclusive} included and {@code maxExclusive} excluded.
 	 * @see Random#nextInt(int, int)
-	 * @throws IllegalArgumentException if {@code minInclu} is greater than {@code maxExclu}.
+	 * @throws IllegalArgumentException if {@code minInclusive} is greater than {@code maxExclusive}.
 	 */
-	public static int nextIntBetween(int minInclu, int maxExclu) {
-		return minInclu + rand.nextInt(maxExclu - minInclu);
+	public static int nextIntBetween(int minInclusive, int maxExclusive) {
+		return minInclusive + rand.nextInt(maxExclusive - minInclusive);
 	}
 
 	/**
-	 * Returns a randomly generated double between {@code minInclu} included and {@code maxExclu} excluded.
+	 * Returns a randomly generated double between {@code minInclusive} included and {@code maxExclusive} excluded.
 	 * This method is safer to use that Random#nextDouble(double, double) because it does not check the validity of
 	 * the parameters
-	 * @param minInclu the minimum value, included.
-	 * @param maxExclu the maximum value, excluded.
-	 * @return a random number between {@code minInclu} included and {@code maxExclu} excluded.
+	 * @param minInclusive the minimum value, included.
+	 * @param maxExclusive the maximum value, excluded.
+	 * @return a random number between {@code minInclusive} included and {@code maxExclusive} excluded.
 	 * @see Random#nextDouble(double, double)
 	 */
-	public static double nextDoubleBetween(double minInclu, double maxExclu) {
-		return minInclu + rand.nextDouble() * (maxExclu - minInclu);
+	public static double nextDoubleBetween(double minInclusive, double maxExclusive) {
+		return minInclusive + rand.nextDouble() * (maxExclusive - minInclusive);
 	}
 
 	/**
 	 * Returns a random element from the provided array.
-	 * @param array the array in whith to pick a value randomly.
+	 * @param array the array in which to pick a value randomly.
 	 * @return the value randomly picked from the array, or null if the array is null or empty.
 	 * @param <T> the type of the array elements.
 	 * @see Random#nextInt(int)
@@ -54,7 +54,7 @@ public class RandomUtil {
 
 	/**
 	 * Returns a random element from the provided list.
-	 * @param list the list in whith to pick a value randomly.
+	 * @param list the list in which to pick a value randomly.
 	 * @return the value randomly picked from the list, or null if the array is null or empty.
 	 * @param <T> the type of the list elements.
 	 * @see Random#nextInt(int)
@@ -65,7 +65,7 @@ public class RandomUtil {
 
 	/**
 	 * Returns a random character from the provided string.
-	 * @param str the string in whith to pick a character randomly.
+	 * @param str the string in which to pick a character randomly.
 	 * @return the character randomly picked from the string, or {@code '\0'} if the string is null or empty.
 	 * @see Random#nextInt(int)
 	 */
@@ -98,8 +98,8 @@ public class RandomUtil {
 	/**
 	 * Return a value between 0 and the number of parameter minus 1, using the provided frequencies.
 	 * <p>
-	 * The probability of each value to be returned depends of the frequencies provided.
-	 * @param frequencies the frequencies of each entries
+	 * The probability of each value to be returned depends on the frequencies provided.
+	 * @param frequencies the frequencies of each entry
 	 * @return the index of an entry, or -1 if it is unable to pick anything (all the frequencies are 0 or there is no provided frequency)
 	 * @throws IllegalArgumentException if frequencies is null.
 	 */
@@ -144,18 +144,18 @@ public class RandomUtil {
 	public static final String PASSWORD_CHARSET_SPECIAL = "@#+*/-;:,.?!='()[]{}&";
 
 	/**
-	 * A set of characters representing uppercase and lowercase latin alphabet letters and digits, exclusing some that
+	 * A set of characters representing uppercase and lowercase latin alphabet letters and digits, excluding some that
 	 * can be confusing to read (like {@code iIl1} or {@code oO0}).
 	 */
-	public static final String PASSWORD_CHARSET_NO_ANBIGUITY = "abcdefghkmnpqrstwxyzACDEFGHKLMNPQRSTWXYZ2345679";
+	public static final String PASSWORD_CHARSET_NO_AMBIGUITY = "abcdefghkmnpqrstwxyzACDEFGHKLMNPQRSTWXYZ2345679";
 
 	/**
-	 * Generate a random password of the provided length, using the characters listed in {@link #PASSWORD_CHARSET_NO_ANBIGUITY}.
+	 * Generate a random password of the provided length, using the characters listed in {@link #PASSWORD_CHARSET_NO_AMBIGUITY}.
 	 * @param length the length of the generated password.
 	 * @return the generated password.
 	 */
 	public static String randomPassword(int length) {
-		return randomPassword(length, PASSWORD_CHARSET_NO_ANBIGUITY);
+		return randomPassword(length, PASSWORD_CHARSET_NO_AMBIGUITY);
 	}
 
 	/**

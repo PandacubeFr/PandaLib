@@ -26,8 +26,15 @@ import java.util.function.IntUnaryOperator;
  */
 public class PlayerDataWrapper {
 
+    /**
+     * The data as they are stored in the player file.
+     */
     public final CompoundTag data;
 
+    /**
+     * Creates a new wrapper for the provided player data.
+     * @param data the data to wrap.
+     */
     public PlayerDataWrapper(CompoundTag data) {
         this.data = data == null ? new CompoundTag() : data;
     }
@@ -44,10 +51,10 @@ public class PlayerDataWrapper {
     }
 
     private int fromNBTtoBukkitInventorySlot(int nbtSlot) {
-        // cat   nbEl NBTslot   bukkitSlot NBT->Bukkit
-        // items 36el           0-35       ==
-        // armor  4el start 100 36-39      -100 + 36
-        // offhnd 1el start 150 40         -150 + 40
+        // cat   nbEl    NBTSlot      bukkitSlot  NBT->Bukkit
+        // items   36                    0-35     ==
+        // armor    4  starts at 100    36-39     -100 + 36
+        // offhand  1  starts at 150      40      -150 + 40
         if (nbtSlot >= 0 && nbtSlot < 36) { // regular inventory slots
             return nbtSlot;
         }
@@ -92,7 +99,7 @@ public class PlayerDataWrapper {
 
 
     private Inventory getBukkitInventory(String nbtKey, InventoryType bukkitType, IntUnaryOperator nbtToBukkitSlotConverter) {
-        Map<Integer, ItemStack> stacks = getRawInvontoryContent(nbtKey);
+        Map<Integer, ItemStack> stacks = getRawInventoryContent(nbtKey);
         Inventory inv = Bukkit.createInventory(null, bukkitType);
         if (stacks.isEmpty())
             return inv;
@@ -102,7 +109,7 @@ public class PlayerDataWrapper {
         return inv;
     }
 
-    private Map<Integer, ItemStack> getRawInvontoryContent(String key) {
+    private Map<Integer, ItemStack> getRawInventoryContent(String key) {
         if (!data.contains(key, 9)) // type 9 is list
             return Map.of();
         ListTag list = data.getList(key, 10); // type of list element 10 is CompoundTag
@@ -125,16 +132,17 @@ public class PlayerDataWrapper {
 
 
 
-    private void setBukkitInventory(String nbtKey, Inventory inv, IntUnaryOperator bukkitToNBTSlotconverter) {
+    private void setBukkitInventory(String nbtKey, Inventory inv, IntUnaryOperator bukkitToNBTSlotConverter) {
         Map<Integer, ItemStack> stacks = new TreeMap<>();
         if (inv == null) {
             setRawInventoryContent(nbtKey, stacks);
+            return;
         }
         for (int bukkitSlot = 0; bukkitSlot < inv.getSize(); bukkitSlot++) {
             ItemStack is = filterStack(inv.getItem(bukkitSlot));
             if (is == null)
                 continue;
-            int nbtSlot = bukkitToNBTSlotconverter.applyAsInt(bukkitSlot);
+            int nbtSlot = bukkitToNBTSlotConverter.applyAsInt(bukkitSlot);
             stacks.put(nbtSlot, is);
         }
         setRawInventoryContent(nbtKey, stacks);
@@ -309,33 +317,18 @@ public class PlayerDataWrapper {
             Preconditions.checkArgument(slot != null, "slot must not be null");
 
             switch (slot) {
-                case HAND:
-                    this.setItemInMainHand(item);
-                    break;
-                case OFF_HAND:
-                    this.setItemInOffHand(item);
-                    break;
-                case FEET:
-                    this.setBoots(item);
-                    break;
-                case LEGS:
-                    this.setLeggings(item);
-                    break;
-                case CHEST:
-                    this.setChestplate(item);
-                    break;
-                case HEAD:
-                    this.setHelmet(item);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Not implemented. This is a bug");
+                case HAND -> this.setItemInMainHand(item);
+                case OFF_HAND -> this.setItemInOffHand(item);
+                case FEET -> this.setBoots(item);
+                case LEGS -> this.setLeggings(item);
+                case CHEST -> this.setChestplate(item);
+                case HEAD -> this.setHelmet(item);
+                default -> throw new IllegalArgumentException("Not implemented. This is a bug");
             }
         }
 
         @Override
-        public ItemStack getItem(EquipmentSlot slot) {
-            Preconditions.checkArgument(slot != null, "slot must not be null");
-
+        public @NotNull ItemStack getItem(@NotNull EquipmentSlot slot) {
             return switch (slot) {
                 case HAND -> this.getItemInMainHand();
                 case OFF_HAND -> this.getItemInOffHand();
@@ -348,7 +341,7 @@ public class PlayerDataWrapper {
 
         @Override
         public @NotNull ItemStack getItemInMainHand() {
-            return getItem(heldItemSlot);
+            return Objects.requireNonNullElse(getItem(heldItemSlot), new ItemStack(Material.AIR));
         }
 
         @Override
@@ -358,7 +351,7 @@ public class PlayerDataWrapper {
 
         @Override
         public @NotNull ItemStack getItemInOffHand() {
-            return getItem(40);
+            return Objects.requireNonNullElse(getItem(40), new ItemStack(Material.AIR));
         }
 
         @Override

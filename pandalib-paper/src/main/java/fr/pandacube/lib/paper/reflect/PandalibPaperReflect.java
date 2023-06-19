@@ -79,14 +79,14 @@ import fr.pandacube.lib.util.ThrowableAccumulator;
 import static fr.pandacube.lib.reflect.wrapper.WrapperRegistry.initWrapper;
 
 /**
- * Initializer for all the reflect tools in {@code pandalib-paper-reflect} module.
+ * Initializer for all the reflection tools in {@code pandalib-paper-reflect} module.
  */
 public class PandalibPaperReflect {
 
     private static boolean isInit = false;
 
     /**
-     * Initializes the reflect tools in {@code pandalib-paper-reflect} module.
+     * Initializes the reflection tools in {@code pandalib-paper-reflect} module.
      * @throws Exception if a problem occurs when initializing wrapper classes.
      */
     public static void init() throws Exception {
@@ -117,7 +117,7 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(RenderData.class, RenderData.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(VanillaCommandWrapper.class, VanillaCommandWrapper.REFLECT.get()));
 
-        // dataconverter
+        // data-converter
         thAcc.catchThrowable(() -> initWrapper(MCDataConverter.class, MCDataConverter.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(MCDataType.class, MCDataType.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(MCTypeRegistry.class, MCTypeRegistry.REFLECT.get()));
@@ -204,7 +204,7 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(QueuedChangesMapLong2Object.class, QueuedChangesMapLong2Object.REFLECT.get()));
 
 
-        thAcc.throwCatched();
+        thAcc.throwCaught();
 
     }
 }

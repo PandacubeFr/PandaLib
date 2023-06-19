@@ -83,7 +83,7 @@ public class PayloadRegistry {
      * to a Json string.
      * @param type the type
      * @param obj the object to Jsonify
-     * @param serializeNulls if null propreties must be included in the json object.
+     * @param serializeNulls if null properties must be included in the json object.
      * @return the String to send through the websocket
      * @throws JsonParseException if the json is invalid.
      */

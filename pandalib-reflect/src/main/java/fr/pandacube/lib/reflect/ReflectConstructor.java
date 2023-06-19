@@ -61,7 +61,7 @@ public final class ReflectConstructor<T> extends ReflectMember<T, ConstructorIde
      * @throws InvocationTargetException if the called constructor throws an exception.
      * @see Constructor#newInstance(Object...)
      */
-    public T instanciate(Object... values) throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public T instantiate(Object... values) throws InvocationTargetException, InstantiationException, IllegalAccessException {
         return get().newInstance(values);
     }
 

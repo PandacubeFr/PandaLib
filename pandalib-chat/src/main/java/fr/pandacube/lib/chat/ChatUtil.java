@@ -22,7 +22,7 @@ import net.md_5.bungee.api.ChatColor;
 import fr.pandacube.lib.chat.Chat.FormatableChat;
 
 /**
- * Provides various methods and properties to manipulate text displayed in chat an other parts of the game.
+ * Provides various methods and properties to manipulate text displayed in chat and other parts of the game.
  */
 public class ChatUtil {
 
@@ -48,7 +48,7 @@ public class ChatUtil {
 
     /**
      * Mapping indicating the text pixel with for specific characters in the default Minecraft font.
-     * If a character doesn’t have a mapping in this map, then its width is {@link #DEFAULT_CHAR_SIZE}.
+     * If a character doesn't have a mapping in this map, then its width is {@link #DEFAULT_CHAR_SIZE}.
      */
     public static final Map<Character, Integer> CHAR_SIZES;
     static {
@@ -112,7 +112,7 @@ public class ChatUtil {
      * @param nbPages the number of pages.
      * @param nbPagesToDisplay the number of pages to display around the first page, the last page and the
      *                         {@code currentPage}.
-     * @return a {@link Chat} containging the created page navigator.
+     * @return a {@link Chat} containing the created page navigator.
      */
     public static Chat createPagination(String prefix, String cmdFormat, int currentPage, int nbPages, int nbPagesToDisplay) {
         Set<Integer> pagesToDisplay = new TreeSet<>();
@@ -149,11 +149,11 @@ public class ChatUtil {
             else
                 first = false;
 
-            FormatableChat pDisp = Chat.clickableCommand(Chat.text(page), String.format(cmdFormat, page), Chat.text("Aller à la page " + page));
+            FormatableChat pDisplay = Chat.clickableCommand(Chat.text(page), String.format(cmdFormat, page), Chat.text("Aller à la page " + page));
             if (page == currentPage) {
-                pDisp.highlightedCommandColor();
+                pDisplay.highlightedCommandColor();
             }
-            d.then(pDisp);
+            d.then(pDisplay);
 
             previous = page;
         }
@@ -258,7 +258,7 @@ public class ChatUtil {
 
 
     /**
-     * Wraps the provided text in multiple lines, taking into account the legacy formating.
+     * Wraps the provided text in multiple lines, taking into account the legacy formatting.
      * <p>
      * This method only takes into account IG text width. Use a regular text-wrapper for console instead.
      * @param legacyText the text to wrap.
@@ -272,7 +272,7 @@ public class ChatUtil {
     }
 
     /**
-     * Wraps the provided text in multiple lines, taking into account the legacy formating.
+     * Wraps the provided text in multiple lines, taking into account the legacy formatting.
      * <p>
      * This method only takes into account IG text width. Use a regular text-wrapper for console instead.
      * @param legacyText the text to wrap.
@@ -369,7 +369,7 @@ public class ChatUtil {
 
     /**
      * Try to render a matrix of {@link Chat} components into a table in the chat or console.
-     * @param data the component, in the form of {@link List} of {@link List} of {@link Chat}. The englobing list holds
+     * @param data the component, in the form of {@link List} of {@link List} of {@link Chat}. The parent list holds
      *             the table lines (line 0 being the top line). Each sublist holds the cells content (element 0 is the
      *             leftText one). The row lengths can be different.
      * @param space a spacer to put between columns.
@@ -392,7 +392,7 @@ public class ChatUtil {
 
     /**
      * Try to render a matrix of {@link Component} components into a table in the chat or console.
-     * @param data the component, in the form of {@link List} of {@link List} of {@link Component}. The englobing list holds
+     * @param data the component, in the form of {@link List} of {@link List} of {@link Component}. The parent list holds
      *             the table lines (line 0 being the top line). Each sublist holds the cells content (element 0 is the
      *             leftText one). The row lengths can be different.
      * @param space a spacer to put between columns.
@@ -505,9 +505,9 @@ public class ChatUtil {
     private static final char PROGRESS_BAR_FULL_CHAR = '|';
 
     /**
-     * Generate a (eventually multi-part) progress bar using text.
+     * Generate a (eventually multipart) progress bar using text.
      * @param values the values to render in the progress bar.
-     * @param colors the colors attributed to each values.
+     * @param colors the colors attributed to each value.
      * @param total the total value of the progress bar.
      * @param width the width in which the progress bar should fit (in pixel for IG, in character count for console)
      * @param console true if the progress bar is intended to be displayed on the console, false if it’s in game chat.

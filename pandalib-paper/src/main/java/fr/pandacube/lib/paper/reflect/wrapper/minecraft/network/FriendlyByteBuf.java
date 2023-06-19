@@ -14,7 +14,7 @@ public class FriendlyByteBuf extends ByteBuf {
     private static final ReflectMethod<?> writeUtf = wrapEx(() -> MAPPING.mojMethod("writeUtf", String.class));
 
     public FriendlyByteBuf(ByteBuf parent) {
-        this(wrapReflectEx(() -> CONSTRUCTOR.instanciate(unwrap(parent))));
+        this(wrapReflectEx(() -> CONSTRUCTOR.instantiate(unwrap(parent))));
     }
 
     public FriendlyByteBuf writeUtf(String string) {

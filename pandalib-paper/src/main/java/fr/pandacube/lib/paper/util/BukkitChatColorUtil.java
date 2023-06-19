@@ -19,11 +19,11 @@ public class BukkitChatColorUtil {
 	 * @return the closest chat color from {@code dye}
 	 */
 	public static TextColor fromDyeToSignColor(DyeColor dye) {
+		// following code invalid due to text color on sign does not use rgb value of dye color.
 		//org.bukkit.Color col = dye.getColor();
 		//return ChatColor.of(new Color(col.asRGB()));
-		// hmmm this is not that simple, of course
-		
-		// black 
+
+		// the color values are extracted from IG screenshot of dyed text signs.
 		return switch (dye) {
 			case BLACK -> TextColor.fromHexString("#000000");
 			case RED -> TextColor.fromHexString("#650000");

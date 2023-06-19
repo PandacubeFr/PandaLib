@@ -10,7 +10,6 @@ import org.bukkit.World;
 import java.io.File;
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.function.BiPredicate;
 
 public class PaperWorldProcess extends PaperBackupProcess {
 	private final String worldName;

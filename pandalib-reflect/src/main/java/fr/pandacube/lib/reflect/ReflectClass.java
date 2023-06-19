@@ -57,7 +57,7 @@ public class ReflectClass<T> {
      * @param name the method name.
      * @param paramTypes the types of the method parameters.
      * @return a {@link ReflectMethod} wrapping the requested {@link Method}.
-     * @throws NoSuchMethodException if the requested method doesn’t exists in the wrapped class.
+     * @throws NoSuchMethodException if the requested method doesn't exist in the wrapped class.
      */
     public ReflectMethod<T> method(String name, Class<?>... paramTypes) throws NoSuchMethodException {
         return method(new MethodIdentifier(name, paramTypes), false);
@@ -69,7 +69,7 @@ public class ReflectClass<T> {
      * @param name the method name.
      * @param paramTypes the types of the method parameters.
      * @return a {@link ReflectMethod} wrapping the requested {@link Method}.
-     * @throws NoSuchMethodException if the requested method doesn’t exists in the wrapped class.
+     * @throws NoSuchMethodException if the requested method doesn't exist in the wrapped class.
      */
     public ReflectMethod<T> filteredMethod(String name, Class<?>... paramTypes) throws NoSuchMethodException {
         return method(new MethodIdentifier(name, paramTypes), true);
@@ -93,7 +93,7 @@ public class ReflectClass<T> {
      * Provides a {@link ReflectConstructor} wrapping the requested {@link Constructor}.
      * @param paramTypes the types of the constructor parameters.
      * @return a {@link ReflectConstructor} wrapping the requested {@link Constructor}.
-     * @throws NoSuchMethodException if the requested constructor doesn’t exists in the wrapped class.
+     * @throws NoSuchMethodException if the requested constructor doesn't exist in the wrapped class.
      */
     public ReflectConstructor<T> constructor(Class<?>... paramTypes) throws NoSuchMethodException {
         return constructor(new ConstructorIdentifier(paramTypes), false);
@@ -104,7 +104,7 @@ public class ReflectClass<T> {
      * filtering in the {@link Class} implementation.
      * @param paramTypes the types of the constructor parameters.
      * @return a {@link ReflectConstructor} wrapping the requested {@link Constructor}.
-     * @throws NoSuchMethodException if the requested constructor doesn’t exists in the wrapped class.
+     * @throws NoSuchMethodException if the requested constructor doesn't exist in the wrapped class.
      */
     public ReflectConstructor<T> filteredConstructor(Class<?>... paramTypes) throws NoSuchMethodException {
         return constructor(new ConstructorIdentifier(paramTypes), true);
@@ -128,7 +128,7 @@ public class ReflectClass<T> {
      * Provides a {@link ReflectField} wrapping the requested {@link Field}.
      * @param name the name of the field.
      * @return a {@link ReflectField} wrapping the requested {@link Field}.
-     * @throws NoSuchFieldException if the requested field doesn’t exists in the wrapped class.
+     * @throws NoSuchFieldException if the requested field doesn't exist in the wrapped class.
      */
     public ReflectField<T> field(String name) throws NoSuchFieldException {
         return field0(name, false);
@@ -139,10 +139,11 @@ public class ReflectClass<T> {
      * {@link Class} implementation.
      * @param name the name of the field.
      * @return a {@link ReflectField} wrapping the requested {@link Field}.
-     * @throws NoSuchFieldException if the requested field doesn’t exists in the wrapped class.
+     * @throws NoSuchFieldException if the requested field doesn't exist in the wrapped class.
      * @deprecated on Java 17, does not work due to module encapsulation, it is impossible to bypass the Java reflection
      *             API internal filtering.
      */
+    @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated(since = "Java 17")
     public ReflectField<T> filteredField(String name) throws NoSuchFieldException {
         return field0(name, true);

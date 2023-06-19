@@ -102,7 +102,7 @@ public class CronScheduler {
 
     /**
      * Cancel a scheduled task.
-     * Will not stop a current execution of the task. If the task does not exists, it will not do anything.
+     * Will not stop a current execution of the task. If the task does not exist, it will not do anything.
      * @param taskId the id of the task to cancel.
      */
     public static void unSchedule(String taskId) {

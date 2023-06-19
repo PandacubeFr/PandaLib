@@ -258,7 +258,7 @@ public abstract class AbstractPlayerManager<OP extends AbstractOnlinePlayer, OF 
 	 * @param prefix if the server prefix will be prepended to the message.
 	 * @param console if the message must be displayed in the console.
 	 * @param permission if not null, the message is only sent to player with this permission.
-	 * @param sourcePlayer specifiy the eventual player that is the source of the message.
+	 * @param sourcePlayer specify the eventual player that is the source of the message.
 	 * 			If null, the message will be sent as a SYSTEM chat message.
 	 * 			If not null, the message will be sent as a CHAT message, and will not be sent
 	 * 			to players ignoring the provided player (if implemented).
@@ -315,7 +315,7 @@ public abstract class AbstractPlayerManager<OP extends AbstractOnlinePlayer, OF 
 	 * @param prefix if the server prefix will be prepended to the message.
 	 * @param permission if not null, the message is only sent to player with this permission (but not to console).
 	 * 			If null, the message will be sent to all players and to console.
-	 * @param sourcePlayer specifiy the eventual player that is the source of the message.
+	 * @param sourcePlayer specify the eventual player that is the source of the message.
 	 * 			If null, the message will be sent as a SYSTEM chat message.
 	 * 			If not null, the message will be sent as a CHAT message, and will not be sent
 	 * 			to players ignoring the provided player (if implemented).
@@ -330,13 +330,13 @@ public abstract class AbstractPlayerManager<OP extends AbstractOnlinePlayer, OF 
 	/**
 	 * Broadcast a message to some or all players, and eventually to the console.
 	 * <p>
-	 * This method doesn’t restrict to a specific permission. To change this behaviour, use
+	 * This method doesn't restrict to a specific permission. To change this behaviour, use
 	 * {@link #broadcast(ComponentLike, boolean, boolean, String, UUID)}.
 	 *
 	 * @param message the message to send.
 	 * @param prefix if the server prefix will be prepended to the message.
 	 * @param console if the message must be displayed in the console.
-	 * @param sourcePlayer specifiy the eventual player that is the source of the message.
+	 * @param sourcePlayer specify the eventual player that is the source of the message.
 	 * 			If null, the message will be sent as a SYSTEM chat message.
 	 * 			If not null, the message will be sent as a CHAT message, and will not be sent
 	 * 			to players ignoring the provided player (if implemented).
@@ -354,7 +354,7 @@ public abstract class AbstractPlayerManager<OP extends AbstractOnlinePlayer, OF 
 	 * This method assumes this message is not caused by a specific player. To specify the source player, use
 	 * {@link #broadcast(ComponentLike, boolean, boolean, UUID)}.
 	 * <p>
-	 * This method doesn’t restrict to a specific permission. To change this behaviour, use
+	 * This method doesn't restrict to a specific permission. To change this behaviour, use
 	 * {@link #broadcast(ComponentLike, boolean, boolean, String)}.
 	 *
 	 * @param message the message to send.
@@ -372,12 +372,12 @@ public abstract class AbstractPlayerManager<OP extends AbstractOnlinePlayer, OF 
 	 * This method sends the message to the console. To change this behaviour, use
 	 * {@link #broadcast(ComponentLike, boolean, boolean, UUID)}.
 	 * <p>
-	 * This method doesn’t restrict to a specific permission. To change this behaviour, use
+	 * This method doesn't restrict to a specific permission. To change this behaviour, use
 	 * {@link #broadcast(ComponentLike, boolean, String, UUID)}.
 	 *
 	 * @param message the message to send.
 	 * @param prefix if the server prefix will be prepended to the message.
-	 * @param sourcePlayer specifiy the eventual player that is the source of the message.
+	 * @param sourcePlayer specify the eventual player that is the source of the message.
 	 * 			If null, the message will be sent as a SYSTEM chat message.
 	 * 			If not null, the message will be sent as a CHAT message, and will not be sent
 	 * 			to players ignoring the provided player (if implemented).
@@ -396,7 +396,7 @@ public abstract class AbstractPlayerManager<OP extends AbstractOnlinePlayer, OF 
 	 * This method sends the message to the console. To change this behaviour, use
 	 * {@link #broadcast(ComponentLike, boolean, boolean)}.
 	 * <p>
-	 * This method doesn’t restrict to a specific permission. To change this behaviour, use
+	 * This method doesn't restrict to a specific permission. To change this behaviour, use
 	 * {@link #broadcast(ComponentLike, boolean, String)}.
 	 *
 	 * @param message the message to send.

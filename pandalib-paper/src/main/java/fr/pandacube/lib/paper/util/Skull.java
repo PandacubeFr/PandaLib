@@ -69,7 +69,7 @@ public enum Skull {
     /**
      * Return the item based on this Skull enum.
      *
-     * @return itemstack
+     * @return item stack
      */
     public ItemStack get() {
     	return get(null, null);
@@ -77,29 +77,29 @@ public enum Skull {
     /**
      * Return the item based on this Skull enum, with the provided display name and lore.
      *
-     * @return itemstack
+     * @return item stack
      */
-    public ItemStack get(Chat dispName, List<Chat> lore) {
-        return getFromPlayerName(name, dispName, lore);
+    public ItemStack get(Chat displayName, List<Chat> lore) {
+        return getFromPlayerName(name, displayName, lore);
     }
 
     
     
     /**
-     * Return a skull of a player based on his name.
+     * Return a skull of a player based on their name.
      *
      * @param name player's name
-     * @return itemstack
+     * @return item stack
      */
-	public static ItemStack getFromPlayerName(String name, Chat dispName, List<Chat> lore) {
+	public static ItemStack getFromPlayerName(String name, Chat displayName, List<Chat> lore) {
         ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD, 1);
         SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
         
         @SuppressWarnings({ "deprecation", "unused" })
         boolean b = meta.setOwner(name);
         
-        if (dispName != null)
-        	meta.displayName(dispName.getAdv());
+        if (displayName != null)
+        	meta.displayName(displayName.getAdv());
         
         if (lore != null)
         	meta.lore(lore.stream().map(Chat::getAdv).collect(Collectors.toList()));
@@ -122,7 +122,7 @@ public enum Skull {
      * Return a skull that has a custom texture specified by url.
      *
      * @param url skin url
-     * @return itemstack
+     * @return item stack
      */
     public static ItemStack getFromSkinURL(String url) {
         return getFromSkinURL(url, null, null);
@@ -132,7 +132,7 @@ public enum Skull {
      * Return a skull that has a custom texture specified by url.
      *
      * @param url the skin full url
-     * @return itemstack
+     * @return item stack
      */
     public static ItemStack getFromSkinURL(String url, Chat name, List<Chat> lore) {
         return getFromBase64String(Base64.getEncoder().encodeToString(String.format("{\"textures\":{\"SKIN\":{\"url\":\"%s\"}}}", url).getBytes()), name, lore);
@@ -148,8 +148,8 @@ public enum Skull {
     /**
      * Return a skull that has a custom texture specified by a base64 String.
      *
-     * @param str the base64 string from gameprofile informations
-     * @return itemstack
+     * @param str the base64 string from game profile information
+     * @return item stack
      */
     public static ItemStack getFromBase64String(String str) {
     	return getFromBase64String(str, null, null);
@@ -159,10 +159,10 @@ public enum Skull {
     /**
      * Return a skull that has a custom texture specified by a base64 String.
      *
-     * @param str the base64 string from gameprofile informations
-     * @return itemstack
+     * @param str the base64 string from game profile information
+     * @return item stack
      */
-    public static ItemStack getFromBase64String(String str, Chat dispName, List<Chat> lore) {
+    public static ItemStack getFromBase64String(String str, Chat displayName, List<Chat> lore) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
         
         SkullMeta headMeta = (SkullMeta) head.getItemMeta();
@@ -171,8 +171,8 @@ public enum Skull {
         profile.setProperty(new ProfileProperty("textures", str));
         headMeta.setPlayerProfile(profile);
         
-        if (dispName != null)
-        	headMeta.displayName(dispName.getAdv());
+        if (displayName != null)
+        	headMeta.displayName(displayName.getAdv());
         
         if (lore != null)
         	headMeta.lore(lore.stream().map(Chat::getAdv).collect(Collectors.toList()));

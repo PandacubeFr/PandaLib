@@ -13,20 +13,20 @@ public class DistanceUtil {
 	 * specified metric prefix
 	 * @param meterDist the distance to display, in meter
 	 * @param precision the number of digit to display after the decimal separator
-	 * @param desiredUnits the prefered unit prefix to use for convertion.
+	 * @param desiredUnits the preferred unit prefix to use for conversion.
 	 * @return a string representation of the provided distance
 	 */
 	public static String distanceToString(double meterDist, int precision, DistanceUnit... desiredUnits) {
 
 		Arrays.sort(desiredUnits);
 
-		DistanceUnit choosenUnit = desiredUnits[0]; // la plus petite unitée
+		DistanceUnit chosenUnit = desiredUnits[0]; // la plus petite unité
 		for (DistanceUnit unit : desiredUnits) {
-			if (meterDist / unit.multiplicator < 1) continue;
-			choosenUnit = unit;
+			if (meterDist / unit.multiplier < 1) continue;
+			chosenUnit = unit;
 		}
 
-		if (choosenUnit != desiredUnits[0] && precision <= 2) precision = 2;
+		if (chosenUnit != desiredUnits[0] && precision <= 2) precision = 2;
 
 		String precisionFormat = "##0";
 		if (precision > 0) precisionFormat += ".";
@@ -34,9 +34,9 @@ public class DistanceUtil {
 
 		DecimalFormat df = new DecimalFormat(precisionFormat);
 
-		double dist = meterDist / choosenUnit.multiplicator;
+		double dist = meterDist / chosenUnit.multiplier;
 
-		return df.format(dist) + choosenUnit.unitStr;
+		return df.format(dist) + chosenUnit.unitStr;
 	}
 
 	/**
@@ -54,7 +54,7 @@ public class DistanceUtil {
 	}
 
 	/**
-	 * Enumeration of comonly used distance metric unit
+	 * Enumeration of commonly used distance metric unit
 	 */
 	public enum DistanceUnit {
 
@@ -91,15 +91,15 @@ public class DistanceUtil {
 		/**
 		 * The value of this unit in meter.
 		 */
-		public final double multiplicator;
+		public final double multiplier;
 
 		/**
 		 * String representation of the unit symbol.
 		 */
 		public final String unitStr;
 
-		DistanceUnit(double mult, String s) {
-			multiplicator = mult;
+		DistanceUnit(double multiplier, String s) {
+			this.multiplier = multiplier;
 			unitStr = s;
 		}
 	}

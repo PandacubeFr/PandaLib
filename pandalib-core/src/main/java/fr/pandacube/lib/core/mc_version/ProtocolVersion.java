@@ -23,8 +23,8 @@ import java.util.concurrent.atomic.AtomicReference;
  * The data if fetch updated data from an external API on startup. If it fails,
  * it uses the data stored in the current package at build time.
  * <p>
- * The public static methos are used to fetch an instance of {@link ProtocolVersion}
- * based on the provided protocol version (eg. 763) or Minecraft version (eg. "1.20.1").
+ * The public static methods are used to fetch an instance of {@link ProtocolVersion}
+ * based on the provided protocol version (e.g. 763) or Minecraft version (e.g. "1.20.1").
  * An instance of this class provides information related to a protocol version
  * (the protocol version number and all the corresponding Minecraft versions).
  */
@@ -89,15 +89,24 @@ public class ProtocolVersion implements Comparable<ProtocolVersion> {
 
         Log.warning("Unable to get minecraft version data from API. Using local data instead.");
         // try local source
-        try (InputStream is = ProtocolVersion.class.getResourceAsStream("mcversion.json");
-                InputStreamReader isr = new InputStreamReader(is)) {
-            MinecraftVersionList data = Json.gson.fromJson(isr, MinecraftVersionList.class);
-            versionList.set(data);
+        try (InputStream is = ProtocolVersion.class.getResourceAsStream("mcversion.json")) {
+            if (is != null) {
+                try (InputStreamReader isr = new InputStreamReader(is)) {
+                    MinecraftVersionList data = Json.gson.fromJson(isr, MinecraftVersionList.class);
+                    versionList.set(data);
+                }
+            }
         } catch (Exception e) {
-            Log.severe("Unable to get Minecraft versions data from classpath. Using empty data instead.");
-            versionList.set(new MinecraftVersionList());
+            Log.warning(e);
         }
 
+        if (versionList.get() != null) {
+            return;
+        }
+
+        Log.severe("Unable to get Minecraft versions data from classpath. Using empty data instead.");
+
+        versionList.set(new MinecraftVersionList());
     }
 
 

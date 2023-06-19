@@ -10,17 +10,17 @@ public class MinecraftWebUtil {
 	 * <p>
 	 * Each colored part of the text will be contained in a {@code <span>} tag with {@code class="cX"} where {@code X}
 	 * is the color code from 0 to F in uppercase.
-	 * The bold, striked, underlined and italic parts will be contained in a {@code <span>} tag with respectively the
+	 * The bold, struck, underlined and italic parts will be contained in a {@code <span>} tag with respectively the
 	 * classes {@code cL}, {@code cM}, {@code cN} and {@code cO}.
 	 * Some CSS properties are needed to apply the colors to the CSS classes.
-	 * @param chatcolorPrefix the prefix used for the color codes
+	 * @param chatColorPrefix the prefix used for the color codes
 	 * @param legacyText the legacy text to convert to HTML.
-	 * @return The text formated in HTML.
-	 * @implNote the current implementation does not yet supports the RGB colors.
+	 * @return The text formatted in HTML.
+	 * @implNote the current implementation does not yet support the RGB colors.
 	*/
 	// TODO update to support RGB colors (Bungee and Essentials notation). (see JS implementation at https://www.pandacube.fr/assets/js/global.js )
 	// TODO moves this to pandalib-chat and use Adventure API to help serializing to HTML
-	public static String fromMinecraftColorCodeToHTML(char chatcolorPrefix, String legacyText)
+	public static String fromMinecraftColorCodeToHTML(char chatColorPrefix, String legacyText)
 	{
 		String color_char = "0123456789abcdefr";
 		
@@ -31,7 +31,7 @@ public class MinecraftWebUtil {
 		for (int i=0; i<legacyText.length(); i++) {
 			char c = legacyText.charAt(i);
 			
-			if (c == chatcolorPrefix && (i<legacyText.length()-1)) {
+			if (c == chatColorPrefix && (i<legacyText.length()-1)) {
 				i++;
 				c = legacyText.charAt(i);
 				if (color_char.contains(String.valueOf(Character.toLowerCase(c)))) {
@@ -85,7 +85,7 @@ public class MinecraftWebUtil {
 					}
 				}
 				else {
-					builder.append(chatcolorPrefix + c);
+					builder.append(chatColorPrefix + c);
 				}
 				
 				

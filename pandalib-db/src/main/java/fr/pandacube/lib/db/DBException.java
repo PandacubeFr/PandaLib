@@ -1,7 +1,7 @@
 package fr.pandacube.lib.db;
 
 /**
- * Exception thrown when something bad happends when using the {@link DB} API.
+ * Exception thrown when something bad happens when using the {@link DB} API.
  */
 public class DBException extends Exception {
 

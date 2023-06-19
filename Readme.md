@@ -3,7 +3,7 @@
 ### Development library for Minecraft server applications and plugins
 
 This repository contains a collection of maven modules that are used for the development of our Minecraft server. Those
-modules are made open source so they can be used by other developpers. Each of them provides different functionalities
+modules are made open source, so they can be used by other developers. Each of them provides different functionalities
 that are detailed in their respective Readme file (if any).
 
 - `pandalib-util` General purpose utility and helper classes;
@@ -20,7 +20,7 @@ that are detailed in their respective Readme file (if any).
 - `pandalib-netapi` A poorly designed, but working TCP network library;
 - `pandalib-commands` An abstract command manager working on top of [Brigadier](https://github.com/Mojang/brigadier);
 - `pandalib-cli` Utility and helper classes for a standalone CLI Java application.
-- `pandalib-core` A catch-all module for some helper classes that didn’t have their own module yet;
+- `pandalib-core` A catch-all module for some helper classes that didn't have their own module yet;
 
 ### Use in your projects
 

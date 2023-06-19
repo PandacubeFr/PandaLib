@@ -303,9 +303,9 @@ import fr.pandacube.lib.util.Log;
 		public final boolean deflt;
 		public final List<CachedGroup> inheritances = new ArrayList<>();
 		private CachedGroup(String n, String p, String s,
-				boolean dflt, Map<ServerWorldKey, List<String>> perms) {
+				boolean deflt, Map<ServerWorldKey, List<String>> perms) {
 			super(n, p, s, perms);
-			deflt = dflt;
+			this.deflt = deflt;
 		}
 
 

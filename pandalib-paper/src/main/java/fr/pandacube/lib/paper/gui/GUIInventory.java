@@ -31,7 +31,7 @@ public class GUIInventory implements Listener {
 
 	/**
 	 * Used as parameter of {@link #buildButton(ItemStack, Integer, ComponentLike, List, Map)} to indicate that a button should
-	 * shine like an enchanted object, without showing enchant informations in the hover text.
+	 * shine like an enchanted object, without showing enchant information in the hover text.
 	 */
 	public static final Map<Enchantment, Integer> FAKE_ENCHANT = ImmutableMap.of(Enchantment.DURABILITY, 1);
 
@@ -44,7 +44,7 @@ public class GUIInventory implements Listener {
 	/**
 	 * Create a new inventory based GUI.
 	 * @param p the player for which to create the GUI.
-	 * @param nbLines the number of invotory lines for the interface.
+	 * @param nbLines the number of inventory lines for the interface.
 	 * @param title the title of the GUI (title of the inventory)
 	 * @param closeEventAction the action to perform when the player closes the GUI inventory
 	 */
@@ -73,7 +73,7 @@ public class GUIInventory implements Listener {
 	 * @param p the slot index.
 	 * @param iStack the item to put in the slot.
 	 * @param clickEventActions the action to perform when the user clicks that button. The event passed as a parameter
-	 *                         is already cancelled. It is possible to uncancel it if needed.
+	 *                         is already cancelled. It is possible to un-cancel it if needed.
 	 */
 	public void setButtonIfEmpty(int p, ItemStack iStack, Consumer<InventoryClickEvent> clickEventActions) {
 		if (inv.getItem(p) == null)
@@ -85,7 +85,7 @@ public class GUIInventory implements Listener {
 	 * @param p the slot index.
 	 * @param iStack the item to put in the slot.
 	 * @param clickEventActions the action to perform when the user clicks that button. The event passed as a parameter
-	 *                         is already cancelled. It is possible to uncancel it if needed.
+	 *                         is already cancelled. It is possible to un-cancel it if needed.
 	 */
 	public void setButton(int p, ItemStack iStack, Consumer<InventoryClickEvent> clickEventActions) {
 		inv.setItem(p, iStack);
@@ -96,7 +96,7 @@ public class GUIInventory implements Listener {
 	 * Update/replace the action to perform for a specific slot.
 	 * @param p the slot index.
 	 * @param clickEventActions the action to perform when the user clicks that button. The event passed as a parameter
-	 *                         is already cancelled. It is possible to uncancel it if needed.
+	 *                         is already cancelled. It is possible to un-cancel it if needed.
 	 */
 	public void changeClickEventAction(int p, Consumer<InventoryClickEvent> clickEventActions) {
 		onClickEvents.put(p, clickEventActions);
@@ -122,7 +122,7 @@ public class GUIInventory implements Listener {
 
 	/**
 	 * Force this GUI to be closes, without the intervention of the player.
-	 * The bukkit API will call the {@link InventoryCloseEvent}, trigerring eventual actions associated with this event.
+	 * The bukkit API will call the {@link InventoryCloseEvent}, triggering eventual actions associated with this event.
 	 */
 	public void forceClose() {
 		if (!isOpened) return;

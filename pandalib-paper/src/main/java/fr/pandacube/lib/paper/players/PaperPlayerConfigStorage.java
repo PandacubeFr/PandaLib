@@ -18,12 +18,12 @@ import java.util.stream.Collectors;
 
 public class PaperPlayerConfigStorage {
 
-    static File storageFile = new File(PandaLibPaper.getPlugin().getDataFolder(), "playerdata.yml");
+    static final File storageFile = new File(PandaLibPaper.getPlugin().getDataFolder(), "playerdata.yml");
     static boolean initialized = false;
 
-    static LinkedHashMap<ConfigKey, ConfigEntry> data = new LinkedHashMap<>();
-    static LinkedHashMap<UUID, LinkedHashSet<ConfigEntry>> playerSortedData = new LinkedHashMap<>();
-    static LinkedHashMap<String, LinkedHashSet<ConfigEntry>> keySortedData = new LinkedHashMap<>();
+    static final LinkedHashMap<ConfigKey, ConfigEntry> data = new LinkedHashMap<>();
+    static final LinkedHashMap<UUID, LinkedHashSet<ConfigEntry>> playerSortedData = new LinkedHashMap<>();
+    static final LinkedHashMap<String, LinkedHashSet<ConfigEntry>> keySortedData = new LinkedHashMap<>();
     static boolean changed = false;
 
 
@@ -194,10 +194,6 @@ public class PaperPlayerConfigStorage {
 
         public String getValue() {
             return value;
-        }
-
-        private void setValue(String value) {
-            this.value = value;
         }
 
         @Override

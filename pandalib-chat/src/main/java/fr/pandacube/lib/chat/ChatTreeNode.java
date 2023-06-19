@@ -27,7 +27,7 @@ public class ChatTreeNode {
     public final List<ChatTreeNode> children = new ArrayList<>();
 
     /**
-     * Construct an new {@link ChatTreeNode}.
+     * Construct a new {@link ChatTreeNode}.
      * @param cmp the component for the current node.
      */
     public ChatTreeNode(Chat cmp) {
@@ -48,7 +48,7 @@ public class ChatTreeNode {
      * Generate a tree view based on this tree structure.
      * <p>
      * Each element in the returned list represent 1 line of this tree view.
-     * Thus, the caller may send each line separately or at once depending of the quantity of data.
+     * Thus, the caller may send each line separately or at once, depending on the quantity of data.
      * @param console true to render for console, false otherwise.
      * @return an array of component, each element being a single line.
      */

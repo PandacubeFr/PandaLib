@@ -10,23 +10,23 @@ public class RequestAnalyser {
 	public final String command;
 	public final String data;
 
-	public RequestAnalyser(Socket socket, NetworkAPIListener napiListener) throws IOException, BadRequestException {
-		if (socket == null || socket.isClosed() || socket.isInputShutdown() || napiListener == null)
+	public RequestAnalyser(Socket socket, NetworkAPIListener nAPIListener) throws IOException, BadRequestException {
+		if (socket == null || socket.isClosed() || socket.isInputShutdown() || nAPIListener == null)
 			throw new IllegalArgumentException(
-					"le socket doit être non null et doit être ouvert sur le flux d'entrée et napiListener ne doit pas être null");
+					"le socket doit être non null et doit être ouvert sur le flux d'entrée et nAPIListener ne doit pas être null");
 
-		// on lis la réponse
+		// on lit la réponse
 		BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
 		String line;
 
 		// lecture de la première ligne
 		line = in.readLine();
-		if (line == null || !line.equals(napiListener.pass)) throw new BadRequestException("wrong_password");
+		if (line == null || !line.equals(nAPIListener.pass)) throw new BadRequestException("wrong_password");
 
 		// lecture de la deuxième ligne
 		line = in.readLine();
-		if (line == null || napiListener.getRequestExecutor(line) == null)
+		if (line == null || nAPIListener.getRequestExecutor(line) == null)
 			throw new BadRequestException("command_not_exists");
 		command = line;
 

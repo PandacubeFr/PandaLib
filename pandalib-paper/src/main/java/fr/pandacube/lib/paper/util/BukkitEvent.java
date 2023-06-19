@@ -96,7 +96,7 @@ public class BukkitEvent {
 	}
 	
 	/**
-	 * Abstract implementation of {@link EventListener} that ensure as best as it can,
+	 * Abstract implementation of {@link EventListener} that ensure as good as it can,
 	 * that it is the last listener called to handle the event.
 	 *
 	 * @param <E> the type of the event

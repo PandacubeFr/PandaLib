@@ -14,7 +14,7 @@ public class ChatColorUtil {
 
 
     /**
-     * All characters that represent a colorcode.
+     * All characters that represent a color code.
      */
     public static final String ALL_COLORS = "0123456789AaBbCcDdEeFf";
     /**
@@ -30,7 +30,7 @@ public class ChatColorUtil {
      * Returns the legacy format needed to reproduce the format at the end of the provided legacy text.
      * Supports standard chat colors and formats, BungeeCord Chat rgb format and EssentialsX rgb format.
      * The RGB value from EssentialsX format is converted to BungeeCord Chat when included in the returned value.
-     * @param legacyText the legacy formated text.
+     * @param legacyText the legacy formatted text.
      * @return the active format at the end of the provided text.
      */
     public static String getLastColors(String legacyText) {
@@ -84,8 +84,8 @@ public class ChatColorUtil {
     }
 
     /**
-     * Returns the {@link ChatColor} associated with the provided char, case insensitive.
-     * @param code the case insensitive char code.
+     * Returns the {@link ChatColor} associated with the provided char, case-insensitive.
+     * @param code the case-insensitive char code.
      * @return the corresponding {@link ChatColor}.
      */
     public static ChatColor getChatColorByChar(char code) {

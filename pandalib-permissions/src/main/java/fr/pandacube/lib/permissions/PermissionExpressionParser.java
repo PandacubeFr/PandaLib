@@ -42,7 +42,7 @@ public class PermissionExpressionParser {
 	 * @throws IllegalArgumentException if the expression is not correct.
 	 * @return the result of the evaluation of the permission expression.
 	 */
-	public static boolean evaluate(String permString, LitteralPermissionTester permTester) {
+	public static boolean evaluate(String permString, LiteralPermissionTester permTester) {
 		try {
 			return PERMISSION_EVALUATOR.evaluate(permString, permTester);
 		} catch (IllegalArgumentException e) {
@@ -53,7 +53,7 @@ public class PermissionExpressionParser {
 	/**
 	 * Functional interface that converts a string into a boolean.
 	 */
-	public interface LitteralPermissionTester extends Function<String, Boolean> { }
+	public interface LiteralPermissionTester extends Function<String, Boolean> { }
 	
 	
 	
@@ -90,7 +90,7 @@ public class PermissionExpressionParser {
 		protected Boolean toValue(String literal, Object evaluationContext) {
 			if (literal.contains(" ") || literal.contains("|") || literal.contains("&"))
 				throw new IllegalArgumentException("Unable to parse the following part of permission expression as one permission node: '" + literal + "'");
-			return evaluationContext instanceof LitteralPermissionTester pt ? pt.apply(literal) : false;
+			return evaluationContext instanceof LiteralPermissionTester pt ? pt.apply(literal) : false;
 		}
 		
 		@Override

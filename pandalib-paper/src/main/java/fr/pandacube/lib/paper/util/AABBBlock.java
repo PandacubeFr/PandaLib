@@ -14,7 +14,7 @@ import fr.pandacube.lib.util.RandomUtil;
 
 /**
  * Checkpoint represented as a 3D Axis and Block Aligned Bounding Box (sort of AABB).
- * Represent the littelest cuboid selection of blocks that contains the bounding box
+ * Represent the littlest cuboid selection of blocks that contains the bounding box
  * passed to the constructor.
  */
 public class AABBBlock implements Iterable<BlockVector>, Cloneable {
@@ -26,10 +26,10 @@ public class AABBBlock implements Iterable<BlockVector>, Cloneable {
 	private final long volume;
 
 	private AABBBlock(AABBBlock original, int shiftX, int shiftY, int shiftZ) {
-		Vector shiftVect = new Vector(shiftX, shiftY, shiftZ);
-		pos1 = original.pos1.clone().add(shiftVect);
-		pos2 = original.pos2.clone().add(shiftVect);
-		center = original.center.clone().add(shiftVect);
+		Vector shiftVec = new Vector(shiftX, shiftY, shiftZ);
+		pos1 = original.pos1.clone().add(shiftVec);
+		pos2 = original.pos2.clone().add(shiftVec);
+		center = original.center.clone().add(shiftVec);
 		volume = original.volume;
 	}
 	
@@ -47,7 +47,7 @@ public class AABBBlock implements Iterable<BlockVector>, Cloneable {
 	
 	public AABBBlock(int p1x, int p1y, int p1z, int p2x, int p2y, int p2z) {
 		/*
-		 * Prends les points extérieurs permettant de former un bouding box englobant
+		 * Prends les points extérieurs permettant de former un bounding box englobant
 		 * celui représenté par v1 et v2, et étant aligné au quadrillage des blocs.
 		 */
 		int p1x_ = Math.min(p1x, p2x);
@@ -70,7 +70,7 @@ public class AABBBlock implements Iterable<BlockVector>, Cloneable {
 
 	@SuppressWarnings("MethodDoesntCallSuperMethod")
 	@Override
-	public AABBBlock clone() throws CloneNotSupportedException {
+	public AABBBlock clone() {
 		return new AABBBlock(this, 0, 0, 0);
 	}
 

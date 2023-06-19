@@ -7,7 +7,7 @@ package fr.pandacube.lib.reflect.wrapper;
 public abstract class ReflectWrapperTyped<T> extends ReflectWrapper implements ReflectWrapperTypedI<T> {
 
     /**
-     * Instanciate this Reflect Wrapper with the provided object.
+     * Instantiate this reflection Wrapper with the provided object.
      * Any subclasses should not make their constructor public since the instanciation is managed by {@link #wrap(Object, Class) wrap(...)}.
      * @param obj the object to wrap. It must be an instance of the {@link #__getRuntimeClass() runtime class} of this
      *            wrapper class.

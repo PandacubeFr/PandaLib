@@ -12,7 +12,7 @@ public class AABB extends ReflectWrapper {
     private static final ReflectConstructor<?> CONSTRUCTOR = wrapEx(() -> MAPPING.runtimeReflect().constructor(double.class, double.class, double.class, double.class, double.class, double.class));
 
     public AABB(double x1, double y1, double z1, double x2, double y2, double z2) {
-        this(wrapReflectEx(() -> CONSTRUCTOR.instanciate(x1, y1, z1, x2, y2, z2)));
+        this(wrapReflectEx(() -> CONSTRUCTOR.instantiate(x1, y1, z1, x2, y2, z2)));
     }
 
     protected AABB(Object obj) {

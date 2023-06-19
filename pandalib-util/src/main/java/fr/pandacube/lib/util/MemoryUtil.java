@@ -36,19 +36,19 @@ public class MemoryUtil {
 			break;
 		}
 		
-		String dispValue;
+		String displayValue;
 		if (unit == roundTo) {
-			dispValue = "" + unit.toUnitRound(size, si);
+			displayValue = "" + unit.toUnitRound(size, si);
 		}
 		else {
-			dispValue = format.format(unit.toUnit(size, si));
+			displayValue = format.format(unit.toUnit(size, si));
 		}
 		
-		return (neg ? "-" : "") + dispValue + unit.unit(si);
+		return (neg ? "-" : "") + displayValue + unit.unit(si);
 	}
 
 	/**
-	 * Generate a string representation of the provided memory amount, displayinh the value in byte (as is) and with the
+	 * Generate a string representation of the provided memory amount, displaying the value in byte (as is) and with the
 	 * unit symbol {@code "o"}.
 	 * <p>
 	 * <b>This method returns the unit symbol in French.</b>
@@ -62,7 +62,7 @@ public class MemoryUtil {
 
 
 	/**
-	 * Enumeration of comonly used unit of memory prefix.
+	 * Enumeration of commonly used unit of memory prefix.
 	 */
 	public enum MemoryUnit {
 
@@ -152,10 +152,10 @@ public class MemoryUtil {
 			return unitMultiplier == null ? "o" : (unitMultiplier + (si ? "o" : "io"));
 		}
 
-		MemoryUnit(long vTrad, long vSI, String uMult) {
+		MemoryUnit(long vTrad, long vSI, String uMultiplier) {
 			valueTrad = vTrad;
 			valueSI = vSI;
-			unitMultiplier = uMult;
+			unitMultiplier = uMultiplier;
 		}
 	}
 	

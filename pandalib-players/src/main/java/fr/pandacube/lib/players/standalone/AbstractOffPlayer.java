@@ -29,7 +29,7 @@ public interface AbstractOffPlayer {
 	
 	/**
 	 * Indicate if this player is connected to the current node (server or proxy, depending on interface implementation).
-	 * @return wether the player is online or not.
+	 * @return weather the player is online or not.
 	 */
 	boolean isOnline();
 	

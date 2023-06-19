@@ -5,13 +5,13 @@ import java.io.IOException;
 
 /**
  * An abstract manager for a set of configuration files and folders.
- * Its uses is to manage the loading/reloading of the configuration of a plugin.
+ * It's uses to manage the loading/reloading of the configuration of a plugin.
  */
 public abstract class AbstractConfigManager {
 
 	/**
 	 * The global configuration directory.
-	 * May be the one provided by the environmenet API (like Plugin.getPluginFolder() in Bukkit).
+	 * It may be the one provided by the environment API (like Plugin.getPluginFolder() in Bukkit).
 	 */
 	protected final File configDir;
 

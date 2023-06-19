@@ -9,7 +9,7 @@ import fr.pandacube.lib.db.SQLField;
 public class SQLPermissions extends SQLElement<SQLPermissions> {
 
 	/**
-	 * Instanciate a new entry in the table.
+	 * Instantiate a new entry in the table.
 	 */
 	public SQLPermissions() {
 		super();

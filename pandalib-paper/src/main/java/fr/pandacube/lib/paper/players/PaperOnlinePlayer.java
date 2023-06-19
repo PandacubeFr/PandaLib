@@ -97,7 +97,7 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
      * Play a sound on this player’s client, sourced at this player’s location.
      * @param sound the sound to play
      * @param volume the volume of the sound.
-     * @param pitch the pich in which the sound is played.
+     * @param pitch the pitch in which the sound is played.
      */
     default void playSound(Sound sound, float volume, float pitch) {
         playSound(sound, getBukkitPlayer().getLocation(), volume, pitch);
@@ -108,7 +108,7 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
      * @param sound the sound to play
      * @param location the source location of the sound.
      * @param volume the volume of the sound.
-     * @param pitch the pich in which the sound is played.
+     * @param pitch the pitch in which the sound is played.
      */
     default void playSound(Sound sound, Location location, float volume, float pitch) {
         getBukkitPlayer().playSound(location, sound, volume, pitch);

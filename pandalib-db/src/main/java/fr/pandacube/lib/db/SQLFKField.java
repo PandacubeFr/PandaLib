@@ -28,7 +28,7 @@ public class SQLFKField<F extends SQLElement<F>, T, P extends SQLElement<P>> ext
             SQLField<F, Integer> f = DB.getSQLIdField(fkEl);
             return new SQLFKField<>(f.type, nul, deflt, fkEl, f);
         } catch (DBInitTableException e) {
-            Log.severe("Can't create Foreign key Field targetting id field of '"+fkEl+"'", e);
+            Log.severe("Can't create Foreign key Field targeting id field of '"+fkEl+"'", e);
             return null;
         }
     }
@@ -51,7 +51,7 @@ public class SQLFKField<F extends SQLElement<F>, T, P extends SQLElement<P>> ext
         }
 
         if (fkF.getSQLElementType() == null)
-            throw new RuntimeException("Can't initialize foreign key. The primary key in the table " + fkEl.getName() + " is not properly initialized and can't be targetted by a forein key");
+            throw new RuntimeException("Can't initialize foreign key. The primary key in the table " + fkEl.getName() + " is not properly initialized and can't be targeted by a foreign key");
         sqlPrimaryKeyField = fkF;
         sqlForeignKeyElemClass = fkEl;
     }

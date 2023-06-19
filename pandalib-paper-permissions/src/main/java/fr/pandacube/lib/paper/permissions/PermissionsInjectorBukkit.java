@@ -1,5 +1,23 @@
 package fr.pandacube.lib.paper.permissions;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import fr.pandacube.lib.permissions.Permissions;
+import fr.pandacube.lib.reflect.Reflect;
+import fr.pandacube.lib.util.Log;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permissible;
+import org.bukkit.permissions.PermissibleBase;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -10,24 +28,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permissible;
-import org.bukkit.permissions.PermissibleBase;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionAttachment;
-import org.bukkit.permissions.PermissionAttachmentInfo;
-import org.bukkit.plugin.Plugin;
-
-import fr.pandacube.lib.permissions.Permissions;
-import fr.pandacube.lib.reflect.Reflect;
-import fr.pandacube.lib.util.Log;
 
 /* package */ class PermissionsInjectorBukkit
 {
@@ -58,26 +58,24 @@ import fr.pandacube.lib.util.Log;
         }
     }
 
-    private static void setPermissible(CommandSender sender, Permissible newpermissible)
+    private static void setPermissible(CommandSender sender, Permissible newPermissible)
     {
         try {
             Field perm = getPermField(sender);
             if (perm == null)
                 return;
             perm.setAccessible(true);
-            perm.set(sender, newpermissible);
+            perm.set(sender, newPermissible);
         }
         catch (Exception e) {
-            Log.severe(e);
+            throw new RuntimeException(e);
         }
     }
 
     /* package */ static Permissible getPermissible(CommandSender sender)
     {
-        Field perm = getPermField(sender);
-        if (perm == null)
-            return null;
         try {
+            Field perm = getPermField(sender);
             perm.setAccessible(true);
             Permissible p = (Permissible) perm.get(sender);
             if (p == null) {
@@ -86,26 +84,19 @@ import fr.pandacube.lib.util.Log;
             return p;
         }
         catch (Exception e) {
-            Log.severe(e);
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
-    private static Field getPermField(CommandSender sender)
-    {
+    private static Field getPermField(CommandSender sender) throws NoSuchFieldException {
     	if (sender == null) {
     		throw new IllegalArgumentException("sender cannot be null");
     	}
-        try {
-            if (sender instanceof Player || sender instanceof ConsoleCommandSender)
-                return Reflect.ofClassOfInstance(sender).field("perm").get();
-            else
-            	throw new IllegalArgumentException("Unsupported type for sender: " + sender.getClass());
-        }
-        catch (Exception e) {
-            Log.severe(e);
-        }
-        return null;
+        if (sender instanceof Player || sender instanceof ConsoleCommandSender)
+            return Reflect.ofClassOfInstance(sender).field("perm").get();
+        else
+            throw new IllegalArgumentException("Unsupported type for sender: " + sender.getClass());
+
     }
     
     /* package */ static class PandaPermissible extends PermissibleBase
@@ -118,7 +109,7 @@ import fr.pandacube.lib.util.Log;
 
         @SuppressWarnings("UnusedAssignment")
         private boolean init = false;
-        /* assigment to false is necessary because of super class constructor calling the method recalculatePermission()
+        /* assignment to false is necessary because of super class constructor calling the method recalculatePermission()
          * and we don’t want that.
          */
 
@@ -143,7 +134,7 @@ import fr.pandacube.lib.util.Log;
         public boolean hasPermission(String permission)
         {
         	/*
-        	 * WARNING: don’t call PermissibleOnlinePlayer#hasPermission(String) here or it will result on a stack overflow
+        	 * WARNING: don’t call PermissibleOnlinePlayer#hasPermission(String) here, or it will result on a stack overflow
         	 */
         	
         	if (permission.toLowerCase().startsWith("minecraft.command."))
@@ -180,7 +171,7 @@ import fr.pandacube.lib.util.Log;
         	if (res != null)
         		return res;
 
-        	return oldPermissible.hasPermission(permission); // doesn’t need to manage negative permission (should not happend)
+        	return oldPermissible.hasPermission(permission); // doesn't need to manage negative permission (should not happen)
         }
 
         @Override
@@ -214,36 +205,34 @@ import fr.pandacube.lib.util.Log;
     			.build();
 
         @Override
-        public Set<PermissionAttachmentInfo> getEffectivePermissions()
+        public @NotNull Set<PermissionAttachmentInfo> getEffectivePermissions()
         {
         	// PlotSquared uses this method to optimize permission range (plots.limit.10 for example)
         	// MobArena uses this method when a player leave the arena
         	// LibsDisguises uses this method (and only this one) to parse all the permissions
-        	
-        	//Log.warning("There is a plugin calling CommandSender#getEffectivePermissions(). See the stacktrace to understand the reason for that.", new Throwable());
 
-        	String world = null;
     		if (sender instanceof Player player) {
-                world = player.getWorld().getName();
+                String world = player.getWorld().getName();
+                try {
+                    return effectivePermissionsListCache.get(world, () -> {
+                        // first get the superperms effective permissions (that take isOp into account)
+                        Map<String, PermissionAttachmentInfo> perms = oldPermissible.getEffectivePermissions().stream()
+                                .collect(Collectors.toMap(PermissionAttachmentInfo::getPermission, Function.identity()));
+
+                        // then override them with the permissions from our permission system (that has priority, and take current world into account)
+                        for (Map.Entry<String, Boolean> permE : getEffectivePermissionsOnServerInWorld().entrySet()) {
+                            perms.put(permE.getKey(), new PermissionAttachmentInfo(this, permE.getKey(), null, permE.getValue()));
+                        }
+
+                        return new LinkedHashSet<>(perms.values());
+                    });
+                } catch (ExecutionException e) {
+                    Log.severe(e);
+                }
     		}
         	
-    		try {
-				return effectivePermissionsListCache.get(world, () -> {
-					// first get the superperms effective permissions (taht take isOp into accound)
-					Map<String, PermissionAttachmentInfo> perms = oldPermissible.getEffectivePermissions().stream()
-							.collect(Collectors.toMap(PermissionAttachmentInfo::getPermission, Function.identity()));
-					
-					// then override them with the permissions from our permission system (that has priority, and take current world into account)
-					for (Map.Entry<String, Boolean> permE : getEffectivePermissionsOnServerInWorld().entrySet()) {
-						perms.put(permE.getKey(), new PermissionAttachmentInfo(this, permE.getKey(), null, permE.getValue()));
-					}
-					
-				    return new LinkedHashSet<>(perms.values());
-				});
-			} catch (ExecutionException e) {
-				Log.severe(e);
-				return oldPermissible.getEffectivePermissions();
-			}
+
+            return oldPermissible.getEffectivePermissions();
         	
         }
 
@@ -260,7 +249,7 @@ import fr.pandacube.lib.util.Log;
         }
 
         @Override
-        public boolean isPermissionSet(String permission)
+        public boolean isPermissionSet(@NotNull String permission)
         {
         	Boolean res = hasPermissionOnServerInWorld(permission);
         	if (res != null)
@@ -278,31 +267,31 @@ import fr.pandacube.lib.util.Log;
         }
 
         @Override
-        public PermissionAttachment addAttachment(Plugin plugin)
+        public @NotNull PermissionAttachment addAttachment(@NotNull Plugin plugin)
         {
             return oldPermissible.addAttachment(plugin);
         }
 
         @Override
-        public PermissionAttachment addAttachment(Plugin plugin, int ticks)
+        public PermissionAttachment addAttachment(@NotNull Plugin plugin, int ticks)
         {
             return oldPermissible.addAttachment(plugin, ticks);
         }
 
         @Override
-        public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value)
+        public @NotNull PermissionAttachment addAttachment(@NotNull Plugin plugin, @NotNull String name, boolean value)
         {
             return oldPermissible.addAttachment(plugin, name, value);
         }
 
         @Override
-        public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value, int ticks)
+        public PermissionAttachment addAttachment(@NotNull Plugin plugin, @NotNull String name, boolean value, int ticks)
         {
             return oldPermissible.addAttachment(plugin, name, value, ticks);
         }
 
         @Override
-        public void removeAttachment(PermissionAttachment attachment)
+        public void removeAttachment(@NotNull PermissionAttachment attachment)
         {
             oldPermissible.removeAttachment(attachment);
         }

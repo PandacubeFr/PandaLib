@@ -6,7 +6,7 @@ import fr.pandacube.lib.util.ThrowableUtil.SupplierException;
 import java.util.function.Supplier;
 
 /**
- * A class that delay and accumulate thown exceptions, that can be thrown later using {@link #throwCatched()}.
+ * A class that delay and accumulate thrown exceptions, that can be thrown later using {@link #throwCaught()}.
  * @param <T> the type of {@link Throwable} to accumulate.
  */
 public class ThrowableAccumulator<T extends Throwable> {
@@ -81,13 +81,13 @@ public class ThrowableAccumulator<T extends Throwable> {
     }
 
     /**
-     * Throws an exception if there is at least one catched by this accumulator.
-     * If multiple exception where catched, all the exception after the first one are added to the first one as
+     * Throws an exception if there is at least one caught by this accumulator.
+     * If multiple exception where caught, all the exception after the first one are added to the first one as
      * suppressed exceptions.
-     * If no exception were catched, this method does nothing.
+     * If no exception were caught, this method does nothing.
      * @throws Exception the first accumulated throwable, the other ones being suppressed.
      */
-    public void throwCatched() throws Exception {
+    public void throwCaught() throws Exception {
         synchronized (this) {
             if (base != null)
                 throwEx(base);

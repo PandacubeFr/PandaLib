@@ -27,7 +27,7 @@ public class CLIBrigadierDispatcher extends BrigadierDispatcher<CLICommandSender
 
 	/**
 	 * Executes the provided command as the console.
-	 * @param commandWithoutSlash the command, without the eventual slash at the begining.
+	 * @param commandWithoutSlash the command, without the eventual slash at the beginning.
 	 * @return the value returned by the executed command.
 	 */
 	public int execute(String commandWithoutSlash) {

@@ -16,10 +16,10 @@ public abstract class AbstractServerWS extends WebSocketAdapter implements Abstr
 	private boolean isClosed = false;
 	
 	@Override
-	public final void onWebSocketConnect(Session sess)
+	public final void onWebSocketConnect(Session session)
 	{
-		super.onWebSocketConnect(sess);
-		sess.setIdleTimeout(Duration.ofDays(1000)); // practically infinite
+		super.onWebSocketConnect(session);
+		session.setIdleTimeout(Duration.ofDays(1000)); // practically infinite
 		onConnect();
 	}
 

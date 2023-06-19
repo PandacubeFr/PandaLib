@@ -1,6 +1,7 @@
 package fr.pandacube.lib.paper.util;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.World.Environment;
 
 import java.io.File;
@@ -14,8 +15,9 @@ public class WorldUtil {
 	
 	
 	public static Environment determineEnvironment(String world) {
-		if (Bukkit.getWorld(world) != null) {
-			return Bukkit.getWorld(world).getEnvironment();
+		World bWorld = Bukkit.getWorld(world);
+		if (bWorld != null) {
+			return bWorld.getEnvironment();
 		}
 		
 		File worldFolder = worldDir(world);
@@ -43,7 +45,7 @@ public class WorldUtil {
 	private static final List<String> REGION_DATA_FILES = Arrays.asList("entities", "poi", "region", "DIM-1", "DIM1");
 	
 	public static List<File> regionDataFiles(String world) {
-		return onlyExistents(worldDir(world), REGION_DATA_FILES);
+		return onlyExisting(worldDir(world), REGION_DATA_FILES);
 	}
 
 	public static List<File> mapFiles(String world) {
@@ -51,7 +53,7 @@ public class WorldUtil {
 		return List.of(dataDir(world).listFiles((dir, name) -> mapFilePattern.matcher(name).find() || "idcounts.dat".equals(name)));
 	}
 	
-	private static List<File> onlyExistents(File worldDir, List<String> searchList) {
+	private static List<File> onlyExisting(File worldDir, List<String> searchList) {
 		return searchList.stream()
 				.map(f -> new File(worldDir, f))
 				.filter(File::exists)

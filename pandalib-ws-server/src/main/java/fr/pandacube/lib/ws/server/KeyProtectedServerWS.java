@@ -69,7 +69,7 @@ public abstract class KeyProtectedServerWS extends AbstractServerWS {
 	}
 
 	/**
-	 * Called when the client endpoint is succesfully logged in.
+	 * Called when the client endpoint is successfully logged in.
 	 */
 	public abstract void onLoginSucceed();
 

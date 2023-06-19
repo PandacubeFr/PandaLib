@@ -4,7 +4,6 @@ import fr.pandacube.lib.chat.Chat;
 import fr.pandacube.lib.core.mc_version.ProtocolVersion;
 import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
 import fr.pandacube.lib.reflect.Reflect;
-import fr.pandacube.lib.util.MinecraftVersion;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import net.kyori.adventure.text.Component;
@@ -47,16 +46,6 @@ public interface BungeeOnlinePlayer extends BungeeOffPlayer, AbstractOnlinePlaye
      */
     default Server getServer() {
         return getBungeeProxiedPlayer().getServer();
-    }
-
-    /**
-     * Gets the minecraft version of this player’s client.
-     * @return the minecraft version of this player’s client.
-     * @deprecated use {@link #getProtocolVersion()} instead.
-     */
-    @Deprecated(forRemoval = true)
-    default MinecraftVersion getMinecraftVersion() {
-        return MinecraftVersion.getVersion(getBungeeProxiedPlayer().getPendingConnection().getVersion());
     }
 
     /**

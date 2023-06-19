@@ -119,7 +119,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 
     /**
      * Gets the name of the table in the database, without the prefix defined by {@link DB#init(DBConnection, String)}.
-     * @return The unprefixed name of the table in the database.
+     * @return The non-prefixed name of the table in the database.
      */
     protected abstract String tableName();
 
@@ -133,7 +133,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
     }
 
     /**
-     * Fills the values of this entry that are known to be nullable or have a default value.
+     * Fills the entries values that are known to be nullable or have a default value.
      */
     @SuppressWarnings("unchecked")
     private void initDefaultValues() {
@@ -193,7 +193,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
     /**
      * Sets a value in this entry.
      * <p>
-     * This is not good practice to set the {@code id} field of any entry, because it’s an unique auto-incremented
+     * This is not good practice to set the {@code id} field of any entry, because it’s a unique auto-incremented
      * value. Use {@link #save()} and {@link #delete()} to set or unset the {@code id} instead, in consistence with the
      * database.
      * @param field the field to set.
@@ -255,11 +255,11 @@ public abstract class SQLElement<E extends SQLElement<E>> {
     }
 
     /**
-     * Gets the foreign table entry targeted by the provided foreignkey of this table.
-     * @param field a foreignkey of this table.
-     * @param <T> the type of the foreignkey field.
+     * Gets the foreign table entry targeted by the provided foreign key of this table.
+     * @param field a foreign key of this table.
+     * @param <T> the type of the foreign key field.
      * @param <P> the targeted foreign table type.
-     * @return the foreign table entry targeted by the provided foreignkey of this table.
+     * @return the foreign table entry targeted by the provided foreign key of this table.
      * @throws DBException if an error occurs when interacting with the database.
      */
     public <T, P extends SQLElement<P>> P getReferencedEntry(SQLFKField<E, T, P> field) throws DBException {
@@ -271,11 +271,11 @@ public abstract class SQLElement<E extends SQLElement<E>> {
     /**
      * Gets the original table entry which the provided foreign key is targeting this entry, and following the provided
      * {@code ORDER BY}, {@code LIMIT} and {@code OFFSET} clauses.
-     * @param field a foreignkey in the original table.
+     * @param field a foreign key in the original table.
      * @param orderBy the {@code ORDER BY} clause of the query.
      * @param limit the {@code LIMIT} clause of the query.
      * @param offset the {@code OFFSET} clause of the query.
-     * @param <T> the type of the foreignkey field.
+     * @param <T> the type of the foreign key field.
      * @param <F> the table class of the foreign key that reference a field of this entry.
      * @return the original table entry which the provided foreign key is targeting this entry.
      * @throws DBException if an error occurs when interacting with the database.
@@ -314,7 +314,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 
     /**
      * Saves this entry into the database, either by updating the already existing entry in it, or by creating a new
-     * entry if it doesn’t exist yet.
+     * entry if it doesn't exist yet.
      * @return this.
      * @throws DBException if an error occurs when interacting with the database.
      */
@@ -474,14 +474,14 @@ public abstract class SQLElement<E extends SQLElement<E>> {
      * Creates a new SQL field.
      * @param type the type of the field.
      * @param nullable true if nullable, false if {@code NOT NULL}.
-     * @param autoIncr if {@code AUTO_INCREMENT}.
+     * @param autoIncrement if {@code AUTO_INCREMENT}.
      * @param deflt a default value for this field. A null value indicate that this has no default value.
      * @return the new SQL field.
      * @param <E> the table type.
      * @param <T> the Java type of this field.
      */
-    protected static <E extends SQLElement<E>, T> SQLField<E, T> field(SQLType<T> type, boolean nullable, boolean autoIncr, T deflt) {
-        return new SQLField<>(type, nullable, autoIncr, deflt);
+    protected static <E extends SQLElement<E>, T> SQLField<E, T> field(SQLType<T> type, boolean nullable, boolean autoIncrement, T deflt) {
+        return new SQLField<>(type, nullable, autoIncrement, deflt);
     }
 
     /**
@@ -500,13 +500,13 @@ public abstract class SQLElement<E extends SQLElement<E>> {
      * Creates a new SQL field.
      * @param type the type of the field.
      * @param nullable true if nullable, false if {@code NOT NULL}.
-     * @param autoIncr if {@code AUTO_INCREMENT}.
+     * @param autoIncrement if {@code AUTO_INCREMENT}.
      * @return the new SQL field.
      * @param <E> the table type.
      * @param <T> the Java type of this field.
      */
-    protected static <E extends SQLElement<E>, T> SQLField<E, T> field(SQLType<T> type, boolean nullable, boolean autoIncr) {
-        return new SQLField<>(type, nullable, autoIncr);
+    protected static <E extends SQLElement<E>, T> SQLField<E, T> field(SQLType<T> type, boolean nullable, boolean autoIncrement) {
+        return new SQLField<>(type, nullable, autoIncrement);
     }
 
     /**

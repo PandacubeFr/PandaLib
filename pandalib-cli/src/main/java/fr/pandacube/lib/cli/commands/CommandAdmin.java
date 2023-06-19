@@ -170,13 +170,13 @@ public class CommandAdmin extends CLIBrigadierCommand {
 		}
 
 
-		ChatTreeNode dispTree = new ChatTreeNode(d);
+		ChatTreeNode displayTree = new ChatTreeNode(d);
 		
 		for (DisplayCommandNode child : displayNode.children) {
-			dispTree.addChild(buildDisplayTree(child, sender));
+			displayTree.addChild(buildDisplayTree(child, sender));
 		}
 		
-		return dispTree;
+		return displayTree;
 		
 	}
 	
@@ -257,8 +257,8 @@ public class CommandAdmin extends CLIBrigadierCommand {
 	
 	
 	private static class DisplayCommandNode {
-		List<CommandNode<CLICommandSender>> nodes = new ArrayList<>();
-		List<DisplayCommandNode> children = new ArrayList<>();
+		final List<CommandNode<CLICommandSender>> nodes = new ArrayList<>();
+		final List<DisplayCommandNode> children = new ArrayList<>();
 		
 		void addInline(CommandNode<CLICommandSender> node) {
 			nodes.add(node);

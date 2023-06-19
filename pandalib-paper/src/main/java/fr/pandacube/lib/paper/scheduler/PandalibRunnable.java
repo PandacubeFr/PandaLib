@@ -1,15 +1,11 @@
 package fr.pandacube.lib.paper.scheduler;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import org.bukkit.Bukkit;
+import fr.pandacube.lib.paper.PandaLibPaper;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import fr.pandacube.lib.paper.PandaLibPaper;
+import java.util.Objects;
 
 /**
  * An extension of {@link BukkitRunnable} that already integrates a reference to the Bukkit plugin.
@@ -21,13 +17,13 @@ public class PandalibRunnable extends BukkitRunnable {
 
 
 	/**
-	 * Instanciate a {@link PandalibRunnable}, whose {@link #run()} method will be called by the server scheduler.
-	 * When using this default constructor, the {@link #run()} method must be override to provides code to run.
+	 * Instantiate a {@link PandalibRunnable}, whose {@link #run()} method will be called by the server scheduler.
+	 * When using this default constructor, the {@link #run()} method must be overridden to provide code to run.
 	 */
 	protected PandalibRunnable() { }
 
 	/**
-	 * Instanciate a {@link PandalibRunnable}, with an {@code updater} that will be called by the server scheduler.
+	 * Instantiate a {@link PandalibRunnable}, with an {@code updater} that will be called by the server scheduler.
 	 * @param updater the updater to run when this task is executed.
 	 */
 	public PandalibRunnable(Runnable updater) {

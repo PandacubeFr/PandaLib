@@ -43,7 +43,7 @@ public class ThrowableAdapter implements JsonSerializer<Throwable>, JsonDeserial
         // handle types
         Throwable t = null;
         if (obj.has("types") && obj.get("types").isJsonArray()) {
-            t = instanciate(obj.getAsJsonArray("types"), message, cause);
+            t = instantiate(obj.getAsJsonArray("types"), message, cause);
         }
         if (t == null) {
             t = new Throwable(message, cause);
@@ -53,8 +53,8 @@ public class ThrowableAdapter implements JsonSerializer<Throwable>, JsonDeserial
         JsonArray suppressed = obj.has("suppressed") && !obj.get("suppressed").isJsonNull()
                 ? obj.get("suppressed").getAsJsonArray() : null;
         if (suppressed != null) {
-            for (JsonElement jsonel : suppressed) {
-                t.addSuppressed(context.deserialize(jsonel, Throwable.class));
+            for (JsonElement jsonEl : suppressed) {
+                t.addSuppressed(context.deserialize(jsonEl, Throwable.class));
             }
         }
 
@@ -63,8 +63,8 @@ public class ThrowableAdapter implements JsonSerializer<Throwable>, JsonDeserial
                 ? obj.get("stacktrace").getAsJsonArray() : null;
         if (stacktrace != null) {
             List<StackTraceElement> els = new ArrayList<>();
-            for (JsonElement jsonel : stacktrace) {
-                els.add(context.deserialize(jsonel, StackTraceElement.class));
+            for (JsonElement jsonEl : stacktrace) {
+                els.add(context.deserialize(jsonEl, StackTraceElement.class));
             }
             t.setStackTrace(els.toArray(new StackTraceElement[0]));
         }
@@ -159,7 +159,7 @@ public class ThrowableAdapter implements JsonSerializer<Throwable>, JsonDeserial
     }
 
 
-    private Throwable instanciate(JsonArray types, String message, Throwable cause) {
+    private Throwable instantiate(JsonArray types, String message, Throwable cause) {
         Throwable t = null;
         for (JsonElement clNameEl : types) {
             String clName = clNameEl.getAsString();
@@ -196,7 +196,7 @@ public class ThrowableAdapter implements JsonSerializer<Throwable>, JsonDeserial
         }
 
         /**
-         * Utiliy method to use on {@link Throwable} class that only have a message (no cause) constructor.
+         * Utility method to use on {@link Throwable} class that only have a message (no cause) constructor.
          * @param constructorWithMessage function that will construct a new throwable, with prefilled message.
          * @return a function that will construct a throwable using the provided function, then will try to init the cause of the throwable.
          * @param <T> the type of the constructed {@link Throwable}.

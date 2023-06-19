@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 /**
- * Utility class to manage searching among a set of {@link SearchResult} instances, using case insensitive keywords.
+ * Utility class to manage searching among a set of {@link SearchResult} instances, using case-insensitive keywords.
  * The search engine is responsible for storing a database of entries ({@link SearchResult}) that can be searched using
  * keywords. This class provides methods to returns a list of results for provided keywords, a list of keyword
  * suggestions based on pre-typed keywords.

@@ -22,7 +22,7 @@ public class ClientboundGameEventPacket extends ReflectWrapper implements Packet
     }
 
     public ClientboundGameEventPacket(Type type, float value) {
-        this(wrapReflectEx(() -> CONSTRUCTOR.instanciate(unwrap(type), value)));
+        this(wrapReflectEx(() -> CONSTRUCTOR.instantiate(unwrap(type), value)));
     }
 
     protected ClientboundGameEventPacket(Object obj) {

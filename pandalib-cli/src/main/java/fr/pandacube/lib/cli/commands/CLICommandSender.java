@@ -4,6 +4,7 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A command sender.
@@ -41,5 +42,5 @@ public interface CLICommandSender extends Audience {
     void sendMessage(String message);
 
     @Override // force implementation of super-interface default method
-    void sendMessage(Identity source, Component message, MessageType type);
+    void sendMessage(@NotNull Identity source, @NotNull Component message, @NotNull MessageType type);
 }

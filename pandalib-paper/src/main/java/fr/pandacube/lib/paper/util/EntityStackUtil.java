@@ -4,22 +4,19 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
 /**
- * Permet de gérer les entités qui se transportent les uns les autres
- *
- * Ce groupement d'entité est appelé une "pile d'entité".
- *
- * Par exemple, un cheval et son monteur représente à eux deux une pile
- * d'entité, dont
- * l'élement tout en bas est le cheval
+ * Utility class to handle stacks of entities. A stack an entity is when an entity is mounting onto another one.
+ * For instance, a player mounting a horse. We also say that the horse is the vehicle of the player.
  */
 public class EntityStackUtil {
 
 	/**
-	 * Déplace une pile d'entité vers l'endroit défini
+	 * Teleport a stack of entity, all at once.
 	 *
-	 * @param e Une entité faisant parti de la pile d'entité à téléporter
-	 * @param l La position vers lequel envoyer toute la pile
+	 * @param e An entity that is part of the stack to teleport.
+	 * @param l The location where to send the entity stack.
+	 * @deprecated This method has not been tested since a long time ago.
 	 */
+	@Deprecated
 	public static void teleportStack(Entity e, Location l) {
 
 		// on se place sur l'entité tout en bas de la pile
@@ -27,7 +24,7 @@ public class EntityStackUtil {
 		while (entTemp.getVehicle() != null)
 			entTemp = entTemp.getVehicle();
 		
-		/* la possibilité d'avoir plusieurs passagers sur un entité rend le code
+		/* La possibilité d'avoir plusieurs passagers sur une entité rend le code
 		 * commenté qui suit invalide. On le remplace temporairement (voire
 		 * définitivement si ça suffit) par le code encore en dessous
 		List<Entity> stack = new ArrayList<>();

@@ -11,7 +11,7 @@ import org.fusesource.jansi.AnsiConsole;
 import fr.pandacube.lib.util.Log;
 
 /**
- * Class to hangle general standard IO operation for a CLI application. It uses Jline’s {@link ConsoleReader} for the
+ * Class to handle general standard IO operation for a CLI application. It uses Jline’s {@link ConsoleReader} for the
  * console rendering, a JUL {@link Logger} for logging, and Brigadier to handle commands.
  */
 public class CLI extends Thread {
@@ -33,7 +33,7 @@ public class CLI extends Thread {
 		reader.setPrompt(">");
 		reader.addCompleter(CLIBrigadierDispatcher.instance);
 
-		// configuration du formatteur pour le logger
+		// configure logger's formatter
 		System.setProperty("net.md_5.bungee.log-date-format", "yyyy-MM-dd HH:mm:ss");
 		logger = CLILogger.getLogger(this);
 	}

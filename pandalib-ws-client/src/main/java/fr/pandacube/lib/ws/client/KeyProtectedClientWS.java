@@ -70,7 +70,7 @@ public abstract class KeyProtectedClientWS extends AbstractClientWS {
     }
 
     /**
-     * Called when this Websocket is succesfully logged in to the server.
+     * Called when this Websocket is successfully logged in to the server.
      */
     public abstract void onLoginSucceed();
 

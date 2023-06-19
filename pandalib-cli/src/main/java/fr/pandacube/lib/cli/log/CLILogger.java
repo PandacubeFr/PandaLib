@@ -25,7 +25,7 @@ public class CLILogger {
 	/**
 	 * Initialize and return the logger for this application.
 	 * @param cli the CLI instance to use
-	 * @return the logger of this application.
+	 * @return the logger for this application.
 	 */
 	public static synchronized Logger getLogger(CLI cli) {
 		if (logger == null) {

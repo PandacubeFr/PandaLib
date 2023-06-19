@@ -173,8 +173,8 @@ import fr.pandacube.lib.util.Log;
 			ChatTreeNode node = new ChatTreeNode(c);
 			
 			if (result == null && !conflict && !inheritances.isEmpty()) {
-				// there is nothing interesting to show on current or subnode
-				node.children.add(new ChatTreeNode(Chat.text("(Inheritances hidden for brevety)").darkGray().italic()));
+				// there is nothing interesting to show on current or sub node
+				node.children.add(new ChatTreeNode(Chat.text("(Inheritances hidden for brevity)").darkGray().italic()));
 				return node;
 			}
 			
@@ -364,9 +364,9 @@ import fr.pandacube.lib.util.Log;
 				.collect(Collectors.toCollection(() -> EnumSet.noneOf(PermState.class)));
 		
 		boolean inheritancesGranted = inheritedPermissions.contains(PermState.GRANTED);
-		boolean inheritancesRevoqued = inheritedPermissions.contains(PermState.REVOQUED);
-		if (inheritancesGranted != inheritancesRevoqued) {
-			resolutionNode.result = inheritancesGranted ? PermState.GRANTED : PermState.REVOQUED;
+		boolean inheritancesRevoked = inheritedPermissions.contains(PermState.REVOKED);
+		if (inheritancesGranted != inheritancesRevoked) {
+			resolutionNode.result = inheritancesGranted ? PermState.GRANTED : PermState.REVOKED;
 		}
 		else if (inheritancesGranted) {
 			resolutionNode.conflictMessage = (resolutionNode.conflictMessage == null ? "" : (resolutionNode.conflictMessage + " ; "))
@@ -435,28 +435,28 @@ import fr.pandacube.lib.util.Log;
 
 				boolean explicitGranted = foundPerms.stream()
 						.anyMatch(n -> n.type == PermType.EXPLICIT && n.result == Boolean.TRUE);
-				boolean explicitRevoqued = foundPerms.stream()
+				boolean explicitRevoked = foundPerms.stream()
 						.anyMatch(n -> n.type == PermType.EXPLICIT && n.result == Boolean.FALSE);
 				
 				boolean wildcardGranted = foundPerms.stream()
 						.anyMatch(n -> n.type == PermType.WILDCARD && n.result == Boolean.TRUE);
-				boolean wildcardRevoqued = foundPerms.stream()
+				boolean wildcardRevoked = foundPerms.stream()
 						.anyMatch(n -> n.type == PermType.WILDCARD && n.result == Boolean.FALSE);
 				
-				if (explicitGranted != explicitRevoqued) {
+				if (explicitGranted != explicitRevoked) {
 					result = PermState.of(explicitGranted);
-					if (!wildcardGranted && !wildcardRevoqued) { }
-					else if (wildcardGranted && wildcardRevoqued) {
+					if (!wildcardGranted && !wildcardRevoked) { }
+					else if (wildcardGranted && wildcardRevoked) {
 						conflict = "Self explicit permission defined but conflict between self wildcard permissions";
 					}
 					else if (explicitGranted == wildcardGranted) {
-						conflict = "Unnecessary explicit permission already granted by self wildcard permissions"; // redundent explicit perm
+						conflict = "Unnecessary explicit permission already granted by self wildcard permissions"; // redundant explicit perm
 					}
 				}
 				else if (explicitGranted) {
 					conflict = "Unsolvable conflit between explicit permissions";
 				}
-				else if (wildcardGranted != wildcardRevoqued) {
+				else if (wildcardGranted != wildcardRevoked) {
 					result = PermState.of(wildcardGranted);
 				}
 				else if (wildcardGranted) {
@@ -500,8 +500,8 @@ import fr.pandacube.lib.util.Log;
 			selfPermissions.forEach(p -> node.children.add(p.toDisplayTreeNode()));
 			
 			if (result == PermState.UNDEFINED && !conflict && !inheritances.isEmpty()) {
-				// there is nothing interesting to show on current or subnode
-				node.children.add(new ChatTreeNode(Chat.text("(Inheritances hidden for brevety)").darkGray().italic()));
+				// there is nothing interesting to show on current or sub node
+				node.children.add(new ChatTreeNode(Chat.text("(Inheritances hidden for brevity)").darkGray().italic()));
 				return node;
 			}
 			
@@ -551,12 +551,12 @@ import fr.pandacube.lib.util.Log;
 	
 	private enum PermState {
 		GRANTED(true),
-		REVOQUED(false),
+		REVOKED(false),
 		UNDEFINED(null);
 		final Boolean value;
 		PermState(Boolean v) { value = v; }
 		private static PermState of(Boolean v) {
-			return v == null ? UNDEFINED : v ? GRANTED : REVOQUED;
+			return v == null ? UNDEFINED : v ? GRANTED : REVOKED;
 		}
 	}
 	

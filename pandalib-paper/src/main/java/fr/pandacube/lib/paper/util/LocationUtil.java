@@ -77,13 +77,9 @@ public class LocationUtil {
 				return;
 			
 			if (extraSecureCheck != null && !extraSecureCheck.test(ret))
-				return; // extra checks didn’t validate the location
-			
-			//if (checkCubo && PandacubePaper.getPlugin().cuboManager != null)
-			//	if (PandacubePaper.getPlugin().cuboManager.getCuboFromLocation(ret) != null)
-			//		return; // il y a un cubo à l'endroit aléatoire sélectionnée
+				return; // extra checks didn't validate the location
 
-			// tout est bon
+			// all good
 			future.complete(ret);
 			t.get().cancel();
 			
@@ -103,11 +99,11 @@ public class LocationUtil {
 	 * @return a secure location with the same X and Z coordinate as the
 	 * provided location, but Y modified to ensure security for player
 	 * who will be teleported to this location.
-	 * May return null if it is impossible to securize find a secure location.
+	 * May return null if it is impossible to find a secure location.
 	 */
 	public static Location getSecureLocationOrNull(Location l) {
 		l = l.clone();
-		l.setY(l.getWorld().getEnvironment() == Environment.NETHER ? 126 : 256);
+		l.setY(l.getWorld().getEnvironment() == Environment.NETHER ? 126 : l.getWorld().getMaxHeight());
 		Block b = l.getBlock();
 
 		while (b.getY() >= 0 && !currPosSafe(b))
@@ -147,7 +143,7 @@ public class LocationUtil {
 	
 
 	/**
-	 * Check if the {@link Location} l is inside the cuboïd formed by the 2 others
+	 * Check if the {@link Location} l is inside the cuboid formed by the 2 others
 	 * Locations min and max.
 	 * @return true if l is inside the cuboid min-max
 	 */
@@ -164,7 +160,7 @@ public class LocationUtil {
 	
 	/**
 	 * Return a new location based on the linear interpolation between p0 and p1, according to the value c.
-	 * @param c between 0 and 1. If 0, it returns p0 and if 1, returns p1. Other finite numbers are allowed, but the returned location wont be part of the {@code [p0;p1]} segment.
+	 * @param c between 0 and 1. If 0, it returns p0 and if 1, returns p1. Other finite numbers are allowed, but the returned location won't be part of the {@code [p0;p1]} segment.
 	 * @return The location, linearly interpolated between p0 and p1 with the value c. The yaw and pitch in the returned location are those of p0.
 	 * @throws IllegalArgumentException if the provided locations are not in the same world.
 	 */

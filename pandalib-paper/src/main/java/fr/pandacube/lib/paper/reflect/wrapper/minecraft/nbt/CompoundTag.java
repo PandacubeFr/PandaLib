@@ -57,7 +57,7 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 	private static final ReflectMethod<?> containsStringInt = wrapEx(() -> MAPPING.mojMethod("contains", String.class, int.class));
 
 	public CompoundTag() {
-		this(wrapReflectEx(() -> CONSTRUCTOR.instanciate()));
+		this(wrapReflectEx(() -> CONSTRUCTOR.instantiate()));
 	}
 
 	protected CompoundTag(Object nms) {
@@ -167,7 +167,7 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, ?> entries() {
-		// we cannot easily wrap every value of the map without being able to synch the returned map with the wrapped map
+		// we cannot easily wrap every value of the map without being able to synchronize the returned map with the wrapped map
 		return (Map<String, ?>) wrapReflectEx(() -> entries.invoke(__getRuntimeInstance()));
 	}
 	public int size() {

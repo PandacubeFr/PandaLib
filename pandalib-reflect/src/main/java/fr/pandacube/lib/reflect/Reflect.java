@@ -37,7 +37,7 @@ public class Reflect {
 
 	/**
 	 * Wraps the class of the provided object into a {@link ReflectClass}.
-	 * @param instance the object wrom which to get the class using {@link Object#getClass()}.
+	 * @param instance the object from which to get the class using {@link Object#getClass()}.
 	 * @return a {@link ReflectClass} wrapping the provided object’s class.
 	 * @throws IllegalArgumentException if {@code instance} is null.
 	 */

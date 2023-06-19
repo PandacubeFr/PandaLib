@@ -18,7 +18,7 @@ import static fr.pandacube.lib.chat.ChatStatic.text;
 
 /**
  * Cleanup a backup directory (i.e. removes old backup archives).
- * It is possible to combine differents instances to affect which archive to keep or delete.
+ * It is possible to combine different instances to affect which archive to keep or delete.
  */
 public abstract class BackupCleaner implements UnaryOperator<TreeSet<LocalDateTime>> {
 
@@ -48,7 +48,7 @@ public abstract class BackupCleaner implements UnaryOperator<TreeSet<LocalDateTi
      * formula <code><i>YEAR</i> * (12 / <i>n</i>) + <i>MONTH</i> / <i>n</i></code>. It then keeps the first archive
      * found in each section.
      *
-     * @param n the interval in month between each kept archives. Must be a dividor of 12 (1, 2, 3, 4, 6 or 12).
+     * @param n the interval in month between each kept archives. Must be a divider of 12 (1, 2, 3, 4, 6 or 12).
      * @return a {@link BackupCleaner} that keeps one archive every n month.
      */
     public static BackupCleaner KEEPING_1_EVERY_N_MONTH(int n) {
@@ -94,11 +94,13 @@ public abstract class BackupCleaner implements UnaryOperator<TreeSet<LocalDateTi
 
     /**
      * Performs the cleanup operation on the provided directory.
-     * @param archiveDir the backup directory to cleanup.
-     * @param compressDisplayName the displayname of the backup process that manages the backup directory. Used for logs.
+     * @param archiveDir the backup directory to clean up.
+     * @param compressDisplayName the display name of the backup process that manages the backup directory. Used for logs.
      */
     public void cleanupArchives(File archiveDir, String compressDisplayName) {
         String[] files = archiveDir.list();
+        if (files == null)
+            return;
 
         Log.info("[Backup] Cleaning up backup directory " + ChatColor.GRAY + compressDisplayName + ChatColor.RESET + "...");
 

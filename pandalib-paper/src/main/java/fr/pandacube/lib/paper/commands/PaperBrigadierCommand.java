@@ -77,7 +77,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<BukkitBriga
     }
 
     /**
-     * Removes a plugin command that overrides a vanilla command, so the vanilla command functionnalities are fully
+     * Removes a plugin command that overrides a vanilla command, so the vanilla command functionalities are fully
      * restored (so, not only the usage, but also the suggestions and the command structure sent to the client).
      * @param name the name of the command to restore.
      */
@@ -137,7 +137,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<BukkitBriga
     private Set<String> registeredAliases;
 
     /**
-     * Instanciate this command instance.
+     * Instantiate this command instance.
      *
      * @param pl the plugin instance.
      * @param regPolicy the registration policy for this command.
@@ -155,7 +155,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<BukkitBriga
     }
 
     /**
-     * Instanciate this command isntance with a registration policy of {@link RegistrationPolicy#ONLY_BASE_COMMAND}.
+     * Instantiate this command instance with a registration policy of {@link RegistrationPolicy#ONLY_BASE_COMMAND}.
      * @param pl the plugin instance.
      */
     public PaperBrigadierCommand(Plugin pl) {
@@ -206,10 +206,10 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<BukkitBriga
 
         // nmsDispatcher integration and conflit resolution
         boolean nmsRegister = false, nmsRegistered = false;
-        CommandNode<BukkitBrigadierCommandSource> nmsConflited = root.getChild(name);
-        if (nmsConflited != null) {
+        CommandNode<BukkitBrigadierCommandSource> nmsConflicted = root.getChild(name);
+        if (nmsConflicted != null) {
 
-            if (isFromThisCommand(nmsConflited)) {
+            if (isFromThisCommand(nmsConflicted)) {
                 // this command is already registered in NMS. Don’t need to register again
                 nmsRegistered = true;
             }
@@ -221,7 +221,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<BukkitBriga
                 Log.severe("/" + name + " already in NMS Brigadier instance."
                         + " Wont replace it because registration is not forced for prefixed or initial name of a command.");
             }
-            else { // conflict, wont replace, not forced but only an alias anyway
+            else { // conflict, won't replace, not forced but only an alias anyway
                 Log.info("/" + name + " already in NMS Brigadier instance."
                         + " Wont replace it because registration is not forced for a non-prefixed alias.");
             }
@@ -418,7 +418,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<BukkitBriga
 
 
     /**
-     * A suggestions supplier that suggests the names of the currently connected players (that the command sender can see).
+     * A suggestion supplier that suggests the names of the currently connected players (that the command sender can see).
      */
     public static final SuggestionsSupplier<CommandSender> TAB_PLAYER_CURRENT_SERVER =  (sender, ti, token, a) -> {
         @SuppressWarnings("unchecked")
@@ -432,7 +432,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<BukkitBriga
     };
 
     /**
-     * A suggestions supplier that suggests the names of the worlds currently loaded on this server.
+     * A suggestion supplier that suggests the names of the worlds currently loaded on this server.
      */
     public static final SuggestionsSupplier<CommandSender> TAB_WORLDS = SuggestionsSupplier.fromStreamSupplier(() -> Bukkit.getWorlds().stream().map(World::getName));
 
@@ -477,7 +477,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<BukkitBriga
 
 
     /*
-     * Minecraft argument type
+     * Minecraft's argument type
      */
 
 
@@ -577,13 +577,13 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<BukkitBriga
      * Gets the value of the provided argument of type {@code minecraft:block_pos}, from the provided context.
      * @param context the command execution context.
      * @param argument the argument name.
-     * @param deflt a defualt value if the argument is not found.
+     * @param deflt a default value if the argument is not found.
      * @return the value of the argument.
      */
     public BlockVector tryGetMinecraftBlockPositionArgument(CommandContext<BukkitBrigadierCommandSource> context,
                                                             String argument, BlockVector deflt) {
-        return tryGetArgument(context, argument, Coordinates.MAPPING.runtimeClass(), nmsCoord -> {
-            BlockPos bp = ReflectWrapper.wrap(nmsCoord, Coordinates.class).getBlockPos(context.getSource());
+        return tryGetArgument(context, argument, Coordinates.MAPPING.runtimeClass(), nmsCoordinate -> {
+            BlockPos bp = ReflectWrapper.wrap(nmsCoordinate, Coordinates.class).getBlockPos(context.getSource());
             return new BlockVector(bp.getX(), bp.getY(), bp.getZ());
         }, deflt);
     }
@@ -603,14 +603,14 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<BukkitBriga
      * Gets the value of the provided argument of type {@code minecraft:vec3}, from the provided context.
      * @param context the command execution context.
      * @param argument the argument name.
-     * @param deflt a defualt value if the argument is not found.
+     * @param deflt a default value if the argument is not found.
      * @return the value of the argument.
      */
     public Vector tryGetMinecraftVec3Argument(CommandContext<BukkitBrigadierCommandSource> context, String argument,
                                               Vector deflt) {
         return tryGetArgument(context, argument, Coordinates.MAPPING.runtimeClass(),
-                nmsCoord -> CraftVector.toBukkit(
-                        ReflectWrapper.wrap(nmsCoord, Coordinates.class).getPosition(context.getSource())
+                nmsCoordinate -> CraftVector.toBukkit(
+                        ReflectWrapper.wrap(nmsCoordinate, Coordinates.class).getPosition(context.getSource())
                 ),
                 deflt);
     }
@@ -630,7 +630,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<BukkitBriga
      * Gets the value of the provided argument of type {@code minecraft:component}, from the provided context.
      * @param context the command execution context.
      * @param argument the argument name.
-     * @param deflt a defualt value if the argument is not found.
+     * @param deflt a default value if the argument is not found.
      * @return the value of the argument.
      */
     public Component tryGetMinecraftChatComponentArgument(CommandContext<BukkitBrigadierCommandSource> context,

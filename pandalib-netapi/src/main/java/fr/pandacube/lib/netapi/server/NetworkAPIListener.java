@@ -18,7 +18,7 @@ public class NetworkAPIListener implements Runnable {
 	private final String name;
 
 	/**
-	 * Instencie le côté serveur du NetworkAPI.
+	 * Instancie le côté serveur du NetworkAPI.
 	 *
 	 * @param n nom du networkAPI (permet l'identification dans les logs)
 	 * @param p le port d'écoute
@@ -29,7 +29,7 @@ public class NetworkAPIListener implements Runnable {
 	}
 
 	/**
-	 * Instencie le côté serveur du NetworkAPI.
+	 * Instancie le côté serveur du NetworkAPI.
 	 *
 	 * @param n nom du networkAPI (permet l'identification dans les logs)
 	 * @param p le port d'écoute
@@ -56,7 +56,6 @@ public class NetworkAPIListener implements Runnable {
 		Log.info("NetworkAPI '" + name + "' à l'écoute sur le socket " + serverSocket.getLocalSocketAddress());
 
 		try {
-			// réception des connexion client
 			while (!serverSocket.isClosed()) {
 				Thread t = new Thread(new PacketExecutor(serverSocket.accept(), this));
 				t.setDaemon(true);

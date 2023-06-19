@@ -18,7 +18,7 @@ public class ResponseAnalyser {
 		if (socket == null || socket.isClosed() || socket.isInputShutdown())
 			throw new IllegalArgumentException("le socket doit être non null et doit être ouvert sur le flux d'entrée");
 
-		// on lis la réponse
+		// on lit la réponse
 		BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
 		String line;

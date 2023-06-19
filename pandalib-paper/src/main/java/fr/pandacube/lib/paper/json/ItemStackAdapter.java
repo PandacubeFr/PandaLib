@@ -28,10 +28,11 @@ import java.util.Map;
         Map<String, Object> deserializedMap = context.deserialize(json, MAP_STR_OBJ_TYPE.getType());
         int itemStackVersion = deserializedMap.containsKey("v") ? ((Number)deserializedMap.get("v")).intValue() : -1;
         if (itemStackVersion >= 0) {
+            @SuppressWarnings("deprecation")
             int currentDataVersion = Bukkit.getUnsafe().getDataVersion();
             if (itemStackVersion > currentDataVersion) {
                 /* The itemStack we are deserializing is from a newer MC version, so Bukkit will refuse it.
-                 * We decide to ignore the provided version and consider that the received itemstack is from current
+                 * We decide to ignore the provided version and consider that the received item stack is from current
                  * version. We let Bukkit handles the deserialization with the data it can interpret, throwing an error
                  * only if it can't.
                  */

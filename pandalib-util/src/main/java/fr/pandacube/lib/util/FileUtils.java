@@ -28,17 +28,17 @@ public class FileUtils {
 	 * @param target the copy destination.
 	 * @throws IOException if an IO error occurs.
 	 * @throws IllegalStateException if the target destination already exists and is not a directory.
-	 * @throws IllegalArgumentException if at least one of the parameter is null, or if the source doesn’t exists.
+	 * @throws IllegalArgumentException if at least one of the parameter is null, or if the source doesn't exist.
 	 */
 	public static void copy(File source, File target) throws IOException {
-		if (source == null || !source.exists()) {
-			throw new IllegalArgumentException("source is null or doesn’t exists: " + source);
+		if (source == null || !source.exists() || !source.isDirectory()) {
+			throw new IllegalArgumentException("source is null or doesn't exist: " + source);
 		}
 		if (target == null) {
 			throw new IllegalArgumentException("target cannot be null");
 		}
 		if (target.exists() && !target.isDirectory()) {
-			throw new IllegalStateException("target file already exists: " + target);
+			throw new IllegalStateException("target file already exists but is not a directory: " + target);
 		}
 		BasicFileAttributes sourceAttr = Files.readAttributes(source.toPath(), BasicFileAttributes.class);
 		if (sourceAttr.isDirectory()) {

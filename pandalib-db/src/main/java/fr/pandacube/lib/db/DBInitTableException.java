@@ -1,7 +1,7 @@
 package fr.pandacube.lib.db;
 
 /**
- * Exception thrown when something bad happends when initializing a new table using {@link DB#initTable(Class)}.
+ * Exception thrown when something bad happens when initializing a new table using {@link DB#initTable(Class)}.
  */
 public class DBInitTableException extends DBException {
 

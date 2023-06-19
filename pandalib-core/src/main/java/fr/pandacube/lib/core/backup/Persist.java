@@ -26,7 +26,7 @@ public class Persist {
 	// private final Set<String> dirtyWorldsSave = new HashSet<>();
 
 	/**
-	 * Creates a new instance, immediatly loading the data from the file if it exists, or creating an empty one if not.
+	 * Creates a new instance, immediately loading the data from the file if it exists, or creating an empty one if not.
 	 * @param bm the associated backup manager.
 	 */
 	public Persist(BackupManager bm) {

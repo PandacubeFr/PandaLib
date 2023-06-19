@@ -24,24 +24,24 @@ public class StringUtil {
 	}
 
 	/**
-	 * Counts the number of occurence of a speficied character in a string.
+	 * Counts the number of occurrence of a specified character in a string.
 	 * @param string the character sequence to search into.
 	 * @param character the character to count.
-	 * @return the number of occurence of
-	 * @deprecated Because it uses snake_case naming convention. Use {@link #countOccurences(CharSequence, char)} instead.
+	 * @return the number of occurrence of
+	 * @deprecated Because it uses snake_case naming convention. Use {@link #countOccurrences(CharSequence, char)} instead.
 	 */
 	@Deprecated(forRemoval = true, since = "2022-07-26")
 	public static int char_count(CharSequence string, char character) {
-		return countOccurences(string, character);
+		return countOccurrences(string, character);
 	}
 
 	/**
-	 * Counts the number of occurence of a speficied character in a string.
+	 * Counts the number of occurrence of a specified character in a string.
 	 * @param string the character sequence to search into.
 	 * @param character the character to count.
-	 * @return the number of occurence of
+	 * @return the number of occurrence of
 	 */
-	public static int countOccurences(CharSequence string, char character) {
+	public static int countOccurrences(CharSequence string, char character) {
 		int count = 0;
 		for (char c : string.toString().toCharArray()) {
 			if (c == character) {
@@ -53,8 +53,8 @@ public class StringUtil {
 
 
 	/**
-	 * Do like {@link String#join(CharSequence, Iterable)}, but the last separator is different than the others.
-	 * It is usedful when enumerating thins in a sentense, for instance : <code>"a thing<u>, </u>a thing<u> and </u>a thing"</code>
+	 * Do like {@link String#join(CharSequence, Iterable)}, but the last separator is different from the others.
+	 * It is useful when enumerating thins in a sentence, for instance : <code>"a thing<u>, </u>a thing<u> and </u>a thing"</code>
 	 * (the coma being the usual separator, and {@code " and "} being the final separator).
 	 * @param regularSeparator the separator used everywhere except between the two last strings to join.
 	 * @param finalSeparator the separator used between the two last strings to join.
@@ -91,9 +91,9 @@ public class StringUtil {
 
 
 	/**
-	 * Generate a name based on the original name, but that does not conflit with anouther one, according to the
+	 * Generate a name based on the original name, but that does not conflit with another one, according to the
 	 * provided predicate.
-	 * It can be used to to add an entry in a map when the key already exists, and it is ok to modify the added key to
+	 * It can be used to add an entry in a map when the key already exists, and it is ok to modify the added key to
 	 * not erase the previous data.
 	 * This situation can be compared to when a file is added to a directory but another file with the same name exists,
 	 * so the new file have a suffix number to make the file name different.
@@ -141,17 +141,17 @@ public class StringUtil {
 
 
 	/**
-	 * Generate a {@link Pattern} with extra wrapping regex around the provided one to consider a sentense (like a chat
+	 * Generate a {@link Pattern} with extra wrapping regex around the provided one to consider a sentence (like a chat
 	 * message). For instance, the returned pattern will only match the expression at the beginning or end of sentence,
 	 * or separated by the rest of it with space or another non-letter character.
 	 * @param wordPattern the regex pattern to wrap.
 	 * @param caseInsensitive if the pattern must match ignoring case.
 	 * @return a {@link Pattern}. The matching will match 3 groups. The first group is the eventual non-letter separator
 	 * before the matched word, the second one is the actual word, and the last one is the eventual non-letter separator
-	 * after the matched word. Any additionnal pattern group between the 2nd and the last one are thoses provided in the
+	 * after the matched word. Any additional pattern group between the 2nd and the last one are those provided in the
 	 * wordPattern.
 	 */
-	public static Pattern asPatternInSentense(String wordPattern, boolean caseInsensitive) {
+	public static Pattern asPatternInSentence(String wordPattern, boolean caseInsensitive) {
 		return Pattern.compile((caseInsensitive ? "(?i)" : "") + "(\\P{L}|^)(" + wordPattern + ")(\\P{L}|$)");
 	}
 

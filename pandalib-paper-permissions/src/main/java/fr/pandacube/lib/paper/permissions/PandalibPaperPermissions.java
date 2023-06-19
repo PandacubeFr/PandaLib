@@ -42,7 +42,7 @@ public class PandalibPaperPermissions implements Listener {
 	 * Integrates the {@code pandalib-permissions} system into the Bukkit server.
 	 * @param plugin a Bukkit plugin.
 	 * @param serverName the name of the current server, used to fetch server specific permissions. Cannot be null.
-	 *                   If this server in not in a multi-server configuration, use a dummy server name, like
+	 *                   If this server in not in a multiserver configuration, use a dummy server name, like
 	 *                   {@code ""} (empty string).
 	 */
 	public static void init(JavaPlugin plugin, String serverName) {

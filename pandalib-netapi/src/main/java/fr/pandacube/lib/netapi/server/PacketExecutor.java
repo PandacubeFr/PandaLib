@@ -20,9 +20,9 @@ public class PacketExecutor implements Runnable {
 	private final Socket socket;
 	private final NetworkAPIListener networkAPIListener;
 
-	public PacketExecutor(Socket s, NetworkAPIListener napiListener) {
+	public PacketExecutor(Socket s, NetworkAPIListener nAPIListener) {
 		socket = s;
-		networkAPIListener = napiListener;
+		networkAPIListener = nAPIListener;
 	}
 
 	@Override

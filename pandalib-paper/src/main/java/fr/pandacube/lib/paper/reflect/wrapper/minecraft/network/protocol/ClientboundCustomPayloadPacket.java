@@ -24,6 +24,6 @@ public class ClientboundCustomPayloadPacket extends ReflectWrapper implements Pa
     }
 
     public ClientboundCustomPayloadPacket(ResourceLocation res, FriendlyByteBuf buff) {
-        this(wrapReflectEx(() -> CONSTRUCTOR.instanciate(unwrap(res), unwrap(buff))));
+        this(wrapReflectEx(() -> CONSTRUCTOR.instantiate(unwrap(res), unwrap(buff))));
     }
 }

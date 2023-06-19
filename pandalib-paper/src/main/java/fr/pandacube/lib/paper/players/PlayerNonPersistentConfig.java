@@ -79,7 +79,7 @@ public class PlayerNonPersistentConfig {
     }
 
     public static class ExpiresTick extends Expiration {
-        long expirationTick;
+        final long expirationTick;
 
         public ExpiresTick(long expirationDelayTick) {
             expirationTick = tick + expirationDelayTick;

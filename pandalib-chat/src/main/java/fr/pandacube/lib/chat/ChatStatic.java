@@ -227,9 +227,9 @@ public abstract class ChatStatic {
     }
 
     /**
-     * Creates a {@link FormatableChat} with the provided keybind.
-     * @param key the keybind to display.
-     * @return a new {@link FormatableChat} with the provided keybind.
+     * Creates a {@link FormatableChat} with the provided keybinding.
+     * @param key the keybinding to display.
+     * @return a new {@link FormatableChat} with the provided keybinding.
      */
     public static FormatableChat keybind(String key) {
         return new FormatableChat(Component.keybind().keybind(key));
@@ -451,12 +451,12 @@ public abstract class ChatStatic {
 
 
     /**
-     * Creates a {@link FormatableChat} filling a line of chat (or console) with decoration and a left-aligned text.
+     * Creates a {@link FormatableChat} filling a chat line with decoration and a left-aligned text.
      * @param text the text aligned to the left.
      * @param decorationChar the character used for decoration around the text.
      * @param decorationColor the color used for the decoration characters.
      * @param console if the line is rendered on console (true) or IG (false).
-     * @return a new {@link FormatableChat} filling a line of chat (or console) with decoration and a left-aligned text.
+     * @return a new {@link FormatableChat} filling a chat line with decoration and a left-aligned text.
      * @see ChatFilledLine#leftText(ComponentLike)
      */
     public static FormatableChat leftText(ComponentLike text, char decorationChar, TextColor decorationColor, boolean console) {
@@ -464,11 +464,11 @@ public abstract class ChatStatic {
     }
 
     /**
-     * Creates a {@link FormatableChat} filling a line of chat (or console) with the configured decoration character and
+     * Creates a {@link FormatableChat} filling a chat line with the configured decoration character and
      * color and a left-aligned text.
      * @param text the text aligned to the left.
      * @param console if the line is rendered on console (true) or IG (false).
-     * @return a new {@link FormatableChat} filling a line of chat (or console) with the configured decoration character
+     * @return a new {@link FormatableChat} filling a chat line with the configured decoration character
      *         and color and a left-aligned text.
      * @see ChatFilledLine#leftText(ComponentLike)
      * @see ChatConfig#decorationChar
@@ -479,12 +479,12 @@ public abstract class ChatStatic {
     }
 
     /**
-     * Creates a {@link FormatableChat} filling a line of chat (or console) with decoration and a right-aligned text.
+     * Creates a {@link FormatableChat} filling a chat line with decoration and a right-aligned text.
      * @param text the text aligned to the right.
      * @param decorationChar the character used for decoration around the text.
      * @param decorationColor the color used for the decoration characters.
      * @param console if the line is rendered on console (true) or IG (false).
-     * @return a new {@link FormatableChat} filling a line of chat (or console) with decoration and a right-aligned
+     * @return a new {@link FormatableChat} filling a chat line with decoration and a right-aligned
      *         text.
      * @see ChatFilledLine#rightText(ComponentLike)
      */
@@ -493,11 +493,11 @@ public abstract class ChatStatic {
     }
 
     /**
-     * Creates a {@link FormatableChat} filling a line of chat (or console) with the configured decoration character and
+     * Creates a {@link FormatableChat} filling a chat line with the configured decoration character and
      * color and a right-aligned text.
      * @param text the text aligned to the right.
      * @param console if the line is rendered on console (true) or IG (false).
-     * @return a new {@link FormatableChat} filling a line of chat (or console) with the configured decoration character
+     * @return a new {@link FormatableChat} filling a chat line with the configured decoration character
      *         and color and a right-aligned text.
      * @see ChatFilledLine#rightText(ComponentLike)
      * @see ChatConfig#decorationChar
@@ -508,12 +508,12 @@ public abstract class ChatStatic {
     }
 
     /**
-     * Creates a {@link FormatableChat} filling a line of chat (or console) with decoration and a centered text.
+     * Creates a {@link FormatableChat} filling a chat line with decoration and a centered text.
      * @param text the text aligned to the center.
      * @param decorationChar the character used for decoration around the text.
      * @param decorationColor the color used for the decoration characters.
      * @param console if the line is rendered on console (true) or IG (false).
-     * @return a new {@link FormatableChat} filling a line of chat (or console) with decoration and a centered text.
+     * @return a new {@link FormatableChat} filling a chat line with decoration and a centered text.
      * @see ChatFilledLine#centerText(ComponentLike)
      */
     public static FormatableChat centerText(ComponentLike text, char decorationChar, TextColor decorationColor, boolean console) {
@@ -521,11 +521,11 @@ public abstract class ChatStatic {
     }
 
     /**
-     * Creates a {@link FormatableChat} filling a line of chat (or console) with the configured decoration character and
+     * Creates a {@link FormatableChat} filling a chat line with the configured decoration character and
      * color and a centered text.
      * @param text the text aligned to the center.
      * @param console if the line is rendered on console (true) or IG (false).
-     * @return a new {@link FormatableChat} filling a line of chat (or console) with the configured decoration character
+     * @return a new {@link FormatableChat} filling a chat line with the configured decoration character
      *         and color and a centered text.
      * @see ChatFilledLine#centerText(ComponentLike)
      * @see ChatConfig#decorationChar
@@ -536,11 +536,11 @@ public abstract class ChatStatic {
     }
 
     /**
-     * Creates a {@link FormatableChat} filling a line of chat (or console) with a decoration character and color.
+     * Creates a {@link FormatableChat} filling a chat line with a decoration character and color.
      * @param decorationChar the character used for decoration.
      * @param decorationColor the color used for the decoration characters.
      * @param console if the line is rendered on console (true) or IG (false).
-     * @return a new {@link FormatableChat} filling a line of chat (or console) with a decoration character and color.
+     * @return a new {@link FormatableChat} filling a chat line with a decoration character and color.
      * @see ChatFilledLine#filled()
      */
     public static FormatableChat filledLine(char decorationChar, TextColor decorationColor, boolean console) {
@@ -548,10 +548,10 @@ public abstract class ChatStatic {
     }
 
     /**
-     * Creates a {@link FormatableChat} filling a line of chat (or console) with the configured decoration character and
+     * Creates a {@link FormatableChat} filling a chat line with the configured decoration character and
      * color.
      * @param console if the line is rendered on console (true) or IG (false).
-     * @return a new {@link FormatableChat} filling a line of chat (or console) with a decoration character and color.
+     * @return a new {@link FormatableChat} filling a chat line with a decoration character and color.
      * @see ChatFilledLine#filled()
      * @see ChatConfig#decorationChar
      * @see ChatConfig#decorationColor
@@ -633,7 +633,7 @@ public abstract class ChatStatic {
                     .storage(((StorageNBTComponent) c).storage());
         }
         else {
-            throw new IllegalArgumentException("Unknows component type " + c.getClass());
+            throw new IllegalArgumentException("Unknown component type " + c.getClass());
         }
         return builder.style(c.style()).append(c.children());
     }

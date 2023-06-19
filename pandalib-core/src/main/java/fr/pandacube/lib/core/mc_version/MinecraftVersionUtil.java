@@ -16,7 +16,7 @@ public class MinecraftVersionUtil {
 
     /**
      * Compare two Minecraft version strings. It uses the rules of semantic
-     * versionning to compare the versions.
+     * versioning to compare the versions.
      * @param v1 the first version to compare.
      * @param v2 the second version to compare.
      * @return 0 if they are equal, &lt;0 if v1&lt;v2 and vice-versa.
@@ -49,20 +49,20 @@ public class MinecraftVersionUtil {
     }
 
     /**
-     * Tells if the two provided Minecraft versions are consecutives.
+     * Tells if the two provided Minecraft versions are consecutive.
      * <p>
-     * Two versions are consecutives if (considering {@code 1.X[.Y]}):
+     * Two versions are consecutive if (considering {@code 1.X[.Y]}):
      * <ul>
      *     <li>They are part of the same main version (X value)</li>
      *     <li>v1 has no Y value, and v2 has Y = 1 (eg. 1.19 and 1.19.1) OR
-     *         both v1 and v2 has a Y value and those values are consecutives.
+     *         both v1 and v2 has a Y value and those values are consecutive.
      *     </li>
      * </ul>
      * @param v1 the first version.
      * @param v2 the second version.
      * @return thue if the second version is consecutive to the first one.
      */
-    public static boolean areConsecutives(String v1, String v2) {
+    public static boolean areConsecutive(String v1, String v2) {
         int[] v1Int = decomposedVersion(v1);
         int[] v2Int = decomposedVersion(v2);
 
@@ -105,21 +105,21 @@ public class MinecraftVersionUtil {
         versions = new ArrayList<>(toOrderedSet(versions));
         List<String> keptVersions = new ArrayList<>(versions.size());
 
-        for (int i = 0, firstConsec = 0; i < versions.size(); i++) {
-            if (i == versions.size() - 1 || !areConsecutives(versions.get(i), versions.get(i + 1))) {
-                if (firstConsec == i) {
+        for (int i = 0, firstConsecutive = 0; i < versions.size(); i++) {
+            if (i == versions.size() - 1 || !areConsecutive(versions.get(i), versions.get(i + 1))) {
+                if (firstConsecutive == i) {
                     keptVersions.add(versions.get(i));
-                    firstConsec++;
+                    firstConsecutive++;
                 }
                 else {
                     // merge
-                    if (i - firstConsec > 1)
-                        keptVersions.add(versions.get(firstConsec) + "-" + versions.get(i));
+                    if (i - firstConsecutive > 1)
+                        keptVersions.add(versions.get(firstConsecutive) + "-" + versions.get(i));
                     else {
-                        keptVersions.add(versions.get(firstConsec));
+                        keptVersions.add(versions.get(firstConsecutive));
                         keptVersions.add(versions.get(i));
                     }
-                    firstConsec = i + 1;
+                    firstConsecutive = i + 1;
                 }
             }
         }

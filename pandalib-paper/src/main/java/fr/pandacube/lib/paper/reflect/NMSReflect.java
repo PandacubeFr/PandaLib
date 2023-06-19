@@ -68,7 +68,7 @@ public class NMSReflect {
 				OBF_NAMESPACE = (String) obfHelperClass.field("SPIGOT_NAMESPACE").getStaticValue();
 				MOJ_NAMESPACE = (String) obfHelperClass.field("MOJANG_PLUS_YARN_NAMESPACE").getStaticValue();
 			} catch (ReflectiveOperationException e) {
-				throw new ReflectiveOperationException("Unable to find the Paper ofbuscation mapping class or class members.", e);
+				throw new ReflectiveOperationException("Unable to find the Paper obfuscation mapping class or class members.", e);
 			}
 			
 			List<ClassMapping> mappings = loadMappings(obfHelperClass);
@@ -165,7 +165,7 @@ public class NMSReflect {
     private static List<ClassMapping> loadMappings(ReflectClass<?> obfHelperClass) throws IOException {
         try (final InputStream mappingsInputStream = obfHelperClass.get().getClassLoader().getResourceAsStream("META-INF/mappings/reobf.tiny")) {
             if (mappingsInputStream == null) {
-            	throw new RuntimeException("Unable to find the ofbuscation mapping file in the Paper jar.");
+            	throw new RuntimeException("Unable to find the obfuscation mapping file in the Paper jar.");
             }
             
             MemoryMappingTree tree = new MemoryMappingTree();
@@ -290,7 +290,7 @@ public class NMSReflect {
 
 
 	/**
-	 * Represents the mapping between the obfuscated and mojang names of a class and all its members.
+	 * Represents the mapping between the obfuscated and Mojang names of a class and all its members.
 	 */
 	public static class ClassMapping {
     	private static int nextID = 0;
@@ -463,9 +463,9 @@ public class NMSReflect {
 		private List<NMSTypeWrapper> superInterfaces(boolean obf) {
 			Class<?>[] interfaces = runtimeClass().getInterfaces();
 			List<NMSTypeWrapper> types = new ArrayList<>(interfaces.length);
-			for (Class<?> interfce : interfaces) {
-				ClassMapping cm = (IS_SERVER_OBFUSCATED ? CLASSES_BY_OBF : CLASSES_BY_MOJ).get(interfce.getName());
-				types.add((cm != null) ? cm.toType(obf) : NMSTypeWrapper.of(interfce));
+			for (Class<?> i : interfaces) {
+				ClassMapping cm = (IS_SERVER_OBFUSCATED ? CLASSES_BY_OBF : CLASSES_BY_MOJ).get(i.getName());
+				types.add((cm != null) ? cm.toType(obf) : NMSTypeWrapper.of(i));
 			}
 			return types;
 		}

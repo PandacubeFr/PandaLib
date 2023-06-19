@@ -11,7 +11,7 @@ import java.util.Objects;
 import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 
 /**
- * Superclass of all reflect wrapper objects.
+ * Superclass of all reflection wrapper objects.
  */
 public abstract class ReflectWrapper implements ReflectWrapperI {
 
@@ -20,7 +20,7 @@ public abstract class ReflectWrapper implements ReflectWrapperI {
 
 	/**
 	 * Unwraps the object from the provided reflect wrapper.
-	 * @param wr the reflect wrapper from which to get the object.
+	 * @param wr the reflection wrapper from which to get the object.
 	 * @return the object from the provided reflect wrapper.
 	 */
 	public static Object unwrap(ReflectWrapperI wr) {
@@ -29,7 +29,7 @@ public abstract class ReflectWrapper implements ReflectWrapperI {
 
 	/**
 	 * Unwraps the object from the provided reflect wrapper.
-	 * @param wr the reflect wrapper from which to get the object.
+	 * @param wr the reflection wrapper from which to get the object.
 	 * @param <T> the type of the wrapped object.
 	 * @return the object from the provided reflect wrapper.
 	 */
@@ -38,11 +38,11 @@ public abstract class ReflectWrapper implements ReflectWrapperI {
 	}
 
 	/**
-	 * Wraps the provided runtime object into a reflect wrapper.
-	 * If a wrapper instance is already known, it will return it instead of instanciating a new one.
+	 * Wraps the provided runtime object into a reflection wrapper.
+	 * If a wrapper instance is already known, it will return it instead of instantiating a new one.
 	 * It is better to call {@link #wrap(Object, Class)} if you know the type of wrapper needed.
 	 * @param runtimeObj the object to wrap.
-	 * @return the reflect wrapper wrapping the provided object.
+	 * @return the reflection wrapper wrapping the provided object.
 	 * @throws ClassCastException if the runtime class of the object is not handled by the expected wrapper class or its
 	 *                            subclasses.
 	 * @throws IllegalArgumentException if the runtime class of the object is not handled by any of the registered
@@ -53,14 +53,14 @@ public abstract class ReflectWrapper implements ReflectWrapperI {
 	}
 
 	/**
-	 * Wraps the provided runtime object (with has a known type) into a reflect wrapper.
-	 * If a wrapper instance is already known, it will return it instead of instanciating a new one.
+	 * Wraps the provided runtime object (with has a known type) into a reflection wrapper.
+	 * If a wrapper instance is already known, it will return it instead of instantiating a new one.
 	 * It is better to call {@link #wrap(Object, Class)} if you know the type of wrapper needed.
 	 * @param runtimeObj the object to wrap.
-	 * @param expectedWrapperClass the reflect wrapper class expected to be returned.
-	 * @param <W> the type of the reflect wrapper.
+	 * @param expectedWrapperClass the reflection wrapper class expected to be returned.
+	 * @param <W> the type of the reflection wrapper.
 	 * @param <T> the type of the wrapped object.
-	 * @return the reflect wrapper wrapping the provided object.
+	 * @return the reflection wrapper wrapping the provided object.
 	 * @throws ClassCastException if the runtime class of the object is not handled by the expected wrapper class or its
 	 *                            subclasses.
 	 * @throws IllegalArgumentException if the runtime class of the object is not handled by any of the registered
@@ -71,13 +71,13 @@ public abstract class ReflectWrapper implements ReflectWrapperI {
 	}
 
 	/**
-	 * Wraps the provided runtime object into a reflect wrapper.
-	 * If a wrapper instance is already known, it will return it instead of instanciating a new one.
-	 * It is better to call {@link #wrap(Object, Class)} if you know the type of wrapper needed.
+	 * Wraps the provided runtime object into a reflection wrapper.
+	 * If a wrapper instance is already known, it will return it instead of instantiating a new one.
+	 * It is better to call {@link #wrap(Object)} if you don't know the type of wrapper needed.
 	 * @param runtimeObj the object to wrap.
-	 * @param expectedWrapperClass the reflect wrapper class expected to be returned.
-	 * @param <W> the type of the reflect wrapper.
-	 * @return the reflect wrapper wrapping the provided object.
+	 * @param expectedWrapperClass the reflection wrapper class expected to be returned.
+	 * @param <W> the type of the reflection wrapper.
+	 * @return the reflection wrapper wrapping the provided object.
 	 * @throws ClassCastException if the runtime class of the object is not handled by the expected wrapper class or its
 	 *                            subclasses.
 	 * @throws IllegalArgumentException if the runtime class of the object is not handled by any of the registered
@@ -117,9 +117,9 @@ public abstract class ReflectWrapper implements ReflectWrapperI {
 			}
 			ReflectConstructor<? extends ReflectWrapperI> constructor = WrapperRegistry.getWrapperConstructorOfWrapperClass(wrapperClass);
 			if (constructor == null) {
-				throw new IllegalStateException("Unable to find a constructor to instanciate " + wrapperClass + " to wrap an instance of " + runtimeObj);
+				throw new IllegalStateException("Unable to find a constructor to instantiate " + wrapperClass + " to wrap an instance of " + runtimeObj);
 			}
-			ReflectWrapperI wrapper = wrapEx(() -> constructor.instanciate(runtimeObj));
+			ReflectWrapperI wrapper = wrapEx(() -> constructor.instantiate(runtimeObj));
 			// added to cache by constructor
 			@SuppressWarnings("unchecked")
 			W wr = (W) wrapper;
@@ -128,11 +128,11 @@ public abstract class ReflectWrapper implements ReflectWrapperI {
 	}
 
 	/**
-	 * Wraps the provided runtime list into a reflect list wrapper.
+	 * Wraps the provided runtime list into a reflection list wrapper.
 	 * @param runtimeList the list of runtime object to wrap.
 	 * @param expectedWrapperClass the wrapper class of the objects in this list.
 	 * @param <W> the type of reflect wrapper for the objects in this list.
-	 * @return a reflect list wrapper wrapping the provided list.
+	 * @return a reflection list wrapper wrapping the provided list.
 	 */
 	public static <W extends ReflectWrapperI> ReflectListWrapper<W> wrapList(List<Object> runtimeList, Class<W> expectedWrapperClass) {
 		return new ReflectListWrapper<>(runtimeList, expectedWrapperClass);
@@ -152,7 +152,7 @@ public abstract class ReflectWrapper implements ReflectWrapperI {
 	private final Object reflectObject;
 
 	/**
-	 * Instanciate this Reflect Wrapper with the provided object.
+	 * Instantiate this reflection wrapper with the provided object.
 	 * Any subclasses should not make their constructor public since the instanciation is managed by {@link #wrap(Object, Class) wrap(...)}.
 	 * @param obj the object to wrap. It must be an instance of the {@link #__getRuntimeClass() runtime class} of this
 	 *            wrapper class.

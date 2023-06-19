@@ -8,6 +8,7 @@ import net.kyori.adventure.text.format.TextColor;
 /**
  * Class holding static configuration values for chat component rendering.
  */
+@SuppressWarnings("CanBeFinal")
 public class ChatConfig {
 
     /**
@@ -29,7 +30,7 @@ public class ChatConfig {
     /**
      * The color used for successful messages.
      */
-    public static TextColor successColor = PandaTheme.CHAT_GREEN_SATMAX;
+    public static TextColor successColor = PandaTheme.CHAT_GREEN_MAX_SAT;
 
     /**
      * The color used for error/failure messages.
@@ -67,14 +68,14 @@ public class ChatConfig {
     public static TextColor highlightedCommandColor = NamedTextColor.WHITE;
 
     /**
-     * The color used for broadcasted messages.
+     * The color used for broadcast messages.
      * It is often used in combination with {@link #prefix}.
      */
     public static TextColor broadcastColor = NamedTextColor.YELLOW;
     
     /**
      * The prefix used for prefixed messages.
-     * It can be a sylized name of the server, like {@code "[Pandacube] "}.
+     * It can be a stylized name of the server, like {@code "[Pandacube] "}.
      * It is often used in combination with {@link #broadcastColor}.
      */
     public static Supplier<Chat> prefix = PandaTheme::CHAT_MESSAGE_PREFIX;
@@ -104,7 +105,7 @@ public class ChatConfig {
         public static final TextColor CHAT_GREEN_4 = TextColor.fromHexString("#abe3b0"); // h=126 s=50 l=78
 
         /** Green max saturation color. */
-        public static final TextColor CHAT_GREEN_SATMAX = TextColor.fromHexString("#00ff19"); // h=126 s=100 l=50
+        public static final TextColor CHAT_GREEN_MAX_SAT = TextColor.fromHexString("#00ff19"); // h=126 s=100 l=50
         /** Green 1 saturated color. */
         public static final TextColor CHAT_GREEN_1_SAT = TextColor.fromHexString("#20d532"); // h=126 s=50 l=48
         /** Green 2 saturated color. */

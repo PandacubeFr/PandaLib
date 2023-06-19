@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 public abstract class CLIBrigadierCommand extends BrigadierCommand<CLICommandSender> {
 
 	/**
-	 * Instanciate this command instance.
+	 * Instantiate this command instance.
 	 */
 	public CLIBrigadierCommand() {
 		LiteralCommandNode<CLICommandSender> commandNode = buildCommand().build();

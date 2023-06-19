@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 /**
- * A log rotate that extends the functionnalities of {@link DailyLogRotateFileHandler}
+ * A log rotate that extends the functionalities of {@link DailyLogRotateFileHandler}
  * to adapt with bungee specificities.
  */
 public class BungeeDailyLogRotateFileHandler extends DailyLogRotateFileHandler {
@@ -35,9 +35,10 @@ public class BungeeDailyLogRotateFileHandler extends DailyLogRotateFileHandler {
         @Override
         public boolean isLoggable(LogRecord record) {
             String formattedRecord = getFormatter().format(record);
-            if (formattedRecord.contains("<-> InitialHandler has connected")) return false;
-            if (formattedRecord.contains("<-> InitialHandler has pinged")) return false;
-            return true;
+            return !(
+                    formattedRecord.contains("<-> InitialHandler has connected")
+                    || formattedRecord.contains("<-> InitialHandler has pinged")
+            );
         }
 
     }

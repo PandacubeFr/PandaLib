@@ -35,12 +35,12 @@ public abstract class BackupProcess implements Comparable<BackupProcess>, Runnab
 
 
     private boolean enabled = true;
-    private String scheduling = "0 2 * * *"; // cron format, here is everyday at 2am
+    private String scheduling = "0 2 * * *"; // cron format, here is every day at 2am
     private BackupCleaner backupCleaner = null;
     private List<String> ignoreList = new ArrayList<>();
 
     /**
-     * Instanciates a new backup process.
+     * Instantiates a new backup process.
      * @param bm the associated backup manager.
      * @param n the process identifier.
      */
@@ -66,9 +66,9 @@ public abstract class BackupProcess implements Comparable<BackupProcess>, Runnab
     }
 
     /**
-     * Gets the displayname of this process.
+     * Gets the display name of this process.
      * Default implementation returns {@link #getIdentifier()}.
-     * @return the displayname of this process.
+     * @return the display name of this process.
      */
     protected String getDisplayName() {
         return getIdentifier();
@@ -105,8 +105,8 @@ public abstract class BackupProcess implements Comparable<BackupProcess>, Runnab
     }
 
     /**
-     * Gets the source directory to backup.
-     * @return the source directory to backup.
+     * Gets the source directory to back up.
+     * @return the source directory to back up.
      */
     public abstract File getSourceDir();
 
@@ -123,7 +123,7 @@ public abstract class BackupProcess implements Comparable<BackupProcess>, Runnab
 
     /**
      * Called when the backup ends.
-     * @param success true if the backup ended successfuly.
+     * @param success true if the backup ended successfully.
      */
     protected abstract void onBackupEnd(boolean success);
 
@@ -209,7 +209,7 @@ public abstract class BackupProcess implements Comparable<BackupProcess>, Runnab
             File sourceDir = getSourceDir();
 
             if (!sourceDir.exists()) {
-                Log.warning("[Backup] Unable to compress " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET + ": source directory " + sourceDir + " doesn’t exist");
+                Log.warning("[Backup] Unable to compress " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET + ": source directory " + sourceDir + " doesn't exist");
                 return;
             }
 

@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.stream.LongStream;
 
 import fr.pandacube.lib.chat.ChatTreeNode;
-import fr.pandacube.lib.permissions.PermissionExpressionParser.LitteralPermissionTester;
+import fr.pandacube.lib.permissions.PermissionExpressionParser.LiteralPermissionTester;
 import fr.pandacube.lib.permissions.PermissionsCachedBackendReader.CachedEntity;
 import fr.pandacube.lib.permissions.SQLPermissions.EntityType;
 import fr.pandacube.lib.util.Log;
@@ -87,8 +87,8 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	}
 
 	/**
-	 * Provides informations on how the effective prefix of this entity is determined.
-	 * @return a {@link ChatTreeNode} providing informations on how the effective prefix of this entity is determined.
+	 * Provides information on how the effective prefix of this entity is determined.
+	 * @return a {@link ChatTreeNode} providing information on how the effective prefix of this entity is determined.
 	 */
 	public ChatTreeNode debugPrefix() {
 		return Permissions.resolver.debugPrefix(name, type);
@@ -124,8 +124,8 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	}
 
 	/**
-	 * Provides informations on how the effective suffix of this entity is determined.
-	 * @return a {@link ChatTreeNode} providing informations on how the effective suffix of this entity is determined.
+	 * Provides information on how the effective suffix of this entity is determined.
+	 * @return a {@link ChatTreeNode} providing information on how the effective suffix of this entity is determined.
 	 */
 	public ChatTreeNode debugSuffix() {
 		return Permissions.resolver.debugSuffix(name, type);
@@ -147,7 +147,7 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	/**
 	 * Gets the effective list of permissions that applies to this entity out of a specific server and world.
 	 * It is either the permissions defined directly for this entity, or from inheritance as long as they are not
-	 * overriden.
+	 * overridden.
 	 * @return the effective list of permissions that applies to this entity out of a specific server and world.
 	 */
 	public Map<String, Boolean> listEffectivePermissions() {
@@ -157,7 +157,7 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	/**
 	 * Gets the effective list of permissions that applies to this entity on a specific server.
 	 * It is either the permissions defined directly for this entity, or from inheritance as long as they are not
-	 * overriden.
+	 * overridden.
 	 * @param server the server where the returned permissions apply for this entity.
 	 * @return the effective list of permissions that applies to this entity on a specific server.
 	 */
@@ -168,7 +168,7 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	/**
 	 * Gets the effective list of permissions that applies to this entity on a specific server and world.
 	 * It is either the permissions defined directly for this entity, or from inheritance as long as they are not
-	 * overriden.
+	 * overridden.
 	 * @param server the server containing the world where the returned permissions apply for this entity.
 	 * @param world the world in the server where the returned permissions apply for this entity.
 	 * @return the effective list of permissions that applies to this entity on a specific server and world.
@@ -187,7 +187,7 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	 * Gets the effective values of the provided permission range prefix that applies to this entity out of a specific
 	 * server and world.
 	 * It is either the range values defined directly for this entity, or from inheritance as long as they are not
-	 * overriden.
+	 * overridden.
 	 * @param permissionPrefix the permission range prefix.
 	 * @return the effective values of the provided permission range prefix that applies to this entity out of a
 	 *         specific server and world.
@@ -200,7 +200,7 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	 * Gets the effective values of the provided permission range prefix that applies to this entity on a specific
 	 * server.
 	 * It is either the range values defined directly for this entity, or from inheritance as long as they are not
-	 * overriden.
+	 * overridden.
 	 * @param permissionPrefix the permission range prefix.
 	 * @param server the server where the returned values apply for this entity.
 	 * @return the effective values of the provided permission range prefix that applies to this entity on a specific
@@ -214,7 +214,7 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	 * Gets the effective values of the provided permission range prefix that applies to this entity on a specific
 	 * server and world.
 	 * It is either the range values defined directly for this entity, or from inheritance as long as they are not
-	 * overriden.
+	 * overridden.
 	 * @param permissionPrefix the permission range prefix.
 	 * @param server the server containing the world where the returned values apply for this entity.
 	 * @param world the world in the server where the returned values apply for this entity.
@@ -247,7 +247,7 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	 * Gets the maximum effective value of the provided permission range prefix that applies to this entity out of a
 	 * specific server and world.
 	 * It is either the range values defined directly for this entity, or from inheritance as long as they are not
-	 * overriden.
+	 * overridden.
 	 * @param permissionPrefix the permission range prefix.
 	 * @return the maximum effective value of the provided permission range prefix that applies to this entity out of a
 	 *         specific server and world.
@@ -260,7 +260,7 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	 * Gets the maximum effective value of the provided permission range prefix that applies to this entity on a
 	 * specific server.
 	 * It is either the range values defined directly for this entity, or from inheritance as long as they are not
-	 * overriden.
+	 * overridden.
 	 * @param permissionPrefix the permission range prefix.
 	 * @param server the server where the returned value applies for this entity.
 	 * @return the maximum effective value of the provided permission range prefix that applies to this entity on a
@@ -274,7 +274,7 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	 * Gets the maximum effective value of the provided permission range prefix that applies to this entity on a
 	 * specific server and world.
 	 * It is either the range values defined directly for this entity, or from inheritance as long as they are not
-	 * overriden.
+	 * overridden.
 	 * @param permissionPrefix the permission range prefix.
 	 * @param server the server containing the world where the returned value applies for this entity.
 	 * @param world the world in the server where the returned value applies for this entity.
@@ -294,8 +294,8 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	/**
 	 * Tells if this entity has the provided permission out of a specific server and world.
 	 * It is either based on the permissions defined directly for this entity, or from inheritance as long as they are
-	 * not overriden.
-	 * @param permission the permission to ckeck on this entity.
+	 * not overridden.
+	 * @param permission the permission to check on this entity.
 	 * @return true if this entity has the permission, false if it is negated, or null if not known.
 	 */
 	public Boolean hasPermission(String permission) {
@@ -303,10 +303,10 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	}
 
 	/**
-	 * Tells if this entity has the provided permission on a specitif server.
+	 * Tells if this entity has the provided permission on a specific server.
 	 * It is either based on the permissions defined directly for this entity, or from inheritance as long as they are
-	 * not overriden. It also consider permissions that apply on any server.
-	 * @param permission the permission to ckeck on this entity.
+	 * not overridden. It also considers permissions that apply on any server.
+	 * @param permission the permission to check on this entity.
 	 * @param server the server in which to test the permission for this entity.
 	 * @return true if this entity has the permission, false if it is negated, or null if not known.
 	 */
@@ -315,10 +315,10 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	}
 
 	/**
-	 * Tells if this entity has the provided permission on a specitif server and world.
+	 * Tells if this entity has the provided permission on a specific server and world.
 	 * It is either based on the permissions defined directly for this entity, or from inheritance as long as they are
-	 * not overriden. It also consider permissions that apply on any world of that server, and then any server.
-	 * @param permission the permission to ckeck on this entity.
+	 * not overridden. It also considers permissions that apply on any world of that server, and then any server.
+	 * @param permission the permission to check on this entity.
 	 * @param server the server in which to test the permission for this entity.
 	 * @param world the world in which to test the permission for this entity.
 	 * @return true if this entity has the permission, false if it is negated, or null if not known.
@@ -330,10 +330,10 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	}
 
 	/**
-	 * Tells if this entity has the provided permission on a specitif server and world.
+	 * Tells if this entity has the provided permission on a specific server and world.
 	 * It is either based on the permissions defined directly for this entity, or from inheritance as long as they are
-	 * not overriden.
-	 * @param permission the permission to ckeck on this entity.
+	 * not overridden.
+	 * @param permission the permission to check on this entity.
 	 * @param server the server in which to test the permission for this entity.
 	 * @param world the world in which to test the permission for this entity.
 	 * @param deflt the default value is the permission is undefined for this entity.
@@ -347,12 +347,12 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 	/**
 	 * Evaluates the provided permission expression for this entity.
 	 * It uses {@link #hasPermissionOr(String, String, String, boolean)} with {@code false} as a default value, to check
-	 * each permission nodes individualy.
+	 * each permission nodes individually.
 	 * @param permExpression the permission expression to evaluate on this entity.
 	 * @param server the server in which to test the permission expression for this entity.
 	 * @param world the world in which to test the permission expression for this entity.
 	 * @return true if this the permission expression evaluates to true, false otherwise.
-	 * @see PermissionExpressionParser#evaluate(String, LitteralPermissionTester)
+	 * @see PermissionExpressionParser#evaluate(String, LiteralPermissionTester)
 	 */
 	public boolean hasPermissionExpression(String permExpression, String server, String world) {
 		return PermissionExpressionParser.evaluate(permExpression, p -> hasPermissionOr(p, server, world, false));
@@ -367,33 +367,33 @@ public sealed abstract class PermEntity permits PermPlayer, PermGroup {
 
 
 	/**
-	 * Provides informations on how the effective permission of this entity on the provided permission node is
+	 * Provides information on how the effective permission of this entity on the provided permission node is
 	 * determined.
 	 * @param permission the permission node to debug on this entity.
-	 * @return a {@link ChatTreeNode} providing informations on how the effective permission is determined.
+	 * @return a {@link ChatTreeNode} providing information on how the effective permission is determined.
 	 */
 	public ChatTreeNode debugPermission(String permission) {
 		return debugPermission(permission, null, null);
 	}
 
 	/**
-	 * Provides informations on how the effective permission of this entity on the provided permission node is
+	 * Provides information on how the effective permission of this entity on the provided permission node is
 	 * determined.
 	 * @param permission the permission node to debug on this entity.
 	 * @param server the server in which to test the permission for this entity.
-	 * @return a {@link ChatTreeNode} providing informations on how the effective permission is determined.
+	 * @return a {@link ChatTreeNode} providing information on how the effective permission is determined.
 	 */
 	public ChatTreeNode debugPermission(String permission, String server) {
 		return debugPermission(permission, server, null);
 	}
 
 	/**
-	 * Provides informations on how the effective permission of this entity on the provided permission node is
+	 * Provides information on how the effective permission of this entity on the provided permission node is
 	 * determined.
 	 * @param permission the permission node to debug on this entity.
 	 * @param server the server in which to test the permission for this entity.
 	 * @param world the world in which to test the permission for this entity.
-	 * @return a {@link ChatTreeNode} providing informations on how the effective permission is determined.
+	 * @return a {@link ChatTreeNode} providing information on how the effective permission is determined.
 	 */
 	public ChatTreeNode debugPermission(String permission, String server, String world) {
 		return Permissions.resolver.debugPermission(name, type, permission, server, world);

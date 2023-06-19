@@ -12,34 +12,34 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
- * Provides pre-instanciated {@link Gson} instances, all with support for Java records and additionnal
+ * Provides pre-instanced {@link Gson} objects, all with support for Java records and additional
  * {@link TypeAdapterFactory} provided with {@link #registerTypeAdapterFactory(TypeAdapterFactory)}.
  */
 public class Json {
 
 	/**
-	 * {@link Gson} instance with {@link GsonBuilder#setLenient()} and support for Java records and additionnal
+	 * {@link Gson} instance with {@link GsonBuilder#setLenient()} and support for Java records and additional
 	 * {@link TypeAdapterFactory} provided with {@link #registerTypeAdapterFactory(TypeAdapterFactory)}.
 	 */
 	public static final Gson gson = build(Function.identity());
 
 	/**
 	 * {@link Gson} instance with {@link GsonBuilder#setLenient()}, {@link GsonBuilder#setPrettyPrinting()} and support
-	 * for Java records and additionnal {@link TypeAdapterFactory} provided with
+	 * for Java records and additional {@link TypeAdapterFactory} provided with
 	 * {@link #registerTypeAdapterFactory(TypeAdapterFactory)}.
 	 */
 	public static final Gson gsonPrettyPrinting = build(GsonBuilder::setPrettyPrinting);
 
 	/**
 	 * {@link Gson} instance with {@link GsonBuilder#setLenient()}, {@link GsonBuilder#serializeNulls()} and support for
-	 * Java records and additionnal {@link TypeAdapterFactory} provided with
+	 * Java records and additional {@link TypeAdapterFactory} provided with
 	 * {@link #registerTypeAdapterFactory(TypeAdapterFactory)}.
 	 */
 	public static final Gson gsonSerializeNulls = build(GsonBuilder::serializeNulls);
 
 	/**
 	 * {@link Gson} instance with {@link GsonBuilder#setLenient()}, {@link GsonBuilder#serializeNulls()},
-	 * {@link GsonBuilder#setPrettyPrinting()} and support for Java records and additionnal {@link TypeAdapterFactory}
+	 * {@link GsonBuilder#setPrettyPrinting()} and support for Java records and additional {@link TypeAdapterFactory}
 	 * provided with {@link #registerTypeAdapterFactory(TypeAdapterFactory)}.
 	 */
 	public static final Gson gsonSerializeNullsPrettyPrinting = build(b -> b.serializeNulls().setPrettyPrinting());

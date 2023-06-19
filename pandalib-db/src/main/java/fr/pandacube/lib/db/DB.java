@@ -52,10 +52,10 @@ public final class DB {
     }
 
     /**
-     * Initialialize the table represented by the provided class.
+     * Initialize the table represented by the provided class.
      * @param elemClass the class representing a table.
      * @param <E> the type representing the table.
-     * @throws DBInitTableException if the table failed to initialized.
+     * @throws DBInitTableException if the table failed to initialize.
      */
     public static synchronized <E extends SQLElement<E>> void initTable(Class<E> elemClass) throws DBInitTableException {
         if (connection == null) {
@@ -111,7 +111,7 @@ public final class DB {
      * @param elemClass the class representing a table.
      * @return a table name.
      * @param <E> the type representing the table.
-     * @throws DBInitTableException if the provided table had to be initialized and it failed to do so.
+     * @throws DBInitTableException if the provided table had to be initialized and failed to do so.
      */
     public static <E extends SQLElement<E>> String getTableName(Class<E> elemClass) throws DBInitTableException {
         initTable(elemClass);
@@ -130,7 +130,7 @@ public final class DB {
      * @param elemClass the class representing a table.
      * @return the {@code id} field of the provided table.
      * @param <E> the type representing the table.
-     * @throws DBInitTableException if the provided table had to be initialized and it failed to do so.
+     * @throws DBInitTableException if the provided table had to be initialized and failed to do so.
      */
     @SuppressWarnings("unchecked")
     public static <E extends SQLElement<E>> SQLField<E, Integer> getSQLIdField(Class<E> elemClass) throws DBInitTableException {
@@ -226,8 +226,8 @@ public final class DB {
      * @throws DBException if an error occurs when interacting with the database.
      */
     public static <E extends SQLElement<E>> E getFirst(Class<E> elemClass, SQLWhere<E> where, SQLOrderBy<E> orderBy, Integer offset) throws DBException {
-        SQLElementList<E> elts = getAll(elemClass, where, orderBy, 1, offset);
-        return (elts.size() == 0) ? null : elts.get(0);
+        SQLElementList<E> elements = getAll(elemClass, where, orderBy, 1, offset);
+        return (elements.size() == 0) ? null : elements.get(0);
     }
 
     /**
@@ -294,15 +294,15 @@ public final class DB {
      * @throws DBException if an error occurs when interacting with the database.
      */
     public static <E extends SQLElement<E>> SQLElementList<E> getAll(Class<E> elemClass, SQLWhere<E> where, SQLOrderBy<E> orderBy, Integer limit, Integer offset) throws DBException {
-        SQLElementList<E> elmts = new SQLElementList<>();
-        forEach(elemClass, where, orderBy, limit, offset, elmts::add);
-        return elmts;
+        SQLElementList<E> elements = new SQLElementList<>();
+        forEach(elemClass, where, orderBy, limit, offset, elements::add);
+        return elements;
     }
 
     /**
      * Iterate through all the entries from the provided table.
      * @param elemClass the class representing a table.
-     * @param action the action to perform on each entries.
+     * @param action the action to perform on each entry.
      * @param <E> the type representing the table.
      * @throws DBException if an error occurs when interacting with the database.
      */
@@ -314,7 +314,7 @@ public final class DB {
      * Iterate through the entries from the provided table, using the provided {@code WHERE} clause.
      * @param elemClass the class representing a table.
      * @param where the {@code WHERE} clause of the query.
-     * @param action the action to perform on each entries.
+     * @param action the action to perform on each entry.
      * @param <E> the type representing the table.
      * @throws DBException if an error occurs when interacting with the database.
      */
@@ -328,7 +328,7 @@ public final class DB {
      * @param elemClass the class representing a table.
      * @param where the {@code WHERE} clause of the query.
      * @param orderBy the {@code ORDER BY} clause of the query.
-     * @param action the action to perform on each entries.
+     * @param action the action to perform on each entry.
      * @param <E> the type representing the table.
      * @throws DBException if an error occurs when interacting with the database.
      */
@@ -343,7 +343,7 @@ public final class DB {
      * @param where the {@code WHERE} clause of the query.
      * @param orderBy the {@code ORDER BY} clause of the query.
      * @param limit the {@code LIMIT} clause of the query.
-     * @param action the action to perform on each entries.
+     * @param action the action to perform on each entry.
      * @param <E> the type representing the table.
      * @throws DBException if an error occurs when interacting with the database.
      */
@@ -359,7 +359,7 @@ public final class DB {
      * @param orderBy the {@code ORDER BY} clause of the query.
      * @param limit the {@code LIMIT} clause of the query.
      * @param offset the {@code OFFSET} clause of the query.
-     * @param action the action to perform on each entries.
+     * @param action the action to perform on each entry.
      * @param <E> the type representing the table.
      * @throws DBException if an error occurs when interacting with the database.
      */
@@ -577,7 +577,7 @@ public final class DB {
     @SuppressWarnings("unchecked")
     private static <E extends SQLElement<E>> E getElementInstance(ResultSet set, Class<E> elemClass) throws DBException {
         try {
-            E instance = Reflect.ofClass(elemClass).constructor(int.class).instanciate(set.getInt("id"));
+            E instance = Reflect.ofClass(elemClass).constructor(int.class).instantiate(set.getInt("id"));
 
             int fieldCount = set.getMetaData().getColumnCount();
 
@@ -623,7 +623,7 @@ public final class DB {
 
             return instance;
         } catch (ReflectiveOperationException | IllegalArgumentException | SecurityException | SQLException e) {
-            throw new DBException("Can't instanciate " + elemClass.getName(), e);
+            throw new DBException("Can't instantiate " + elemClass.getName(), e);
         }
     }
 

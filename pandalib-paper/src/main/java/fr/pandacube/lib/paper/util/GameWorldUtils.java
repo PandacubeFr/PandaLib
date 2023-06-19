@@ -83,6 +83,9 @@ public class GameWorldUtils implements Listener {
 		new File(destDir, "uid.dat").delete();
 		
 		World w = Bukkit.createWorld(new WorldCreator(copiedName).environment(Environment.NORMAL));
+		if (w == null) {
+			throw new RuntimeException("Unable to create the world " + copiedName + ": Bukkit.createWorld(...) returned null value.");
+		}
 		w.setAutoSave(false);
 		gameWorld.put(world, w);
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mvm set hidden true "+copiedName);

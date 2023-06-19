@@ -68,9 +68,9 @@ public interface PermissibleOffPlayer extends AbstractOffPlayer {
 	 * Tells if this player has the specified permission.
 	 * If the player is online, this will redirect the
 	 * method call to the {@link PermissibleOnlinePlayer} instance,
-	 * that MUST override this current method to avoid recussive
+	 * that MUST override this current method to avoid recursive
 	 * loop.
-	 * If the player is offline, it just call the Pandacube
+	 * If the player is offline, it just calls the Pandacube
 	 * permission system.
 	 * @param permission the permission node to test
 	 * @return whether this player has the provided permission
@@ -89,9 +89,9 @@ public interface PermissibleOffPlayer extends AbstractOffPlayer {
 	 * Tells if this player has the permission resulted from the provided expression.
 	 * If the player is online, this will redirect the
 	 * method call to the {@link PermissibleOnlinePlayer} instance,
-	 * that MUST override this current method to avoid recussive
+	 * that MUST override this current method to avoid recursive
 	 * loop.
-	 * If the player is offline, it just call the Pandacube
+	 * If the player is offline, it just calls the Pandacube
 	 * permission system.
 	 * @param permissionExpression the permission node to test
 	 * @return whether this player has the provided permission
@@ -145,7 +145,7 @@ public interface PermissibleOffPlayer extends AbstractOffPlayer {
 	}
 
 	/**
-	 * Tells if the this player is part of the specified group.
+	 * Tells if this player is part of the specified group.
 	 * @param group the permissions group
 	 * @return <i>true</i> if this player is part of the group,
 	 *         <i>false</i> otherwise

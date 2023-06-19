@@ -14,7 +14,7 @@ public class AABBVoxelShape extends VoxelShape {
     private static final ReflectConstructor<?> CONSTRUCTOR = wrapEx(() -> REFLECT.constructor(AABB.MAPPING.runtimeClass()));
 
     public AABBVoxelShape(AABB aabb) {
-        this(wrapReflectEx(() -> CONSTRUCTOR.instanciate(unwrap(aabb))));
+        this(wrapReflectEx(() -> CONSTRUCTOR.instantiate(unwrap(aabb))));
     }
 
     protected AABBVoxelShape(Object obj) {

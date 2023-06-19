@@ -24,36 +24,36 @@ import fr.pandacube.lib.util.Log;
 import fr.pandacube.lib.paper.util.BukkitEvent;
 
 /**
- * Managed a « lobby » type hotbar menu/inventory. It represents items in the player inventory on which you can right click on it.
+ * Managed a "lobby" type hot bar menu/inventory. It represents items in the
+ * player inventory on which you can right-click on it.
  * The player can't move or drop these items.
- *
  */
 public class GUIHotBar implements Listener {
 
 	private final Map<ItemStack, BiConsumer<PlayerInventory, ItemStack>> itemsAndSetters = new HashMap<>();
 	
-	private final Map<ItemStack, Consumer<Player>> itemsAndRunnables = new HashMap<>();
+	private final Map<ItemStack, Consumer<Player>> itemsAndClickListeners = new HashMap<>();
 	
-	private final int defltSlot;
+	private final int defaultSlot;
 	
 	private final List<Player> currentPlayers = new ArrayList<>();
 	
 	public GUIHotBar(int defaultSlot) {
-		defltSlot = Math.max(0, Math.min(8, defaultSlot));
+		this.defaultSlot = Math.max(0, Math.min(8, defaultSlot));
 		
 		BukkitEvent.register(this);
 	}
 	
 	/**
-	 * Add the item to this hotbar menu. if there is already players hooked to this hotbar, the item will be directly added to
+	 * Add the item to this hot bar menu. if there is already players hooked to this hot bar, the item will be directly added to
 	 * their inventories.
 	 * @param i the item stack
-	 * @param setter code executed to put the item in the inventory. Additionally check for permission before doing the addition.
-	 * @param run the Runnable to run when the user right click on the item in the hotbar.
+	 * @param setter code executed to put the item in the inventory. Additionally, check for permission before doing the addition.
+	 * @param run the Runnable to run when the user right-click on the item in the hot bar.
 	 */
 	public GUIHotBar addItem(ItemStack i, BiConsumer<PlayerInventory, ItemStack> setter, Consumer<Player> run) {
 		itemsAndSetters.put(i, setter);
-		itemsAndRunnables.put(i, run);
+		itemsAndClickListeners.put(i, run);
 		
 		for (Player p : currentPlayers)
 			addItemToPlayer(p, i);
@@ -62,9 +62,9 @@ public class GUIHotBar implements Listener {
 	}
 	
 	/**
-	 * Add the hotbar elements to this player.
+	 * Add the hot bar elements to this player.
 	 * 
-	 * The players is automatically removed when they quit. You can remove it before by calling {@link #removePlayer(Player)}.
+	 * The player is automatically removed when they quit. You can remove it before by calling {@link #removePlayer(Player)}.
 	 */
 	public void addPlayer(Player p) {
 		if (!currentPlayers.contains(p))
@@ -74,11 +74,11 @@ public class GUIHotBar implements Listener {
 			addItemToPlayer(p, is);
 		}
 		
-		p.getInventory().setHeldItemSlot(defltSlot);
+		p.getInventory().setHeldItemSlot(defaultSlot);
 	}
 	
 	/**
-	 * Detach this player from this hotbar manager and removes the managed items from the players inventory.
+	 * Detach this player from this hot bar manager and removes the managed items from the players inventory.
 	 */
 	public void removePlayer(Player p) {
 		if (!currentPlayers.contains(p))
@@ -110,9 +110,9 @@ public class GUIHotBar implements Listener {
 	
 	public void addItemToPlayer(Player p, ItemStack is) {
 		if (!itemsAndSetters.containsKey(is))
-			throw new IllegalArgumentException("The provided ItemStack is not registered in this HotbarMenu");
+			throw new IllegalArgumentException("The provided ItemStack is not registered in this GUIHotBar");
 		if (!currentPlayers.contains(p))
-			throw new IllegalArgumentException("The provided Player is not registered in this HotbarMenu");
+			throw new IllegalArgumentException("The provided Player is not registered in this GUIHotBar");
 		itemsAndSetters.get(is).accept(p.getInventory(), is.clone());
 	}
 	
@@ -153,10 +153,10 @@ public class GUIHotBar implements Listener {
 		
 		Player p = event.getPlayer();
 		
-		for (ItemStack is : itemsAndRunnables.keySet()) {
+		for (ItemStack is : itemsAndClickListeners.keySet()) {
 			if (item.isSimilar(is)) {
 				try {
-					itemsAndRunnables.get(is).accept(p);
+					itemsAndClickListeners.get(is).accept(p);
 				} catch (Exception e) {
 					Log.severe(e);
 				}
@@ -181,7 +181,7 @@ public class GUIHotBar implements Listener {
 		for (ItemStack is : itemsAndSetters.keySet()) {
 			if (item != null && item.isSimilar(is)) {
 				try {
-					itemsAndRunnables.get(is).accept((Player) inv.getHolder());
+					itemsAndClickListeners.get(is).accept((Player) inv.getHolder());
 				} catch (Exception e) {
 					Log.severe(e);
 				}

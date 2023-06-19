@@ -41,7 +41,7 @@ public class AutoUpdatedBossBar implements Listener {
 	
 	
 	/**
-	 * Schedule the update of this bossbar with synchronisation with the system clock.
+	 * Schedule the update of this boss bar with synchronisation with the system clock.
 	 * The underlying method called is {@link Timer#schedule(TimerTask, long, long)}.
 	 * The updater is executed in a separate Thread.
 	 * @param msDelay ms before running the first update of this bossbar
@@ -49,7 +49,7 @@ public class AutoUpdatedBossBar implements Listener {
 	 */
 	public synchronized void scheduleUpdateTimeSyncThreadAsync(long msDelay, long msPeriod) {
 		if (scheduled)
-			throw new IllegalStateException("Can't schedule an already scheduled bossbar update");
+			throw new IllegalStateException("Can't schedule an already scheduled boss bar update");
 		
 		scheduled = true;
 		timer = new Timer("Panda BossBarUpdater - " + Chat.chatComponent(bar.name()).getPlainText());
@@ -66,16 +66,16 @@ public class AutoUpdatedBossBar implements Listener {
 	}
 	
 	/**
-	 * Schedule the update of this bossbar with synchronisation with the main Thread of the
+	 * Schedule the update of this boss bar with synchronisation with the main Thread of the
 	 * current Minecraft server (follow the tick count progress).
 	 * The underlying method called is {@link BukkitScheduler#runTaskTimer(org.bukkit.plugin.Plugin, Runnable, long, long)}.
 	 * The updater is executed by the Server Thread.
-	 * @param tickDelay number of server tick before running the first update of this bossbar
+	 * @param tickDelay number of server tick before running the first update of this boss bar
 	 * @param tickPeriod number of server tick between each call of the updater
 	 */
 	public synchronized void scheduleUpdateTickSyncThreadSync(long tickDelay, long tickPeriod) {
 		if (scheduled)
-			throw new IllegalStateException("Can't schedule an already scheduled bossbar update");
+			throw new IllegalStateException("Can't schedule an already scheduled boss bar update");
 		
 		scheduled = true;
 		bukkitTask = Bukkit.getServer().getScheduler()
@@ -164,7 +164,7 @@ public class AutoUpdatedBossBar implements Listener {
 
 	
 	/**
-	 * Utility method to update the title of the bossbar without unnecessary packet.
+	 * Utility method to update the title of the boss bar without unnecessary packet.
 	 */
 	public void setTitle(Chat title) {
 		synchronized (bar) {
@@ -173,7 +173,7 @@ public class AutoUpdatedBossBar implements Listener {
 	}
 	
 	/**
-	 * Utility method to update the color of the bossbar without unnecessary packet.
+	 * Utility method to update the color of the boss bar without unnecessary packet.
 	 */
 	public void setColor(Color color) {
 		synchronized (bar) {
@@ -182,7 +182,7 @@ public class AutoUpdatedBossBar implements Listener {
 	}
 	
 	/**
-	 * Utility method to update the progress of the bossbar without unnecessary packet.
+	 * Utility method to update the progress of the boss bar without unnecessary packet.
 	 */
 	public void setProgress(double progress) {
 		synchronized (bar) {

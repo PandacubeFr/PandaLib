@@ -53,7 +53,7 @@ public interface AbstractOnlinePlayer extends AbstractOffPlayer {
 	/**
 	 * Tells if this online player has the specified permission.
 	 * @param permission the permission to test on that player.
-	 * @return weither this player has the specified permission or not.
+	 * @return weather this player has the specified permission or not.
 	 * @implSpec Implementation of this method should call the permission system of their environment (paper/bungee),
 	 * so this method will work independently of the usage of the 'pandalib-permissions' module.
 	 */
@@ -90,7 +90,7 @@ public interface AbstractOnlinePlayer extends AbstractOffPlayer {
 	 * <p>
 	 * This method differs from {@link #sendMessage(ComponentLike)} with the fact that this method sends the message
 	 * only if {@link #canChat()} returns true.
-	 * The message sent to the client is still a SYSTEM messge, due to CHAT messages required to be signed.
+	 * The message sent to the client is still a SYSTEM message, due to CHAT messages required to be signed.
 	 * @param message the message to display as CHAT message.
 	 */
 	default void sendChatMessage(ComponentLike message) {
@@ -203,13 +203,13 @@ public interface AbstractOnlinePlayer extends AbstractOffPlayer {
 		
 		/**
 		 * Tells if the client has configured the main hand on the left.
-		 * @return true if the player’s character is left handed, false otherwise.
+		 * @return true if the player’s character is left-handed, false otherwise.
 		 */
 		boolean isLeftHanded();
 
 		/**
 		 * Tells if the client has configured the main hand on the right.
-		 * @return true if the player’s character is right handed, false otherwise.
+		 * @return true if the player’s character is right-handed, false otherwise.
 		 */
 		boolean isRightHanded();
 		
@@ -279,8 +279,8 @@ public interface AbstractOnlinePlayer extends AbstractOffPlayer {
 	 * Tells if the player can send chat messages or receive chat messages from other players, according to their client
 	 * configuration.
 	 * <p>
-	 * Chat messages represent public communication between players. By default, it only include actual chat message.
-	 * This method may be used in commands like /me, /afk or the login/logout broadcasted messages.
+	 * Chat messages represent public communication between players. By default, it only includes actual chat message.
+	 * This method may be used in commands like /me, /afk or the login/logout broadcast messages.
 	 * @return true if the player can send chat messages or receive chat messages from other players, false otherwise.
 	 */
 	default boolean canChat() {

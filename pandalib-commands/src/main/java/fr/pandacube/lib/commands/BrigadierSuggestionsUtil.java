@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Utility methods to replace some functionalities of Brigadier, especialy suggestion sorting that we don’t like.
+ * Utility methods to replace some functionalities of Brigadier, especially suggestion sorting that we don’t like.
  */
 public class BrigadierSuggestionsUtil {
 

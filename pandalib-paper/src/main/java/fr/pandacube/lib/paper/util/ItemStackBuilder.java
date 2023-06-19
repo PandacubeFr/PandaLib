@@ -37,7 +37,7 @@ public class ItemStackBuilder {
 
 	/**
 	 * Create a builder of a new ItemStack with the specified Material.
-	 * @param mat the material of the new builded ItemStack
+	 * @param mat the material of the new built ItemStack
 	 * @return the builder
 	 */
 	public static ItemStackBuilder of(Material mat) {
@@ -50,8 +50,8 @@ public class ItemStackBuilder {
 	 * The {@link #build()} method of the returned builder will return the same instance
 	 * of ItemStack as the parameter of this method.
 	 * <p>
-	 * To create a builder that doesn’t modify the provided ItemStack, use {@link #of(ItemStack)}.
-	 * @param stack the wrapped itemstack.
+	 * To create a builder that doesn't modify the provided ItemStack, use {@link #of(ItemStack)}.
+	 * @param stack the wrapped item stack.
 	 * @return the builder
 	 */
 	public static ItemStackBuilder wrap(ItemStack stack) {
@@ -149,8 +149,8 @@ public class ItemStackBuilder {
 		return addLoreAfter(Arrays.asList(lores));
 	}
 	
-	public ItemStackBuilder enchant(Enchantment ench, int level) {
-		return meta(m -> m.addEnchant(ench, level, true));
+	public ItemStackBuilder enchant(Enchantment enchantment, int level) {
+		return meta(m -> m.addEnchant(enchantment, level, true));
 	}
 	
 	public ItemStackBuilder flags(ItemFlag... flags) {

@@ -253,28 +253,28 @@ public enum MinecraftVersion {
 
 	/**
 	 * Returns a string representation of all the Minecraft version of this enum value, using
-	 * {@link StringUtil#joinGrammatically(CharSequence, CharSequence, List)} with the gramatical word "et"
+	 * {@link StringUtil#joinGrammatically(CharSequence, CharSequence, List)} with the grammatical word "et"
 	 * ("and" in french).
 	 *
 	 * @return a string representation of this {@link MinecraftVersion}.
-	 * @deprecated it uses the hardcoded french word "et" as the final word separator.
+	 * @deprecated it uses the hardcoded French word "et" as the final word separator.
 	 *             Use {@link #displayOptimizedListOfVersions(List, String)} with "et" as the last parameter instead.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	public String toStringAnd() {
 		return toString("et");
 	}
 
 	/**
 	 * Returns a string representation of all the Minecraft version of this enum value, using
-	 * {@link StringUtil#joinGrammatically(CharSequence, CharSequence, List)} with the gramatical word "ou"
+	 * {@link StringUtil#joinGrammatically(CharSequence, CharSequence, List)} with the grammatical word "ou"
 	 * ("or" in french).
 	 *
 	 * @return a string representation of this {@link MinecraftVersion}.
-	 * @deprecated it uses the hardcoded french word "ou" as the final word separator.
+	 * @deprecated it uses the hardcoded French word "ou" as the final word separator.
 	 *             Use {@link #displayOptimizedListOfVersions(List, String)} with "ou" as the last parameter instead.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	public String toStringOr() {
 		return toString("ou");
 	}
@@ -316,30 +316,30 @@ public enum MinecraftVersion {
 
 	/**
 	 * Generate a string representation of the provided list of version, using
-	 * {@link StringUtil#joinGrammatically(CharSequence, CharSequence, List)} with the gramatical word "et"
+	 * {@link StringUtil#joinGrammatically(CharSequence, CharSequence, List)} with the grammatical word "et"
 	 * ("and" in french).
 	 *
 	 * @param versions the minecraft versions to list
 	 * @return a string representation of the provided list of version.
-	 * @deprecated it uses the hardcoded french word "et" as the final word separator.
+	 * @deprecated it uses the hardcoded French word "et" as the final word separator.
 	 *             Use {@link #displayOptimizedListOfVersions(List, String)} with "et" as the last parameter instead.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	public static String displayOptimizedListOfVersionsAnd(List<MinecraftVersion> versions) {
 		return displayOptimizedListOfVersions(versions, "et");
 	}
 
 	/**
 	 * Generate a string representation of the provided list of version, using
-	 * {@link StringUtil#joinGrammatically(CharSequence, CharSequence, List)} with the gramatical word "ou"
+	 * {@link StringUtil#joinGrammatically(CharSequence, CharSequence, List)} with the grammatical word "ou"
 	 * ("or" in french).
 	 *
 	 * @param versions the minecraft versions to list
 	 * @return a string representation of the provided list of version.
-	 * @deprecated it uses the hardcoded french word "ou" as the final word separator.
+	 * @deprecated it uses the hardcoded French word "ou" as the final word separator.
 	 *             Use {@link #displayOptimizedListOfVersions(List, String)} with "ou" as the last parameter instead.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	public static String displayOptimizedListOfVersionsOr(List<MinecraftVersion> versions) {
 		return displayOptimizedListOfVersions(versions, "ou");
 	}
@@ -348,7 +348,7 @@ public enum MinecraftVersion {
 	 * Returns an optimized list of string representation of Minecraft version, that represent the provided list of
 	 * Minecraft version.
 	 * <p>
-	 * This methods try to merge successive Minecraft version into a single string: for instance, all versions from 1.18
+	 * This method try to merge successive Minecraft version into a single string: for instance, all versions from 1.18
 	 * to 1.18.2 are represented by the string "1.18.x"; all version from 1.14.1 to 1.14.4 are represented by the string
 	 * "1.14.1-1.14.4".
 	 * <p>

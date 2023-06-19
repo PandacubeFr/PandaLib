@@ -1,7 +1,6 @@
 package fr.pandacube.lib.paper.reflect.wrapper.dataconverter;
 
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.network.chat.Component;
 import fr.pandacube.lib.reflect.Reflect;
 import fr.pandacube.lib.reflect.ReflectClass;
 import fr.pandacube.lib.reflect.ReflectMethod;

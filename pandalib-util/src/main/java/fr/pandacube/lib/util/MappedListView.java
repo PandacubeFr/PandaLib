@@ -7,9 +7,9 @@ import java.util.ListIterator;
 import java.util.function.Function;
 
 /**
- * A Wrapper list that provides a mapped view of the backend list. Every modification of this list will modify the bakend
- * list. Each time a value is accessed or modified, the appropriate setter or getter is used to convert the value
- * between the source {@code S} and the visible {@code T} type.
+ * A Wrapper list that provides a mapped view of the backend list. Every modification of this list will modify the
+ * backend list. Each time a value is accessed or modified, the appropriate setter or getter is used to convert the
+ * value between the source {@code S} and the visible {@code T} type.
  * @param <S> the source (backend) type
  * @param <T> the visible (mapped) type
  */
@@ -109,22 +109,6 @@ public class MappedListView<S, T> extends AbstractList<T> {
 	@Override
 	protected void removeRange(int fromIndex, int toIndex) {
 		backend.subList(fromIndex, toIndex).clear();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean equals(Object o) {
-		return backend.equals(o);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int hashCode() {
-		return backend.hashCode();
 	}
 
 	/**

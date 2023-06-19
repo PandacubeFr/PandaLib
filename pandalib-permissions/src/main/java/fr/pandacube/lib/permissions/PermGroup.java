@@ -11,7 +11,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * Represents an group in the permission system.
+ * Represents a group in the permission system.
  */
 public final class PermGroup extends PermEntity {
 	/* package */ PermGroup(String name) {
@@ -54,7 +54,7 @@ public final class PermGroup extends PermEntity {
 	 * Gets all the players that inherits from this group.
 	 * This method does not use cached data.
 	 * @param recursive true to include players that are in inherited groups.
-	 * @return the players that inherits from this group.
+	 * @return the players that inherit from this group.
 	 * @throws DBException if a database error occurs.
 	 */
 	public Set<UUID> getInheritedPlayers(boolean recursive) throws DBException {
@@ -69,7 +69,7 @@ public final class PermGroup extends PermEntity {
 
 	/**
 	 * Tells if this group is a default group.
-	 * A player inherits all default groups when they don’t explicitely inherit from at least one group.
+	 * A player inherits all default groups when they don’t explicitly inherit from at least one group.
 	 * @return true if this group is a default group, false otherwise.
 	 */
 	public boolean isDefault() {
@@ -78,7 +78,7 @@ public final class PermGroup extends PermEntity {
 
 	/**
 	 * Sets this group as a default group or not.
-	 * All players that don’t explicitely inherit from at least one group will either start or stop implicitely
+	 * All players that don’t explicitly inherit from at least one group will either start or stop implicitly
 	 * inheriting from this group.
 	 * @param deflt true to set this group as default, false to set is as not default.
 	 */

@@ -39,7 +39,7 @@ public class BungeeBrigadierDispatcher extends BrigadierDispatcher<CommandSender
 	 */
 	public BungeeBrigadierDispatcher(Plugin pl) {
 		if (instance != null)
-			throw new IllegalStateException("Cannot instanciante more than one BungeeBrigadierDispatcher");
+			throw new IllegalStateException("Cannot instantiate more than one BungeeBrigadierDispatcher");
 		instance = this;
 		plugin = pl;
 		ProxyServer.getInstance().getPluginManager().registerListener(plugin, this);
@@ -47,7 +47,7 @@ public class BungeeBrigadierDispatcher extends BrigadierDispatcher<CommandSender
 
 
 	/**
-	 * Called when a player sends a chat message. Used to gets the typed command and execute it.
+	 * Called when a player sends a chat message. Used to get the typed command and execute it.
 	 * @param event the event.
 	 */
 	@EventHandler

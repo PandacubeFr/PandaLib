@@ -33,7 +33,7 @@ public class GeometryUtil {
 	/**
 	 * The visual height of a Minecraft player skin, when he is standing up and not sneaking,
 	 * from the ground where the player is standing on, to the above of the first layer of the head skin.
-	 * It doesn't correspond to the player hitbox height.<br/>
+	 * It doesn't correspond to the player hit box height.<br/>
 	 * <br/>
 	 * The value is provided in Minecraft Wiki.
 	 */
@@ -45,9 +45,9 @@ public class GeometryUtil {
 	/**
 	 * The visual height of a Minecraft player skin, when he is standing up and sneaking,
 	 * from the ground where the player is standing on, to the above of the first layer of the head skin.
-	 * It may not correspond to the player hitbox height.<br/>
+	 * It may not correspond to the player hit box height.<br/>
 	 * <br/>
-	 * The current value is the height of the player's hitbox when sneaking. Even if this
+	 * The current value is the height of the player's hit box when sneaking. Even if this
 	 * is close to the real value (tested in game), this is not the exact value.
 	 */
 	public static final double PLAYER_SKIN_HEIGHT_SNEAK = 1.50;
@@ -76,7 +76,7 @@ public class GeometryUtil {
 	/**
 	 * Get the {@link Location}s of the 8 vertex of the player head<br/>
 	 * This method only work if the player is standing up
-	 * (not dead, not glyding, not sleeping).
+	 * (not dead, not gliding, not sleeping).
 	 * @param playerLocation the location of the player, generally provided by {@link Player#getLocation()}
 	 * @param isSneaking if the player is sneaking. Generally {@link Player#isSneaking()}
 	 * @return an array of 8 {@link Location}s with x, y, and z values filled (yaw and pitch are ignored).
@@ -140,32 +140,15 @@ public class GeometryUtil {
         ad.setX(Math.abs(ad.getX()));
         ad.setY(Math.abs(ad.getY()));
         ad.setZ(Math.abs(ad.getZ()));
- 
-        if (Math.abs(c.getX()) > e.getX() + ad.getX()){
-            return false;
-        }
- 
-        if (Math.abs(c.getY()) > e.getY() + ad.getY()){
-            return false;
-        }
- 
-        if (Math.abs(c.getZ()) > e.getX() + ad.getZ()){
-            return false;
-        }
- 
-        if (Math.abs(d.getY() * c.getZ() - d.getZ() * c.getY()) > e.getY() * ad.getZ() + e.getZ() * ad.getY() + epsilon){
-            return false;
-        }
- 
-        if (Math.abs(d.getZ() * c.getX() - d.getX() * c.getZ()) > e.getZ() * ad.getX() + e.getX() * ad.getZ() + epsilon){
-            return false;
-        }
 
-        if (Math.abs(d.getX() * c.getY() - d.getY() * c.getX()) > e.getX() * ad.getY() + e.getY() * ad.getX() + epsilon){
-            return false;
-        }
-
-        return true;
+        return !(
+				Math.abs(c.getX()) > e.getX() + ad.getX()
+				|| Math.abs(c.getY()) > e.getY() + ad.getY()
+				|| Math.abs(c.getZ()) > e.getX() + ad.getZ()
+				|| Math.abs(d.getY() * c.getZ() - d.getZ() * c.getY()) > e.getY() * ad.getZ() + e.getZ() * ad.getY() + epsilon
+				|| Math.abs(d.getZ() * c.getX() - d.getX() * c.getZ()) > e.getZ() * ad.getX() + e.getX() * ad.getZ() + epsilon
+				|| Math.abs(d.getX() * c.getY() - d.getY() * c.getX()) > e.getX() * ad.getY() + e.getY() * ad.getX() + epsilon
+		);
     }
 	
 	
@@ -181,7 +164,7 @@ public class GeometryUtil {
 	
 	
 	/**
-	 * This vector consider Minecraft X Y Z axis orientation,
+	 * This vector considers Minecraft X Y Z axis orientation,
 	 * but consider standard (not Minecraft) radian values for yaw and pitch.<br/>
 	 * The length of this Vector (based on {@link #x}, {@link #y} and {@link #z} values)
 	 * Is always 1.
@@ -199,25 +182,25 @@ public class GeometryUtil {
 	public static class DirectionalVector {
 		/**
 		 * The X cartesian coordinate of this {@link DirectionalVector}.
-		 * It correspond to the X (west to east) axis in a Minecraft world.
+		 * It corresponds to the X (west to east) axis in a Minecraft world.
 		 */
 		public final double x;
 		
 		/**
 		 * The Y cartesian coordinate of this {@link DirectionalVector}.
-		 * It correspond to the Y (bottom to top) axis in a Minecraft world.
+		 * It corresponds to the Y (bottom to top) axis in a Minecraft world.
 		 */
 		public final double y;
 		
 		/**
 		 * The Z cartesian coordinate of this {@link DirectionalVector}.
-		 * It correspond to the Z (north to south) axis in a Minecraft world.
+		 * It corresponds to the Z (north to south) axis in a Minecraft world.
 		 */
 		public final double z;
 		
 		/**
 		 * The azimuthal angle φ (phi) of this {@link DirectionalVector}, in radian.
-		 * It correspond with Minecraft world as follow :
+		 * It corresponds with Minecraft world as follows :
 		 * <pre>Yaw :
 		 * North (-z) = -PI/2
 		 * East  (+x) = 0
@@ -228,7 +211,7 @@ public class GeometryUtil {
 
 		/**
 		 * The polar angle θ (theta) of this {@link DirectionalVector}, in radian.
-		 * It correspond with Minecraft world as follow :
+		 * It corresponds with Minecraft world as follows :
 		 * <pre>Pitch :
 		 * Down (-y) = -PI/2
 		 * Up   (+y) = PI/2</pre>
@@ -258,7 +241,7 @@ public class GeometryUtil {
 		
 		/**
 		 * @param v the vector representing the direction. If v.getX() and v.getZ() are 0,
-		 * the yaw will be 0. This may have inconsistence if the vector is calculated
+		 * the yaw will be 0. This may have inconsistency if the vector is calculated
 		 * from a {@link Location}'s yaw and pitch. In this case, prefer using
 		 * {@link #DirectionalVector(Location)}. The {@link Vector} is
 		 * normalized if necessary (does not modify the provided {@link Vector}).
@@ -271,10 +254,10 @@ public class GeometryUtil {
 		
 
 		private DirectionalVector(double x, double y, double z) {
-			double vectSize = Math.sqrt(x*x + y*y + z*z);
-			this.x = x/vectSize;
-			this.y = y/vectSize;
-			this.z = z/vectSize;
+			double vecSize = Math.sqrt(x*x + y*y + z*z);
+			this.x = x/vecSize;
+			this.y = y/vecSize;
+			this.z = z/vecSize;
 
 	        if (x == 0.0 && z == 0.0) {
 	        	pitch = y > 0.0 ? PId2 : -PId2;

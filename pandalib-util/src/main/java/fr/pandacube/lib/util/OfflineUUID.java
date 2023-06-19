@@ -8,7 +8,7 @@ import java.util.UUID;
 /**
  * Utility class and program that generate offline UUIDs for provided player names.
  * <p>
- * You can generate the UUID programatically using {@link #getFromNickName(String)} and
+ * You can generate the UUID programmatically using {@link #getFromNickName(String)} and
  * {@link #getFromNickNames(String[])}.
  *
  * To use this class as a program, type
@@ -23,7 +23,7 @@ public class OfflineUUID {
 
 	/**
 	 * Generate the offline {@link UUID} of the provided player name.
-	 * @param nickname the player name to optain the offline UUID from.
+	 * @param nickname the player name to obtain the offline UUID from.
 	 * @return the offline {@link UUID} of the provided player name.
 	 */
 	public static UUID getFromNickName(String nickname) {
@@ -33,7 +33,7 @@ public class OfflineUUID {
 
 	/**
 	 * Generate the offline {@link UUID}s of the provided player names.
-	 * @param nicknames an array of player name to optain the offline UUIDs from.
+	 * @param nicknames an array of player name to obtain the offline UUIDs from.
 	 * @return the offline {@link UUID}s of the provided player name in an array, at the same order as the input.
 	 */
 	public static UUID[] getFromNickNames(String[] nicknames) {

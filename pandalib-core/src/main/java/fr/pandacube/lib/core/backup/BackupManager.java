@@ -33,7 +33,7 @@ public class BackupManager extends TimerTask {
     private final Timer schedulerTimer = new Timer();
 
     /**
-     * Instanciate a new backup manager.
+     * Instantiate a new backup manager.
      * @param backupDirectory the root backup directory.
      */
     public BackupManager(File backupDirectory) {

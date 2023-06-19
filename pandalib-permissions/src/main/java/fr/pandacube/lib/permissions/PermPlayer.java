@@ -8,7 +8,7 @@ import fr.pandacube.lib.permissions.PermissionsCachedBackendReader.CachedPlayer;
 import fr.pandacube.lib.permissions.SQLPermissions.EntityType;
 
 /**
- * Represents an player in the permission system.
+ * Represents a player in the permission system.
  */
 public final class PermPlayer extends PermEntity {
 	private final UUID playerId;
@@ -84,7 +84,7 @@ public final class PermPlayer extends PermEntity {
 
 	/**
 	 * Tells if this player has been assigned to the default groups.
-	 * @return true if this player has been assigned to the default groups, or false if this player belongs explicitely
+	 * @return true if this player has been assigned to the default groups, or false if this player belongs explicitly
 	 *         to their groups.
 	 */
 	public boolean isUsingDefaultGroups() {
@@ -92,7 +92,7 @@ public final class PermPlayer extends PermEntity {
 	}
 
 	/**
-	 * Sets the group this player will now inheritate, removing all previously inherited groups.
+	 * Sets the group this player will now inherit, removing all previously inherited groups.
 	 * To keep the other inherited groups, use {@link #addGroup(String)}.
 	 * @param group the name of the group to inherit from.
 	 */
@@ -101,7 +101,7 @@ public final class PermPlayer extends PermEntity {
 	}
 
 	/**
-	 * Sets the group this player will now inheritate, removing all previously inherited groups.
+	 * Sets the group this player will now inherit, removing all previously inherited groups.
 	 * To keep the other inherited groups, use {@link #addGroup(PermGroup)}.
 	 * @param group the group to inherit from.
 	 */
@@ -110,7 +110,7 @@ public final class PermPlayer extends PermEntity {
 	}
 
 	/**
-	 * Makes this player inherit the provided group, keeping the other groups they already inherits from.
+	 * Makes this player inherit the provided group, keeping the other groups they already inherit from.
 	 * @param group the name of the group to inherit from.
 	 */
 	public void addGroup(String group) {
@@ -118,7 +118,7 @@ public final class PermPlayer extends PermEntity {
 	}
 
 	/**
-	 * Makes this player inherit the provided group, keeping the other groups they already inherits from.
+	 * Makes this player inherit the provided group, keeping the other groups they already inherit from.
 	 * @param group the group to inherit from.
 	 */
 	public void addGroup(PermGroup group) {

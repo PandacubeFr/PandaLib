@@ -4,7 +4,6 @@ import fr.pandacube.lib.paper.reflect.NMSReflect;
 import fr.pandacube.lib.paper.reflect.NMSReflect.ClassMapping;
 import fr.pandacube.lib.reflect.ReflectConstructor;
 import fr.pandacube.lib.reflect.ReflectMethod;
-import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 
 import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
@@ -19,7 +18,7 @@ public class ListTag extends CollectionTag {
 	}
 
 	public ListTag() {
-		this(wrapReflectEx(() -> CONSTRUCTOR.instanciate()));
+		this(wrapReflectEx(() -> CONSTRUCTOR.instantiate()));
 	}
 
 	protected ListTag(Object nms) {

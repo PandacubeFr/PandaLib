@@ -1,6 +1,5 @@
 package fr.pandacube.lib.paper.players;
 
-import com.google.common.io.Files;
 import fr.pandacube.lib.paper.reflect.util.PrimaryWorlds;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftServer;
 import fr.pandacube.lib.paper.reflect.wrapper.dataconverter.MCDataConverter;
@@ -21,6 +20,7 @@ import org.bukkit.scoreboard.Team;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.function.UnaryOperator;
 
 /**
@@ -76,7 +76,7 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
      * @return the display name of the player.
      *
      * @implNote This default implementation gets the display name from bukkit (if the player is online).
-     * If its different to the player name, it returns it. Otherwise, it tries to generate the team displayname with {@link #getTeamDisplayName()}.
+     * If it's different to the player name, it returns it. Otherwise, it tries to generate the team display name with {@link #getTeamDisplayName()}.
      * If the player is not in a team, then the player name is used.
      */
     @Override
@@ -84,16 +84,16 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
         String name = getName();
         Player p = getBukkitPlayer();
         @SuppressWarnings("deprecation")
-        String bukkitDispName = p != null ? p.getDisplayName() : name;
-        if (!name.equals(bukkitDispName))
-            return bukkitDispName;
-        String teamDispName = getTeamDisplayName();
-        return teamDispName == null ? name : teamDispName;
+        String bukkitDisplayName = p != null ? p.getDisplayName() : name;
+        if (!name.equals(bukkitDisplayName))
+            return bukkitDisplayName;
+        String teamDisplayName = getTeamDisplayName();
+        return teamDisplayName == null ? name : teamDisplayName;
     }
 
     /**
-     * Computes and returns the the name of the player with the prefix, suffix and color of the team the player is in.
-     * @return The legacy formated player display name, if he is in a {@link Team}, or null otherwise.
+     * Computes and returns the name of the player with the prefix, suffix and color of the team the player is in.
+     * @return The legacy formatted player display name, if he is in a {@link Team}, or null otherwise.
      */
     default String getTeamDisplayName() {
         String name = getName();
@@ -151,10 +151,10 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
      */
 
     /**
-     * Gets the NBT data from the playerdata file.
+     * Gets the NBT data from the player-data file.
      * It will not work if the player is online, because the data on the file are not synchronized with real-time values.
      * @param convertTag true to convert the data to the current MC version, false to keep the saved version
-     * @return the NBT data from the playerdata file.
+     * @return the NBT data from the player-data file.
      * @throws IllegalStateException if the player is online.
      */
     default CompoundTag getPlayerData(boolean convertTag) {
@@ -173,9 +173,9 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
     }
 
     /**
-     * Gets a wrapper for the NBT data from the playerdata file.
+     * Gets a wrapper for the NBT data from the player-data file.
      * It will not work if the player is online, because the data on the file are not synchronized with real-time values.
-     * @return the NBT data from the playerdata file.
+     * @return the NBT data from the player-data file.
      * @throws IllegalStateException if the player is online.
      */
     default PlayerDataWrapper getPlayerDataWrapper() {
@@ -183,7 +183,7 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
     }
 
     /**
-     * Saves the provided NBT data to the playerdata file.
+     * Saves the provided NBT data to the player-data file.
      * It will not work if the player is online, because the provided data will be lost when the player disconnects.
      * @param data the data to save.
      * @throws IllegalStateException if the player is online.
@@ -195,14 +195,14 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
         File file = getPlayerDataFile(false);
         File old = getPlayerDataFile(true);
         old.delete();
-        Files.move(file, old);
+        Files.move(file.toPath(), old.toPath());
         NbtIo.writeCompressed(data.data, file);
     }
 
     /**
-     * Gets the file where the playerdata is stored.
+     * Gets the file where the player-data is stored.
      * @param old true to return the path of old data, false to return the actual file.
-     * @return the file where the playerdata is stored.
+     * @return the file where the player-data is stored.
      */
     default File getPlayerDataFile(boolean old) {
         File playerDataDir = new File(WorldUtil.worldDir(PrimaryWorlds.PRIMARY_WORLDS.get(0)), "playerdata");

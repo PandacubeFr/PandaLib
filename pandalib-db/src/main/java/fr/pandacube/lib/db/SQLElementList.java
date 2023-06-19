@@ -46,7 +46,7 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
             E emptyElement = elemClass.getConstructor().newInstance();
             emptyElement.set(field, value, false);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Illegal field or value or can't instanciante an empty instance of "
+            throw new IllegalArgumentException("Illegal field or value or can't instantiate an empty instance of "
                     + elemClass.getName() + ". (the instance is only created to test validity of field and value)", e);
         }
 
@@ -83,7 +83,7 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 
     @SuppressWarnings("unchecked")
     private void applyNewValuesToElements(List<E> storedEl) {
-        // applique les valeurs dans chaques objets de la liste
+        // applique les valeurs dans chaque objet de la liste
         for (E el : storedEl) {
             for (@SuppressWarnings("rawtypes") SQLField entry : modifiedValues.keySet()) {
                 if (!el.isModified(entry)) {
@@ -100,7 +100,7 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
     /**
      * Removes all the entries of this list from the database.
      * This method has the same effect as calling the {@link SQLElement#delete()} method individually on each element,
-     * but with only one SQL query to delete all of the entries.
+     * but with only one SQL query to delete all the entries.
      * <p>
      * If you intend to remove the entries from the database just after fetching them, call directly the
      * {@link DB#delete(Class, SQLWhere)} method instead.
@@ -124,9 +124,9 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 
     /**
      * Get all the entries targeted by the foreign key of all the entries in this list.
-     * @param foreignKey a foreignkey of this table.
+     * @param foreignKey a foreign key of this table.
      * @param orderBy the {@code ORDER BY} clause of the query.
-     * @return a list of foreign table entries targeted by the provided foreignkey of this table.
+     * @return a list of foreign table entries targeted by the provided foreign key of this table.
      * @param <T> the field’s Java type.
      * @param <P> the target table type.
      * @throws DBException if an error occurs when interacting with the database.
@@ -144,7 +144,7 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 
     /**
      * Get all the entries targeted by the foreign key of all the entries in this list, mapped from the foreign key value.
-     * @param foreignKey a foreignkey of this table.
+     * @param foreignKey a foreign key of this table.
      * @return a map of the foreign key values, mapped to the foreign table’s entries.
      * @param <T> the field’s Java type.
      * @param <P> the target table type.
@@ -163,11 +163,11 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
     /**
      * Gets all the original table’s entries which the provided foreign key is targeting the entries of this list, and
      * following the provided {@code ORDER BY}, {@code LIMIT} and {@code OFFSET} clauses.
-     * @param foreignKey a foreignkey in the original table.
+     * @param foreignKey a foreign key in the original table.
      * @param orderBy the {@code ORDER BY} clause of the query.
      * @param limit the {@code LIMIT} clause of the query.
      * @param offset the {@code OFFSET} clause of the query.
-     * @param <T> the type of the foreignkey field.
+     * @param <T> the type of the foreign key field.
      * @param <F> the table class of the foreign key that reference a field of this entry.
      * @return the original table’s entries which the provided foreign key is targeting the entries of this list.
      * @throws DBException if an error occurs when interacting with the database.
@@ -187,11 +187,11 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
      * Gets all the original table’s entries which the provided foreign key is targeting the entries of this list,
      * following the provided {@code ORDER BY}, {@code LIMIT} and {@code OFFSET} clauses, and mapped from the foreign
      * key value.
-     * @param foreignKey a foreignkey in the original table.
+     * @param foreignKey a foreign key in the original table.
      * @param orderBy the {@code ORDER BY} clause of the query.
      * @param limit the {@code LIMIT} clause of the query.
      * @param offset the {@code OFFSET} clause of the query.
-     * @param <T> the type of the foreignkey field.
+     * @param <T> the type of the foreign key field.
      * @param <F> the table class of the foreign key that reference a field of this entry.
      * @return a map of the foreign key values, mapped to the orignal table’s entries.
      * @throws DBException if an error occurs when interacting with the database.

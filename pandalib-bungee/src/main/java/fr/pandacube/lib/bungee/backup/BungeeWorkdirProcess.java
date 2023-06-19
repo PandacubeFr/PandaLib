@@ -18,15 +18,12 @@ public class BungeeWorkdirProcess extends BackupProcess {
 	
 	
 	public BiPredicate<File, String> getFilenameFilter() {
-		return new BiPredicate<>() {
-			@Override
-			public boolean test(File file, String path) {
-				if (new File(getSourceDir(), "logs").equals(file))
-					return false;
-				if (file.isFile() && file.getName().endsWith(".lck"))
-					return false;
-				return BungeeWorkdirProcess.super.getFilenameFilter().test(file, path);
-			}
+		return (file, path) -> {
+			if (new File(getSourceDir(), "logs").equals(file))
+				return false;
+			if (file.isFile() && file.getName().endsWith(".lck"))
+				return false;
+			return BungeeWorkdirProcess.super.getFilenameFilter().test(file, path);
 		};
 	}
 	

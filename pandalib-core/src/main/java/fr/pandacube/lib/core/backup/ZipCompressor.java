@@ -158,8 +158,8 @@ public class ZipCompressor {
 	}
 	
 	private class Entry {
-		File file;
-		String entry;
+		final File file;
+		final String entry;
 		Entry(File f, String e) {
 			file = f;
 			entry = e;

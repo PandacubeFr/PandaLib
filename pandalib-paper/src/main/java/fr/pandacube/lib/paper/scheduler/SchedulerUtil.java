@@ -16,7 +16,7 @@ public class SchedulerUtil {
 	 * Ensure that the provided runnable is run on the server thread.
 	 * If the current thread is the server thread, then the task is run right now, then this method returns.
 	 * If the current thread is another thread, it passes over the runnable to the Bukkit scheduler, then returns
-	 * imediately.
+	 * immediately.
 	 * @param task the task to run on the main thread.
 	 */
 	public static void runOnServerThread(Runnable task) {

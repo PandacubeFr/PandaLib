@@ -1,7 +1,7 @@
 package fr.pandacube.lib.ws.payloads;
 
 /**
- * Payload used by the client to login to key-protected websocket endpoint.
+ * Payload used by the client to log in to key-protected websocket endpoint.
  */
 public class LoginPayload extends Payload {
     /**

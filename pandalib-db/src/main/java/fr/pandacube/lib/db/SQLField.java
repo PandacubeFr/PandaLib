@@ -24,10 +24,10 @@ public class SQLField<E extends SQLElement<E>, T> {
     /* package */ final boolean autoIncrement;
     /* package */ final T defaultValue;
 
-    /* package */ SQLField(SQLType<T> type, boolean nullable, boolean autoIncr, T deflt) {
+    /* package */ SQLField(SQLType<T> type, boolean nullable, boolean autoIncrement, T deflt) {
         this.type = type;
         this.nullable = nullable;
-        autoIncrement = autoIncr;
+        this.autoIncrement = autoIncrement;
         defaultValue = deflt;
     }
 
@@ -35,8 +35,8 @@ public class SQLField<E extends SQLElement<E>, T> {
         this(type, nullable, false, null);
     }
 
-    /* package */ SQLField(SQLType<T> type, boolean nullable, boolean autoIncr) {
-        this(type, nullable, autoIncr, null);
+    /* package */ SQLField(SQLType<T> type, boolean nullable, boolean autoIncrement) {
+        this(type, nullable, autoIncrement, null);
     }
 
     /* package */ SQLField(SQLType<T> type, boolean nullable, T deflt) {

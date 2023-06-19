@@ -28,7 +28,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -57,7 +56,7 @@ public class PerformanceAnalysisManager implements Listener {
 	}
 
 
-	private static final int NB_TICK_HISTORY = 20 * 60 * 60; // 60 secondes;
+	private static final int NB_TICK_HISTORY = 20 * 60 * 60; // 60 secondes ;
 	
 	private final Plugin plugin = PandaLibPaper.getPlugin();
 	private long firstRecord = 0;
@@ -292,7 +291,7 @@ public class PerformanceAnalysisManager implements Listener {
 				}
 				else {
 					
-					String tps1sDisp = Double.isNaN(tps1s) ? "N/A" : (Math.round(tps1s)) + "";
+					String tps1sDisplay = Double.isNaN(tps1s) ? "N/A" : (Math.round(tps1s)) + "";
 					
 					
 					int[] tpsHistory = getTPSHistory();
@@ -319,7 +318,7 @@ public class PerformanceAnalysisManager implements Listener {
 						// we have a lag spike, so we need to display the time since lagging
 						long lagDurationSec = System.nanoTime() - tickEndNanoTime;
 						timings = text("(")
-								.thenFailure("lag:" + dispRound10(lagDurationSec / (double) 1_000_000_000) + "s")
+								.thenFailure("lag:" + displayRound10(lagDurationSec / (double) 1_000_000_000) + "s")
 								.thenText(")");
 					}
 					else {
@@ -359,7 +358,7 @@ public class PerformanceAnalysisManager implements Listener {
 					title = infoText("TPS [")
 							.thenLegacyText(s.toString())
 							.thenText("] ")
-							.then(text(tps1sDisp+"/20 ").color(tps1sGradient.pickColorAt(tps1s)))
+							.then(text(tps1sDisplay+"/20 ").color(tps1sGradient.pickColorAt(tps1s)))
 							.then(timings);
 				}
 				
@@ -469,7 +468,7 @@ public class PerformanceAnalysisManager implements Listener {
 			Log.info(finalMessage.getLegacyText());
 	}
 
-	public static String dispRound10(double val) {
+	public static String displayRound10(double val) {
 		long v = (long) Math.ceil(val * 10);
 		return "" + (v / 10f);
 	}

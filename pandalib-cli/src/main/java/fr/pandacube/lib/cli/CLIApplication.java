@@ -64,6 +64,7 @@ public abstract class CLIApplication {
     private final Object stopLock = new Object();
     private final AtomicBoolean stopping = new AtomicBoolean(false);
 
+    @SuppressWarnings("finally")
     public final void stop() {
         synchronized (stopLock) {
             synchronized (stopping) {

@@ -6,7 +6,7 @@ import java.util.List;
 import net.kyori.adventure.text.format.TextColor;
 
 /**
- * A custom gradient with a least 2 colors in it.
+ * A custom gradient with at least 2 colors in it.
  */
 public class ChatColorGradient {
     private record GradientColor(float location, TextColor color) { }

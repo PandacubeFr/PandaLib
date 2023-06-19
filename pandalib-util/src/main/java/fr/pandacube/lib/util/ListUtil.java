@@ -3,7 +3,7 @@ package fr.pandacube.lib.util;
 import java.util.List;
 
 /**
- * Provides utility methods related to lists.
+ * Provides utility methods for lists.
  */
 public class ListUtil {
 

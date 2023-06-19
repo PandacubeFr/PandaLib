@@ -140,7 +140,7 @@ public class ChatFilledLine implements ComponentLike {
 
     /**
      * Renders this line to a {@link FormatableChat}.
-     * @return a new {@link FormatableChat} builded by this {@link ChatFilledLine}.
+     * @return a new {@link FormatableChat} built by this {@link ChatFilledLine}.
      */
     public FormatableChat toChat() {
         int maxWidth = (this.maxWidth != null)

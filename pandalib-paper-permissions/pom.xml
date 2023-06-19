@@ -25,7 +25,7 @@
             <url>https://maven.enginehub.org/repo/</url>
         </repository>
 
-        <!--  Vault and maybe other dependecies -->
+        <!--  Vault and maybe other dependencies -->
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
@@ -33,12 +33,12 @@
     </repositories>
 
     <dependencies>
-        <dependency>
+        <!-- <dependency>
             <groupId>fr.pandacube.lib</groupId>
             <artifactId>pandalib-players-permissible</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>fr.pandacube.lib</groupId>
             <artifactId>pandalib-permissions</artifactId>

@@ -2,8 +2,6 @@ package fr.pandacube.lib.paper.reflect.wrapper.minecraft.world;
 
 import fr.pandacube.lib.paper.reflect.NMSReflect;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
-import fr.pandacube.lib.paper.reflect.wrapper.paper.configuration.WorldConfiguration;
-import fr.pandacube.lib.reflect.ReflectField;
 import fr.pandacube.lib.reflect.ReflectMethod;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 

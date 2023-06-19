@@ -25,7 +25,7 @@ public class OBCReflect {
 
 	/**
 	 * Returns the OBC class that has the provided name, wrapped into a {@link ReflectClass}.
-	 * @param obcClass the name of the class, including the subpackage in whitch the requested class is. This parameter
+	 * @param obcClass the name of the class, including the subpackage in which the requested class is. This parameter
 	 *                 will be prefixed with the {@code OBC} package and the current package version.
 	 * @return the OBC class that has the provided name, wrapped into a {@link ReflectClass}.
 	 * @throws ClassNotFoundException if the provided class was not found in {@code OBC} package.

@@ -15,7 +15,7 @@ public class ThrowableUtil {
 	 * Convert a {@link Throwable} into a {@link String} using the {@link Throwable#printStackTrace(PrintStream)} method,
 	 * so the returned string contains the full stack trace.
 	 * @param t the {@link Throwable}
-	 * @return a {@link String} containing the full stack thace of the provided {@link Throwable}.
+	 * @return a {@link String} containing the full stack trace of the provided {@link Throwable}.
 	 */
 	public static String stacktraceToString(Throwable t) {
 		if (t == null) return null;
@@ -97,7 +97,7 @@ public class ThrowableUtil {
 
 
 	/**
-	 * Makes the provided Throwable unckecked if necessary.
+	 * Makes the provided Throwable unchecked if necessary.
 	 * @param t the throwable to eventually wrap into a {@link RuntimeException}.
 	 * @param convertReflectionExceptionToError true to convert reflection related exception to their error counterpart.
 	 * @return a {@link RuntimeException}

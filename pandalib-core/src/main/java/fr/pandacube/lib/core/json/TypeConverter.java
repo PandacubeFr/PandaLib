@@ -15,8 +15,8 @@ public class TypeConverter {
 	/**
 	 * Converts the provided object to an {@link Integer}.
 	 * @param o the object to convert.
-	 * @return a the object converted to an {@link Integer}.
-	 * @throws ConvertionException is a conversion error occurs.
+	 * @return the object converted to an {@link Integer}.
+	 * @throws ConversionException is a conversion error occurs.
 	 */
 	public static Integer toInteger(Object o) {
 		if (o == null) {
@@ -27,7 +27,7 @@ public class TypeConverter {
 			try {
 				return ((JsonElement)o).getAsInt();
 			} catch(UnsupportedOperationException e) {
-				throw new ConvertionException(e);
+				throw new ConversionException(e);
 			}
 		}
 		
@@ -38,34 +38,34 @@ public class TypeConverter {
 			try {
 			return Integer.parseInt((String)o);
 			} catch (NumberFormatException e) {
-				throw new ConvertionException(e);
+				throw new ConversionException(e);
 			}
 		}
 		if (o instanceof Boolean) {
 			return ((Boolean)o) ? 1 : 0;
 		}
 		
-		throw new ConvertionException("No integer convertion available for an instance of "+o.getClass());
+		throw new ConversionException("No integer conversion available for an instance of "+o.getClass());
 	}
 
 	/**
 	 * Converts the provided object to a primitive int.
 	 * @param o the object to convert.
-	 * @return a the object converted to a primitive int.
-	 * @throws ConvertionException is a conversion error occurs.
+	 * @return the object converted to a primitive int.
+	 * @throws ConversionException is a conversion error occurs.
 	 */
 	public static int toPrimInt(Object o) {
 		Integer val = toInteger(o);
 		if (val == null)
-			throw new ConvertionException("null values can't be converted to primitive int");
+			throw new ConversionException("null values can't be converted to primitive int");
 		return val;
 	}
 
 	/**
 	 * Converts the provided object to a {@link Double}.
 	 * @param o the object to convert.
-	 * @return a the object converted to a {@link Double}.
-	 * @throws ConvertionException is a conversion error occurs.
+	 * @return the object converted to a {@link Double}.
+	 * @throws ConversionException is a conversion error occurs.
 	 */
 	public static Double toDouble(Object o) {
 		if (o == null) {
@@ -76,7 +76,7 @@ public class TypeConverter {
 			try {
 			return ((JsonElement)o).getAsDouble();
 			} catch(UnsupportedOperationException e) {
-				throw new ConvertionException(e);
+				throw new ConversionException(e);
 			}
 		}
 
@@ -87,35 +87,35 @@ public class TypeConverter {
 			try {
 			return Double.parseDouble((String)o);
 			} catch (NumberFormatException e) {
-				throw new ConvertionException(e);
+				throw new ConversionException(e);
 			}
 		}
 		if (o instanceof Boolean) {
 			return ((Boolean)o) ? 1d : 0d;
 		}
 		
-		throw new ConvertionException("No double convertion available for an instance of "+o.getClass());
+		throw new ConversionException("No double conversion available for an instance of "+o.getClass());
 		
 	}
 
 	/**
 	 * Converts the provided object to a primitive double.
 	 * @param o the object to convert.
-	 * @return a the object converted to a primitive double.
-	 * @throws ConvertionException is a conversion error occurs.
+	 * @return the object converted to a primitive double.
+	 * @throws ConversionException is a conversion error occurs.
 	 */
 	public static double toPrimDouble(Object o) {
 		Double val = toDouble(o);
 		if (val == null)
-			throw new ConvertionException("null values can't converted to primitive int");
+			throw new ConversionException("null values can't converted to primitive int");
 		return val;
 	}
 
 	/**
 	 * Converts the provided object to a {@link String}.
 	 * @param o the object to convert.
-	 * @return a the object converted to a {@link String}.
-	 * @throws ConvertionException is a conversion error occurs.
+	 * @return the object converted to a {@link String}.
+	 * @throws ConversionException is a conversion error occurs.
 	 */
 	public static String toString(Object o) {
 		if (o == null) {
@@ -126,7 +126,7 @@ public class TypeConverter {
 			try {
 				return ((JsonElement)o).getAsString();
 			} catch(UnsupportedOperationException e) {
-				throw new ConvertionException(e);
+				throw new ConversionException(e);
 			}
 		}
 		
@@ -134,7 +134,7 @@ public class TypeConverter {
 			return o.toString();
 		}
 
-		throw new ConvertionException("No string convertion available for an instance of "+o.getClass());
+		throw new ConversionException("No string conversion available for an instance of "+o.getClass());
 		
 	}
 	
@@ -144,8 +144,8 @@ public class TypeConverter {
 	 * @param mapIntKeys if the String key representing an int should be duplicated as integer type,
 	 * which map to the same value as the original String key. For example, if a key is "12" and map
 	 * to the object <i>o</i>, an integer key 12 will be added and map to the same object <i>o</i>.
-	 * @return a the object converted to a {@link Map}.
-	 * @throws ConvertionException is a conversion error occurs.
+	 * @return the object converted to a {@link Map}.
+	 * @throws ConversionException is a conversion error occurs.
 	 */
 	@SuppressWarnings("unchecked")
 	public static Map<Object, Object> toMap(Object o, boolean mapIntKeys) {
@@ -186,15 +186,15 @@ public class TypeConverter {
 			return map;
 		}
 
-		throw new ConvertionException("No Map convertion available for an instance of "+o.getClass());
+		throw new ConversionException("No Map conversion available for an instance of "+o.getClass());
 	}
 
 
 	/**
 	 * Converts the provided object to a {@link List}.
 	 * @param o the object to convert.
-	 * @return a the object converted to a {@link List}.
-	 * @throws ConvertionException is a conversion error occurs.
+	 * @return the object converted to a {@link List}.
+	 * @throws ConversionException is a conversion error occurs.
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<Object> toList(Object o) {
@@ -217,7 +217,7 @@ public class TypeConverter {
 		}
 		
 
-		throw new ConvertionException("No Map convertion available for an instance of "+o.getClass());
+		throw new ConversionException("No Map conversion available for an instance of "+o.getClass());
 		
 		
 		
@@ -225,14 +225,14 @@ public class TypeConverter {
 
 
 	/**
-	 * Thrown when a convertion error occurs.
+	 * Thrown when a conversion error occurs.
 	 */
-	public static class ConvertionException extends RuntimeException {
+	public static class ConversionException extends RuntimeException {
 		
-		private ConvertionException(String m) {
+		private ConversionException(String m) {
 			super(m);
 		}
-		private ConvertionException(Throwable t) {
+		private ConversionException(Throwable t) {
 			super(t);
 		}
 		

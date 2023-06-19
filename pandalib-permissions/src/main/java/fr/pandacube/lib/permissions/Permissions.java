@@ -79,7 +79,7 @@ public class Permissions {
 	}
 
 	/**
-	 * Clears all the cached data (players and groupds) and fetch all the groups data from the database.
+	 * Clears all the cached data (players and groups) and fetch all the groups' data from the database.
 	 * The clearing and fetching of the data is made asynchronously in a new thread.
 	 * @param then the action to perform after the cache has been updated.
 	 * @throws IllegalStateException if the permission system was not initialized properly.
@@ -105,7 +105,7 @@ public class Permissions {
 	}
 
 	/**
-	 * Asks the permission system to preventively and asynchronoulsy cache the data of the provided player.
+	 * Asks the permission system to preventively and asynchronously cache the data of the provided player.
 	 * This can be called as soon as possible when a player connects, so the permission data of the player are
 	 * accessible as soon as possible when they are needed.
 	 * @param playerId the UUID of the player.

@@ -17,8 +17,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * Utility class providing methods to display human readable time and duration, and parse duration strings.
- *
+ * Utility class providing methods to display human-readable time and duration, and parse duration strings.
+ * <p>
  * The methods that return date and daytime are hardcoded in French.
  */
 public class TimeUtil {
@@ -37,17 +37,17 @@ public class TimeUtil {
 
 
 	/**
-	 * Provides a human readable date of the provided time, with ability to adapt the text relatively to the current
+	 * Provides a human-readable date of the provided time, with ability to adapt the text relatively to the current
 	 * time (for instance "il y a 13 minutes" (french for "13 minutes ago"))
 	 * <p>
 	 * <b>This method renders the text in French.</b>
 	 *
-	 * @param time the timestamp in milliseconds of the time to diplay.
-	 * @param showSeconds if the returned string should includes seconds (true) or not (false). To have more control
+	 * @param time the timestamp in milliseconds of the time to display.
+	 * @param showSeconds if the returned string should include seconds (true) or not (false). To have more control
 	 *                    over the precision, call {@link #relativeDateFr(long, RelativePrecision, DisplayPrecision,
 	 *                    boolean)}.
 	 * @param compactWords true to use compact words, false to use full words.
-	 * @return a human readable {@link String} representation of the provided time.
+	 * @return a human-readable {@link String} representation of the provided time.
 	 */
 	public static String relativeDateFr(long time, boolean showSeconds, boolean compactWords) {
 		return relativeDateFr(time,
@@ -58,18 +58,18 @@ public class TimeUtil {
 
 
 	/**
-	 * Provides a human readable date of the provided time, with ability to adapt the text relatively to the current
+	 * Provides a human-readable date of the provided time, with ability to adapt the text relatively to the current
 	 * time (for instance "il y a 13 minutes" (french for "13 minutes ago"))
 	 * <p>
 	 * <b>This method renders the text in French.</b>
 	 *
-	 * @param time the timestamp in milliseconds of the time to diplay.
+	 * @param time the timestamp in milliseconds of the time to display.
 	 * @param relPrecision the precision of the relative text.
-	 * @param dispPrecision the precision of the full date and time.
+	 * @param displayPrecision the precision of the full date and time.
 	 * @param compactWords true to use compact words, false to use full words.
-	 * @return a human readable {@link String} representation of the provided time.
+	 * @return a human-readable {@link String} representation of the provided time.
 	 */
-	public static String relativeDateFr(long time, RelativePrecision relPrecision, DisplayPrecision dispPrecision, boolean compactWords) {
+	public static String relativeDateFr(long time, RelativePrecision relPrecision, DisplayPrecision displayPrecision, boolean compactWords) {
 		long currentTime = System.currentTimeMillis();
 		
 		
@@ -91,27 +91,27 @@ public class TimeUtil {
 					return compactWords ? "dans moins d’1min" : "dans moins d’une minute";
 				if (timeDiffSec > -60*2) // dans 2 min
 					return compactWords ? "dans 1min" : "dans une minute";
-				if (timeDiffSec > -3600) // dans moins d’1h
+				if (timeDiffSec > -3600) // dans moins d'1 h
 					return "dans " + (-timeDiffSec/60) + (compactWords ? "min" : " minutes");
 			}
 			if (relPrecision.ordinal() >= RelativePrecision.HOURS.ordinal()) {
-				if (timeDiffSec > -3600) // dans moins d’1h
+				if (timeDiffSec > -3600) // dans moins d'1 h
 					return compactWords ? "dans moins d’1h" : "dans moins d’une heure";
-				if (timeDiffSec > -3600*2) // dans moins de 2h
+				if (timeDiffSec > -3600*2) // dans moins de 2 h
 					return compactWords ? "dans 1h" : "dans une heure";
-				if (timeDiffSec > -3600*12) // dans moins de 12h
+				if (timeDiffSec > -3600*12) // dans moins de 12 h
 					return "dans " + (-timeDiffSec/3600) + (compactWords ? "h" : " heures");
 			}
 			if (relPrecision.ordinal() >= RelativePrecision.DAYS.ordinal()) {
 				LocalDateTime nextMidnight = LocalDateTime.of(currentDateTime.getYear(), currentDateTime.getMonth(), currentDateTime.getDayOfMonth(), 0, 0).plusDays(1);
 				if (displayDateTime.isBefore(nextMidnight)) // aujourd'hui
-					return "aujourd’hui à " + dayTimeFr(time, dispPrecision);
+					return "aujourd’hui à " + dayTimeFr(time, displayPrecision);
 				if (displayDateTime.isBefore(nextMidnight.plusDays(1))) // demain
-					return "demain à " + dayTimeFr(time, dispPrecision);
+					return "demain à " + dayTimeFr(time, displayPrecision);
 				if (displayDateTime.isBefore(nextMidnight.plusDays(5))) // dans moins d'1 semaine
 					return (compactWords ? cmpDayOfWeekFormatter : dayOfWeekFormatter).format(displayDateTime) + " "
 							+ dayOfMonthFormatter.format(displayDateTime) + " à "
-							+ dayTimeFr(time, dispPrecision);
+							+ dayTimeFr(time, displayPrecision);
 			}
 
 		}
@@ -121,43 +121,43 @@ public class TimeUtil {
 				return "maintenant";
 
 			if (relPrecision == RelativePrecision.SECONDS) {
-				if (timeDiffSec < 60) // ya moins d'1 min
+				if (timeDiffSec < 60) // il y a moins d'1 min
 					return "il y a " + timeDiffSec + (compactWords ? "s" : " secondes");
 			}
 			if (relPrecision.ordinal() >= RelativePrecision.MINUTES.ordinal()) {
-				if (timeDiffSec < 60) // ya moins d'1 min
+				if (timeDiffSec < 60) // il y a moins d'1 min
 					return compactWords ? "il y a moins d’1min" : "il y a moins d’une minute";
-				if (timeDiffSec < 60*2) // ya moins de 2 min
+				if (timeDiffSec < 60*2) // il y a moins de 2 min
 					return compactWords ? "il y a 1min" : "il y a une minute";
-				if (timeDiffSec < 3600) // ya moins d'1h
+				if (timeDiffSec < 3600) // il y a moins d'1 h
 					return "il y a " + (timeDiffSec/60) + (compactWords ? "min" : " minutes");
 			}
 			if (relPrecision.ordinal() >= RelativePrecision.HOURS.ordinal()) {
-				if (timeDiffSec < 3600) // ya moins d'1h
+				if (timeDiffSec < 3600) // il y a moins d'1 h
 					return "il y a moins d’une heure";
-				if (timeDiffSec < 3600*2) // ya moins de 2h
+				if (timeDiffSec < 3600*2) // il y a moins de 2 h
 					return "il y a une heure";
-				if (timeDiffSec < 3600*12) // ya moins de 12h
+				if (timeDiffSec < 3600*12) // il y a moins de 12 h
 					return "il y a " + (timeDiffSec/3600) + " heures";
 			}
 			if (relPrecision.ordinal() >= RelativePrecision.DAYS.ordinal()) {
 				LocalDateTime lastMidnight = LocalDateTime.of(currentDateTime.getYear(), currentDateTime.getMonth(), currentDateTime.getDayOfMonth(), 0, 0);
 				if (!displayDateTime.isBefore(lastMidnight)) // aujourd'hui
-					return "aujourd’hui à " + dayTimeFr(time, dispPrecision);
+					return "aujourd’hui à " + dayTimeFr(time, displayPrecision);
 				if (!displayDateTime.isBefore(lastMidnight.minusDays(1))) // hier
-					return "hier à " + dayTimeFr(time, dispPrecision);
-				if (!displayDateTime.isBefore(lastMidnight.minusDays(6))) // ya moins d'1 semaine
+					return "hier à " + dayTimeFr(time, displayPrecision);
+				if (!displayDateTime.isBefore(lastMidnight.minusDays(6))) // il y a moins d'1 semaine
 					return (compactWords ? cmpDayOfWeekFormatter : dayOfWeekFormatter).format(displayDateTime) + " dernier à "
-							+ dayTimeFr(time, dispPrecision);
+							+ dayTimeFr(time, displayPrecision);
 			}
 
 		}
-		return fullDateFr(time, dispPrecision, true, compactWords);
+		return fullDateFr(time, displayPrecision, true, compactWords);
 
 	}
 
 	/**
-	 * Enumaration of different level of precision to display a relative time.
+	 * Enumeration of different level of precision to display a relative time.
 	 */
 	public enum RelativePrecision {
 		/**
@@ -183,7 +183,7 @@ public class TimeUtil {
 	}
 
 	/**
-	 * Enumaration of different level of precision to display a date and daytime.
+	 * Enumeration of different level of precision to display a date and daytime.
 	 */
 	public enum DisplayPrecision {
 		/**
@@ -195,11 +195,11 @@ public class TimeUtil {
 		 */
 		HOURS,
 		/**
-		 * Display the date and the time of the day up to the minute.
+		 * Display the date and the time of the day with minute precision.
 		 */
 		MINUTES,
 		/**
-		 * Display the date and the time of the day up to the second.
+		 * Display the date and the time of the day with second precision.
 		 */
 		SECONDS
 	}
@@ -211,7 +211,7 @@ public class TimeUtil {
 	 * <b>This method renders the text in French.</b>
 	 *
 	 * @param timestamp the time to represent in the returned string.
-	 * @param showSeconds if the returned string should includes seconds (true) or not (false). To have more control
+	 * @param showSeconds if the returned string should include seconds (true) or not (false). To have more control
 	 *                    over the precision, call {@link #fullDateFr(long, DisplayPrecision, boolean, boolean)}.
 	 * @param showWeekday true to show the week day, false otherwise.
 	 * @param compactWords true to use compact words, false to use full words.
@@ -269,7 +269,7 @@ public class TimeUtil {
 
 
 	/**
-	 * Converts the provided duration into a human readable {@link String}.
+	 * Converts the provided duration into a human-readable {@link String}.
 	 * @param msDuration the duration in millisecond.
 	 * @param hUnit the biggest unit of time to display.
 	 * @param lUnit the smallest unit of time to display.
@@ -334,7 +334,7 @@ public class TimeUtil {
 
 	/**
 	 * Indicate the 0-padded length of a number for the provided {@link TimeUnit}.
-	 * Will returns 3 for below-second time units, 2 for seconds, munutes and hours and 1 otherwise.
+	 * Will returns 3 for below-second time units, 2 for seconds, minutes and hours and 1 otherwise.
 	 * @param u the {@link TimeUnit}
 	 * @return the 0-padded length of a number for the provided {@link TimeUnit}.
 	 */

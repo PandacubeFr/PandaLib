@@ -1,15 +1,14 @@
 package fr.pandacube.lib.core.config;
 
+import fr.pandacube.lib.chat.ChatColorUtil;
+import fr.pandacube.lib.util.Log;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import fr.pandacube.lib.chat.ChatColorUtil;
-import fr.pandacube.lib.util.Log;
 
 /**
  * Class that loads a specific config file or directory.
@@ -17,7 +16,7 @@ import fr.pandacube.lib.util.Log;
 public abstract class AbstractConfig {
 	
 	/**
-	 * The {@link File} corresponging to this config file or directory.
+	 * The {@link File} corresponding to this config file or directory.
 	 */
 	protected final File configFile;
 	
@@ -94,7 +93,8 @@ public abstract class AbstractConfig {
 	 * @return the list of files in the config directory, or null if this config is not a directory.
 	 */
 	protected List<File> getFileList() {
-		return configFile.isDirectory() ? Arrays.asList(configFile.listFiles()) : null;
+		File[] arr = configFile.listFiles();
+		return arr != null ? List.of(arr) : null;
 	}
 	
 	
@@ -105,7 +105,7 @@ public abstract class AbstractConfig {
 	 * Splits the provided string into a list of permission nodes.
 	 * The permission nodes must be separated by {@code ";"}.
 	 * @param perms one or more permissions nodes, separated by {@code ";"}.
-	 * @return {@code null} if the parameter is null or is equal to {@code "*"}, or the string splitted using {@code ";"}.
+	 * @return {@code null} if the parameter is null or is equal to {@code "*"}, or the string split using {@code ";"}.
 	 */
 	public static List<String> splitPermissionsString(String perms) {
 		if (perms == null || perms.equals("*"))
@@ -115,9 +115,9 @@ public abstract class AbstractConfig {
 
 
 	/**
-	 * Utility method to that translate the {@code '&'} formated string to the legacy format.
+	 * Utility method to that translate the {@code '&'} formatted string to the legacy format.
 	 * @param string the string to convert.
-	 * @return a legacy formated string (using {@code '§'}).
+	 * @return a legacy formatted string (using {@code '§'}).
 	 */
 	public static String getTranslatedColorCode(String string) {
 		return ChatColorUtil.translateAlternateColorCodes('&', string);

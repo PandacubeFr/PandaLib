@@ -29,7 +29,7 @@ public abstract class BrigadierCommand<S> {
      * Returns a builder for this command.
      * Concrete class should include any element in the builder that is needed to build the command (sub-commands and
      * arguments, requirements, redirection, ...).
-     * If any of the sub-commands and arguments needs to know the {@link LiteralCommandNode} builded from the returned
+     * If any of the sub-commands and arguments needs to know the {@link LiteralCommandNode} built from the returned
      * {@link LiteralArgumentBuilder}, this can be done by overriding {@link #postBuildCommand(LiteralCommandNode)}.
      * @return a builder for this command.
      */
@@ -37,16 +37,16 @@ public abstract class BrigadierCommand<S> {
 
     /**
      * Method to override if the reference to the command node has to be known when building the subcommands.
-     * @param commandNode the command node builded from {@link #buildCommand()}.
+     * @param commandNode the command node built from {@link #buildCommand()}.
      */
     protected void postBuildCommand(LiteralCommandNode<S> commandNode) {
         // default implementation does nothing.
     }
 
     /**
-     * Method to override if this command have any aliases.
+     * Method to override if this command has any aliases.
      * @return an array of string corresponding to the aliases. This must not include the orignal command name (that
-     * is the name of the literal command node builded from {@link #buildCommand()}).
+     * is the name of the literal command node built from {@link #buildCommand()}).
      */
     protected String[] getAliases() {
         return new String[0];

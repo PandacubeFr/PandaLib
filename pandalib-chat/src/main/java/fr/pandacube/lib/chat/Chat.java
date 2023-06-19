@@ -23,6 +23,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A builder for chat components.
@@ -30,10 +31,10 @@ import net.md_5.bungee.api.chat.BaseComponent;
  * Use one of the provided static methods to create a new instance.
  * <p>
  * This class implements {@link ComponentLike} and {@link HoverEventSource} so they can be used directly in
- * Adventure API and its implentation without using the final methods of this builder.
+ * Adventure API and its implementation without using the final methods of this builder.
  * <p>
- * The unique possible concrete subclass of this class, {@link FormatableChat}, takes care of the formating of the
- * builded component. The rationale for this design is explained in the documentation of {@link FormatableChat}.
+ * The unique possible concrete subclass of this class, {@link FormatableChat}, takes care of the formatting of the
+ * built component. The rationale for this design is explained in the documentation of {@link FormatableChat}.
  */
 public abstract sealed class Chat extends ChatStatic implements HoverEventSource<Component>, ComponentLike {
 
@@ -60,7 +61,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
 
     /**
      * Builds the component into Adventure Component instance.
-     * @return the {@link Component} builded from this {@link Chat} component.
+     * @return the {@link Component} built from this {@link Chat} component.
      */
     public Component getAdv() {
         return builder.build();
@@ -68,7 +69,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
 
     /**
      * Builds the component into BungeeCord {@link BaseComponent} instance.
-     * @return the {@link BaseComponent} builded from this {@link Chat} component.
+     * @return the {@link BaseComponent} built from this {@link Chat} component.
      */
     public BaseComponent get() {
         return toBungee(getAdv());
@@ -76,27 +77,27 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
 
     /**
      * Builds the component into BungeeCord {@link BaseComponent} array.
-     * @return the {@link BaseComponent} array builded from this {@link Chat} component.
+     * @return the {@link BaseComponent} array built from this {@link Chat} component.
      */
     public BaseComponent[] getAsArray() {
         return toBungeeArray(getAdv());
     }
 
-    private static final LegacyComponentSerializer LEGACY_SERIALIZER_BUNGEE_FIENDLY = LegacyComponentSerializer.builder()
+    private static final LegacyComponentSerializer LEGACY_SERIALIZER_BUNGEE_FRIENDLY = LegacyComponentSerializer.builder()
             .hexColors()
             .useUnusualXRepeatedCharacterHexFormat()
             .build();
 
     /**
-     * Converts the builded component into legacy text.
+     * Converts the built component into legacy text.
      * @return the legacy text. RGB colors are in BungeeCord format.
      */
     public String getLegacyText() {
-        return LEGACY_SERIALIZER_BUNGEE_FIENDLY.serialize(getAdv());
+        return LEGACY_SERIALIZER_BUNGEE_FRIENDLY.serialize(getAdv());
     }
 
     /**
-     * Converts the builded component into plain text.
+     * Converts the built component into plain text.
      * @return the plain text of this component.
      */
     public String getPlainText() {
@@ -104,16 +105,16 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
     }
 
     @Override
-    public HoverEvent<Component> asHoverEvent(UnaryOperator<Component> op) {
+    public @NotNull HoverEvent<Component> asHoverEvent(@NotNull UnaryOperator<Component> op) {
         return HoverEvent.showText(op.apply(getAdv()));
     }
 
     /**
      * Builds the component into Adventure Component instance.
-     * @return the {@link Component} builded from this {@link Chat} component.
+     * @return the {@link Component} built from this {@link Chat} component.
      */
     @Override
-    public Component asComponent() {
+    public @NotNull Component asComponent() {
         return getAdv();
     }
 
@@ -284,8 +285,8 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
     public Chat thenTranslation(String key, Object... with) { return then(translation(key, with)); }
 
     /**
-     * Appends a component with the provided keybind.
-     * @param key the keybind to display.
+     * Appends a component with the provided keybinding.
+     * @param key the keybinding to display.
      * @return this.
      */
     public Chat thenKeyBind(String key) { return then(keybind(key)); }
@@ -443,19 +444,19 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
 
 
     /**
-     * Appends a component filling a line of chat (or console) with the configured decoration character and
+     * Appends a component filling a chat line with the configured decoration character and
      * color and a left-aligned text.
      * @param leftText the text aligned to the left.
-     * @return a new {@link FormatableChat} filling a line of chat (or console) with the configured decoration character
+     * @return a new {@link FormatableChat} filling a chat line with the configured decoration character
      *         and color and a left-aligned text.
      */
     public Chat thenLeftText(ComponentLike leftText) { return then(leftText(leftText, console)); }
 
     /**
-     * Appends a component filling a line of chat (or console) with the configured decoration character and
+     * Appends a component filling a chat line with the configured decoration character and
      * color and a left-aligned text.
      * @param leftText the text aligned to the left.
-     * @return a new {@link FormatableChat} filling a line of chat (or console) with the configured decoration character
+     * @return a new {@link FormatableChat} filling a chat line with the configured decoration character
      *         and color and a left-aligned text.
      * @deprecated uses Bungeecord chat API.
      */
@@ -463,19 +464,19 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
     public Chat thenLeftText(BaseComponent leftText) { return thenLeftText(chatComponent(leftText)); }
 
     /**
-     * Appends a component filling a line of chat (or console) with the configured decoration character and
+     * Appends a component filling a chat line with the configured decoration character and
      * color and a right-aligned text.
      * @param rightText the text aligned to the right.
-     * @return a new {@link FormatableChat} filling a line of chat (or console) with the configured decoration character
+     * @return a new {@link FormatableChat} filling a chat line with the configured decoration character
      *         and color and a right-aligned text.
      */
     public Chat thenRightText(ComponentLike rightText) { return then(rightText(rightText, console)); }
 
     /**
-     * Appends a component filling a line of chat (or console) with the configured decoration character and
+     * Appends a component filling a chat line with the configured decoration character and
      * color and a right-aligned text.
      * @param rightText the text aligned to the right.
-     * @return a new {@link FormatableChat} filling a line of chat (or console) with the configured decoration character
+     * @return a new {@link FormatableChat} filling a chat line with the configured decoration character
      *         and color and a right-aligned text.
      * @deprecated uses Bungeecord chat API.
      */
@@ -483,10 +484,10 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
     public Chat thenRightText(BaseComponent rightText) { return thenRightText(chatComponent(rightText)); }
 
     /**
-     * Appends a component filling a line of chat (or console) with the configured decoration character and
+     * Appends a component filling a chat line with the configured decoration character and
      * color and a centered text.
      * @param centerText the text aligned to the center.
-     * @return a new {@link FormatableChat} filling a line of chat (or console) with the configured decoration character
+     * @return a new {@link FormatableChat} filling a chat line with the configured decoration character
      *         and color and a centered text.
      */
     public Chat thenCenterText(ComponentLike centerText) {
@@ -494,10 +495,10 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
     }
 
     /**
-     * Appends a component filling a line of chat (or console) with the configured decoration character and
+     * Appends a component filling a chat line with the configured decoration character and
      * color and a centered text.
      * @param centerText the text aligned to the center.
-     * @return a new {@link FormatableChat} filling a line of chat (or console) with the configured decoration character
+     * @return a new {@link FormatableChat} filling a chat line with the configured decoration character
      *         and color and a centered text.
      * @deprecated uses Bungeecord chat API.
      */
@@ -507,8 +508,8 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
     }
 
     /**
-     * Appends a component filling a line of chat (or console) with the configured decoration character and color.
-     * @return a new {@link FormatableChat} filling a line of chat (or console) with a decoration character and color.
+     * Appends a component filling a chat line with the configured decoration character and color.
+     * @return a new {@link FormatableChat} filling a chat line with a decoration character and color.
      */
     public Chat thenFilledLine() { return then(filledLine(console)); }
 
@@ -534,11 +535,11 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
      *         .append("!").color(ChatColor.RED)
      *         .create();
      * }</pre>
-     * Here, when you call a formating method (like {@code bold(boolean)} or {@code color(ChatColor)}) after the
-     * {@code append(String)} method, the formating apply to the last sub-component appended.
+     * Here, when you call a formatting method (like {@code bold(boolean)} or {@code color(ChatColor)}) after the
+     * {@code append(String)} method, the formatting apply to the last subcomponent appended.
      * <p>
-     * In our design, we want the formating to apply to the currently builded component, not the last appended one.
-     * The purpose is to make the component structure clearer and have better control of the formating over the
+     * In our design, we want the formatting to apply to the currently built component, not the last appended one.
+     * The purpose is to make the component structure clearer and have better control of the formatting over the
      * component hierarchy.
      * Here is the equivalent of the above code, with the {@link Chat} API:
      * <pre>{@code
@@ -547,9 +548,9 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
      *         .thenText("!"); // short for .then(Chat.text("!"))
      *         // the red color for "!" is not needed because the parent component is already red.
      * }</pre>
-     * When calling {@link #then(Component) #then(...)} on a {@link FormatableChat}, the method returns itself, casted
-     * to {@link Chat}, to prevent future formating (that the programmer would think it formats the previously appended
-     * sub-component). If the formatting of the currently builded component is needed, since {@link Chat} is a sealed
+     * When calling {@link #then(Component) #then(...)} on a {@link FormatableChat}, the method returns itself, cast
+     * to {@link Chat}, to prevent future formatting (that the programmer would think it formats the previously appended
+     * subcomponent). If the formatting of the currently built component is needed, since {@link Chat} is a sealed
      * class which only subclass is {@link FormatableChat}, you can cast the builder, and use the format methods again.
      * <pre>{@code
      * Chat component = Chat.text("Hello ").red()
@@ -986,7 +987,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
     }
 
     /**
-     * Force the italic formating to be set to false if it is not explicitely set in the component.
+     * Force the italic formatting to be set to false if it is not explicitly set in the component.
      * This is useful for item lores that defaults to italic in the game UI.
      * @param c the {@link Chat} in which to set the italic property if needed.
      * @return the provided {@link Chat} instance.

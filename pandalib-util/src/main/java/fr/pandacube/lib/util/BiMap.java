@@ -10,9 +10,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 /**
- * A bi-direction map storing in a synchronized way a {@code forwardMap} that store the key to value mapping, and a
+ * A bidirectional map storing in a synchronized way a {@code forwardMap} that store the key to value mapping, and a
  * {@code backwardMap} that store the value to key mapping.
- * All the keys and value are always unique in this bi-directional map.
+ * All the keys and value are always unique in this bidirectional map.
  * This class is fully thread safe.
  * @param <K> the type of the "key"
  * @param <V> the type of the "value"
@@ -25,7 +25,7 @@ public class BiMap<K, V> implements Iterable<Entry<K, V>> {
     protected final Map<K, V> forwardMap;
 
     /**
-     * The backend bawkward map
+     * The backend backward map
      */
     protected final Map<V, K> backwardMap;
 
@@ -45,14 +45,14 @@ public class BiMap<K, V> implements Iterable<Entry<K, V>> {
     }
 
     /**
-     * Create a new bi-directional map with {@link HashMap} as the two backend maps.
+     * Create a new bidirectional map with {@link HashMap} as the two backend maps.
      */
     public BiMap() {
     	this(HashMap::new);
 	}
 
     /**
-     * Create a new bi-directional map with {@link HashMap} as the two backend maps, and filled with the provided source
+     * Create a new bidirectional map with {@link HashMap} as the two backend maps, and filled with the provided source
      * {@link Map}.
      * @param source the source to fill the new {@link BiMap}.
      */
@@ -72,9 +72,9 @@ public class BiMap<K, V> implements Iterable<Entry<K, V>> {
     }
 
     /**
-     * Associate the provided key and value to each other in this bi-directional map.
+     * Associate the provided key and value to each other in this bidirectional map.
      * Since the {@link BiMap} cannot have duplicate keys or values: if a key is already present, the currently mapped
-     * value will be removed from the map. Also if a value is already present, the currently mapped key will also be
+     * value will be removed from the map. Also, if a value is already present, the currently mapped key will also be
      * removed.
      * @param k the key.
      * @param v the value.
@@ -92,9 +92,9 @@ public class BiMap<K, V> implements Iterable<Entry<K, V>> {
 
 
     /**
-     * Associate the provided key and value to each other in this bi-directional map.
+     * Associate the provided key and value to each other in this bidirectional map.
      * Since the {@link BiMap} cannot have duplicate keys or values: if a key is already present, the currently mapped
-     * value will be removed from the map. Also if a value is already present, the currently mapped key will also be
+     * value will be removed from the map. Also, if a value is already present, the currently mapped key will also be
      * removed.
      * @param entry the entry with a key and value.
      */
@@ -103,8 +103,8 @@ public class BiMap<K, V> implements Iterable<Entry<K, V>> {
     }
 
     /**
-     * Put the content of the provided map into this bi-directional map.
-     * This methods will call the {@link #put(Entry)} method successively in the order of the provided Map’s iterator.
+     * Put the content of the provided map into this bidirectional map.
+     * This method will call the {@link #put(Entry)} method successively in the order of the provided Map’s iterator.
      * @param source the source map.
      */
     public void putAll(Map<? extends K, ? extends V> source) {
@@ -187,7 +187,7 @@ public class BiMap<K, V> implements Iterable<Entry<K, V>> {
 
     /**
      * Returns an unmodifiable {@link Set} view of this map.
-     * It’s iteration order will depends on the implementation of the {@code forwardMap}.
+     * It’s iteration order will depend on the implementation of the {@code forwardMap}.
      * @return an unmodifiable {@link Set} view of this map.
      * @see Map#entrySet()
      */
@@ -197,7 +197,7 @@ public class BiMap<K, V> implements Iterable<Entry<K, V>> {
 
     /**
      * Returns an iterator of this map.
-     * It’s iteration order will depends on the implementation of the {@code forwardMap}.
+     * It’s iteration order will depend on the implementation of the {@code forwardMap}.
      * @return an iterator of this map.
      * @see Map#entrySet()
      * @see Set#iterator()
@@ -209,7 +209,7 @@ public class BiMap<K, V> implements Iterable<Entry<K, V>> {
 
     /**
      * Returns an unmodifiable {@link Set} view of the keys contained in this map.
-     * It’s iteration order will depends on the implementation of the {@code forwardMap}’s key set.
+     * It’s iteration order will depend on the implementation of the {@code forwardMap}’s key set.
      * @return an unmodifiable {@link Set} view of the keys contained in this map.
      * @see Map#keySet()
      */
@@ -219,7 +219,7 @@ public class BiMap<K, V> implements Iterable<Entry<K, V>> {
 
     /**
      * Returns an unmodifiable {@link Set} view of the values contained in this map.
-     * It’s iteration order will depends on the implementation of the {@code backwardMap}’s key set.
+     * It’s iteration order will depend on the implementation of the {@code backwardMap}’s key set.
      * @return an unmodifiable {@link Set} view of the values contained in this map.
      * @see Map#keySet()
      */
@@ -228,16 +228,16 @@ public class BiMap<K, V> implements Iterable<Entry<K, V>> {
     }
 
     /**
-     * Returns an unmodifiable {@link Map} view of the {@code forwardMap} of this bi-directional map.
-     * It’s iteration order will depends on the implementation of the {@code forwardMap}.
-     * @return an unmodifiable {@link Map} view of the {@code forwardMap} of this bi-directional map.
+     * Returns an unmodifiable {@link Map} view of the {@code forwardMap} of this bidirectional map.
+     * It’s iteration order will depend on the implementation of the {@code forwardMap}.
+     * @return an unmodifiable {@link Map} view of the {@code forwardMap} of this bidirectional map.
      */
     public Map<K, V> asMap() {
     	return Collections.unmodifiableMap(forwardMap);
     }
 
     /**
-     * Create a reversed view of this bi-directional map.
+     * Create a reversed view of this bidirectional map.
      * Since the returned {@link BiMap} is a view of this {@link BiMap}, any change to either of those will affect both
      * of them. Also, calling {@code bimap.reversedView().reversedView()} will return the original instance
      * {@code bimap} since calling this method will cache each map into the respective reversed view.

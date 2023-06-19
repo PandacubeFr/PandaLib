@@ -12,7 +12,7 @@ public class ChunkPos extends ReflectWrapper {
     public static final ReflectConstructor<?> CONSTRUCTOR = wrapEx(() -> MAPPING.runtimeReflect().constructor(int.class, int.class));
 
     public ChunkPos(int x, int z) {
-        this(wrapReflectEx(() -> CONSTRUCTOR.instanciate(x, z)));
+        this(wrapReflectEx(() -> CONSTRUCTOR.instantiate(x, z)));
     }
 
     protected ChunkPos(Object obj) {

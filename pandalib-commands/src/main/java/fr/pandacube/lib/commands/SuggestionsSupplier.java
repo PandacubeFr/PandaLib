@@ -14,7 +14,7 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 /**
- * Functionnal interface providing suggestions for an argument of a command.
+ * Functional interface providing suggestions for an argument of a command.
  * @param <S> the type of the command sender.
  */
 @FunctionalInterface
@@ -66,7 +66,7 @@ public interface SuggestionsSupplier<S> {
 	 * Filter the provided {@link Stream} of string according to the provided token, using the filter returned by {@link #filter(String)},
 	 * then returns the strings collected into a {@link List}.
 	 * <p>
-	 * This methods consume the provided stream, so will not be usable anymore.
+	 * This method consume the provided stream, so will not be usable anymore.
 	 * @param stream the stream to filter and collet.
 	 * @param token the token to consider for filtering.
 	 * @return the stream, filtered and collected into a {@link List}.
@@ -505,7 +505,7 @@ public interface SuggestionsSupplier<S> {
 	/**
 	 * Creates a new {@link SuggestionsSupplier} containing all the suggestions of this instance,
 	 * but if this list is still empty, returns the suggestions from the provided one.
-	 * @param other another {@link SuggestionsSupplier} to fallback to.
+	 * @param other another {@link SuggestionsSupplier} to fall back to.
 	 * @return a new {@link SuggestionsSupplier}.
 	 */
 	default SuggestionsSupplier<S> orIfEmpty(SuggestionsSupplier<S> other) {

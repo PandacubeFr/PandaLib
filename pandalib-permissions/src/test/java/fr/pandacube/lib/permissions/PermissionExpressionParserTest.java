@@ -1,16 +1,16 @@
 package fr.pandacube.lib.permissions;
 
-import fr.pandacube.lib.permissions.PermissionExpressionParser.LitteralPermissionTester;
-import org.junit.Before;
+import fr.pandacube.lib.permissions.PermissionExpressionParser.LiteralPermissionTester;
 import org.junit.Test;
 
 import static fr.pandacube.lib.permissions.PermissionExpressionParser.evaluate;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class PermissionExpressionParserTest {
 
-    java.util.List<String> pList = java.util.Arrays.asList("p1.cmd", "p1.toto", "p2.lol");
-    LitteralPermissionTester tester = p -> pList.contains(p);
+    final java.util.List<String> pList = java.util.Arrays.asList("p1.cmd", "p1.toto", "p2.lol");
+    final LiteralPermissionTester tester = pList::contains;
 
     @Test
     public void evaluateTrue() {

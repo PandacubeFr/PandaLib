@@ -5,6 +5,7 @@ import fr.pandacube.lib.util.Log;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The console command sender.
@@ -31,7 +32,7 @@ public class CLIConsoleCommandSender implements CLICommandSender {
     }
 
     @Override
-    public void sendMessage(Identity source, Component message, MessageType type) {
+    public void sendMessage(@NotNull Identity source, @NotNull Component message, @NotNull MessageType type) {
         sendMessage(Chat.chatComponent(message).getLegacyText());
     }
 }

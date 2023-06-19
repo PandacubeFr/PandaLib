@@ -60,7 +60,7 @@ public class EnumUtil {
 	 *
 	 * @param enumType the class of the enum in which to search
 	 * @param search the case-insensitive name of the enum value to return.
-	 * @return the element found in the enum, or null if not found or if the provideid type is not an enum.
+	 * @return the element found in the enum, or null if not found or if the provided type is not an enum.
 	 */
 	public static Enum<?> searchUncheckedEnum(Class<?> enumType, String search) {
 		if (!enumType.isEnum())

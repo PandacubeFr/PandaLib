@@ -24,7 +24,8 @@ public class RotatedLogsBackupProcess extends BackupProcess {
      * @param inNewThread tells if this process should be run in a separate thread (true) or in the same thread handling
      *                    the backup manager (false).
      * @param sourceLogDir the directory where the rotated log files are stored, usually {@code ./logs/}.
-     * @param logFileRegexPattern the pattern to match the rotated log files (usually dated log files, excuding the current log file).
+     * @param logFileRegexPattern the pattern to match the rotated log files (usually dated log files, excluding the
+     *                            current log file).
      */
     public RotatedLogsBackupProcess(BackupManager bm, boolean inNewThread, File sourceLogDir, String logFileRegexPattern) {
         super(bm, "logs");

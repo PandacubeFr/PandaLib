@@ -123,7 +123,7 @@ public interface AbstractWS {
      * {@link PayloadRegistry#arbitraryToString(String, Object, boolean)}.
      * @param type the type.
      * @param obj the object to Jsonify.
-     * @param serializeNulls if null propreties must be included in the json object.
+     * @param serializeNulls if null properties must be included in the json object.
      * @throws IOException if an IO error occurs when sending the data.
      * @throws JsonParseException if the json is invalid.
      * @see PayloadRegistry#arbitraryToString(String, Object, boolean)
@@ -137,7 +137,7 @@ public interface AbstractWS {
      * {@link PayloadRegistry#arbitraryToString(String, Object, boolean)}.
      * @param type the type.
      * @param obj the object to Jsonify.
-     * @param serializeNulls if null propreties must be included in the json object.
+     * @param serializeNulls if null properties must be included in the json object.
      * @return true if the data is sent successfully, false if an IO error occurs.
      * @see PayloadRegistry#arbitraryToString(String, Object, boolean)
      */
@@ -225,7 +225,7 @@ public interface AbstractWS {
      * Utility method to wrap sending operation into a try-catch.
      * @param run the sending operation that may throw an {@link IOException}.
      * @param errorMessage the error message to log if the runnable throws an {@link IOException}.
-     * @return true if the data if the runnable is executed successfully, false if an IO error occurs.
+     * @return true if the runnable is executed successfully, false if an IO error occurs.
      */
     default boolean trySend(RunnableException<IOException> run, String errorMessage) {
         try {
@@ -244,7 +244,7 @@ public interface AbstractWS {
      */
 
     /**
-     * Logs the provided message with logger level {@link Level#INFO}, prefixed with infos avout this web-socket.
+     * Logs the provided message with logger level {@link Level#INFO}, prefixed with infos about this web-socket.
      * @param message the message to log.
      */
     default void log(String message) {
@@ -252,7 +252,7 @@ public interface AbstractWS {
     }
 
     /**
-     * Logs the provided message with logger level {@link Level#SEVERE}, prefixed with infos avout this web-socket.
+     * Logs the provided message with logger level {@link Level#SEVERE}, prefixed with infos about this web-socket.
      * @param message the message to log.
      */
     default void logError(String message) {
@@ -260,7 +260,7 @@ public interface AbstractWS {
     }
 
     /**
-     * Logs the provided message and {@link Throwable} with logger level {@link Level#SEVERE}, prefixed with infos avout this web-socket.
+     * Logs the provided message and {@link Throwable} with logger level {@link Level#SEVERE}, prefixed with infos about this web-socket.
      * @param message the message to log.
      * @param t the throwable to log.
      */
@@ -269,7 +269,8 @@ public interface AbstractWS {
     }
 
     /**
-     * Gets an identifier for this web-socket, used for logging. May be the remote IP:port or URI.
+     * Gets an identifier for this web-socket, used for logging.
+     * It may be the remote IP:port or URI.
      * @return an identifier for this web-socket.
      */
     String getRemoteIdentifier();

@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * Abstract class that holds a Brigadier {@link CommandDispatcher} instance.
- * Subclasses contains logic to integrate this commands dispatcher into their environment (like Bungee or CLI app).
+ * Subclasses contain logic to integrate this commands dispatcher into their environment (like Bungee or CLI app).
  * @param <S> the command source (or command sender) type.
  */
 public abstract class BrigadierDispatcher<S> {
@@ -43,7 +43,7 @@ public abstract class BrigadierDispatcher<S> {
     /**
      * Executes the provided command as the provided sender.
      * @param sender the command sender.
-     * @param commandWithoutSlash the command, without the eventual slash at the begining.
+     * @param commandWithoutSlash the command, without the eventual slash at the beginning.
      * @return the value returned by the executed command.
      */
     public int execute(S sender, String commandWithoutSlash) {
