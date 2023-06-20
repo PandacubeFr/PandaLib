@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -20,6 +21,8 @@ import net.kyori.adventure.text.format.TextDecoration.State;
 import net.md_5.bungee.api.ChatColor;
 
 import fr.pandacube.lib.chat.Chat.FormatableChat;
+
+import static fr.pandacube.lib.chat.ChatStatic.chat;
 
 /**
  * Provides various methods and properties to manipulate text displayed in chat and other parts of the game.
@@ -127,7 +130,7 @@ public class ChatUtil {
                 pagesToDisplay.add(i);
         }
 
-        Chat d = ChatStatic.chat().thenLegacyText(prefix);
+        Chat d = chat().thenLegacyText(prefix);
         boolean first = true;
         int previous = 0;
 
@@ -160,6 +163,34 @@ public class ChatUtil {
 
 
         return d;
+    }
+
+
+
+
+
+
+    /**
+     * Do like {@link String#join(CharSequence, Iterable)}, but for components, and the last separator is different from
+     * the others. It is useful when enumerating things in a sentence, for instance :
+     * <code>"a thing<u>, </u>a thing<u>and </u>a thing"</code>
+     * (the coma being the usual separator, and {@code " and "} being the final separator).
+     * @param regularSeparator the separator used everywhere except between the two last components to join.
+     * @param finalSeparator the separator used between the two last components to join.
+     * @param elements the components to join.
+     * @return a new {@link Chat} instance with all the provided {@code component} joined using the separators.
+     */
+    public static Chat joinGrammatically(ComponentLike regularSeparator, ComponentLike finalSeparator, List<ComponentLike> elements) {
+        int size = elements == null ? 0 : elements.size();
+        int last = size - 1;
+        Chat c = chat();
+        for (int i = 0; i < size; i++) {
+            if (i > 0) {
+                c.then(i < last ? regularSeparator : finalSeparator);
+            }
+            c.then(elements.get(i));
+        }
+        return c;
     }
 
 
@@ -416,7 +447,7 @@ public class ChatUtil {
         // create the lines with appropriate spacing
         List<Component> spacedRows = new ArrayList<>(data.size());
         for (List<Component> row : data) {
-            Chat spacedRow = Chat.chat();
+            Chat spacedRow = chat();
             for (int i = 0; i < row.size() - 1; i++) {
                 int w = componentWidth(row.get(i), console);
                 int padding = nbPixelPerColumn.get(i) - w;

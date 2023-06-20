@@ -28,18 +28,6 @@ public class StringUtil {
 	 * @param string the character sequence to search into.
 	 * @param character the character to count.
 	 * @return the number of occurrence of
-	 * @deprecated Because it uses snake_case naming convention. Use {@link #countOccurrences(CharSequence, char)} instead.
-	 */
-	@Deprecated(forRemoval = true, since = "2022-07-26")
-	public static int char_count(CharSequence string, char character) {
-		return countOccurrences(string, character);
-	}
-
-	/**
-	 * Counts the number of occurrence of a specified character in a string.
-	 * @param string the character sequence to search into.
-	 * @param character the character to count.
-	 * @return the number of occurrence of
 	 */
 	public static int countOccurrences(CharSequence string, char character) {
 		int count = 0;
@@ -54,12 +42,13 @@ public class StringUtil {
 
 	/**
 	 * Do like {@link String#join(CharSequence, Iterable)}, but the last separator is different from the others.
-	 * It is useful when enumerating thins in a sentence, for instance : <code>"a thing<u>, </u>a thing<u> and </u>a thing"</code>
+	 * It is useful when enumerating things in a sentence, for instance :
+	 * <code>"a thing<u>, </u>a thing<u> and </u>a thing"</code>
 	 * (the coma being the usual separator, and {@code " and "} being the final separator).
 	 * @param regularSeparator the separator used everywhere except between the two last strings to join.
 	 * @param finalSeparator the separator used between the two last strings to join.
 	 * @param strings the strings to join.
-	 * @return a new string will all the provided {@code strings} joined using the separators.
+	 * @return a new string with all the provided {@code strings} joined using the separators.
 	 */
 	public static String joinGrammatically(CharSequence regularSeparator, CharSequence finalSeparator, List<String> strings) {
 	    int size = strings == null ? 0 : strings.size();
