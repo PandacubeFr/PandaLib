@@ -180,15 +180,38 @@ public class ChatUtil {
      * @param elements the components to join.
      * @return a new {@link Chat} instance with all the provided {@code component} joined using the separators.
      */
-    public static Chat joinGrammatically(ComponentLike regularSeparator, ComponentLike finalSeparator, List<ComponentLike> elements) {
+    public static FormatableChat joinGrammatically(ComponentLike regularSeparator, ComponentLike finalSeparator, List<? extends ComponentLike> elements) {
         int size = elements == null ? 0 : elements.size();
         int last = size - 1;
-        Chat c = chat();
-        for (int i = 0; i < size; i++) {
-            if (i > 0) {
-                c.then(i < last ? regularSeparator : finalSeparator);
+        return switch (size) {
+            case 0, 1, 2 -> join(finalSeparator, elements);
+            default -> (FormatableChat) join(regularSeparator, elements.subList(0, last))
+                    .then(finalSeparator)
+                    .then(elements.get(last));
+        };
+    }
+
+
+
+
+
+
+    /**
+     * Do like {@link String#join(CharSequence, Iterable)}, but for components.
+     * @param separator the separator used everywhere except between the two last components to join.
+     * @return a new {@link Chat} instance with all the provided {@code component} joined using the separators.
+     */
+    public static FormatableChat join(ComponentLike separator, Iterable<? extends ComponentLike> elements) {
+        FormatableChat c = chat();
+        if (elements == null)
+            return c;
+        boolean first = true;
+        for (ComponentLike el : elements) {
+            if (!first) {
+                c.then(separator);
             }
-            c.then(elements.get(i));
+            c.then(el);
+            first = false;
         }
         return c;
     }
