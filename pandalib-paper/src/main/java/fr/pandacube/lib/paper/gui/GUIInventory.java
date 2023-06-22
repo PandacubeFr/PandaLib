@@ -1,17 +1,8 @@
 package fr.pandacube.lib.paper.gui;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.function.Consumer;
-
-import com.google.common.collect.ImmutableMap;
+import fr.pandacube.lib.chat.Chat;
 import fr.pandacube.lib.paper.PandaLibPaper;
-import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -21,19 +12,14 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import fr.pandacube.lib.chat.Chat;
-import fr.pandacube.lib.paper.util.ItemStackBuilder;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * An inventory based GUI.
  */
 public class GUIInventory implements Listener {
-
-	/**
-	 * Used as parameter of {@link #buildButton(ItemStack, Integer, ComponentLike, List, Map)} to indicate that a button should
-	 * shine like an enchanted object, without showing enchant information in the hover text.
-	 */
-	public static final Map<Enchantment, Integer> FAKE_ENCHANT = ImmutableMap.of(Enchantment.DURABILITY, 1);
 
 	private final Player player;
 	private final Inventory inv;
@@ -204,72 +190,7 @@ public class GUIInventory implements Listener {
 	}
 	
 	
-	
-	
 
-	
-	
-	
-	
-
-	public static ItemStack buildButton(ItemStack base, Integer amount, ComponentLike displayName,
-										List<? extends ComponentLike> lores, Map<Enchantment, Integer> enchantments) {
-		
-		ItemStackBuilder iStackBuilder = ItemStackBuilder.of(base);
-		
-		if (amount != null)
-			iStackBuilder.amount(amount);
-		if (displayName != null)
-			iStackBuilder.displayName(displayName);
-		if (lores != null)
-			iStackBuilder.lore(lores);
-		if (enchantments != null) {
-			if (enchantments == FAKE_ENCHANT)
-				iStackBuilder.fakeEnchant();
-			else {
-				for (Entry<Enchantment, Integer> e : enchantments.entrySet()) {
-					iStackBuilder.enchant(e.getKey(), e.getValue());
-				}
-			}
-		}
-		
-		return iStackBuilder.build();
-	}
-	public static ItemStack buildButton(ItemStack base, ComponentLike displayName, List<? extends ComponentLike> lores, Map<Enchantment, Integer> enchantments) {
-		return buildButton(base, null, displayName, lores, enchantments);
-	}
-	public static ItemStack buildButton(ItemStack base, ComponentLike displayName, Map<Enchantment, Integer> enchantments) {
-		return buildButton(base, null, displayName, null, enchantments);
-	}
-	public static ItemStack buildButton(ItemStack base, Integer amount, ComponentLike displayName, List<? extends ComponentLike> lores) {
-		return buildButton(base, amount, displayName, lores, null);
-	}
-	public static ItemStack buildButton(ItemStack base, ComponentLike displayName, List<? extends ComponentLike> lores) {
-		return buildButton(base, null, displayName, lores, null);
-	}
-	public static ItemStack buildButton(ItemStack base, ComponentLike displayName) {
-		return buildButton(base, null, displayName, null, null);
-	}
-
-
-	public static ItemStack buildButton(Material m, ComponentLike displayName, List<? extends ComponentLike> lores, Map<Enchantment, Integer> enchantments) {
-		return buildButton(new ItemStack(m), null, displayName, lores, enchantments);
-	}
-	public static ItemStack buildButton(Material m, ComponentLike displayName, Map<Enchantment, Integer> enchantments) {
-		return buildButton(new ItemStack(m), null, displayName, null, enchantments);
-	}
-	public static ItemStack buildButton(Material m, ComponentLike displayName, List<? extends ComponentLike> lores) {
-		return buildButton(new ItemStack(m), null, displayName, lores, null);
-	}
-	public static ItemStack buildButton(Material m, ComponentLike displayName) {
-		return buildButton(new ItemStack(m), null, displayName, null, null);
-	}
-	
-	
-	
-
-
-	
 	
 
 	

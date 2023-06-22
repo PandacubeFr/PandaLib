@@ -79,10 +79,6 @@ public class ItemStackBuilder {
 	private ItemMeta getOrInitMeta() {
 		return (cachedMeta != null) ? cachedMeta : (cachedMeta = stack.getItemMeta());
 	}
-	
-	private void updateMeta() {
-		stack.setItemMeta(cachedMeta);
-	}
 
 	public ItemStackBuilder meta(Consumer<ItemMeta> metaUpdater) {
 		return meta(metaUpdater, ItemMeta.class);
@@ -148,30 +144,57 @@ public class ItemStackBuilder {
 			return this;
 		return addLoreAfter(Arrays.asList(lores));
 	}
-	
+
+	/**
+	 * Supports unsafe enchants.
+	 */
 	public ItemStackBuilder enchant(Enchantment enchantment, int level) {
 		return meta(m -> m.addEnchant(enchantment, level, true));
 	}
-	
+
 	public ItemStackBuilder flags(ItemFlag... flags) {
-		return meta(m -> m.addItemFlags(flags));
+		return flags(true, flags);
 	}
-	
+
+	public ItemStackBuilder flags(boolean add, ItemFlag... flags) {
+		return add ? meta(m -> m.addItemFlags(flags))
+				: meta(m -> m.removeItemFlags(flags));
+	}
+
 	public ItemStackBuilder hideEnchants() {
-		return flags(ItemFlag.HIDE_ENCHANTS);
+		return hideEnchants(true);
 	}
-	
+
+	public ItemStackBuilder hideEnchants(boolean hide) {
+		return flags(hide, ItemFlag.HIDE_ENCHANTS);
+	}
+
 	public ItemStackBuilder hideAttributes() {
-		return flags(ItemFlag.HIDE_ATTRIBUTES);
+		return hideAttributes(true);
+	}
+
+	public ItemStackBuilder hideAttributes(boolean hide) {
+		return flags(hide, ItemFlag.HIDE_ATTRIBUTES);
 	}
 
 	public ItemStackBuilder fakeEnchant() {
-		enchant(Enchantment.DURABILITY, 1);
-		return hideEnchants();
+		return fakeEnchant(true);
+	}
+
+	public ItemStackBuilder fakeEnchant(boolean apply) {
+		if (apply) {
+			enchant(Enchantment.DURABILITY, 1);
+			return hideEnchants();
+		}
+		return this;
 	}
 
 	public ItemStackBuilder unbreakable() {
-		return meta(m -> m.setUnbreakable(true));
+		return unbreakable(true);
+	}
+
+	public ItemStackBuilder unbreakable(boolean unbreakable) {
+		return meta(m -> m.setUnbreakable(unbreakable));
 	}
 
 	public ItemStackBuilder canDestroy(Set<Material> destroyable) {

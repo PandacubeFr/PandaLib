@@ -173,7 +173,7 @@ public class ChatUtil {
     /**
      * Do like {@link String#join(CharSequence, Iterable)}, but for components, and the last separator is different from
      * the others. It is useful when enumerating things in a sentence, for instance :
-     * <code>"a thing<u>, </u>a thing<u>and </u>a thing"</code>
+     * <code>"a thing<u>, </u>a thing<u> and </u>a thing"</code>
      * (the coma being the usual separator, and {@code " and "} being the final separator).
      * @param regularSeparator the separator used everywhere except between the two last components to join.
      * @param finalSeparator the separator used between the two last components to join.
