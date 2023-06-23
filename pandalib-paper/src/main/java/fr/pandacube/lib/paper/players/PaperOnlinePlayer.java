@@ -123,12 +123,14 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
      */
 
     @Override
-    PaperClientOptions getClientOptions();
+    default PaperClientOptions getClientOptions() {
+        return new PaperClientOptions(this);
+    }
 
     /**
      * Provides various configuration values of the Minecraft client.
      */
-    abstract class PaperClientOptions implements AbstractOnlinePlayer.ClientOptions {
+    class PaperClientOptions implements AbstractOnlinePlayer.ClientOptions {
 
         private final PaperOnlinePlayer op;
 
@@ -198,8 +200,8 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
         }
 
         @Override
-        public boolean isTextFilteringEnabled() { // needs reflection to get the actual value
-            return false;
+        public boolean isTextFilteringEnabled() {
+            return op.getBukkitPlayer().getClientOption(ClientOption.TEXT_FILTERING_ENABLED);
         }
 
         @Override
