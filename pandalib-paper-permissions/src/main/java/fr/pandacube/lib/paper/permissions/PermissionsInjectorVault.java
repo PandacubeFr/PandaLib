@@ -3,6 +3,8 @@ package fr.pandacube.lib.paper.permissions;
 import fr.pandacube.lib.permissions.PermGroup;
 import fr.pandacube.lib.permissions.Permissions;
 import fr.pandacube.lib.util.Log;
+import net.milkbowl.vault.chat.Chat;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.ServicePriority;
@@ -10,6 +12,8 @@ import org.bukkit.plugin.ServicePriority;
 import java.util.List;
 
 /* package */ class PermissionsInjectorVault {
+
+	private static final ServicePriority servicePriority = ServicePriority.Highest;
 	
 	public static PandaVaultPermission permInstance;
 	
@@ -17,13 +21,32 @@ import java.util.List;
 		try {
 			permInstance = new PandaVaultPermission();
 			PandaVaultChat chat = new PandaVaultChat(permInstance);
-			Bukkit.getServicesManager().register(net.milkbowl.vault.permission.Permission.class, permInstance,
-					PandalibPaperPermissions.plugin, ServicePriority.High);
-			Bukkit.getServicesManager().register(net.milkbowl.vault.chat.Chat.class, chat,
-					PandalibPaperPermissions.plugin, ServicePriority.High);
+			Bukkit.getServicesManager().register(Permission.class, permInstance,
+					PandalibPaperPermissions.plugin, servicePriority);
+			Bukkit.getServicesManager().register(Chat.class, chat,
+					PandalibPaperPermissions.plugin, servicePriority);
 			Log.info("Providing permissions and chat prefix/suffix through Vault API.");
+			Bukkit.getScheduler().runTaskLater(PandalibPaperPermissions.plugin,
+					PermissionsInjectorVault::checkServicesRegistration, 1);
 		} catch (NoClassDefFoundError e) {
 			Log.warning("Vault plugin not detected. Not using it to provide permissions and prefix/suffix." + e.getMessage());
+		}
+	}
+
+
+	private static void checkServicesRegistration() {
+		Permission permService = Bukkit.getServicesManager().load(Permission.class);
+		if (!(permService instanceof PandaVaultPermission)) {
+			Log.severe("Check for Vault Permission service failed. "
+					+ (permService == null ? "Service manager returned null."
+					: ("Returned service is " + permService.getName() + " (" + permService.getClass().getName() + ").")));
+
+		}
+		Chat chatService = Bukkit.getServicesManager().load(Chat.class);
+		if (!(chatService instanceof PandaVaultChat)) {
+			Log.severe("Check for Vault Chat service failed. "
+					+ (chatService == null ? "Service manager returned null."
+					: ("Returned service is " + chatService.getName() + " (" + chatService.getClass().getName() + ").")));
 		}
 	}
 
@@ -31,7 +54,7 @@ import java.util.List;
 
 
 
-	/* package */ static class PandaVaultPermission extends net.milkbowl.vault.permission.Permission {
+	/* package */ static class PandaVaultPermission extends Permission {
 		
 		private PandaVaultPermission() { }
 
@@ -189,9 +212,9 @@ import java.util.List;
 	}
 	
 	
-	private static class PandaVaultChat extends net.milkbowl.vault.chat.Chat {
+	private static class PandaVaultChat extends Chat {
 
-		public PandaVaultChat(net.milkbowl.vault.permission.Permission perms) {
+		public PandaVaultChat(Permission perms) {
 			super(perms);
 		}
 
