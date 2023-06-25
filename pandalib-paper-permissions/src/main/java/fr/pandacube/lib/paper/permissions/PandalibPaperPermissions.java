@@ -27,7 +27,7 @@ import fr.pandacube.lib.util.Log;
 
 /**
  * Class that integrates the {@code pandalib-permissions} system into a Bukkit/Spigot/Paper instance.
- * The integration is made when calling {@link #init(JavaPlugin, String)}.
+ * The integration is made when calling {@link #onLoad(JavaPlugin, String)} and {@link #onEnable()}.
  * The permission system must be initialized first, using {@link Permissions#init(Function)}.
  * Don’t forget that the permission system also needs a connection to a database, so don’t forget to call
  * {@link DB#init(DBConnection, String)} with the appropriate parameters before anything.
@@ -38,18 +38,26 @@ public class PandalibPaperPermissions implements Listener {
 	/* package */ static String serverName;
 	/* package */ static final Map<String, String> permissionMap = new HashMap<>();
 
+
 	/**
-	 * Integrates the {@code pandalib-permissions} system into the Bukkit server.
+	 * Integrates the {@code pandalib-permissions} system into the Bukkit server, during the loading phase of the plugin.
 	 * @param plugin a Bukkit plugin.
 	 * @param serverName the name of the current server, used to fetch server specific permissions. Cannot be null.
 	 *                   If this server in not in a multiserver configuration, use a dummy server name, like
 	 *                   {@code ""} (empty string).
 	 */
-	public static void init(JavaPlugin plugin, String serverName) {
+	public static void onLoad(JavaPlugin plugin, String serverName) {
 		PandalibPaperPermissions.plugin = plugin;
 		PandalibPaperPermissions.serverName = serverName;
+		PermissionsInjectorVault.onLoad();
+	}
+
+	/**
+	 * Integrates the {@code pandalib-permissions} system into the Bukkit server, during the enabling phase of the plugin.
+	 */
+	public static void onEnable() {
 		PermissionsInjectorBukkit.inject(Bukkit.getConsoleSender());
-		PermissionsInjectorVault.inject();
+		PermissionsInjectorVault.onEnable();
 		PermissionsInjectorWEPIF.inject();
 
 		Bukkit.getPluginManager().registerEvents(new PandalibPaperPermissions(), plugin);

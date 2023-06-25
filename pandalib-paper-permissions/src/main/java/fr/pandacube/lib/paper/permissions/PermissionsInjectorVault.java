@@ -16,8 +16,11 @@ import java.util.List;
 	private static final ServicePriority servicePriority = ServicePriority.Highest;
 	
 	public static PandaVaultPermission permInstance;
-	
-	public static void inject() {
+
+	/**
+	 * Vault injection needs to happen as soon as possible so other plugins detects it when they load.
+	 */
+	public static void onLoad() {
 		try {
 			permInstance = new PandaVaultPermission();
 			PandaVaultChat chat = new PandaVaultChat(permInstance);
@@ -26,11 +29,14 @@ import java.util.List;
 			Bukkit.getServicesManager().register(Chat.class, chat,
 					PandalibPaperPermissions.plugin, servicePriority);
 			Log.info("Providing permissions and chat prefix/suffix through Vault API.");
-			Bukkit.getScheduler().runTaskLater(PandalibPaperPermissions.plugin,
-					PermissionsInjectorVault::checkServicesRegistration, 1);
 		} catch (NoClassDefFoundError e) {
 			Log.warning("Vault plugin not detected. Not using it to provide permissions and prefix/suffix." + e.getMessage());
 		}
+	}
+	
+	public static void onEnable() {
+		Bukkit.getScheduler().runTaskLater(PandalibPaperPermissions.plugin,
+				PermissionsInjectorVault::checkServicesRegistration, 1);
 	}
 
 
@@ -68,6 +74,11 @@ import java.util.List;
 			return PandalibPaperPermissions.plugin != null && PandalibPaperPermissions.plugin.isEnabled();
 		}
 
+		private void checkEnabled() {
+			if (!isEnabled())
+				throw new IllegalStateException("Cannot provide permission service because plugin is disabled.");
+		}
+
 		@Override
 		public boolean hasSuperPermsCompat() {
 			return true;
@@ -81,6 +92,7 @@ import java.util.List;
 		
 		@Override
 		public boolean playerHas(String world, OfflinePlayer player, String permission) {
+			checkEnabled();
 			Boolean res = Permissions.getPlayer(player.getUniqueId()).hasPermission(permission, PandalibPaperPermissions.serverName, world);
 			if (res != null)
 				return res;
@@ -100,6 +112,7 @@ import java.util.List;
 
 		@Override
 		public boolean playerAdd(String world, OfflinePlayer player, String permission) {
+			checkEnabled();
 			String server = PandalibPaperPermissions.serverName;
 			Permissions.getPlayer(player.getUniqueId()).addSelfPermission(permission, server, world);
 			Log.info("A plugin added permission " + permission + " (server=" + server + ",world=" + world + ") to player " + player.getName() + " through Vault.");
@@ -114,6 +127,7 @@ import java.util.List;
 
 		@Override
 		public boolean playerRemove(String world, OfflinePlayer player, String permission) {
+			checkEnabled();
 			String server = PandalibPaperPermissions.serverName;
 			Permissions.getPlayer(player.getUniqueId()).removeSelfPermission(permission, server, world);
 			Log.info("A plugin removed permission " + permission + " (server=" + server + ",world=" + world + ") to player " + player.getName() + " through Vault.");
@@ -122,6 +136,7 @@ import java.util.List;
 
 		@Override
 		public boolean groupHas(String world, String group, String permission) {
+			checkEnabled();
 			Boolean res = Permissions.getGroup(group).hasPermission(permission, PandalibPaperPermissions.serverName, world);
 			if (res != null)
 				return res;
@@ -155,6 +170,7 @@ import java.util.List;
 		
 		@Override
 		public boolean playerInGroup(String world, OfflinePlayer player, String group) {
+			checkEnabled();
 			return Permissions.getPlayer(player.getUniqueId()).isInGroup(group);
 		}
 
@@ -182,6 +198,7 @@ import java.util.List;
 		
 		@Override
 		public String[] getPlayerGroups(String world, OfflinePlayer player) {
+			checkEnabled();
 			List<String> groups = Permissions.getPlayer(player.getUniqueId()).getGroupsString();
 			return groups.toArray(new String[0]);
 		}
@@ -194,12 +211,14 @@ import java.util.List;
 		
 		@Override
 		public String getPrimaryGroup(String world, OfflinePlayer player) {
+			checkEnabled();
 			return Permissions.getPlayer(player.getUniqueId()).getGroupsString().stream()
 					.findFirst().orElse(null);
 		}
 
 		@Override
 		public String[] getGroups() {
+			checkEnabled();
 			return Permissions.getGroups().stream()
 					.map(PermGroup::getName).toArray(String[]::new);
 		}
@@ -228,6 +247,11 @@ import java.util.List;
 			return PandalibPaperPermissions.plugin != null && PandalibPaperPermissions.plugin.isEnabled();
 		}
 
+		private void checkEnabled() {
+			if (!isEnabled())
+				throw new IllegalStateException("Cannot provide permission service because plugin is disabled.");
+		}
+
 		@Deprecated
 		@Override
 		public String getPlayerPrefix(String world, String player) {
@@ -236,6 +260,7 @@ import java.util.List;
 		
 		@Override
 		public String getPlayerPrefix(String world, OfflinePlayer player) {
+			checkEnabled();
 			return Permissions.getPlayer(player.getUniqueId()).getPrefix();
 		}
 
@@ -247,16 +272,19 @@ import java.util.List;
 		
 		@Override
 		public String getPlayerSuffix(String world, OfflinePlayer player) {
+			checkEnabled();
 			return Permissions.getPlayer(player.getUniqueId()).getSuffix();
 		}
 
 		@Override
 		public String getGroupPrefix(String world, String group) {
+			checkEnabled();
 			return Permissions.getGroup(group).getPrefix();
 		}
 
 		@Override
 		public String getGroupSuffix(String world, String group) {
+			checkEnabled();
 			return Permissions.getGroup(group).getSuffix();
 		}
 
