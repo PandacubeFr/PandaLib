@@ -27,27 +27,25 @@ public class FileUtils {
 	 * @param source the source file or directory.
 	 * @param target the copy destination.
 	 * @throws IOException if an IO error occurs.
-	 * @throws IllegalStateException if the target destination already exists and is not a directory.
+	 * @throws IllegalStateException if target file already exists and one of source or target is not a directory.
 	 * @throws IllegalArgumentException if at least one of the parameter is null, or if the source doesn't exist.
 	 */
 	public static void copy(File source, File target) throws IOException {
-		if (source == null || !source.exists() || !source.isDirectory()) {
+		if (source == null || !source.exists()) {
 			throw new IllegalArgumentException("source is null or doesn't exist: " + source);
 		}
 		if (target == null) {
 			throw new IllegalArgumentException("target cannot be null");
 		}
-		if (target.exists() && !target.isDirectory()) {
-			throw new IllegalStateException("target file already exists but is not a directory: " + target);
+		if (target.exists() && !(target.isDirectory() && source.isDirectory())) {
+			throw new IllegalStateException("target file already exists and one of source or target is not a directory: " + target);
 		}
 		BasicFileAttributes sourceAttr = Files.readAttributes(source.toPath(), BasicFileAttributes.class);
 		if (sourceAttr.isDirectory()) {
-			if (target.mkdir()) {
-				for (String child : source.list())
-					copy(new File(source, child), new File(target, child));
-			}
-			else {
-				throw new IOException("Cannot create directory " + target);
+			if (!target.exists())
+				target.mkdirs();
+			for (String child : source.list()) {
+				copy(new File(source, child), new File(target, child));
 			}
 		}
 		else if (sourceAttr.isRegularFile()) {
