@@ -4,12 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.kyori.adventure.text.format.TextColor;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A custom gradient with at least 2 colors in it.
  */
 public class ChatColorGradient {
-    private record GradientColor(float location, TextColor color) { }
+    private record GradientColor(
+            float location,
+            TextColor color
+    ) implements Comparable<GradientColor> {
+        @Override
+        public int compareTo(@NotNull ChatColorGradient.GradientColor o) {
+            return Float.compare(location(), o.location());
+        }
+    }
 
     private final List<GradientColor> colors = new ArrayList<>();
 
@@ -21,6 +30,7 @@ public class ChatColorGradient {
      */
     public synchronized ChatColorGradient add(float gradientLocation, TextColor gradientColor) {
         colors.add(new GradientColor(gradientLocation, gradientColor));
+        colors.sort(null);
         return this;
     }
 
@@ -31,25 +41,26 @@ public class ChatColorGradient {
      */
     public synchronized TextColor pickColorAt(float gradientLocation) {
         if (colors.isEmpty())
-            throw new IllegalStateException("Must define at least one color in this ChatValueGradient instance.");
+            throw new IllegalStateException("Must define at least one color in this ChatColorGradient instance.");
         if (colors.size() == 1)
             return colors.get(0).color();
 
-        colors.sort((p1, p2) -> Float.compare(p1.location(), p2.location()));
-
-        if (gradientLocation <= colors.get(0).location())
-            return colors.get(0).color();
-        if (gradientLocation >= colors.get(colors.size() - 1).location())
-            return colors.get(colors.size() - 1).color();
-
-        int p1 = 1;
-        for (; p1 < colors.size(); p1++) {
-            if (colors.get(p1).location() >= gradientLocation)
+        int i = 0;
+        for (; i < colors.size(); i++) {
+            if (gradientLocation <= colors.get(i).location())
                 break;
         }
-        int p0 = p1 - 1;
-        float v0 = colors.get(p0).location(), v1 = colors.get(p1).location();
-        TextColor cc0 = colors.get(p0).color(), cc1 = colors.get(p1).color();
-        return ChatColorUtil.interpolateColor(v0, v1, gradientLocation, cc0, cc1);
+
+        if (i == 0)
+            return colors.get(i).color();
+        if (i == colors.size())
+            return colors.get(colors.size() - 1).color();
+
+        int p = i - 1;
+        float pLoc = colors.get(p).location();
+        float iLoc = colors.get(i).location();
+        TextColor pCol = colors.get(p).color();
+        TextColor iCol = colors.get(i).color();
+        return ChatColorUtil.interpolateColor(pLoc, iLoc, gradientLocation, pCol, iCol);
     }
 }

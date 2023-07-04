@@ -302,7 +302,7 @@ public class PerformanceAnalysisManager implements Listener {
 					for (int i = 58; i >= 0; i--) {
 						int t = tpsHistory[i];
 						ChatColor newC = ChatColorUtil.toBungee(tps1sGradient.pickColorAt(t));
-						if (newC != prevC) {
+						if (!newC.equals(prevC)) {
 							s.append(newC);
 							prevC = newC;
 						}
