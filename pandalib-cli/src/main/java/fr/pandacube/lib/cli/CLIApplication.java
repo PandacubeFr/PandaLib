@@ -46,7 +46,7 @@ public abstract class CLIApplication {
             new CommandAdmin();
             new CommandStop();
 
-            Runtime.getRuntime().addShutdownHook(new Thread(this::end));
+            Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
 
             cli.start(); // actually starts the CLI thread
 
