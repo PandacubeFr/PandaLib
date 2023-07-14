@@ -67,6 +67,9 @@ public class BackupManager extends TimerTask {
     }
 
 
+    public synchronized boolean isBackupRunning() {
+        return runningBackup.get() != null;
+    }
 
 
     public synchronized void run() {
@@ -94,7 +97,7 @@ public class BackupManager extends TimerTask {
 
         schedulerTimer.cancel();
 
-        if (runningBackup.get() != null) {
+        if (isBackupRunning()) {
             Log.warning("[Backup] Waiting after the end of a backup...");
             BackupProcess tmp;
             while ((tmp = runningBackup.get()) != null) {
