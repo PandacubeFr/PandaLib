@@ -1,5 +1,6 @@
 package fr.pandacube.lib.paper;
 
+import fr.pandacube.lib.paper.event.ServerStopEvent;
 import fr.pandacube.lib.paper.json.PaperJson;
 import fr.pandacube.lib.paper.modules.PerformanceAnalysisManager;
 import org.bukkit.plugin.Plugin;
@@ -15,6 +16,7 @@ public class PandaLibPaper {
 
 	public static void onEnable() {
 		PerformanceAnalysisManager.getInstance(); // initialize
+		ServerStopEvent.init();
 	}
 
 
