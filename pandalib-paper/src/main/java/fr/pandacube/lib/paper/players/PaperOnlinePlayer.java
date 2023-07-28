@@ -15,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.MainHand;
 import org.bukkit.inventory.PlayerInventory;
@@ -25,6 +26,17 @@ import java.util.Locale;
  * Represents any online player on a paper server.
  */
 public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer {
+
+    /**
+     * The default value for {@link Player#getWalkSpeed()}.
+     */
+    float BUKKIT_DEFAULT_WALK_SPEED = 0.2f;
+
+    /**
+     * The default value for {@link Player#getFlySpeed()}.
+     */
+    float BUKKIT_DEFAULT_FLY_SPEED = 0.1f;
+
 
     /*
      * General data and state
