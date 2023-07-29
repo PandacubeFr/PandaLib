@@ -167,7 +167,7 @@ public enum Skull {
         
         SkullMeta headMeta = (SkullMeta) head.getItemMeta();
 
-        PlayerProfile profile = Bukkit.createProfile(UUID.randomUUID());
+        PlayerProfile profile = Bukkit.createProfile(UUID.nameUUIDFromBytes(str.getBytes()));
         profile.setProperty(new ProfileProperty("textures", str));
         headMeta.setPlayerProfile(profile);
         
