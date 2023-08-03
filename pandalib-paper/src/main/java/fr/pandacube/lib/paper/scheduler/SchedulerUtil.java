@@ -20,8 +20,10 @@ public class SchedulerUtil {
 	 * @param task the task to run on the main thread.
 	 */
 	public static void runOnServerThread(Runnable task) {
-		if (Bukkit.isPrimaryThread())
+		if (Bukkit.isPrimaryThread()) {
 			task.run();
+			return;
+		}
 		
 		Bukkit.getScheduler().runTask(PandaLibPaper.getPlugin(), task);
 	}
