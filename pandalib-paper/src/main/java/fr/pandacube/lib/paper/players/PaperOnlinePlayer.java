@@ -7,6 +7,7 @@ import fr.pandacube.lib.paper.players.PlayerNonPersistentConfig.Expiration;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftPlayer;
 import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
+import io.papermc.paper.entity.TeleportFlag.Relative;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.title.Title.Times;
@@ -287,6 +288,35 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
      */
     default void damage(double amount, LivingEntity source) {
         getBukkitPlayer().damage(amount, source); // uses appropriate DamageSource according to provided player or entity
+    }
+
+
+
+
+
+
+    /*
+     * Relative teleport
+     */
+
+    /**
+     * Teleports this player to the specified relative location, using the {@link Relative} flags.
+     * @param relX the relative x coordinate.
+     * @param relY the relative y coordinate.
+     * @param relZ the relative z coordinate.
+     */
+    @SuppressWarnings("UnstableApiUsage")
+    default void teleportRelatively(float relX, float relY, float relZ) {
+        getBukkitPlayer().teleport(getBukkitPlayer().getLocation().add(relX, relY, relZ), Relative.X, Relative.Y, Relative.Z, Relative.YAW, Relative.PITCH);
+    }
+
+    /**
+     * Teleports this player to the specified location, using the {@link Relative} flags.
+     * @param destination the destination.
+     */
+    @SuppressWarnings("UnstableApiUsage")
+    default void teleportRelatively(Location destination) {
+        getBukkitPlayer().teleport(destination, Relative.X, Relative.Y, Relative.Z, Relative.YAW, Relative.PITCH);
     }
 
 
