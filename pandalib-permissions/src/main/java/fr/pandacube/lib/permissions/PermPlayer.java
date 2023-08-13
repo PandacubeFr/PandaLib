@@ -10,7 +10,7 @@ import fr.pandacube.lib.permissions.SQLPermissions.EntityType;
 /**
  * Represents a player in the permission system.
  */
-public final class PermPlayer extends PermEntity {
+public sealed class PermPlayer extends PermEntity permits DefaultPlayer {
 	private final UUID playerId;
 	/* package */ PermPlayer(UUID id) {
 		super(id.toString(), EntityType.User);

@@ -105,6 +105,19 @@ public class Permissions {
 	}
 
 	/**
+	 * Gets a dummy permission player object, that have no specific data, only inheriting from the default groups.
+	 *
+	 * The current implementation provides a player named {@code default.0} with an uuid of
+	 * {@code fffdef17-ffff-b0ff-ffff-ffffffffffff}.
+	 * Trying to set a permission data for this player will log a warning.
+	 * @return the default permission player.
+	 */
+	public static PermPlayer getDefaultPlayer() {
+		checkInitialized();
+		return new DefaultPlayer();
+	}
+
+	/**
 	 * Asks the permission system to preventively and asynchronously cache the data of the provided player.
 	 * This can be called as soon as possible when a player connects, so the permission data of the player are
 	 * accessible as soon as possible when they are needed.

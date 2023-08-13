@@ -26,6 +26,12 @@ import fr.pandacube.lib.util.Log;
 	/* package */ PermissionsCachedBackendReader() throws DBException {
 		clearAndResetCache();
 	}
+
+
+	/* package */ static final CachedPlayer DEFAULT_PLAYER = new CachedPlayer(DefaultPlayer.ID, null, null, Map.of());
+	static {
+		DEFAULT_PLAYER.usingDefaultGroups = true;
+	}
 	
 	
 	
@@ -58,6 +64,8 @@ import fr.pandacube.lib.util.Log;
 	}
 	
 	private CachedPlayer initPlayer(UUID playerId) throws DBException {
+		if (playerId.equals(DEFAULT_PLAYER.playerId))
+			return DEFAULT_PLAYER;
 		
 		SQLElementList<SQLPermissions> playerData = DB.getAll(SQLPermissions.class,
 				SQLPermissions.type.eq(EntityType.User.getCode())
@@ -196,6 +204,8 @@ import fr.pandacube.lib.util.Log;
 				cacheIsUpdating = false;
 				usersCache.invalidateAll();
 				fullPermissionsList = newFullPermissionsList;
+				DEFAULT_PLAYER.groups.clear();
+				DEFAULT_PLAYER.groups.addAll(getDefaultGroups());
 			}
 		} finally {
 			synchronized (this) {
