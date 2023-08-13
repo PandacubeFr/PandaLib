@@ -1,29 +1,26 @@
-package fr.pandacube.lib.paper.util;
+package fr.pandacube.lib.paper.geometry.blocks;
 
-import java.util.Iterator;
-
+import fr.pandacube.lib.util.RandomUtil;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
 import org.bukkit.util.BlockVector;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
-import fr.pandacube.lib.util.RandomUtil;
+import java.util.Iterator;
 
 /**
- * Checkpoint represented as a 3D Axis and Block Aligned Bounding Box (sort of AABB).
+ * Block Aligned Bounding Box (sort of AABB).
  * Represent the littlest cuboid selection of blocks that contains the bounding box
  * passed to the constructor.
  */
-public class AABBBlock implements Iterable<BlockVector>, Cloneable {
+public class AABBBlock implements BlockSet, Cloneable {
 	
-	public final Vector pos1, pos2;
-
+	/* package */ final Vector pos1, pos2;
 	private final Vector center;
-	
 	private final long volume;
+	private BoundingBox bukkitBoundingBox;
 
 	private AABBBlock(AABBBlock original, int shiftX, int shiftY, int shiftZ) {
 		Vector shiftVec = new Vector(shiftX, shiftY, shiftZ);
@@ -32,9 +29,17 @@ public class AABBBlock implements Iterable<BlockVector>, Cloneable {
 		center = original.center.clone().add(shiftVec);
 		volume = original.volume;
 	}
-	
+
 	public AABBBlock(Vector p1, Vector p2) {
 		this(p1.getBlockX(), p1.getBlockY(), p1.getBlockZ(), p2.getBlockX(), p2.getBlockY(), p2.getBlockZ());
+	}
+
+	public AABBBlock(BoundingBox bb) {
+		pos1 = bb.getMin();
+		pos2 = bb.getMax();
+		center = bb.getCenter();
+		volume = (int) bb.getVolume();
+		bukkitBoundingBox = bb;
 	}
 	
 	public AABBBlock(Location l1, Location l2) {
@@ -64,6 +69,11 @@ public class AABBBlock implements Iterable<BlockVector>, Cloneable {
 		volume = (long) Math.abs(p2x_ - p1x_) * Math.abs(p2x_ - p1x_) * Math.abs(p2x_ - p1x_);
 	}
 
+	@Override
+	public AABBBlock getEnglobingAABB() {
+		return this;
+	}
+
 	public AABBBlock shift(int x, int y, int z) {
 		return new AABBBlock(this, x, y, z);
 	}
@@ -74,22 +84,14 @@ public class AABBBlock implements Iterable<BlockVector>, Cloneable {
 		return new AABBBlock(this, 0, 0, 0);
 	}
 
-	public boolean overlaps(Entity e) {
-		return overlaps(e.getBoundingBox());
-	}
+
 	
 	public boolean overlaps(BoundingBox bb) {
 		return asBukkitBoundingBox().overlaps(bb);
 	}
-	
+
 	public boolean isInside(Vector v) {
-		return v.isInAABB(pos1, pos2);
-	}
-	public boolean isInside(Location l) {
-		return isInside(l.toVector());
-	}
-	public boolean isInside(Entity p) {
-		return isInside(p.getLocation());
+		return asBukkitBoundingBox().contains(v);
 	}
 	
 	public Vector getCenter() {
@@ -101,8 +103,11 @@ public class AABBBlock implements Iterable<BlockVector>, Cloneable {
 	}
 	
 	public BoundingBox asBukkitBoundingBox() {
-		return new BoundingBox(pos1.getX(), pos1.getY(), pos1.getZ(),
-				pos2.getX(), pos2.getY(), pos2.getZ());
+		if (bukkitBoundingBox == null) {
+			bukkitBoundingBox = new BoundingBox(pos1.getX(), pos1.getY(), pos1.getZ(),
+					pos2.getX(), pos2.getY(), pos2.getZ());
+		}
+		return bukkitBoundingBox;
 	}
 	
 	public Vector getRandomPosition() {
@@ -157,6 +162,22 @@ public class AABBBlock implements Iterable<BlockVector>, Cloneable {
 			}
 		};
 	}
-	
+
+
+
+
+	static boolean overlap(AABBBlock aabb1, AABBBlock aabb2) {
+		return aabb1.asBukkitBoundingBox().overlaps(aabb2.asBukkitBoundingBox());
+	}
+
+	static boolean overlap(AABBBlock aabb1, BlockSet bs) {
+		if (!overlap(aabb1, bs.getEnglobingAABB()))
+			return false;
+		AABBBlock intersection = new AABBBlock(aabb1.asBukkitBoundingBox().intersection(bs.getEnglobingAABB().asBukkitBoundingBox()));
+		for (BlockVector bv : intersection)
+			if (bs.isInside(bv))
+				return true;
+		return false;
+	}
 	
 }
