@@ -173,10 +173,7 @@ public abstract class AbstractClientWS implements AbstractWS {
                 throw ThrowableUtil.uncheck(ce.getCause(), false);
             }
         } catch (IOException ioe) {
-            synchronized (socket) {
-                socket.set(null);
-                reconnectIfNecessary();
-            }
+            receiveListener.onError(socket.get(), ioe);
             throw ioe;
         }
 
