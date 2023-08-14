@@ -74,6 +74,22 @@ public class AABBBlock implements BlockSet, Cloneable {
 		return this;
 	}
 
+	public Vector getMin() {
+		return pos1.clone();
+	}
+
+	public Vector getMax() {
+		return pos2.clone();
+	}
+
+	public BlockVector getMinBlock() {
+		return pos1.toBlockVector();
+	}
+
+	public BlockVector getMaxBlock() {
+		return pos2.clone().add(new Vector(-1, -1, -1)).toBlockVector();
+	}
+
 	public AABBBlock shift(int x, int y, int z) {
 		return new AABBBlock(this, x, y, z);
 	}
