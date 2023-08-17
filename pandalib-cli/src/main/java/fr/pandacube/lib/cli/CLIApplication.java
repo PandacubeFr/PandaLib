@@ -61,28 +61,24 @@ public abstract class CLIApplication {
     }
 
 
-    private final Object stopLock = new Object();
     private final AtomicBoolean stopping = new AtomicBoolean(false);
 
     @SuppressWarnings("finally")
     public final void stop() {
-        synchronized (stopLock) {
-            synchronized (stopping) {
-                if (stopping.get())
-                    return;
-                stopping.set(true);
-            }
-            Log.info("Stopping " + getName() + " version " + getClass().getPackage().getImplementationVersion());
-            try {
-                end();
-            } catch (Throwable t) {
-                Log.severe("Error stopping application " + getName() + " version " + getClass().getPackage().getImplementationVersion(), t);
-            } finally {
-                Log.info("Bye bye.");
-                System.exit(0);
-            }
+        synchronized (stopping) {
+            if (stopping.get())
+                return;
+            stopping.set(true);
         }
-
+        Log.info("Stopping " + getName() + " version " + getClass().getPackage().getImplementationVersion());
+        try {
+            end();
+        } catch (Throwable t) {
+            Log.severe("Error stopping application " + getName() + " version " + getClass().getPackage().getImplementationVersion(), t);
+        } finally {
+            Log.info("Bye bye.");
+            System.exit(0);
+        }
     }
 
     public boolean isStopping() {
