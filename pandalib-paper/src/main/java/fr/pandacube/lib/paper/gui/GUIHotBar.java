@@ -43,6 +43,12 @@ public class GUIHotBar implements Listener {
 		
 		BukkitEvent.register(this);
 	}
+
+	public void disable(boolean clearPlayerMenuItems) {
+		removeAllPlayers(clearPlayerMenuItems);
+
+		BukkitEvent.unregister(this);
+	}
 	
 	/**
 	 * Add the item to this hot bar menu. if there is already players hooked to this hot bar, the item will be directly added to
@@ -62,9 +68,9 @@ public class GUIHotBar implements Listener {
 	}
 	
 	/**
-	 * Add the hot bar elements to this player.
+	 * Add the hot bar elements to this player, or update them if applicable.
 	 * 
-	 * The player is automatically removed when they quit. You can remove it before by calling {@link #removePlayer(Player)}.
+	 * The player is automatically removed when they quit. You can remove it before by calling {@link #removePlayer(Player, boolean)}.
 	 */
 	public void addPlayer(Player p) {
 		if (!currentPlayers.contains(p))
@@ -81,11 +87,20 @@ public class GUIHotBar implements Listener {
 	 * Detach this player from this hot bar manager and removes the managed items from the players inventory.
 	 */
 	public void removePlayer(Player p) {
+		removePlayer(p, true);
+	}
+
+	/**
+	 * Detach this player from this hot bar manager and optionally removes the managed items from the players inventory.
+	 */
+	public void removePlayer(Player p, boolean clearMenuItems) {
 		if (!currentPlayers.contains(p))
 			return;
-		
-		for (ItemStack is : itemsAndSetters.keySet()) {
-			removeItemFromPlayer(p, is);
+
+		if (clearMenuItems) {
+			for (ItemStack is : itemsAndSetters.keySet()) {
+				removeItemFromPlayer(p, is);
+			}
 		}
 		
 		currentPlayers.remove(p);
@@ -100,8 +115,12 @@ public class GUIHotBar implements Listener {
 	
 	
 	public void removeAllPlayers() {
+		removeAllPlayers(true);
+	}
+
+	public void removeAllPlayers(boolean clearMenuItems) {
 		for (Player p : new ArrayList<>(currentPlayers))
-			removePlayer(p);
+			removePlayer(p, clearMenuItems);
 	}
 	
 	
@@ -211,7 +230,6 @@ public class GUIHotBar implements Listener {
 		if (!currentPlayers.contains(event.getPlayer()))
 			return;
 
-		currentPlayers.remove(event.getPlayer());
 		addPlayer(event.getPlayer());
 	}
 	
