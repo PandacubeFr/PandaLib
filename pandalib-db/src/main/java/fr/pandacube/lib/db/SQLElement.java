@@ -241,17 +241,24 @@ public abstract class SQLElement<E extends SQLElement<E>> {
      * Gets the value of the provided field in this entry.
      * @param field the field to get the value from.
      * @return the value of the provided field in this entry.
+     * @throws IllegalArgumentException if the provided field is null or not from the table represented by this class.
+     * @throws IllegalStateException if the field is not nullable and there is no value set
      * @param <T> the Java type of the field.
      */
     public <T> T get(SQLField<E, T> field) {
-        if (field == null) throw new IllegalArgumentException("field can't be null");
+        if (field == null)
+            throw new IllegalArgumentException("field can't be null");
+        if (!fields.containsKey(field.getName()) || !fields.get(field.getName()).equals(field))
+            throw new IllegalArgumentException("The provided field " + field + " is not from this table " + getClass().getName());
         if (values.containsKey(field)) {
             @SuppressWarnings("unchecked")
             T val = (T) values.get(field);
             return val;
         }
-        throw new IllegalArgumentException("The field '" + field.getName() + "' in this instance of " + getClass().getName()
-                + " does not exist or is not set");
+        if (field.nullable)
+            return null;
+        throw new IllegalStateException("The non-nullable field '" + field.getName() + "' in this instance of " + getClass().getName()
+                + " is not set");
     }
 
     /**
