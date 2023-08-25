@@ -225,5 +225,21 @@ public class ThrowableUtil {
 		 */
 		void accept(T t, U u) throws E;
 	}
+
+
+
+	/**
+	 * A consumer that can possibly throw a checked exception.
+	 */
+	public interface TriConsumerException<T, U, V, E extends Exception> {
+		/**
+		 * Run the consumer on the specified parameters.
+		 * @param t the first parameter of the consumer.
+		 * @param u the second parameter of the consumer.
+		 * @param v the tird parameter of the consumer.
+		 * @throws E if the function fails.
+		 */
+		void accept(T t, U u, V v) throws E;
+	}
 	
 }
