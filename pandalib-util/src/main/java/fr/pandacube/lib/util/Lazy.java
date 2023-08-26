@@ -56,4 +56,13 @@ public class Lazy<T> implements Supplier<T> {
 		cached = true;
 	}
 
+	/**
+	 * Tells if the value is currently set or not.
+	 * @return true if the value has been set by calling the method {@link #get()} or {@link #set(Object)} but not yet
+	 * reset by {@link #reset()}, or false otherwise.
+	 */
+	public synchronized boolean isSet() {
+		return cached;
+	}
+
 }
