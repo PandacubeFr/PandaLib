@@ -1,7 +1,7 @@
 package fr.pandacube.lib.core.config;
 
 import fr.pandacube.lib.chat.ChatColorUtil;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 
 import java.io.BufferedReader;
 import java.io.File;

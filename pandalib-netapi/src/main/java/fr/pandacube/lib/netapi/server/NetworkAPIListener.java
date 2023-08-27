@@ -1,6 +1,6 @@
 package fr.pandacube.lib.netapi.server;
 
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 
 import java.io.IOException;
 import java.net.InetAddress;

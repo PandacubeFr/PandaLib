@@ -10,7 +10,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.internal.bind.TreeTypeAdapter;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 import fr.pandacube.lib.util.ThrowableUtil;
 
 import java.lang.reflect.Constructor;

@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import fr.pandacube.lib.reflect.Reflect;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 
 /**
  * Static class to handle most of the database operations.

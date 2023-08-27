@@ -19,7 +19,7 @@ import fr.pandacube.lib.db.DB;
 import fr.pandacube.lib.db.DBException;
 import fr.pandacube.lib.db.SQLElementList;
 import fr.pandacube.lib.permissions.SQLPermissions.EntityType;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 
 /* package */ class PermissionsCachedBackendReader
 {

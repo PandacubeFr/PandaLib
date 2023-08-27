@@ -1,7 +1,7 @@
 package fr.pandacube.lib.cli.commands;
 
 import fr.pandacube.lib.chat.Chat;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;

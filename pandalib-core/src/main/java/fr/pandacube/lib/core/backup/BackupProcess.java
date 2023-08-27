@@ -3,7 +3,7 @@ package fr.pandacube.lib.core.backup;
 import fc.cron.CronExpression;
 import fr.pandacube.lib.core.cron.CronScheduler;
 import fr.pandacube.lib.util.FileUtils;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 import net.md_5.bungee.api.ChatColor;
 
 import java.io.File;

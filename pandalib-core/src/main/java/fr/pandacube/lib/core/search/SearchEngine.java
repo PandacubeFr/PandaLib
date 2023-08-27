@@ -2,7 +2,7 @@ package fr.pandacube.lib.core.search;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,7 +1,7 @@
 package fr.pandacube.lib.util;
 
-import fr.pandacube.lib.util.ThrowableUtil.RunnableException;
-import fr.pandacube.lib.util.ThrowableUtil.SupplierException;
+import fr.pandacube.lib.util.function.RunnableException;
+import fr.pandacube.lib.util.function.SupplierException;
 
 import java.util.function.Supplier;
 

@@ -31,7 +31,7 @@ import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
 import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
 import fr.pandacube.lib.players.standalone.AbstractPlayerManager;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.World;

@@ -11,7 +11,7 @@ import fr.pandacube.lib.chat.ChatTreeNode;
 import fr.pandacube.lib.permissions.PermissionExpressionParser.LiteralPermissionTester;
 import fr.pandacube.lib.permissions.PermissionsCachedBackendReader.CachedEntity;
 import fr.pandacube.lib.permissions.SQLPermissions.EntityType;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 
 /**
  * Represents an entity in the permission system, either a group or a player.

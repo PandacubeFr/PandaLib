@@ -2,7 +2,7 @@ package fr.pandacube.lib.cli;
 
 import fr.pandacube.lib.cli.commands.CommandAdmin;
 import fr.pandacube.lib.cli.commands.CommandStop;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;

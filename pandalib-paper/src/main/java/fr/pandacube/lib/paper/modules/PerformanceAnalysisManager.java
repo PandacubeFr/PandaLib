@@ -13,7 +13,7 @@ import fr.pandacube.lib.paper.scheduler.SchedulerUtil;
 import fr.pandacube.lib.paper.util.AutoUpdatedBossBar;
 import fr.pandacube.lib.paper.util.AutoUpdatedBossBar.BarUpdater;
 import fr.pandacube.lib.players.standalone.AbstractPlayerManager;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 import fr.pandacube.lib.util.MemoryUtil;
 import fr.pandacube.lib.util.MemoryUtil.MemoryUnit;
 import fr.pandacube.lib.util.TimeUtil;

@@ -26,7 +26,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import fr.pandacube.lib.util.EnumUtil;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 
 /**
  * Represents an entry in a SQL table. Each subclass is for a specific table.

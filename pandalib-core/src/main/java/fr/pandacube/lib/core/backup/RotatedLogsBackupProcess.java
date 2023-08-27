@@ -1,7 +1,7 @@
 package fr.pandacube.lib.core.backup;
 
 import com.google.common.io.Files;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 import net.md_5.bungee.api.ChatColor;
 
 import java.io.File;

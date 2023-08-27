@@ -1,6 +1,6 @@
 package fr.pandacube.lib.core.backup;
 
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 
 import java.io.File;
 import java.time.ZonedDateTime;

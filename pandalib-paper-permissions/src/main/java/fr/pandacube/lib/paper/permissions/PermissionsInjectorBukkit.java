@@ -6,7 +6,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import fr.pandacube.lib.permissions.Permissions;
 import fr.pandacube.lib.reflect.Reflect;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;

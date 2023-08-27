@@ -1,8 +1,8 @@
 package fr.pandacube.lib.ws;
 
 import com.google.gson.JsonParseException;
-import fr.pandacube.lib.util.Log;
-import fr.pandacube.lib.util.ThrowableUtil.RunnableException;
+import fr.pandacube.lib.util.log.Log;
+import fr.pandacube.lib.util.function.RunnableException;
 import fr.pandacube.lib.ws.payloads.ErrorPayload;
 import fr.pandacube.lib.ws.payloads.Payload;
 

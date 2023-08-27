@@ -23,7 +23,7 @@ import org.bukkit.permissions.ServerOperator;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import fr.pandacube.lib.permissions.Permissions;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 
 /**
  * Class that integrates the {@code pandalib-permissions} system into a Bukkit/Spigot/Paper instance.

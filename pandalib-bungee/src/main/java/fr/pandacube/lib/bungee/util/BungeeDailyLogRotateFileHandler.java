@@ -1,6 +1,6 @@
 package fr.pandacube.lib.bungee.util;
 
-import fr.pandacube.lib.util.logs.DailyLogRotateFileHandler;
+import fr.pandacube.lib.util.log.DailyLogRotateFileHandler;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.log.ConciseFormatter;
 

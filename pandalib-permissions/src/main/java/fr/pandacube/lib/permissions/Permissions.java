@@ -8,7 +8,7 @@ import java.util.function.Function;
 import fr.pandacube.lib.db.DB;
 import fr.pandacube.lib.db.DBConnection;
 import fr.pandacube.lib.db.DBException;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 
 /**
  * Main class for the Pandalib permission system.

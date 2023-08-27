@@ -20,7 +20,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 import fr.pandacube.lib.paper.util.BukkitEvent;
 
 /**

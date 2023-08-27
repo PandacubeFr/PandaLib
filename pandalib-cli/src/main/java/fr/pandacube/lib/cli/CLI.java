@@ -8,7 +8,7 @@ import fr.pandacube.lib.cli.log.CLILogger;
 import jline.console.ConsoleReader;
 import org.fusesource.jansi.AnsiConsole;
 
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 
 /**
  * Class to handle general standard IO operation for a CLI application. It uses Jline’s {@link ConsoleReader} for the

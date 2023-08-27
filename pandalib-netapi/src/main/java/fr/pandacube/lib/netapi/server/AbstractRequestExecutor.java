@@ -5,7 +5,7 @@ import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
 
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 
 public abstract class AbstractRequestExecutor {
 

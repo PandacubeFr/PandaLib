@@ -2,7 +2,7 @@ package fr.pandacube.lib.paper.permissions;
 
 import fr.pandacube.lib.permissions.PermGroup;
 import fr.pandacube.lib.permissions.Permissions;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;

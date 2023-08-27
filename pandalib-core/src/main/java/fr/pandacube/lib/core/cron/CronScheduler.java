@@ -4,7 +4,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import fc.cron.CronExpression;
 import fr.pandacube.lib.core.json.Json;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 
 import java.io.File;
 import java.io.FileReader;

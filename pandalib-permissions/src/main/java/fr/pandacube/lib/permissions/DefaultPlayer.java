@@ -1,6 +1,6 @@
 package fr.pandacube.lib.permissions;
 
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 
 import java.util.UUID;
 

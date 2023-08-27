@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 import fr.pandacube.lib.reflect.Reflect;
 import fr.pandacube.lib.reflect.ReflectClass;
 import fr.pandacube.lib.reflect.ReflectField;

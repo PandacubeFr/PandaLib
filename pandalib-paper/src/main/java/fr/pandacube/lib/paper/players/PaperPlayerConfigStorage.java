@@ -1,7 +1,7 @@
 package fr.pandacube.lib.paper.players;
 
 import fr.pandacube.lib.paper.PandaLibPaper;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;

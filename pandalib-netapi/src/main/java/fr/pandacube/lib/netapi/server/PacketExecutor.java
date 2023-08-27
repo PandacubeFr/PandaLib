@@ -5,7 +5,7 @@ import java.io.PrintStream;
 import java.net.Socket;
 
 import fr.pandacube.lib.netapi.server.RequestAnalyser.BadRequestException;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 
 /**
  * Prends en charge un socket client et le transmet au gestionnaire de paquet

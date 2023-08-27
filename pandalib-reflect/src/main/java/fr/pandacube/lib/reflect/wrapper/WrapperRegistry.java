@@ -2,7 +2,7 @@ package fr.pandacube.lib.reflect.wrapper;
 
 import fr.pandacube.lib.reflect.Reflect;
 import fr.pandacube.lib.reflect.ReflectConstructor;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 
 import java.lang.reflect.Modifier;
 import java.util.HashMap;

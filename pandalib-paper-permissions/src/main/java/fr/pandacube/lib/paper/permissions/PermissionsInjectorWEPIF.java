@@ -11,7 +11,7 @@ import org.bukkit.plugin.ServicePriority;
 
 import fr.pandacube.lib.permissions.PermPlayer;
 import fr.pandacube.lib.permissions.Permissions;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 
 /* package */ class PermissionsInjectorWEPIF {
 	

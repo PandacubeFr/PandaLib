@@ -4,7 +4,7 @@ import fr.pandacube.lib.paper.PandaLibPaper;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.AABB;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.block.BambooStalkBlock;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.AABBVoxelShape;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;

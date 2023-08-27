@@ -17,7 +17,7 @@ import fr.pandacube.lib.chat.Chat;
 import fr.pandacube.lib.chat.Chat.FormatableChat;
 import fr.pandacube.lib.chat.ChatTreeNode;
 import fr.pandacube.lib.cli.CLIApplication;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 import net.md_5.bungee.api.chat.BaseComponent;
 
 import java.util.ArrayList;

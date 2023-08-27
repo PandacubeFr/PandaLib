@@ -1,9 +1,9 @@
 package fr.pandacube.lib.cli.log;
 
 import fr.pandacube.lib.cli.CLI;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 import fr.pandacube.lib.util.ThrowableUtil;
-import fr.pandacube.lib.util.logs.DailyLogRotateFileHandler;
+import fr.pandacube.lib.util.log.DailyLogRotateFileHandler;
 import net.md_5.bungee.log.ColouredWriter;
 import net.md_5.bungee.log.ConciseFormatter;
 

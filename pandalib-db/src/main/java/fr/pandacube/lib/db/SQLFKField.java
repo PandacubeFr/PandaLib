@@ -1,6 +1,6 @@
 package fr.pandacube.lib.db;
 
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 
 /**
  * A foreign key field in a SQL table.

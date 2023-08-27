@@ -23,7 +23,7 @@ import fr.pandacube.lib.permissions.PermissionsCachedBackendReader.CachedEntity;
 import fr.pandacube.lib.permissions.PermissionsCachedBackendReader.CachedGroup;
 import fr.pandacube.lib.permissions.PermissionsCachedBackendReader.CachedPlayer;
 import fr.pandacube.lib.permissions.SQLPermissions.EntityType;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 
 /* package */ class PermissionsResolver {
 

@@ -12,7 +12,7 @@ import org.bukkit.event.Listener;
 
 import fr.pandacube.lib.util.BiMap;
 import fr.pandacube.lib.util.FileUtils;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 import fr.pandacube.lib.util.RandomUtil;
 
 public class GameWorldUtils implements Listener {

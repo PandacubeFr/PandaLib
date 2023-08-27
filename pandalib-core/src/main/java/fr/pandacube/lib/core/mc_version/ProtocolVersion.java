@@ -1,7 +1,7 @@
 package fr.pandacube.lib.core.mc_version;
 
 import fr.pandacube.lib.core.json.Json;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 import fr.pandacube.lib.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -156,8 +156,9 @@ public class ProtocolVersion implements Comparable<ProtocolVersion> {
      * @return all the {@link ProtocolVersion} currently known by this class.
      */
     public static List<ProtocolVersion> allKnownProtocolVersions() {
-        return versionList.get().versionsOfProtocol().keySet().stream()
-                .map(ProtocolVersion::ofProtocol)
+        return versionList.get().versionsOfProtocol().entrySet().stream()
+                .filter(e -> e.getValue() != null && !e.getValue().isEmpty())
+                .map(e -> new ProtocolVersion(e.getKey(), List.copyOf(e.getValue())))
                 .toList();
     }
 

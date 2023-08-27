@@ -2,7 +2,7 @@ package fr.pandacube.lib.paper.backup;
 
 import fr.pandacube.lib.paper.scheduler.SchedulerUtil;
 import fr.pandacube.lib.paper.util.WorldUtil;
-import fr.pandacube.lib.util.Log;
+import fr.pandacube.lib.util.log.Log;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.World;

@@ -1,35 +1,31 @@
 package fr.pandacube.lib.util;
 
+import fr.pandacube.lib.util.function.SupplierException;
+
 import java.util.Objects;
 
-import fr.pandacube.lib.util.ThrowableUtil.SupplierException;
-
 /**
- * Represents a lazy loaded value.
- * <p>
- * The value will be computed using the Supplier provided in the
- * constructor, only the first time the {@link #get()} method is
- * called.
+ * A Supplier that cache the value the first time it is called.
  *
- * @param <T> the type of the enclosed value.
- * @param <E> the exception type
+ * @param <T> the type of the supplied value.
+ * @param <E> the exception type that may be thrown by the source supplier.
  */
-public class LazyOrException<T, E extends Exception> implements SupplierException<T, E> {
+public class CachedSupplierException<T, E extends Exception> implements SupplierException<T, E> {
 	
 	private T cachedValue;
-	private final SupplierException<T, E> supplier;
+	private final SupplierException<T, E> source;
 	private boolean cached = false;
 
 	/**
 	 * Create a lazy value loader that will call the provided supplier to get the value.
 	 * @param s the supplier from which the value is fetched.
 	 */
-	public LazyOrException(SupplierException<T, E> s) {
-		supplier = Objects.requireNonNull(s);
+	public CachedSupplierException(SupplierException<T, E> s) {
+		source = Objects.requireNonNull(s);
 	}
 	
 	/**
-	 * Get the wrapped value, from cache or from the provider if it is not yet cached.
+	 * Get the value, from cache or from the provider if it's not yet cached.
 	 * <p>
 	 * If the provider throws an exception, it will be redirected to the caller as is, and no value will be cached
 	 * (the next call to this method will execute the supplier again).
@@ -37,12 +33,12 @@ public class LazyOrException<T, E extends Exception> implements SupplierExceptio
 	@Override
 	public synchronized T get() throws E {
 		if (!cached)
-			set(supplier.get());
+			set(source.get());
 		return cachedValue;
 	}
 
 	/**
-	 * Reset the cached value. The next call to {@link #get()} will get the value from the provider.
+	 * Reset the cached value. The next call to {@link #get()} will get the value from the source.
 	 */
 	public synchronized void reset() {
 		cached = false;
