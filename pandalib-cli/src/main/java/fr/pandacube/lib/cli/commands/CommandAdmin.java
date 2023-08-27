@@ -31,6 +31,9 @@ import static fr.pandacube.lib.chat.ChatStatic.failureText;
 import static fr.pandacube.lib.chat.ChatStatic.successText;
 import static fr.pandacube.lib.chat.ChatStatic.text;
 
+/**
+ * The {@code admin} command for a {@link CLIApplication}.
+ */
 public class CommandAdmin extends CLIBrigadierCommand {
 
 	@Override

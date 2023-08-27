@@ -14,17 +14,23 @@ public abstract class CLIApplication {
 
     private static CLIApplication instance;
 
+    /**
+     * Returns the current application instance.
+     * @return the current application instance.
+     */
     public static CLIApplication getInstance() {
         return instance;
     }
 
 
-
-
-
-
+    /**
+     * The instance of {@link CLI} for this application.
+     */
     public final CLI cli;
 
+    /**
+     * Creates a new application instance.
+     */
     protected CLIApplication() {
         instance = this;
         CLI tmpCLI = null;
@@ -56,6 +62,10 @@ public abstract class CLIApplication {
         }
     }
 
+    /**
+     * Returns the application's {@link Logger}.
+     * @return the application's {@link Logger}.
+     */
     public Logger getLogger() {
         return cli.getLogger();
     }
@@ -63,6 +73,9 @@ public abstract class CLIApplication {
 
     private final AtomicBoolean stopping = new AtomicBoolean(false);
 
+    /**
+     * Stops this application.
+     */
     @SuppressWarnings("finally")
     public final void stop() {
         synchronized (stopping) {
@@ -75,25 +88,45 @@ public abstract class CLIApplication {
             end();
         } catch (Throwable t) {
             Log.severe("Error stopping application " + getName() + " version " + getClass().getPackage().getImplementationVersion(), t);
+            System.exit(1);
         } finally {
             Log.info("Bye bye.");
             System.exit(0);
         }
     }
 
+    /**
+     * Tells if this application is currently stopping, that is the {@link #stop()} method has been called.
+     * @return true if the application is stopping, false otherwise.
+     */
     public boolean isStopping() {
         return stopping.get();
     }
 
 
-
-
+    /**
+     * Gets the name of this application.
+     * @return the name of this application.
+     */
     public abstract String getName();
 
+    /**
+     * Method to override to initialize stuff in this application.
+     * This method is called on instanciation of this Application.
+     * @throws Exception If an exception is thrown, the application will not start.
+     */
     protected abstract void start() throws Exception;
 
+    /**
+     * Method to override to reload specific stuff in this application.
+     * This method is called by using the command {@code admin reload}.
+     */
     public abstract void reload();
 
+    /**
+     * Method to override to execute stuff when this application stops.
+     * This method is called once before this application terminates, possibly from a shutdown hook Thread.
+     */
     protected abstract void end();
 
 

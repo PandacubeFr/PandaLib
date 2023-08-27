@@ -66,7 +66,10 @@ public class BackupManager extends TimerTask {
         return backupDirectory;
     }
 
-
+    /**
+     * Tells if a backup is currently running.
+     * @return true if a backup is running, false otherwise.
+     */
     public synchronized boolean isBackupRunning() {
         return runningBackup.get() != null;
     }
@@ -93,6 +96,7 @@ public class BackupManager extends TimerTask {
      * Disables this backup manager, canceling scheduled backups.
      * It will wait for a currently running backup to finish before returning.
      */
+    @SuppressWarnings("BusyWait")
     public synchronized void onDisable() {
 
         schedulerTimer.cancel();

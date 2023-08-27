@@ -5,7 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import fr.pandacube.lib.cli.CLIApplication;
 
 /**
- * /stop (/end) command.
+ * the {@code stop} (or {@code end}) command for a {@link CLIApplication}.
  */
 public class CommandStop extends CLIBrigadierCommand {
 

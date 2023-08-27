@@ -6,10 +6,17 @@ import fr.pandacube.lib.core.backup.RotatedLogsBackupProcess;
 
 import java.io.File;
 
+/**
+ * Handles the backup processes for a Bungeecord instance.
+ */
 public class BungeeBackupManager extends BackupManager {
 
 	BungeeBackupConfig config;
-	
+
+	/**
+	 * Instanciate a new {@link BungeeBackupManager}.
+	 * @param config the configuration.
+	 */
 	public BungeeBackupManager(BungeeBackupConfig config) {
 		super(config.backupDirectory);
 		setConfig(config);
@@ -24,12 +31,19 @@ public class BungeeBackupManager extends BackupManager {
 		super.addProcess(process);
 	}
 
+	/**
+	 * Sets a new configuration for this backup manager.
+	 * @param config the new configuration.
+	 */
 	public void setConfig(BungeeBackupConfig config) {
 		this.config = config;
 		backupQueue.forEach(this::updateProcessConfig);
 	}
 
-
+	/**
+	 * Deploys the new configuration to the provided backup process.
+	 * @param process the process on which to apply the new config.
+	 */
 	public void updateProcessConfig(BackupProcess process) {
 		if (process instanceof BungeeWorkdirProcess) {
 			process.setEnabled(config.workdirBackupEnabled);

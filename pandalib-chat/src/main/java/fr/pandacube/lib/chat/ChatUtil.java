@@ -199,6 +199,7 @@ public class ChatUtil {
     /**
      * Do like {@link String#join(CharSequence, Iterable)}, but for components.
      * @param separator the separator used everywhere except between the two last components to join.
+     * @param elements the components to join.
      * @return a new {@link Chat} instance with all the provided {@code component} joined using the separators.
      */
     public static FormatableChat join(ComponentLike separator, Iterable<? extends ComponentLike> elements) {

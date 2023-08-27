@@ -5,8 +5,15 @@ import fr.pandacube.lib.core.backup.BackupProcess;
 import java.io.File;
 import java.util.function.BiPredicate;
 
+/**
+ * The backup process responsible for the working directory of the current Bungeecord instance.
+ */
 public class BungeeWorkdirProcess extends BackupProcess {
-	
+
+	/**
+	 * Instantiates this backup process.
+	 * @param bm the backup manager.
+	 */
 	protected BungeeWorkdirProcess(BungeeBackupManager bm) {
 		super(bm, "workdir");
 	}
