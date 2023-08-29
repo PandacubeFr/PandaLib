@@ -115,6 +115,7 @@ import java.util.List;
 			checkEnabled();
 			String server = PandalibPaperPermissions.serverName;
 			Permissions.getPlayer(player.getUniqueId()).addSelfPermission(permission, server, world);
+			Permissions.clearPlayerCache(player.getUniqueId());
 			Log.info("A plugin added permission " + permission + " (server=" + server + ",world=" + world + ") to player " + player.getName() + " through Vault.");
 			return true;
 		}
@@ -130,6 +131,7 @@ import java.util.List;
 			checkEnabled();
 			String server = PandalibPaperPermissions.serverName;
 			Permissions.getPlayer(player.getUniqueId()).removeSelfPermission(permission, server, world);
+			Permissions.clearPlayerCache(player.getUniqueId());
 			Log.info("A plugin removed permission " + permission + " (server=" + server + ",world=" + world + ") to player " + player.getName() + " through Vault.");
 			return true;
 		}
@@ -150,14 +152,14 @@ import java.util.List;
 
 		@Override
 		public boolean groupAdd(String world, String group, String permission) {
-			Log.warning(new Throwable("A plugin tried to add to group " + group + " (world=" + world + ") the permission " + permission
+			Log.severe(new Throwable("A plugin tried to add to group " + group + " (world=" + world + ") the permission " + permission
 					+ " through Vault but Pandalib does not support it."));
 			return false;
 		}
 
 		@Override
 		public boolean groupRemove(String world, String group, String permission) {
-			Log.warning(new Throwable("A plugin tried to remove from group " + group + " (world=" + world + ") the permission " + permission
+			Log.severe(new Throwable("A plugin tried to remove from group " + group + " (world=" + world + ") the permission " + permission
 					+ " through Vault but Pandalib does not support it."));
 			return false;
 		}
@@ -177,7 +179,7 @@ import java.util.List;
 		@Deprecated
 		@Override
 		public boolean playerAddGroup(String world, String player, String group) {
-			Log.warning(new Throwable("A plugin tried to add player " + player + " (world=" + world + ") to permission group " + group
+			Log.severe(new Throwable("A plugin tried to add player " + player + " (world=" + world + ") to permission group " + group
 					+ " through Vault but Pandalib does not support it."));
 			return false;
 		}
@@ -185,7 +187,7 @@ import java.util.List;
 		@Deprecated
 		@Override
 		public boolean playerRemoveGroup(String world, String player, String group) {
-			Log.warning(new Throwable("A plugin tried to remove player " + player + " (world=" + world + ") from permission group " + group
+			Log.severe(new Throwable("A plugin tried to remove player " + player + " (world=" + world + ") from permission group " + group
 					+ " through Vault but Pandalib does not support it."));
 			return false;
 		}
