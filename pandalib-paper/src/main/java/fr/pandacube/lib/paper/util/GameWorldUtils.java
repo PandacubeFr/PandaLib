@@ -2,12 +2,14 @@ package fr.pandacube.lib.paper.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 import fr.pandacube.lib.util.BiMap;
@@ -52,9 +54,22 @@ public class GameWorldUtils implements Listener {
 			boolean ret = Bukkit.unloadWorld(rem, false);
 			if (ret)
 				FileUtils.delete(new File(Bukkit.getWorldContainer(), copiedName));
+			else
+				Log.warning("Unable to unload game world " + copiedName + " for some reason.");
 			return ret;
 		}
 		return true;
+	}
+
+
+
+	public static void unloadUnusedGameWorlds() {
+		for (String world : new ArrayList<>(gameWorld.keySet())) {
+			World rem = gameWorld.get(world);
+			if (rem.getPlayers().stream().noneMatch(Player::isOnline)) {
+				unloadGameWorld(world);
+			}
+		}
 	}
 	
 	
