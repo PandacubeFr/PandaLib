@@ -104,6 +104,7 @@
                     <outputDirectory>${project.basedir}/src/main/resources/fr/pandacube/lib/core/mc_version</outputDirectory>
                     <outputFileName>mcversion.json</outputFileName>
                     <skipCache>true</skipCache>
+                    <overwrite>true</overwrite>
                 </configuration>
             </plugin>
         </plugins>
