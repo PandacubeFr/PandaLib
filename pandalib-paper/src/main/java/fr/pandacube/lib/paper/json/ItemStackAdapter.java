@@ -17,8 +17,7 @@ import java.util.Map;
 
 /* package */ class ItemStackAdapter implements JsonSerializer<ItemStack>, JsonDeserializer<ItemStack> {
 
-    private static final TypeToken<ItemStack> ITEMSTACK_TYPE = TypeToken.get(ItemStack.class);
-    public static final TypeAdapterFactory FACTORY = TreeTypeAdapter.newFactoryWithMatchRawType(ITEMSTACK_TYPE, new ItemStackAdapter());
+    public static final TypeAdapterFactory FACTORY = TreeTypeAdapter.newTypeHierarchyFactory(ItemStack.class, new ItemStackAdapter());
 
     private static final TypeToken<Map<String, Object>> MAP_STR_OBJ_TYPE = new TypeToken<>() { };
 
