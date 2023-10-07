@@ -52,7 +52,7 @@ public abstract class CLIApplication {
             new CommandAdmin();
             new CommandStop();
 
-            Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
+            Runtime.getRuntime().addShutdownHook(shutdownThread);
 
             cli.start(); // actually starts the CLI thread
 
@@ -71,12 +71,13 @@ public abstract class CLIApplication {
     }
 
 
+    private final Thread shutdownThread = new Thread(this::stop);
+
     private final AtomicBoolean stopping = new AtomicBoolean(false);
 
     /**
      * Stops this application.
      */
-    @SuppressWarnings("finally")
     public final void stop() {
         synchronized (stopping) {
             if (stopping.get())
@@ -88,10 +89,10 @@ public abstract class CLIApplication {
             end();
         } catch (Throwable t) {
             Log.severe("Error stopping application " + getName() + " version " + getClass().getPackage().getImplementationVersion(), t);
-            System.exit(1);
         } finally {
             Log.info("Bye bye.");
-            System.exit(0);
+            if (!Thread.currentThread().equals(shutdownThread))
+                System.exit(0);
         }
     }
 
