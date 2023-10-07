@@ -12,5 +12,6 @@ public class PaperJson {
      */
     public static void init() {
         Json.registerTypeAdapterFactory(ItemStackAdapter.FACTORY);
+        Json.registerTypeAdapterFactory(ConfigurationSerializableAdapter.FACTORY);
     }
 }

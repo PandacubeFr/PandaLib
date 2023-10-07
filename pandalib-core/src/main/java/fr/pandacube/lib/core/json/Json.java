@@ -52,6 +52,7 @@ public class Json {
 	private static Gson build(Function<GsonBuilder, GsonBuilder> builderModifier) {
 		GsonBuilder base = new GsonBuilder()
 				.registerTypeAdapterFactory(new CustomAdapterFactory())
+				.disableHtmlEscaping()
 				.setLenient();
 		return builderModifier.apply(base).create();
 	}
