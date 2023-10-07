@@ -2,6 +2,7 @@ package fr.pandacube.lib.cli;
 
 import fr.pandacube.lib.cli.commands.CommandAdmin;
 import fr.pandacube.lib.cli.commands.CommandStop;
+import fr.pandacube.lib.cli.log.CLILogger;
 import fr.pandacube.lib.util.log.Log;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -91,6 +92,8 @@ public abstract class CLIApplication {
             Log.severe("Error stopping application " + getName() + " version " + getClass().getPackage().getImplementationVersion(), t);
         } finally {
             Log.info("Bye bye.");
+
+            CLILogger.ShutdownHookDelayerLogManager.resetFinally();
             if (!Thread.currentThread().equals(shutdownThread))
                 System.exit(0);
         }

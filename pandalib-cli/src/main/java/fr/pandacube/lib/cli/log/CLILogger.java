@@ -13,6 +13,7 @@ import java.io.PrintStream;
 import java.util.Scanner;
 import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**
@@ -20,7 +21,21 @@ import java.util.logging.Logger;
  */
 public class CLILogger {
 
+	static {
+		System.setProperty("java.util.logging.manager", ShutdownHookDelayerLogManager.class.getName());
+	}
+
 	private static Logger logger = null;
+
+
+	public static class ShutdownHookDelayerLogManager extends LogManager {
+		static ShutdownHookDelayerLogManager instance;
+		public ShutdownHookDelayerLogManager() { instance = this; }
+		@Override public void reset() { /* don't reset yet. */ }
+		private void reset0() { super.reset(); }
+		public static void resetFinally() { instance.reset0(); }
+	}
+
 
 	/**
 	 * Initialize and return the logger for this application.
