@@ -2,10 +2,14 @@ package fr.pandacube.lib.core.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
+import com.google.gson.ToNumberStrategy;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.MalformedJsonException;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -15,6 +19,52 @@ import java.util.function.Function;
  * {@link TypeAdapterFactory} provided with {@link #registerTypeAdapterFactory(TypeAdapterFactory)}.
  */
 public class Json {
+
+	/**
+	 * Makes Gson deserialize numbers to Number subclasses the same way SnakeYAML does
+	 */
+	private static final ToNumberStrategy YAML_EQUIVALENT_NUMBER_STRATEGY = in -> {
+		String value = in.nextString();
+
+		// YAML uses Regex to resolve values as INT or FLOAT (see org.yaml.snakeyaml.resolver.Resolver), trying FLOAT first.
+		// We see in the regex that FLOAT MUST have a "." in the string, but INT must not, so we try that.
+		boolean isFloat = value.contains(".");
+
+		if (isFloat) {
+			// if float, will only parse to Double
+			//   (see org.yaml.snakeyaml.constructor.SafeConstructor.ConstructYamlFloat)
+			try {
+				Double d = Double.valueOf(value);
+				if ((d.isInfinite() || d.isNaN()) && !in.isLenient()) {
+					throw new MalformedJsonException("JSON forbids NaN and infinities: " + d + "; at path " + in.getPreviousPath());
+				}
+				return d;
+			} catch (NumberFormatException e) {
+				throw new JsonParseException("Cannot parse " + value + "; at path " + in.getPreviousPath(), e);
+			}
+		}
+		else {
+			// if integer, will try to parse int, then long, then BigDecimal
+			//   (see org.yaml.snakeyaml.constructor.SafeConstructor.ConstructYamlInt
+			//    then org.yaml.snakeyaml.constructor.SafeConstructor.createNumber)
+			try {
+				return Integer.valueOf(value);
+			} catch (NumberFormatException e) {
+				try {
+					return Long.valueOf(value);
+				} catch (NumberFormatException e2) {
+					try {
+						return new BigInteger(value);
+					} catch (NumberFormatException e3) {
+						throw new JsonParseException("Cannot parse " + value + "; at path " + in.getPreviousPath(), e3);
+					}
+				}
+			}
+		}
+	};
+
+
+
 
 	/**
 	 * {@link Gson} instance with {@link GsonBuilder#setLenient()} and support for Java records and additional
@@ -53,6 +103,7 @@ public class Json {
 		GsonBuilder base = new GsonBuilder()
 				.registerTypeAdapterFactory(new CustomAdapterFactory())
 				.disableHtmlEscaping()
+				.setObjectToNumberStrategy(YAML_EQUIVALENT_NUMBER_STRATEGY)
 				.setLenient();
 		return builderModifier.apply(base).create();
 	}
@@ -94,5 +145,20 @@ public class Json {
 		registerTypeAdapterFactory(StackTraceElementAdapter.FACTORY);
 		registerTypeAdapterFactory(ThrowableAdapter.FACTORY);
 	}
+
+
+	/*public static void main(String[] args) {
+		TypeToken<Map<String, Object>> MAP_STR_OBJ_TYPE = new TypeToken<>() { };
+		Map<String, Object> map = gson.fromJson("{" +
+				"\"int\":34," +
+				"\"long\":3272567356876864," +
+				"\"bigint\":-737868677777837833757846576245765," +
+				"\"float\":34.0" +
+				"}", MAP_STR_OBJ_TYPE.getType());
+		for (String key : map.keySet()) {
+			Object v = map.get(key);
+			System.out.println(key + ": " + v + " (type " + v.getClass() + ")");
+		}
+	}*/
 
 }

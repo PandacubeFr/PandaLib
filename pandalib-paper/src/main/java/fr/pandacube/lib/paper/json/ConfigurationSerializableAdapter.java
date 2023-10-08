@@ -10,13 +10,11 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.internal.bind.TreeTypeAdapter;
 import com.google.gson.reflect.TypeToken;
-import fr.pandacube.lib.core.json.Json;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.BlockVector;
 import org.yaml.snakeyaml.Yaml;
 
 import java.lang.reflect.Type;
@@ -68,12 +66,12 @@ import java.util.Map;
     }
 
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         PaperJson.init();
         BlockVector bv = new BlockVector(12, 24, 48);
         String json = Json.gson.toJson(bv);
         System.out.println(json);
         BlockVector bv2 = Json.gson.fromJson(json, BlockVector.class);
         System.out.println(bv.equals(bv2));
-    }
+    }*/
 }
