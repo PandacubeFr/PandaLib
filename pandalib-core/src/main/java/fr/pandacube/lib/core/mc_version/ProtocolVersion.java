@@ -216,6 +216,14 @@ public class ProtocolVersion implements Comparable<ProtocolVersion> {
         return displayOptimizedListOfVersions(List.of(this), finalWordSeparator);
     }
 
+    public String getFirstVersion() {
+        return versions.get(0);
+    }
+
+    public String getLastVersion() {
+        return versions.get(versions.size() - 1);
+    }
+
     @Override
     public boolean equals(Object o) {
         return o instanceof ProtocolVersion pv && protocolVersionNumber == pv.protocolVersionNumber;
