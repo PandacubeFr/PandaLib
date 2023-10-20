@@ -59,6 +59,7 @@ public class ChatFilledLine implements ComponentLike {
     private boolean decorationBold = false;
     private int nbSide = ChatConfig.nbCharMargin;
     private boolean spacesAroundText = false;
+    private boolean spacesDecorationRightSide = false;
     private boolean console = false;
     private Integer maxWidth = null;
 
@@ -113,6 +114,16 @@ public class ChatFilledLine implements ComponentLike {
      */
     public ChatFilledLine spacesAroundText() {
         spacesAroundText = true;
+        return this;
+    }
+
+    /**
+     * If the {@link #decoChar(char)} is set to space, also add spaces at the right of the text
+     * to reach the desired width.
+     * @return this.
+     */
+    public ChatFilledLine spacesDecorationRightSide() {
+        spacesDecorationRightSide = true;
         return this;
     }
 
@@ -184,7 +195,7 @@ public class ChatFilledLine implements ComponentLike {
         Chat d = Chat.chat()
                 .then(Chat.text(ChatUtil.repeatedChar(decorationChar, nbCharLeft)).color(decorationColor).bold(decorationBold))
                 .then(text);
-        if (decorationChar != ' ')
+        if (decorationChar != ' ' || spacesDecorationRightSide)
             d.then(Chat.text(ChatUtil.repeatedChar(decorationChar, nbCharRight)).color(decorationColor).bold(decorationBold));
         return (FormatableChat) d;
     }
