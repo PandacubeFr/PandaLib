@@ -10,7 +10,6 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.internal.bind.TreeTypeAdapter;
 import com.google.gson.reflect.TypeToken;
-import fr.pandacube.lib.core.json.Json;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -27,9 +26,6 @@ public record MinecraftVersionList(
         Map<String, Integer> protocolOfVersion,
         Map<Integer, List<String>> versionsOfProtocol
 ) {
-    static {
-        Json.registerTypeAdapterFactory(MinecraftVersionListAdapter.FACTORY);
-    }
 
     /**
      * Creates an empty {@link MinecraftVersionList}.

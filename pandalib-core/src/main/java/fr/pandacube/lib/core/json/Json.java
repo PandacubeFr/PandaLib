@@ -8,6 +8,7 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.MalformedJsonException;
+import fr.pandacube.lib.core.mc_version.MinecraftVersionList.MinecraftVersionListAdapter;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -144,6 +145,7 @@ public class Json {
 	static {
 		registerTypeAdapterFactory(StackTraceElementAdapter.FACTORY);
 		registerTypeAdapterFactory(ThrowableAdapter.FACTORY);
+		registerTypeAdapterFactory(MinecraftVersionListAdapter.FACTORY);
 	}
 
 
