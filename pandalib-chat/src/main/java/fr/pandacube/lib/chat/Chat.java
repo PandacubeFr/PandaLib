@@ -1,10 +1,5 @@
 package fr.pandacube.lib.chat;
 
-import java.awt.Color;
-import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.function.UnaryOperator;
-
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentBuilder;
@@ -18,12 +13,19 @@ import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.format.TextDecoration.State;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 
 /**
  * A builder for chat components.
@@ -116,6 +118,19 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
     @Override
     public @NotNull Component asComponent() {
         return getAdv();
+    }
+
+    public Component getAsDownsampledColorsComponent() {
+        String json = GsonComponentSerializer.colorDownsamplingGson().serialize(getAdv());
+        return GsonComponentSerializer.gson().deserialize(json);
+    }
+
+    public Chat getAsDownsampledColors() {
+        return chatComponent(getAsDownsampledColorsComponent());
+    }
+
+    public String getMiniMessage() {
+        return MiniMessage.miniMessage().serialize(getAdv());
     }
 
 
@@ -270,11 +285,25 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
     public Chat thenNewLine() { return then(Component.newline()); }
 
     /**
-     * Appends a component with the provided legacy text as its content.
-     * @param legacyText the legacy text.
+     * Appends a component with the provided legacy text as its content, using the section {@code "§"} character.
+     * @param legacyText the legacy text that uses the {@code "§"} character.
      * @return this.
      */
     public Chat thenLegacyText(Object legacyText) { return then(legacyText(legacyText)); }
+
+    /**
+     * Appends a component with the provided legacy text as its content, using the ampersand {@code "&"} character.
+     * @param legacyText the legacy text that uses the {@code "&"} character.
+     * @return this.
+     */
+    public Chat thenLegacyAmpersandText(Object legacyText) { return then(legacyAmpersandText(legacyText)); }
+
+    /**
+     * Appends a component with the provided MiniMessage text as its content.
+     * @param miniMessageText the MiniMessage text.
+     * @return this.
+     */
+    public Chat thenMiniMessage(String miniMessageText) { return then(miniMessageText(miniMessageText)); }
 
     /**
      * Appends a component with the provided translation key and parameters.

@@ -16,6 +16,7 @@ import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.event.HoverEventSource;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 
@@ -91,18 +92,58 @@ public abstract class ChatStatic {
 
 
     /**
-     * Creates a {@link FormatableChat} with the provided legacy text as its content.
-     * @param legacyText the legacy text to use as the content.
+     * Creates a {@link FormatableChat} with the provided legacy text as its content, using the section {@code "§"}
+     * character.
+     * @param legacyText the legacy text to use as the content, that uses the {@code "§"} character.
      * @return a new {@link FormatableChat} with the provided text as its content.
-     * @throws IllegalArgumentException If the {@code plainText} parameter is instance of {@link Chat} or
+     * @throws IllegalArgumentException If the {@code legacyText} parameter is instance of {@link Chat} or
      *         {@link Component}. The caller should use {@link #chatComponent(ComponentLike)}
      *         instead.
      */
     public static FormatableChat legacyText(Object legacyText) {
+        return legacyText(legacyText, LegacyComponentSerializer.SECTION_CHAR);
+    }
+
+
+    /**
+     * Creates a {@link FormatableChat} with the provided legacy text as its content, using the ampersand {@code "&"}
+     * character.
+     * @param legacyText the legacy text to use as the content, that uses the {@code "&"} character.
+     * @return a new {@link FormatableChat} with the provided text as its content.
+     * @throws IllegalArgumentException If the {@code legacyText} parameter is instance of {@link Chat} or
+     *         {@link Component}. The caller should use {@link #chatComponent(ComponentLike)}
+     *         instead.
+     */
+    public static FormatableChat legacyAmpersandText(Object legacyText) {
+        return legacyText(legacyText, LegacyComponentSerializer.AMPERSAND_CHAR);
+    }
+
+
+    /**
+     * Creates a {@link FormatableChat} with the provided legacy text as its content, using the specified
+     * legacyCharacter.
+     * @param legacyText the legacy text to use as the content.
+     * @param legacyCharacter the character used in the provided text to prefix color and format code.
+     * @return a new {@link FormatableChat} with the provided text as its content.
+     * @throws IllegalArgumentException If the {@code legacyText} parameter is instance of {@link Chat} or
+     *         {@link Component}. The caller should use {@link #chatComponent(ComponentLike)}
+     *         instead.
+     */
+    private static FormatableChat legacyText(Object legacyText, char legacyCharacter) {
         if (legacyText instanceof ComponentLike) {
             throw new IllegalArgumentException("Expected any object except instance of " + ComponentLike.class + ". Received " + legacyText + ". Please use ChatStatic.chatComponent(ComponentLike) instead.");
         }
-        return chatComponent(LegacyComponentSerializer.legacySection().deserialize(Objects.toString(legacyText)));
+        return chatComponent(LegacyComponentSerializer.legacy(legacyCharacter).deserialize(Objects.toString(legacyText)));
+    }
+
+
+    /**
+     * Creates a {@link FormatableChat} with the provided MiniMessage text as its content.
+     * @param miniMessageText the MiniMessage text to use as the content.
+     * @return a new {@link FormatableChat} with the provided text as its content.
+     */
+    public static FormatableChat miniMessageText(String miniMessageText) {
+        return chatComponent(MiniMessage.miniMessage().deserialize(miniMessageText));
     }
 
 
