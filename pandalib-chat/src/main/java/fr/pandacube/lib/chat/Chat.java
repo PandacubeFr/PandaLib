@@ -120,15 +120,27 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
         return getAdv();
     }
 
-    public Component getAsDownsampledColorsComponent() {
+    /**
+     * Builds the component into Adventure Component instance, also down sampling the RGB colors to named colors.
+     * @return the {@link Component} built from this {@link Chat} component, with down-sampled colors.
+     */
+    public Component getAsDownSampledColorsComponent() {
         String json = GsonComponentSerializer.colorDownsamplingGson().serialize(getAdv());
         return GsonComponentSerializer.gson().deserialize(json);
     }
 
-    public Chat getAsDownsampledColors() {
-        return chatComponent(getAsDownsampledColorsComponent());
+    /**
+     * Returns a new {@link Chat} consisting of this {@link Chat} instance, with the RGB colors down-sampled to named colors.
+     * @return a new {@link Chat} instance, with down-sampled colors.
+     */
+    public Chat getAsDownSampledColors() {
+        return chatComponent(getAsDownSampledColorsComponent());
     }
 
+    /**
+     * Returns a MiniMessage representation of this {@link Chat} component.
+     * @return the MiniMessage representation if this {@link Chat} component.
+     */
     public String getMiniMessage() {
         return MiniMessage.miniMessage().serialize(getAdv());
     }

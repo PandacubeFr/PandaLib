@@ -93,7 +93,7 @@ public abstract class CLIApplication {
         } finally {
             Log.info("Bye bye.");
 
-            CLILogger.ShutdownHookDelayerLogManager.resetFinally();
+            CLILogger.actuallyResetLogManager();
             if (!Thread.currentThread().equals(shutdownThread))
                 System.exit(0);
         }

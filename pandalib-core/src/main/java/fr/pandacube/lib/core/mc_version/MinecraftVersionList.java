@@ -51,6 +51,9 @@ public record MinecraftVersionList(
      * Gson Adapter that ensure the data in {@link MinecraftVersionList} is sorted correctly when deserializing.
      */
     public static class MinecraftVersionListAdapter implements JsonSerializer<MinecraftVersionList>, JsonDeserializer<MinecraftVersionList> {
+        /**
+         * Gson adapter factory for {@link MinecraftVersionList}.
+         */
         public static final TypeAdapterFactory FACTORY = TreeTypeAdapter.newTypeHierarchyFactory(MinecraftVersionList.class, new MinecraftVersionListAdapter());
 
         private static final TypeToken<Map<String, Integer>> MAP_STR_INT_TYPE = new TypeToken<>() { };

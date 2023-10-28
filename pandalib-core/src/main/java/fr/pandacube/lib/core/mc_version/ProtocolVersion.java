@@ -216,10 +216,18 @@ public class ProtocolVersion implements Comparable<ProtocolVersion> {
         return displayOptimizedListOfVersions(List.of(this), finalWordSeparator);
     }
 
+    /**
+     * Gets the first (earliest) Minecraft version that supports this protocol version.
+     * @return the first (earliest) Minecraft version that supports this protocol version.
+     */
     public String getFirstVersion() {
         return versions.get(0);
     }
 
+    /**
+     * Gets the last (latest) Minecraft version that supports this protocol version.
+     * @return the last (latest) Minecraft version that supports this protocol version.
+     */
     public String getLastVersion() {
         return versions.get(versions.size() - 1);
     }

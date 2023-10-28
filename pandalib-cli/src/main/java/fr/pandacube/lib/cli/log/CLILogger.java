@@ -1,6 +1,7 @@
 package fr.pandacube.lib.cli.log;
 
 import fr.pandacube.lib.cli.CLI;
+import fr.pandacube.lib.cli.CLIApplication;
 import fr.pandacube.lib.util.log.Log;
 import fr.pandacube.lib.util.ThrowableUtil;
 import fr.pandacube.lib.util.log.DailyLogRotateFileHandler;
@@ -28,12 +29,21 @@ public class CLILogger {
 	private static Logger logger = null;
 
 
-	public static class ShutdownHookDelayerLogManager extends LogManager {
+	private static class ShutdownHookDelayerLogManager extends LogManager {
 		static ShutdownHookDelayerLogManager instance;
 		public ShutdownHookDelayerLogManager() { instance = this; }
 		@Override public void reset() { /* don't reset yet. */ }
-		private void reset0() { super.reset(); }
-		public static void resetFinally() { instance.reset0(); }
+		private void actuallyReset() { super.reset(); }
+	}
+
+	/**
+	 * Tells the LogManager to actually reset.
+	 *
+	 * This method is called by the shutdown hook of {@link CLIApplication}, because the {@link CLILogger} uses a custom
+	 * {@link LogManager} that bypass the reset process during the shutdown of the process.
+	 */
+	public static void actuallyResetLogManager() {
+		ShutdownHookDelayerLogManager.instance.actuallyReset();
 	}
 
 

@@ -5,8 +5,14 @@ package fr.pandacube.lib.util;
  */
 public class Tick {
 
+	/**
+	 * The number of Minecraft server ticks in a second.
+	 */
 	public static final int TPS = 20;
 
+	/**
+	 * The duration of a Minecraft server tick in millisecond.
+	 */
 	public static final int MS_PER_TICK = 1000 / TPS;
 	
 	
