@@ -442,7 +442,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<BukkitBriga
      * @param suggestions the suggestions to wrap.
      * @return a {@link SuggestionProvider} generating the suggestions from the provided {@link SuggestionsSupplier}.
      */
-    protected SuggestionProvider<BukkitBrigadierCommandSource> wrapSuggestions(SuggestionsSupplier<CommandSender> suggestions) {
+    public SuggestionProvider<BukkitBrigadierCommandSource> wrapSuggestions(SuggestionsSupplier<CommandSender> suggestions) {
         return wrapSuggestions(suggestions, PaperBrigadierCommand::getCommandSender);
     }
 
