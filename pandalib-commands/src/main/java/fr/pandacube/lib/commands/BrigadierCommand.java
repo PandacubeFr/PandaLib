@@ -13,6 +13,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import fr.pandacube.lib.util.log.Log;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -235,9 +236,12 @@ public abstract class BrigadierCommand<S> {
                 args = Arrays.copyOf(args, args.length + 1);
                 args[args.length - 1] = message.substring(tokenStartPos);
 
-                for (String s : suggestions.getSuggestions(sender, args.length - 1, args[args.length - 1], args)) {
-                    if (s != null)
-                        builder.suggest(s);
+                List<String> wrappedResult = suggestions.getSuggestions(sender, args.length - 1, args[args.length - 1], args);
+                if (wrappedResult != null) {
+                    for (String s : wrappedResult) {
+                        if (s != null)
+                            builder.suggest(s);
+                    }
                 }
             } catch (Throwable e) {
                 Log.severe("Error while tab-completing '" + message + "' for " + sender, e);
