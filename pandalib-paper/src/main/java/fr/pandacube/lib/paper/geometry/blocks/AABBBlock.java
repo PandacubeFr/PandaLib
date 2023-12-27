@@ -180,7 +180,16 @@ public class AABBBlock implements BlockSet, Cloneable {
 	}
 
 
-
+	@Override
+	public String toString() {
+		return "{(" + pos1.getBlockX() +
+				", " + pos1.getBlockY() +
+				", " + pos1.getBlockZ() +
+				"), (" + pos2.getBlockX() +
+				", " + pos2.getBlockY() +
+				", " + pos2.getBlockZ() +
+				")}";
+	}
 
 	static boolean overlap(AABBBlock aabb1, AABBBlock aabb2) {
 		return aabb1.asBukkitBoundingBox().overlaps(aabb2.asBukkitBoundingBox());

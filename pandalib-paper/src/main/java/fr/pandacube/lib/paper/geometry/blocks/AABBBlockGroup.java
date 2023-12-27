@@ -35,11 +35,11 @@ public class AABBBlockGroup implements BlockSet {
 		for (int i = 1; i < subAABB.size(); i++) {
 			AABBBlock aabb = subAABB.get(i);
 			pos1.setX(Math.min(pos1.getBlockX(), aabb.pos1.getBlockX()));
-			pos1.setY(Math.min(pos1.getBlockY(), aabb.pos1.getBlockZ()));
-			pos1.setZ(Math.min(pos1.getBlockY(), aabb.pos1.getBlockZ()));
+			pos1.setY(Math.min(pos1.getBlockY(), aabb.pos1.getBlockY()));
+			pos1.setZ(Math.min(pos1.getBlockZ(), aabb.pos1.getBlockZ()));
 			pos2.setX(Math.max(pos2.getBlockX(), aabb.pos2.getBlockX() - 1));
-			pos2.setY(Math.max(pos2.getBlockY(), aabb.pos2.getBlockZ() - 1));
-			pos2.setZ(Math.max(pos2.getBlockY(), aabb.pos2.getBlockZ() - 1));
+			pos2.setY(Math.max(pos2.getBlockY(), aabb.pos2.getBlockY() - 1));
+			pos2.setZ(Math.max(pos2.getBlockZ(), aabb.pos2.getBlockZ() - 1));
 		}
 		return new AABBBlock(pos1, pos2);
 	}
@@ -86,9 +86,13 @@ public class AABBBlockGroup implements BlockSet {
 		return IteratorIterator.ofCollectionOfIterator(subAABB.stream().map(AABBBlock::iterator).toList());
 	}
 
-
-
-
+	@Override
+	public String toString() {
+		return "AABBBlockGroup{" +
+				"subAABB=" + subAABB +
+				", englobingAABB=" + englobingAABB +
+				'}';
+	}
 
 	/* package */ static boolean overlap(AABBBlockGroup aabbGroup, AABBBlock aabb) {
 		if (!aabbGroup.englobingAABB.overlaps(aabb))
