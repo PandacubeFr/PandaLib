@@ -1,5 +1,7 @@
 package fr.pandacube.lib.util;
 
+import java.time.Duration;
+
 /**
  * Provides methods related to Minecraft Java server ticks.
  */
@@ -42,6 +44,16 @@ public class Tick {
 	 */
 	public static long toMs(long tick) {
 		return tick * MS_PER_TICK;
+	}
+
+
+	/**
+	 * Returns the {@link Duration} for the provided number of ticks.
+	 * @param tick the duration in ticks
+	 * @return the {@link Duration} for the provided number of ticks.
+	 */
+	public static Duration toDuration(long tick) {
+		return Duration.ofMillis(toMs(tick));
 	}
 
 }
