@@ -1,4 +1,4 @@
-package fr.pandacube.lib.paper.util;
+package fr.pandacube.lib.paper.world;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -7,6 +7,7 @@ import org.bukkit.World.Environment;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class WorldUtil {
@@ -40,11 +41,38 @@ public class WorldUtil {
 		throw new IllegalStateException("Unable to determine the type of the world " + world + ".");
 	}
 	
-	
+	public List<RegionCoord> getExistingRegions(String world) {
+		Environment env = determineEnvironment(world);
+
+		File worldFolder = worldDir(world);
+
+		File file = switch (env) {
+			case NORMAL -> new File(worldFolder, "region");
+			case NETHER -> new File(worldFolder, "DIM-1" + File.pathSeparator + "region");
+			case THE_END -> new File(worldFolder, "DIM1" + File.pathSeparator + "region");
+            case CUSTOM -> throw new IllegalStateException("The provided world '" + world + "' has a custom Environment type. Unable to tell where the region are stored.");
+        };
+
+		String[] fileList = file.list();
+		if (fileList == null) {
+			throw new IllegalStateException("The provided world '" + world + "' does not hae a valid region folder.");
+		}
+
+		return Arrays.stream(fileList)
+				.map(name -> {
+					try {
+						return RegionCoord.fromFileName(name);
+					} catch (IllegalArgumentException e) {
+						return null;
+					}
+				})
+				.filter(Objects::nonNull)
+				.toList();
+	}
 	
 	private static final List<String> REGION_DATA_FILES = Arrays.asList("entities", "poi", "region", "DIM-1", "DIM1");
 	
-	public static List<File> regionDataFiles(String world) {
+	public static List<File> regionDataFolders(String world) {
 		return onlyExisting(worldDir(world), REGION_DATA_FILES);
 	}
 

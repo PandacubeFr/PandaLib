@@ -8,7 +8,7 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.SharedConstants;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.NbtIo;
 import fr.pandacube.lib.paper.util.PlayerDataWrapper;
-import fr.pandacube.lib.paper.util.WorldUtil;
+import fr.pandacube.lib.paper.world.WorldUtil;
 import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 import org.bukkit.Bukkit;
