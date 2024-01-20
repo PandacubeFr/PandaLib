@@ -32,10 +32,10 @@ public class WorldUtil {
 		if (new File(worldFolder, "region").isDirectory())
 			return Environment.NORMAL;
 		
-		if (new File(worldFolder, "DIM-1" + File.pathSeparator + "region").isDirectory())
+		if (new File(worldFolder, "DIM-1" + File.separator + "region").isDirectory())
 			return Environment.NETHER;
 		
-		if (new File(worldFolder, "DIM1" + File.pathSeparator + "region").isDirectory())
+		if (new File(worldFolder, "DIM1" + File.separator + "region").isDirectory())
 			return Environment.THE_END;
 		
 		throw new IllegalStateException("Unable to determine the type of the world " + world + ".");
@@ -48,8 +48,8 @@ public class WorldUtil {
 
 		File file = switch (env) {
 			case NORMAL -> new File(worldFolder, "region");
-			case NETHER -> new File(worldFolder, "DIM-1" + File.pathSeparator + "region");
-			case THE_END -> new File(worldFolder, "DIM1" + File.pathSeparator + "region");
+			case NETHER -> new File(worldFolder, "DIM-1" + File.separator + "region");
+			case THE_END -> new File(worldFolder, "DIM1" + File.separator + "region");
             case CUSTOM -> throw new IllegalStateException("The provided world '" + world + "' has a custom Environment type. Unable to tell where the region are stored.");
         };
 
