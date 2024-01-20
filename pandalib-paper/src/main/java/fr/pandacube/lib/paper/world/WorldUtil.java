@@ -41,7 +41,7 @@ public class WorldUtil {
 		throw new IllegalStateException("Unable to determine the type of the world " + world + ".");
 	}
 	
-	public List<RegionCoord> getExistingRegions(String world) {
+	public static List<RegionCoord> getExistingRegions(String world) {
 		Environment env = determineEnvironment(world);
 
 		File worldFolder = worldDir(world);
