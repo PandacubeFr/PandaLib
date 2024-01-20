@@ -55,7 +55,7 @@ public class WorldUtil {
 
 		String[] fileList = file.list();
 		if (fileList == null) {
-			throw new IllegalStateException("The provided world '" + world + "' does not hae a valid region folder.");
+			throw new IllegalStateException("The provided world '" + world + "' does not have a valid region folder (expected '" + file + "').");
 		}
 
 		return Arrays.stream(fileList)
