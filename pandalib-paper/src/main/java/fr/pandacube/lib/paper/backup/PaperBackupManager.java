@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
 
 public class PaperBackupManager extends BackupManager implements Listener {
 
@@ -76,7 +77,9 @@ public class PaperBackupManager extends BackupManager implements Listener {
 	public void run() {
 		try {
 			SchedulerUtil.runOnServerThreadAndWait(super::run);
-		} catch (Exception e) {
+		} catch (CancellationException ignored) {
+
+        } catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
