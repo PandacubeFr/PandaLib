@@ -3,6 +3,7 @@ package fr.pandacube.lib.util;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -30,6 +31,7 @@ public class TimeUtil {
 	private static final DateTimeFormatter cmpMonthFormatter = DateTimeFormatter.ofPattern("MMM", Locale.FRENCH);
 	private static final DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMMM", Locale.FRENCH);
 	private static final DateTimeFormatter yearFormatter = DateTimeFormatter.ofPattern("uuuu", Locale.FRENCH);
+	private static final DateTimeFormatter compactDateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(Locale.FRENCH);
 
 	private static final DateTimeFormatter HMSFormatter = DateTimeFormatter.ofPattern("HH:mm:ss", Locale.FRENCH);
 	private static final DateTimeFormatter HMFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.FRENCH);
@@ -152,7 +154,7 @@ public class TimeUtil {
 			}
 
 		}
-		return fullDateFr(time, displayPrecision, true, compactWords);
+		return fullDateFr(time, displayPrecision, true, compactWords, false);
 
 	}
 
@@ -212,13 +214,31 @@ public class TimeUtil {
 	 *
 	 * @param timestamp the time to represent in the returned string.
 	 * @param showSeconds if the returned string should include seconds (true) or not (false). To have more control
-	 *                    over the precision, call {@link #fullDateFr(long, DisplayPrecision, boolean, boolean)}.
+	 *                    over the precision, call {@link #fullDateFr(long, DisplayPrecision, boolean, boolean, boolean)}.
 	 * @param showWeekday true to show the week day, false otherwise.
 	 * @param compactWords true to use compact words, false to use full words.
 	 * @return a string representation of the date (and eventually day time) of the provided timestamp.
 	 */
 	public static String fullDateFr(long timestamp, boolean showSeconds, boolean showWeekday, boolean compactWords) {
-		return fullDateFr(timestamp, showSeconds ? DisplayPrecision.SECONDS : DisplayPrecision.MINUTES, showWeekday, compactWords);
+		return fullDateFr(timestamp, showSeconds, showWeekday, compactWords, false);
+	}
+
+
+	/**
+	 * Returns a string representation of the date (and eventually day time) of the provided timestamp.
+	 * <p>
+	 * <b>This method renders the text in French.</b>
+	 *
+	 * @param timestamp the time to represent in the returned string.
+	 * @param showSeconds if the returned string should include seconds (true) or not (false). To have more control
+	 *                    over the precision, call {@link #fullDateFr(long, DisplayPrecision, boolean, boolean, boolean)}.
+	 * @param showWeekday true to show the week day, false otherwise.
+	 * @param compactWords true to use compact words, false to use full words.
+	 * @param compactDate true to use compact date (DD/MM/YYYY).
+	 * @return a string representation of the date (and eventually day time) of the provided timestamp.
+	 */
+	public static String fullDateFr(long timestamp, boolean showSeconds, boolean showWeekday, boolean compactWords, boolean compactDate) {
+		return fullDateFr(timestamp, showSeconds ? DisplayPrecision.SECONDS : DisplayPrecision.MINUTES, showWeekday, compactWords, compactDate);
 	}
 
 	/**
@@ -230,17 +250,23 @@ public class TimeUtil {
 	 * @param precision the {@link DisplayPrecision} fo the returned string.
 	 * @param showWeekday true to show the week day, false otherwise.
 	 * @param compactWords true to use compact words, false to use full words.
+	 * @param compactDate true to use compact date (DD/MM/YYYY).
 	 * @return a string representation of the date (and eventually day time) of the provided timestamp.
 	 */
-	public static String fullDateFr(long timestamp, DisplayPrecision precision, boolean showWeekday, boolean compactWords) {
+	public static String fullDateFr(long timestamp, DisplayPrecision precision, boolean showWeekday, boolean compactWords, boolean compactDate) {
 		LocalDateTime displayDateTime = toLocalDateTime(timestamp);
-		String ret = (showWeekday ? ((compactWords ? cmpDayOfWeekFormatter : dayOfWeekFormatter).format(displayDateTime) + " ") : "")
-				+ dayOfMonthFormatter.format(displayDateTime) + " "
-				+ (compactWords ? cmpMonthFormatter : monthFormatter).format(displayDateTime) + " "
-				+ yearFormatter.format(displayDateTime);
+		String date = showWeekday ? ((compactWords ? cmpDayOfWeekFormatter : dayOfWeekFormatter).format(displayDateTime) + " ") : "";
+		if (compactDate) {
+			date += dayOfMonthFormatter.format(displayDateTime) + " "
+					+ (compactWords ? cmpMonthFormatter : monthFormatter).format(displayDateTime) + " "
+					+ yearFormatter.format(displayDateTime);
+		}
+		else {
+			date += compactDateFormatter.format(displayDateTime);
+		}
 		if (precision == DisplayPrecision.DAYS)
-			return ret;
-		return ret + " à " + dayTimeFr(timestamp, precision);
+			return date;
+		return date + " à " + dayTimeFr(timestamp, precision);
 	}
 
 	/**
