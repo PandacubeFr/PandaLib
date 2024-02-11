@@ -10,6 +10,7 @@ import fr.pandacube.lib.reflect.ReflectMethod;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +22,7 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 public class CraftPlayer extends ReflectWrapperTyped<Player> {
     public static final ReflectClass<?> REFLECT = wrapEx(() -> OBCReflect.ofClass("entity.CraftPlayer"));
     private static final ReflectMethod<?> getHandle = wrapEx(() -> REFLECT.method("getHandle"));
+    private static final ReflectMethod<?> getPluginWeakReference = wrapEx(() -> REFLECT.method("getPluginWeakReference"));
     private static final ReflectField<?> invertedVisibilityEntities = wrapEx(() -> REFLECT.field("invertedVisibilityEntities"));
 
     public ServerPlayer getHandle() {
@@ -31,6 +33,11 @@ public class CraftPlayer extends ReflectWrapperTyped<Player> {
     @SuppressWarnings("unchecked")
     public Map<UUID, Set<WeakReference<Plugin>>> getInvertedVisibilityEntities() {
         return (Map<UUID, Set<WeakReference<Plugin>>>) wrapReflectEx(() -> invertedVisibilityEntities.getValue(__getRuntimeInstance()));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static WeakReference<Plugin> getPluginWeakReference(@Nullable Plugin plugin) {
+        return (WeakReference<Plugin>) wrapReflectEx(() -> getPluginWeakReference.invokeStatic(plugin));
     }
 
     protected CraftPlayer(Object obj) {
