@@ -1,16 +1,14 @@
 package fr.pandacube.lib.paper.reflect.wrapper.craftbukkit;
 
 import fr.pandacube.lib.paper.reflect.OBCReflect;
-import fr.pandacube.lib.reflect.ReflectField;
-import fr.pandacube.lib.reflect.wrapper.ReflectWrapperTyped;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerPlayer;
 import fr.pandacube.lib.reflect.ReflectClass;
+import fr.pandacube.lib.reflect.ReflectField;
 import fr.pandacube.lib.reflect.ReflectMethod;
-
+import fr.pandacube.lib.reflect.wrapper.ReflectWrapperTyped;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.Set;
@@ -22,7 +20,7 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 public class CraftPlayer extends ReflectWrapperTyped<Player> {
     public static final ReflectClass<?> REFLECT = wrapEx(() -> OBCReflect.ofClass("entity.CraftPlayer"));
     private static final ReflectMethod<?> getHandle = wrapEx(() -> REFLECT.method("getHandle"));
-    private static final ReflectMethod<?> getPluginWeakReference = wrapEx(() -> REFLECT.method("getPluginWeakReference"));
+    private static final ReflectMethod<?> getPluginWeakReference = wrapEx(() -> REFLECT.method("getPluginWeakReference", Plugin.class));
     private static final ReflectField<?> invertedVisibilityEntities = wrapEx(() -> REFLECT.field("invertedVisibilityEntities"));
 
     public ServerPlayer getHandle() {
@@ -36,7 +34,7 @@ public class CraftPlayer extends ReflectWrapperTyped<Player> {
     }
 
     @SuppressWarnings("unchecked")
-    public static WeakReference<Plugin> getPluginWeakReference(@Nullable Plugin plugin) {
+    public static WeakReference<Plugin> getPluginWeakReference(Plugin plugin) {
         return (WeakReference<Plugin>) wrapReflectEx(() -> getPluginWeakReference.invokeStatic(plugin));
     }
 
