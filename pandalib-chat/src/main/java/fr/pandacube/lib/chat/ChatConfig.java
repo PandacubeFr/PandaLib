@@ -50,7 +50,7 @@ public class ChatConfig {
     /**
      * The color used to display data in a message.
      */
-    public static TextColor dataColor = PandaTheme.CHAT_GRAY_MID;
+    public static TextColor dataColor = NamedTextColor.GRAY;
 
     /**
      * The color used for displayed URLs and clickable URLs.
