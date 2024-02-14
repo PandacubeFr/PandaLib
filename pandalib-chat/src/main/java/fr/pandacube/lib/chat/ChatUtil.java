@@ -432,12 +432,12 @@ public class ChatUtil {
      *                alignment, much harder).
      * @return a List containing each rendered line of the table.
      */
-    public static List<Component> renderTable(List<List<Chat>> data, String space, boolean console) {
+    public static List<Component> renderTable(List<List<ComponentLike>> data, String space, boolean console) {
         List<List<Component>> compRows = new ArrayList<>(data.size());
-        for (List<Chat> row : data) {
+        for (List<ComponentLike> row : data) {
             List<Component> compRow = new ArrayList<>(row.size());
-            for (Chat c : row) {
-                compRow.add(c.getAdv());
+            for (ComponentLike c : row) {
+                compRow.add(c.asComponent());
             }
             compRows.add(compRow);
         }

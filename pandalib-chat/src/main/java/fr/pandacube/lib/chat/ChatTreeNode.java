@@ -1,10 +1,13 @@
 package fr.pandacube.lib.chat;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A tree structure of {@link Chat} component intended to be rendered in chat using {@link #render(boolean)}.
+ * A tree structure of chat {@link Component} intended to be rendered in chat using {@link #render(boolean)}.
  */
 public class ChatTreeNode {
 
@@ -19,7 +22,7 @@ public class ChatTreeNode {
     /**
      * The component for the current node.
      */
-    public final Chat component;
+    public final ComponentLike component;
 
     /**
      * Children nodes.
@@ -30,7 +33,7 @@ public class ChatTreeNode {
      * Construct a new {@link ChatTreeNode}.
      * @param cmp the component for the current node.
      */
-    public ChatTreeNode(Chat cmp) {
+    public ChatTreeNode(ComponentLike cmp) {
         component = cmp;
     }
 
@@ -50,7 +53,7 @@ public class ChatTreeNode {
      * Each element in the returned list represent 1 line of this tree view.
      * Thus, the caller may send each line separately or at once, depending on the quantity of data.
      * @param console true to render for console, false otherwise.
-     * @return an array of component, each element being a single line.
+     * @return a list of component, each element being a single line.
      */
     public List<Chat> render(boolean console) {
         List<Chat> ret = new ArrayList<>();

@@ -288,7 +288,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
      * @param comp the component.
      * @return this.
      */
-    public Chat thenPlayerName(Component comp) { return then(playerNameComponent(comp)); }
+    public Chat thenPlayerName(ComponentLike comp) { return then(playerNameComponent(comp)); }
 
     /**
      * Appends a component consisting of a new line.

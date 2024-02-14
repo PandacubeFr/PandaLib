@@ -248,7 +248,7 @@ public abstract class ChatStatic {
      * @param c the {@link Component}.
      * @return a new {@link FormatableChat}.
      */
-    public static FormatableChat playerNameComponent(Component c) {
+    public static FormatableChat playerNameComponent(ComponentLike c) {
         FormatableChat fc = chatComponent(c);
         fc.builder.colorIfAbsent(NamedTextColor.WHITE);
         return fc;
