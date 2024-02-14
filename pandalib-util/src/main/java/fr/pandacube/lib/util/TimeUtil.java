@@ -257,16 +257,16 @@ public class TimeUtil {
 		LocalDateTime displayDateTime = toLocalDateTime(timestamp);
 		String date = showWeekday ? ((compactWords ? cmpDayOfWeekFormatter : dayOfWeekFormatter).format(displayDateTime) + " ") : "";
 		if (compactDate) {
+			date += compactDateFormatter.format(displayDateTime);
+		}
+		else {
 			date += dayOfMonthFormatter.format(displayDateTime) + " "
 					+ (compactWords ? cmpMonthFormatter : monthFormatter).format(displayDateTime) + " "
 					+ yearFormatter.format(displayDateTime);
 		}
-		else {
-			date += compactDateFormatter.format(displayDateTime);
-		}
 		if (precision == DisplayPrecision.DAYS)
 			return date;
-		return date + " à " + dayTimeFr(timestamp, precision);
+		return date + (compactDate ? " " : " à ") + dayTimeFr(timestamp, precision);
 	}
 
 	/**
