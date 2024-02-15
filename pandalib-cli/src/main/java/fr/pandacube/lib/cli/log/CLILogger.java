@@ -2,9 +2,9 @@ package fr.pandacube.lib.cli.log;
 
 import fr.pandacube.lib.cli.CLI;
 import fr.pandacube.lib.cli.CLIApplication;
-import fr.pandacube.lib.util.log.Log;
 import fr.pandacube.lib.util.ThrowableUtil;
 import fr.pandacube.lib.util.log.DailyLogRotateFileHandler;
+import fr.pandacube.lib.util.log.Log;
 import net.md_5.bungee.log.ColouredWriter;
 import net.md_5.bungee.log.ConciseFormatter;
 
@@ -38,7 +38,7 @@ public class CLILogger {
 
 	/**
 	 * Tells the LogManager to actually reset.
-	 *
+	 * <p>
 	 * This method is called by the shutdown hook of {@link CLIApplication}, because the {@link CLILogger} uses a custom
 	 * {@link LogManager} that bypass the reset process during the shutdown of the process.
 	 */
@@ -71,6 +71,8 @@ public class CLILogger {
 	        System.setOut(newRedirector(logger, Level.INFO));
 
 			Log.setLogger(logger);
+
+			Thread.setDefaultUncaughtExceptionHandler((t, e) -> Log.severe("Uncaught Exception in thread " + t.getName(), e));
 		}
 		return logger;
 	}
