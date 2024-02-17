@@ -10,6 +10,7 @@ import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
 import fr.pandacube.lib.chat.Chat;
+import fr.pandacube.lib.commands.BadCommandUsage;
 import fr.pandacube.lib.commands.BrigadierCommand;
 import fr.pandacube.lib.commands.SuggestionsSupplier;
 import fr.pandacube.lib.paper.permissions.PandalibPaperPermissions;
@@ -461,6 +462,9 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<BukkitBriga
                 return cmd.run(context);
             } catch(CommandSyntaxException e) {
                 throw e;
+            } catch (BadCommandUsage e) {
+                getCommandSender(context).sendMessage(Chat.failureText("Error while using the command: " + e.getMessage()));
+                return 0;
             } catch (Throwable t) {
                 Log.severe(t);
                 getCommandSender(context).sendMessage(Chat.failureText("Error while executing the command: " + t));
