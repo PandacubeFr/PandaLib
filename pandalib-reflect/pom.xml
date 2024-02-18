@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>31.1-jre</version> <!-- Match the version imported by Paper API/BungeeCord API if possible -->
+            <version>32.1.2-jre</version> <!-- Match the version imported by Paper API/BungeeCord API if possible -->
         </dependency>
     </dependencies>
 

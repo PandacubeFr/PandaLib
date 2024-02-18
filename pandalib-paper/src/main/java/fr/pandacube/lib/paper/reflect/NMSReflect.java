@@ -169,7 +169,7 @@ public class NMSReflect {
             }
             
             MemoryMappingTree tree = new MemoryMappingTree();
-            MappingReader.read(new InputStreamReader(mappingsInputStream, StandardCharsets.UTF_8), MappingFormat.TINY_2, tree);
+            MappingReader.read(new InputStreamReader(mappingsInputStream, StandardCharsets.UTF_8), MappingFormat.TINY_2_FILE, tree);
             
             List<ClassMapping> classes = new ArrayList<>();
             for (MappingTree.ClassMapping cls : tree.getClasses()) {

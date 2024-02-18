@@ -10,18 +10,7 @@ import fr.pandacube.lib.reflect.ReflectClass;
  */
 public class OBCReflect {
 	
-	private static final String OBC_PACKAGE_PREFIX = "org.bukkit.craftbukkit.";
-	
-	private static final String OBC_PACKAGE_VERSION;
-
-	static {
-		String name = Bukkit.getServer().getClass().getName()
-				.substring(OBC_PACKAGE_PREFIX.length());
-		name = name.substring(0, name.indexOf("."));
-
-		OBC_PACKAGE_VERSION = name;
-	}
-
+	private static final String CRAFTBUKKIT_PACKAGE = Bukkit.getServer().getClass().getPackage().getName();
 
 	/**
 	 * Returns the OBC class that has the provided name, wrapped into a {@link ReflectClass}.
@@ -31,10 +20,7 @@ public class OBCReflect {
 	 * @throws ClassNotFoundException if the provided class was not found in {@code OBC} package.
 	 */
 	public static ReflectClass<?> ofClass(String obcClass) throws ClassNotFoundException {
-		return Reflect.ofClass(OBC_PACKAGE_PREFIX + OBC_PACKAGE_VERSION + "." + obcClass);
+		return Reflect.ofClass(CRAFTBUKKIT_PACKAGE + "." + obcClass);
 	}
-	
-	
-	
 
 }
