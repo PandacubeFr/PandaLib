@@ -1,14 +1,13 @@
 package fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.block;
 
 import fr.pandacube.lib.paper.reflect.NMSReflect;
-import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.VoxelShape;
 import fr.pandacube.lib.reflect.ReflectField;
 
 import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
-public class BambooStalkBlock extends ReflectWrapper {
+public class BambooStalkBlock extends Block {
     public static final NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.world.level.block.BambooStalkBlock"));
     public static final ReflectField<?> COLLISION_SHAPE = wrapEx(() -> MAPPING.mojField("COLLISION_SHAPE"));
 

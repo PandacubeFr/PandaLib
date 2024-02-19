@@ -39,6 +39,8 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.network.chat.Component;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.network.protocol.ClientboundCustomPayloadPacket;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.network.protocol.ClientboundGameEventPacket;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.network.protocol.Packet;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.network.protocol.custom.BrandPayload;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.network.protocol.custom.CustomPacketPayload;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.resources.ResourceLocation;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ChunkMap;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.DedicatedPlayerList;
@@ -47,6 +49,7 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.DedicatedServerPr
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.MinecraftServer;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.PlayerList;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerChunkCache;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerCommonPacketListenerImpl;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerGamePacketListenerImpl;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerLevel;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerPlayer;
@@ -67,9 +70,9 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.SavedData;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Vec3;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.VoxelShape;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.block.BambooStalkBlock;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.block.Block;
 import fr.pandacube.lib.paper.reflect.wrapper.netty.ByteBuf;
 import fr.pandacube.lib.paper.reflect.wrapper.netty.Unpooled;
-import fr.pandacube.lib.paper.reflect.wrapper.paper.AABBVoxelShape;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.PaperAdventure;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.QueuedChangesMapLong2Object;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.configuration.FallbackValue_Int;
@@ -145,6 +148,9 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(Tag.class, Tag.MAPPING.runtimeClass()));
         // minecraft.network.chat
         thAcc.catchThrowable(() -> initWrapper(Component.class, Component.MAPPING.runtimeClass()));
+        // minecraft.network.protocol.custom
+        thAcc.catchThrowable(() -> initWrapper(BrandPayload.class, BrandPayload.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(CustomPacketPayload.class, CustomPacketPayload.MAPPING.runtimeClass()));
         // minecraft.network.protocol
         thAcc.catchThrowable(() -> initWrapper(ClientboundCustomPayloadPacket.class, ClientboundCustomPayloadPacket.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(ClientboundGameEventPacket.class, ClientboundGameEventPacket.MAPPING.runtimeClass()));
@@ -162,6 +168,7 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(MinecraftServer.class, MinecraftServer.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(PlayerList.class, PlayerList.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(ServerChunkCache.class, ServerChunkCache.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(ServerCommonPacketListenerImpl.class, ServerCommonPacketListenerImpl.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(ServerGamePacketListenerImpl.class, ServerGamePacketListenerImpl.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(ServerLevel.class, ServerLevel.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(ServerPlayer.class, ServerPlayer.MAPPING.runtimeClass()));
@@ -169,6 +176,7 @@ public class PandalibPaperReflect {
         // minecraft.util
         thAcc.catchThrowable(() -> initWrapper(ProgressListener.class, ProgressListener.MAPPING.runtimeClass()));
         // minecraft.world.block
+        thAcc.catchThrowable(() -> initWrapper(Block.class, Block.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(BambooStalkBlock.class, BambooStalkBlock.MAPPING.runtimeClass()));
         // minecraft.world
         thAcc.catchThrowable(() -> initWrapper(AABB.class, AABB.MAPPING.runtimeClass()));
@@ -199,7 +207,6 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(WorldConfiguration.class, WorldConfiguration.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(WorldConfiguration.Chunks.class, WorldConfiguration.Chunks.REFLECT.get()));
         // paper
-        thAcc.catchThrowable(() -> initWrapper(AABBVoxelShape.class, AABBVoxelShape.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(PaperAdventure.class, PaperAdventure.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(QueuedChangesMapLong2Object.class, QueuedChangesMapLong2Object.REFLECT.get()));
 
