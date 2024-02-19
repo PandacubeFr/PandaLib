@@ -91,7 +91,8 @@ public class PerformanceAnalysisManager implements Listener {
 			.add(5, NamedTextColor.RED)
 			.add(10, NamedTextColor.GOLD)
 			.add(14, NamedTextColor.YELLOW)
-			.add(20, PandaTheme.CHAT_GREEN_1_NORMAL)
+			.add(19, PandaTheme.CHAT_GREEN_1_NORMAL)
+			.add(21, PandaTheme.CHAT_GREEN_1_NORMAL)
 			.add(26, NamedTextColor.BLUE);
 
 
@@ -100,15 +101,15 @@ public class PerformanceAnalysisManager implements Listener {
 			.add(5, NamedTextColor.RED)
 			.add(10, NamedTextColor.GOLD)
 			.add(14, NamedTextColor.YELLOW)
-			.add(18, PandaTheme.CHAT_GREEN_1_NORMAL);
+			.add(19, PandaTheme.CHAT_GREEN_1_NORMAL);
 
 
 	public final ChatColorGradient tps1mGradient = new ChatColorGradient()
 			.add(0, NamedTextColor.DARK_RED)
 			.add(8, NamedTextColor.RED)
-			.add(12, NamedTextColor.GOLD)
-			.add(16, NamedTextColor.YELLOW)
-			.add(20, PandaTheme.CHAT_GREEN_1_NORMAL);
+			.add(14, NamedTextColor.GOLD)
+			.add(17, NamedTextColor.YELLOW)
+			.add(19, PandaTheme.CHAT_GREEN_1_NORMAL);
 
 	public final ChatColorGradient memoryUsageGradient = new ChatColorGradient()
 			.add(.60f, PandaTheme.CHAT_GREEN_1_NORMAL)
@@ -395,7 +396,8 @@ public class PerformanceAnalysisManager implements Listener {
 	 * @return the avg number of TPS in the interval
 	 */
 	public synchronized float getAvgNano(List<Long> data, int nbTicks) {
-		if (data.size() <= 0) return 0;
+		if (data.isEmpty())
+			return 0;
 
 		if (nbTicks > data.size()) nbTicks = data.size();
 
@@ -412,7 +414,8 @@ public class PerformanceAnalysisManager implements Listener {
 	 * @return the avg number of TPS in the interval
 	 */
 	public synchronized float getTPS(long nbMillis) {
-		if (tpsTimes.size() == 0) return 0;
+		if (tpsTimes.isEmpty())
+			return 0;
 
 		long currentMillis = System.currentTimeMillis();
 
