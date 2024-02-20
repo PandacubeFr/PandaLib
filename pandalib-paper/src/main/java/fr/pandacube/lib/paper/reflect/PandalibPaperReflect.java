@@ -58,8 +58,6 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.util.ProgressListener;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.AABB;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ChunkPos;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ChunkStorage;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.DamageSource;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.DamageSources;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.DataVersion;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Entity;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ItemStack;
@@ -182,8 +180,6 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(AABB.class, AABB.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(ChunkPos.class, ChunkPos.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(ChunkStorage.class, ChunkStorage.MAPPING.runtimeClass()));
-        thAcc.catchThrowable(() -> initWrapper(DamageSource.class, DamageSource.MAPPING.runtimeClass()));
-        thAcc.catchThrowable(() -> initWrapper(DamageSources.class, DamageSources.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(DataVersion.class, DataVersion.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(Entity.class, Entity.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(ItemStack.class, ItemStack.MAPPING.runtimeClass()));

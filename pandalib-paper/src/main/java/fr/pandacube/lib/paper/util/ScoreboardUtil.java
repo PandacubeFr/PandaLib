@@ -1,6 +1,7 @@
 package fr.pandacube.lib.paper.util;
 
 import fr.pandacube.lib.chat.Chat;
+import io.papermc.paper.scoreboard.numbers.NumberFormat;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.Criteria;
@@ -8,7 +9,6 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 
 import java.util.List;
 
@@ -42,6 +42,7 @@ public class ScoreboardUtil {
 		if (obj == null) {
 			obj = scBrd.registerNewObjective("sidebar_autogen", Criteria.DUMMY, title);
 			obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+			obj.numberFormat(NumberFormat.blank());
 		}
 		else {
 			// only update title if needed
@@ -62,21 +63,9 @@ public class ScoreboardUtil {
 		 */
 		int score = 1, i = 0;
 		for (int lineIndex = Math.min(lines.length, 15) - 1; lineIndex >= 0; i++, score++, lineIndex--) {
-			String teamId = "sidebar_team" + score;
 			String sbEntry = colors[i].toString();
-			Team tLine = scBrd.getTeam(teamId);
-			if (tLine == null) {
-				tLine = scBrd.registerNewTeam(teamId);
-			}
-			if (!tLine.hasEntry(sbEntry)) {
-				tLine.addEntry(sbEntry);
-			}
-			
-			if (!tLine.prefix().equals(lines[lineIndex])) {
-				tLine.prefix(lines[lineIndex]);
-			}
-			
 			Score scoreEntry = obj.getScore(sbEntry);
+			scoreEntry.customName(lines[lineIndex]);
 			if (scoreEntry.getScore() != score) {
 				scoreEntry.setScore(score);
 			}
@@ -84,16 +73,10 @@ public class ScoreboardUtil {
 		
 		// clean older data when we are reducing the number of line displayed
 		for (; i < colors.length; i++, score++) {
-			String teamId = "sidebar_team" + score;
 			String sbEntry = colors[i].toString();
 
 			if (obj.getScore(sbEntry).isScoreSet()) {
 				scBrd.resetScores(sbEntry);
-			}
-			
-			Team tLine = scBrd.getTeam(teamId);
-			if (tLine != null && !tLine.prefix().equals(Component.empty())) {
-				tLine.prefix(Component.empty());
 			}
 		}
 		

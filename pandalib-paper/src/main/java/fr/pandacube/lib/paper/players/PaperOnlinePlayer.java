@@ -15,7 +15,6 @@ import net.kyori.adventure.util.Ticks;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.MainHand;
@@ -269,28 +268,6 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
 
 
 
-    /*
-     * Custom damage
-     */
-
-    /**
-     * Deals damages to this player.
-     * @param amount the amount of damage to deal.
-     */
-    default void damage(double amount) {
-        getBukkitPlayer().damage(amount); // uses DamageSource.GENERIC
-    }
-
-    /**
-     * Deals damages to this player, from the provided entity.
-     * @param amount the amount of damage to deal.
-     * @param source the entity from which the damage comes from.
-     */
-    default void damage(double amount, LivingEntity source) {
-        getBukkitPlayer().damage(amount, source); // uses appropriate DamageSource according to provided player or entity
-    }
-
-
 
 
 
@@ -305,7 +282,6 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
      * @param relY the relative y coordinate.
      * @param relZ the relative z coordinate.
      */
-    @SuppressWarnings("UnstableApiUsage")
     default void teleportRelatively(float relX, float relY, float relZ) {
         getBukkitPlayer().teleport(getBukkitPlayer().getLocation().add(relX, relY, relZ), Relative.X, Relative.Y, Relative.Z, Relative.YAW, Relative.PITCH);
     }
@@ -314,7 +290,6 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
      * Teleports this player to the specified location, using the {@link Relative} flags.
      * @param destination the destination.
      */
-    @SuppressWarnings("UnstableApiUsage")
     default void teleportRelatively(Location destination) {
         getBukkitPlayer().teleport(destination, Relative.X, Relative.Y, Relative.Z, Relative.YAW, Relative.PITCH);
     }
