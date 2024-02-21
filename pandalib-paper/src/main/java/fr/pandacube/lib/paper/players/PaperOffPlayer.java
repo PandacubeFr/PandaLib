@@ -196,7 +196,7 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
         File old = getPlayerDataFile(true);
         old.delete();
         Files.move(file.toPath(), old.toPath());
-        NbtIo.writeCompressed(data.data, file);
+        NbtIo.writeCompressed(data.data, file.toPath());
     }
 
     /**

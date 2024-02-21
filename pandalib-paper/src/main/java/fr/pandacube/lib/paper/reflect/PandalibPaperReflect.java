@@ -31,6 +31,7 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.core.Vec3i;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CollectionTag;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.ListTag;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.NbtAccounter;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.NbtIo;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.StringTag;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.Tag;
@@ -141,6 +142,7 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(CollectionTag.class, CollectionTag.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(CompoundTag.class, CompoundTag.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(ListTag.class, ListTag.MAPPING.runtimeClass()));
+        thAcc.catchThrowable(() -> initWrapper(NbtAccounter.class, NbtAccounter.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(NbtIo.class, NbtIo.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(StringTag.class, StringTag.MAPPING.runtimeClass()));
         thAcc.catchThrowable(() -> initWrapper(Tag.class, Tag.MAPPING.runtimeClass()));
