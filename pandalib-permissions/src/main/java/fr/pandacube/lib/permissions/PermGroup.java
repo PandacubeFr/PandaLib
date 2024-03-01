@@ -18,7 +18,7 @@ public final class PermGroup extends PermEntity {
 		super(name, EntityType.Group);
 	}
 	@Override
-	protected CachedGroup getBackendEntity() {
+	/* package */ CachedGroup getBackendEntity() {
 		return Permissions.backendReader.getCachedGroup(name);
 	}
 	

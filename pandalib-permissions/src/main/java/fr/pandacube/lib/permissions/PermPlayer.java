@@ -17,7 +17,7 @@ public sealed class PermPlayer extends PermEntity permits DefaultPlayer {
 		playerId = id;
 	}
 	@Override
-	protected CachedPlayer getBackendEntity() {
+	/* package */ CachedPlayer getBackendEntity() {
 		return Permissions.backendReader.getCachedPlayer(playerId);
 	}
 	

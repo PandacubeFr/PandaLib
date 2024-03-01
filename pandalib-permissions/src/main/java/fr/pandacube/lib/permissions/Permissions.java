@@ -105,8 +105,20 @@ public class Permissions {
 	}
 
 	/**
+	 * Gets the permission object of all players stored in cache.
+	 * @return the permission player object.
+	 * @throws IllegalStateException if the permission system was not initialized properly.
+	 */
+	public static List<PermPlayer> getCachedPlayers() {
+		checkInitialized();
+		return backendReader.getAllCachedPlayers().stream()
+				.map(cp -> getPlayer(cp.playerId))
+				.toList();
+	}
+
+	/**
 	 * Gets a dummy permission player object, that have no specific data, only inheriting from the default groups.
-	 *
+	 * <p>
 	 * The current implementation provides a player named {@code default.0} with an uuid of
 	 * {@code fffdef17-ffff-b0ff-ffff-ffffffffffff}.
 	 * Trying to set a permission data for this player will log a warning.
@@ -135,6 +147,16 @@ public class Permissions {
 		}, "Async permissions player cache loader");
 		t.setDaemon(true);
 		t.start();
+	}
+
+	/**
+	 * Asks the permission system to preventively and asynchronously cache the data of all players.
+	 * This method can be called before doing any operation involving most or all the permission data.
+	 * @throws IllegalStateException if the permission system was not initialized properly.
+	 */
+	public static void precachePlayers() {
+		checkInitialized();
+		backendReader.precacheAllPlayers();
 	}
 
 	/**

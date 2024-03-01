@@ -48,7 +48,7 @@ import fr.pandacube.lib.util.log.Log;
 	/* package */ synchronized void clearPlayerCache(UUID playerId) {
 		usersCache.invalidate(playerId);
 	}
-	
+
 	/* package */ synchronized CachedPlayer getCachedPlayer(UUID playerId) {
 		try {
 			return usersCache.get(playerId, () -> {
@@ -62,7 +62,32 @@ import fr.pandacube.lib.util.log.Log;
 			throw new RuntimeException(e);
 		}
 	}
-	
+
+	/* package */ synchronized List<CachedPlayer> getAllCachedPlayers() {
+		return new ArrayList<>(usersCache.asMap().values());
+	}
+
+	/* package */ synchronized void precacheAllPlayers() {
+		try {
+            DB.getAll(SQLPermissions.class, SQLPermissions.type.eq(EntityType.User.getCode()))
+					.stream()
+					.collect(Collectors.groupingBy(el -> el.get(SQLPermissions.name),
+							Collectors.toCollection(() -> new SQLElementList<SQLPermissions>())
+							)
+					)
+					.forEach((idStr, pData) -> {
+						try {
+							UUID pId = UUID.fromString(idStr);
+							usersCache.put(pId, initPlayer(pId, pData));
+						} catch (Exception e) {
+							Log.severe("Error caching player permission data (name=\"" + idStr + "\")", e);
+						}
+					});
+		} catch (DBException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private CachedPlayer initPlayer(UUID playerId) throws DBException {
 		if (playerId.equals(DEFAULT_PLAYER.playerId))
 			return DEFAULT_PLAYER;
@@ -70,7 +95,12 @@ import fr.pandacube.lib.util.log.Log;
 		SQLElementList<SQLPermissions> playerData = DB.getAll(SQLPermissions.class,
 				SQLPermissions.type.eq(EntityType.User.getCode())
 						.and(SQLPermissions.name.like(playerId.toString()))
-				);
+		);
+
+		return initPlayer(playerId, playerData);
+	}
+
+	private CachedPlayer initPlayer(UUID playerId, SQLElementList<SQLPermissions> playerData) {
 		
 		Map<String, List<SQLPermissions>> playerRawData = playerData.stream()
 				.collect(

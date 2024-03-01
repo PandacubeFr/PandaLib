@@ -7,7 +7,7 @@ import java.util.UUID;
 /**
  * Represents a dummy player in the permission system, that have no specific data, only inheriting from the default
  * groups.
- *
+ * <p>
  * The current implementation provides a player named {@code default.0} with an uuid of
  * {@code fffdef17-ffff-b0ff-ffff-ffffffffffff}.
  * Trying to set a permission data for this player will log a warning.
