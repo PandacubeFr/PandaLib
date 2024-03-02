@@ -74,7 +74,7 @@ public class SQLUpdateBuilder<E extends SQLElement<E>> {
             if (!first)
                 sql.append(", ");
             sql.append("`").append(entry.getKey().getName()).append("` = ? ");
-            SQLElement.addValueToSQLObjectList(params, entry.getKey(), entry.getValue());
+            params.add(entry.getKey().fromJavaTypeToJDBCType(entry.getValue()));
             first = false;
         }
 

@@ -3,11 +3,12 @@ package fr.pandacube.lib.db;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import fr.pandacube.lib.util.log.Log;
 
 /**
- * A SQL {@code WHERE} expression.
+ * SQL {@code WHERE} expression.
  * @param <E> the table type.
  */
 public abstract class SQLWhere<E extends SQLElement<E>> {
@@ -29,7 +30,7 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
      * Create a SQL {@code WHERE} expression that is true when this expression {@code AND} the provided expression is
      * true.
      * @param other the other expression.
-     * @return a SQL {@code WHERE} expression.
+     * @return a new SQL {@code WHERE} expression.
      */
     public SQLWhere<E> and(SQLWhere<E> other) {
         return SQLWhere.<E>and().and(this).and(other);
@@ -39,7 +40,7 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
      * Create a SQL {@code WHERE} expression that is true when this expression {@code OR} the provided expression is
      * true.
      * @param other the other expression.
-     * @return a SQL {@code WHERE} expression.
+     * @return a new SQL {@code WHERE} expression.
      */
     public SQLWhere<E> or(SQLWhere<E> other) {
         return SQLWhere.<E>or().or(this).or(other);
@@ -48,7 +49,7 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 
     /**
      * Create a SQL {@code WHERE} expression builder joining multiple expressions with the {@code AND} operator.
-     * @return a SQL {@code WHERE} expression.
+     * @return a new SQL {@code WHERE} expression.
      * @param <E> the table type.
      */
     public static <E extends SQLElement<E>> SQLWhereAndBuilder<E> and() {
@@ -57,7 +58,7 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 
     /**
      * Create a SQL {@code WHERE} expression builder joining multiple expressions with the {@code OR} operator.
-     * @return a SQL {@code WHERE} expression.
+     * @return a new SQL {@code WHERE} expression.
      * @param <E> the table type.
      */
     public static <E extends SQLElement<E>> SQLWhereOrBuilder<E> or() {
@@ -67,7 +68,7 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
     /**
      * Create a custom SQL {@code WHERE} expression.
      * @param whereExpr the raw SQL {@code WHERE} expression.
-     * @return a SQL {@code WHERE} expression.
+     * @return a new SQL {@code WHERE} expression.
      */
     public static <E extends SQLElement<E>> SQLWhere<E> expression(String whereExpr) {
         return expression(whereExpr, List.of());
@@ -77,10 +78,31 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
      * Create a custom SQL {@code WHERE} expression.
      * @param whereExpr the raw SQL {@code WHERE} expression.
      * @param params the parameters of the provided expression.
-     * @return a SQL {@code WHERE} expression.
+     * @return a new SQL {@code WHERE} expression.
      */
     public static <E extends SQLElement<E>> SQLWhere<E> expression(String whereExpr, List<Object> params) {
         return new SQLWhereCustomExpression<>(whereExpr, params);
+    }
+
+    /**
+     * Create a SQL {@code WHERE ... IN ...} expression with a custom left operand.
+     * @param leftExpr the raw SQL left operand.
+     * @param valuesIn the values on the right of the {@code IN} operator.
+     * @return a new SQL {@code WHERE} expression.
+     */
+    public static <E extends SQLElement<E>> SQLWhere<E> expressionIn(String leftExpr, Collection<?> valuesIn) {
+        return expressionIn(leftExpr, List.of(), valuesIn);
+    }
+
+    /**
+     * Create a SQL {@code WHERE ... IN ...} expression with a custom left operand.
+     * @param leftExpr the raw SQL left operand.
+     * @param leftParams the parameters of the left operand.
+     * @param valuesIn the values on the right of the {@code IN} operator.
+     * @return a new SQL {@code WHERE} expression.
+     */
+    public static <E extends SQLElement<E>> SQLWhere<E> expressionIn(String leftExpr, List<Object> leftParams, Collection<?> valuesIn) {
+        return new SQLWhereInCustom<>(leftExpr, leftParams, valuesIn);
     }
 
 
@@ -232,9 +254,8 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 
         @Override
         /* package */ ParameterizedSQLString toSQL() throws DBException {
-            List<Object> params = new ArrayList<>();
-            SQLElement.addValueToSQLObjectList(params, left, right);
-            return new ParameterizedSQLString("`" + left.getName() + "` " + comp.sql + " ? ", params);
+            return new ParameterizedSQLString("`" + left.getName() + "` " + comp.sql + " ? ",
+                    List.of(left.fromJavaTypeToJDBCType(right)));
         }
 
         /* package */ enum SQLComparator {
@@ -266,35 +287,67 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
 
 
 
-    /* package */ static class SQLWhereIn<E extends SQLElement<E>> extends SQLWhere<E> {
+    /* package */ static class SQLWhereInCustom<E extends SQLElement<E>> extends SQLWhere<E> {
 
-        private final SQLField<E, ?> field;
-        private final Collection<?> values;
+        private final String leftExpression;
+        private final List<Object> leftExpressionParameters;
+        protected Collection<?> collectionIn;
 
-        /* package */ <T> SQLWhereIn(SQLField<E, T> f, Collection<T> v) {
-            if (f == null || v == null)
-                throw new IllegalArgumentException("All arguments for SQLWhereIn constructor can't be null");
-            field = f;
-            values = v;
+        /* package */ <T> SQLWhereInCustom(String leftExpr, List<Object> leftExprParams, Collection<T> collectionIn) {
+            if (leftExpr == null)
+                throw new IllegalArgumentException("leftExpr can't be null");
+            if (leftExprParams == null)
+                leftExprParams = List.of();
+            if (collectionIn == null)
+                collectionIn = List.of();
+            leftExpression = leftExpr;
+            leftExpressionParameters = leftExprParams;
+            this.collectionIn = collectionIn;
         }
 
         @Override
         /* package */ ParameterizedSQLString toSQL() throws DBException {
             List<Object> params = new ArrayList<>();
 
-            if (values.isEmpty())
+            if (collectionIn.isEmpty())
                 return new ParameterizedSQLString(" 1=0 ", params);
 
-            for (Object v : values)
-                SQLElement.addValueToSQLObjectList(params, field, v);
+            params.addAll(leftExpressionParameters);
+            params.addAll(collectionIn);
 
-            char[] questions = new char[values.isEmpty() ? 0 : (values.size() * 2 - 1)];
+            char[] questions = new char[collectionIn.size() * 2 - 1];
             for (int i = 0; i < questions.length; i++)
                 questions[i] = i % 2 == 0 ? '?' : ',';
 
-            return new ParameterizedSQLString("`" + field.getName() + "` IN (" + new String(questions) + ") ", params);
+            return new ParameterizedSQLString("(" + leftExpression + ") IN (" + new String(questions) + ") ", params);
         }
 
+    }
+
+
+
+
+
+
+    /* package */ static class SQLWhereIn<E extends SQLElement<E>> extends SQLWhereInCustom<E> {
+
+        private final SQLField<E, ?> field;
+        private boolean collectionFiltered = false;
+
+        /* package */ <T> SQLWhereIn(SQLField<E, T> f, Collection<T> v) {
+            super("`" + Objects.requireNonNull(f).getName() + "`", List.of(), v);
+            field = f;
+        }
+
+
+        @Override
+        ParameterizedSQLString toSQL() throws DBException {
+            if (!collectionFiltered) {
+                collectionIn = field.fromListJavaTypeToJDBCType(collectionIn);
+                collectionFiltered = true;
+            }
+            return super.toSQL();
+        }
     }
 
 

@@ -133,7 +133,7 @@ public class SQLField<E extends SQLElement<E>, T> {
     /**
      * Create a SQL {@code WHERE} expression comparing this field with the provided value using the {@code =} operator.
      * @param r the value to compare with.
-     * @return a SQL {@code WHERE} expression.
+     * @return a new SQL {@code WHERE} expression.
      */
     public fr.pandacube.lib.db.SQLWhere<E> eq(T r) {
         return comp(SQLComparator.EQ, r);
@@ -142,7 +142,7 @@ public class SQLField<E extends SQLElement<E>, T> {
     /**
      * Create a SQL {@code WHERE} expression comparing this field with the provided value using the {@code >=} operator.
      * @param r the value to compare with.
-     * @return a SQL {@code WHERE} expression.
+     * @return a new SQL {@code WHERE} expression.
      */
     public fr.pandacube.lib.db.SQLWhere<E> geq(T r) {
         return comp(SQLComparator.GEQ, r);
@@ -151,7 +151,7 @@ public class SQLField<E extends SQLElement<E>, T> {
     /**
      * Create a SQL {@code WHERE} expression comparing this field with the provided value using the {@code >} operator.
      * @param r the value to compare with.
-     * @return a SQL {@code WHERE} expression.
+     * @return a new SQL {@code WHERE} expression.
      */
     public fr.pandacube.lib.db.SQLWhere<E> gt(T r) {
         return comp(SQLComparator.GT, r);
@@ -160,7 +160,7 @@ public class SQLField<E extends SQLElement<E>, T> {
     /**
      * Create a SQL {@code WHERE} expression comparing this field with the provided value using the {@code <=} operator.
      * @param r the value to compare with.
-     * @return a SQL {@code WHERE} expression.
+     * @return a new SQL {@code WHERE} expression.
      */
     public fr.pandacube.lib.db.SQLWhere<E> leq(T r) {
         return comp(SQLComparator.LEQ, r);
@@ -169,7 +169,7 @@ public class SQLField<E extends SQLElement<E>, T> {
     /**
      * Create a SQL {@code WHERE} expression comparing this field with the provided value using the {@code <} operator.
      * @param r the value to compare with.
-     * @return a SQL {@code WHERE} expression.
+     * @return a new SQL {@code WHERE} expression.
      */
     public fr.pandacube.lib.db.SQLWhere<E> lt(T r) {
         return comp(SQLComparator.LT, r);
@@ -178,7 +178,7 @@ public class SQLField<E extends SQLElement<E>, T> {
     /**
      * Create a SQL {@code WHERE} expression comparing this field with the provided value using the {@code !=} operator.
      * @param r the value to compare with.
-     * @return a SQL {@code WHERE} expression.
+     * @return a new SQL {@code WHERE} expression.
      */
     public fr.pandacube.lib.db.SQLWhere<E> neq(T r) {
         return comp(SQLComparator.NEQ, r);
@@ -194,7 +194,7 @@ public class SQLField<E extends SQLElement<E>, T> {
      * Create a SQL {@code WHERE} expression comparing this field with the provided value using the {@code LIKE}
      * keyword.
      * @param like the value to compare with.
-     * @return a SQL {@code WHERE} expression.
+     * @return a new SQL {@code WHERE} expression.
      */
     public fr.pandacube.lib.db.SQLWhere<E> like(String like) {
         return new SQLWhereLike<>(this, like);
@@ -206,7 +206,7 @@ public class SQLField<E extends SQLElement<E>, T> {
      * Create a SQL {@code WHERE} expression testing the presence of this field in the provided collection of value
      * using the {@code IN} keyword.
      * @param v the value to compare with.
-     * @return a SQL {@code WHERE} expression.
+     * @return a new SQL {@code WHERE} expression.
      */
     public fr.pandacube.lib.db.SQLWhere<E> in(Collection<T> v) {
         return new SQLWhereIn<>(this, v);
@@ -216,7 +216,7 @@ public class SQLField<E extends SQLElement<E>, T> {
 
     /**
      * Create a SQL {@code WHERE} expression testing the nullity of this field using the {@code IS NULL} keyword.
-     * @return a SQL {@code WHERE} expression.
+     * @return a new SQL {@code WHERE} expression.
      */
     public fr.pandacube.lib.db.SQLWhere<E> isNull() {
         return new SQLWhereNull<>(this, true);
@@ -225,10 +225,39 @@ public class SQLField<E extends SQLElement<E>, T> {
     /**
      * Create a SQL {@code WHERE} expression testing the non-nullity of this field using the {@code IS NOT NULL}
      * keyword.
-     * @return a SQL {@code WHERE} expression.
+     * @return a new SQL {@code WHERE} expression.
      */
     public fr.pandacube.lib.db.SQLWhere<E> isNotNull() {
         return new SQLWhereNull<>(this, false);
+    }
+
+
+
+
+
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public Object fromJavaTypeToJDBCType(Object value) throws DBException {
+        Object ret = value;
+        if (value != null && type instanceof SQLCustomType customType) {
+            try {
+                ret = customType.javaToDbConv.apply(value);
+            } catch (Exception e) {
+                throw new DBException("Error while converting value of field '" + name + "' with SQLCustomType from " + type.getJavaType()
+                        + "(java source) to " + customType.intermediateJavaType + "(jdbc destination). The original value is '" + value + "'", e);
+            }
+        }
+        return ret;
+    }
+
+    public Collection<Object> fromListJavaTypeToJDBCType(Collection<?> values) throws DBException {
+        if (values == null)
+            return null;
+        List<Object> ret = new ArrayList<>(values.size());
+        for (Object value : values) {
+            ret.add(fromJavaTypeToJDBCType(value));
+        }
+        return ret;
     }
 
 }

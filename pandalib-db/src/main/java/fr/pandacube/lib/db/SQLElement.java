@@ -361,7 +361,7 @@ public abstract class SQLElement<E extends SQLElement<E>> {
                     first = false;
                     concatValues.append(" ? ");
                     concatFields.append("`").append(entry.getKey().getName()).append("`");
-                    addValueToSQLObjectList(psValues, entry.getKey(), entry.getValue());
+                    psValues.add(entry.getKey().fromJavaTypeToJDBCType(entry.getValue()));
                 }
 
                 try (Connection c = db.getConnection();
@@ -387,20 +387,6 @@ public abstract class SQLElement<E extends SQLElement<E>> {
             throw new DBException("Error while saving data", e);
         }
         return (E) this;
-    }
-
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    /* package */ static <E extends SQLElement<E>> void addValueToSQLObjectList(List<Object> list, SQLField<E, ?> field, Object jValue) throws DBException {
-        if (jValue != null && field.type instanceof SQLCustomType) {
-            try {
-                jValue = ((SQLCustomType)field.type).javaToDbConv.apply(jValue);
-            } catch (Exception e) {
-                throw new DBException("Error while converting value of field '"+field.getName()+"' with SQLCustomType from "+field.type.getJavaType()
-                        +"(java source) to "+((SQLCustomType<?, ?>)field.type).intermediateJavaType+"(jdbc destination). The original value is '"+jValue+"'", e);
-            }
-        }
-        list.add(jValue);
     }
 
     /**
