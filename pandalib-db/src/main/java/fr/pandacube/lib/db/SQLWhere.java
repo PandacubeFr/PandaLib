@@ -69,7 +69,7 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
      * @param whereExpr the raw SQL {@code WHERE} expression.
      * @return a SQL {@code WHERE} expression.
      */
-    public SQLWhere<E> expression(String whereExpr) {
+    public static <E extends SQLElement<E>> SQLWhere<E> expression(String whereExpr) {
         return expression(whereExpr, List.of());
     }
 
@@ -79,7 +79,7 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
      * @param params the parameters of the provided expression.
      * @return a SQL {@code WHERE} expression.
      */
-    public SQLWhere<E> expression(String whereExpr, List<Object> params) {
+    public static <E extends SQLElement<E>> SQLWhere<E> expression(String whereExpr, List<Object> params) {
         return new SQLWhereCustomExpression<>(whereExpr, params);
     }
 
