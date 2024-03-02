@@ -64,6 +64,31 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
         return new SQLWhereOrBuilder<>();
     }
 
+    /**
+     * Create a custom SQL {@code WHERE} expression.
+     * @param whereExpr the raw SQL {@code WHERE} expression.
+     * @return a SQL {@code WHERE} expression.
+     */
+    public SQLWhere<E> expression(String whereExpr) {
+        return expression(whereExpr, List.of());
+    }
+
+    /**
+     * Create a custom SQL {@code WHERE} expression.
+     * @param whereExpr the raw SQL {@code WHERE} expression.
+     * @param params the parameters of the provided expression.
+     * @return a SQL {@code WHERE} expression.
+     */
+    public SQLWhere<E> expression(String whereExpr, List<Object> params) {
+        return new SQLWhereCustomExpression<>(whereExpr, params);
+    }
+
+
+
+
+
+
+
 
     /**
      * A SQL {@code WHERE} expression builder joining multiple expressions with the {@code AND} or {@code OR} operator.
@@ -263,7 +288,7 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
             for (Object v : values)
                 SQLElement.addValueToSQLObjectList(params, field, v);
 
-            char[] questions = new char[values.size() == 0 ? 0 : (values.size() * 2 - 1)];
+            char[] questions = new char[values.isEmpty() ? 0 : (values.size() * 2 - 1)];
             for (int i = 0; i < questions.length; i++)
                 questions[i] = i % 2 == 0 ? '?' : ',';
 
@@ -324,6 +349,33 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
         @Override
         /* package */ ParameterizedSQLString toSQL() {
             return new ParameterizedSQLString("`" + field.getName() + "` IS " + ((isNull) ? "NULL" : "NOT NULL"), new ArrayList<>());
+        }
+
+    }
+
+
+
+
+
+
+
+    /* package */ static class SQLWhereCustomExpression<E extends SQLElement<E>> extends SQLWhere<E> {
+
+        private final String sqlExpression;
+        private final List<Object> parameters;
+
+        /* package */ SQLWhereCustomExpression(String sqlExpression, List<Object> parameters) {
+            if (sqlExpression == null)
+                throw new IllegalArgumentException("sqlExpression can't be null");
+            if (parameters == null)
+                parameters = List.of();
+            this.sqlExpression = sqlExpression;
+            this.parameters = parameters;
+        }
+
+        @Override
+            /* package */ ParameterizedSQLString toSQL() {
+            return new ParameterizedSQLString(sqlExpression, parameters);
         }
 
     }
