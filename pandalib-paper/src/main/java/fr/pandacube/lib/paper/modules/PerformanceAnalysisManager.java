@@ -347,19 +347,19 @@ public class PerformanceAnalysisManager implements Listener {
 								: (avgTickDuration1s < 46) ? NamedTextColor.GOLD
 								: NamedTextColor.RED;
 						
-						timings = text("(Tr:")
-								.then(text(Math.round(avgTickCPUTime1s) + "ms").color(avgTickCPUTime1sColor))
-								.thenText(" Tw:")
-								.then(text(Math.round(avgTickWaitingTime1s) + "ms").color(avgTickWaitingTime1sColor))
-								.thenText(" S:")
-								.then(text(Math.round(avgInterTickDuration1s) + "ms").color(avgInterTickDuration1sColor))
-								.thenText(")");
+						timings = text("(R/W/S:")
+								.then(text(Math.round(avgTickCPUTime1s)).color(avgTickCPUTime1sColor))
+								.thenText("/")
+								.then(text(Math.round(avgTickWaitingTime1s)).color(avgTickWaitingTime1sColor))
+								.thenText("/")
+								.then(text(Math.round(avgInterTickDuration1s)).color(avgInterTickDuration1sColor))
+								.thenText("ms)");
 					}
 					
 					title = infoText("TPS [")
 							.thenLegacyText(s.toString())
 							.thenText("] ")
-							.then(text(tps1sDisplay+"/20 ").color(tps1sGradient.pickColorAt(tps1s)))
+							.then(text(tps1sDisplay + "/" + getTargetTickRate() + " ").color(tps1sGradient.pickColorAt(tps1s)))
 							.then(timings);
 				}
 				
@@ -444,6 +444,12 @@ public class PerformanceAnalysisManager implements Listener {
 		
 		return history;
 		
+	}
+
+
+
+	public static int getTargetTickRate() {
+		return Math.round(Bukkit.getServerTickManager().getTickRate());
 	}
 	
 	
