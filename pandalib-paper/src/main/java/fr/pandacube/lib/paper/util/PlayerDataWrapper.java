@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftItemStack;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.ListTag;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.Tag;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -23,13 +24,10 @@ import java.util.function.IntUnaryOperator;
 
 /**
  * A wrapper to easily manipulate vanilla player data.
+ *
+ * @param data The data as they are stored in the player file.
  */
-public class PlayerDataWrapper {
-
-    /**
-     * The data as they are stored in the player file.
-     */
-    public final CompoundTag data;
+public record PlayerDataWrapper(CompoundTag data) {
 
     /**
      * Creates a new wrapper for the provided player data.
@@ -86,8 +84,6 @@ public class PlayerDataWrapper {
     }
 
 
-
-
     public Inventory getEnderChest() {
         return getBukkitInventory("EnderItems", InventoryType.ENDER_CHEST, IntUnaryOperator.identity());
     }
@@ -95,7 +91,6 @@ public class PlayerDataWrapper {
     public void setEnderChest(Inventory inv) {
         setBukkitInventory("EnderItems", inv, IntUnaryOperator.identity());
     }
-
 
 
     private Inventory getBukkitInventory(String nbtKey, InventoryType bukkitType, IntUnaryOperator nbtToBukkitSlotConverter) {
@@ -110,9 +105,9 @@ public class PlayerDataWrapper {
     }
 
     private Map<Integer, ItemStack> getRawInventoryContent(String key) {
-        if (!data.contains(key, 9)) // type 9 is list
+        if (!data.contains(key, Tag.TAG_LIST()))
             return Map.of();
-        ListTag list = data.getList(key, 10); // type of list element 10 is CompoundTag
+        ListTag list = data.getList(key, Tag.TAG_COMPOUND());
         if (list == null)
             return Map.of();
 
@@ -127,9 +122,6 @@ public class PlayerDataWrapper {
         }
         return stacks;
     }
-
-
-
 
 
     private void setBukkitInventory(String nbtKey, Inventory inv, IntUnaryOperator bukkitToNBTSlotConverter) {
@@ -168,12 +160,6 @@ public class PlayerDataWrapper {
     }
 
 
-
-
-
-
-
-
     private int getHeldItemSlot() {
         if (!data.contains("SelectedItemSlot"))
             return 0;
@@ -183,9 +169,6 @@ public class PlayerDataWrapper {
     private void setHeldItemSlot(int slot) {
         data.putInt("SelectedItemSlot", slot);
     }
-
-
-
 
 
     public int getScore() {
@@ -198,7 +181,6 @@ public class PlayerDataWrapper {
     public void setScore(int score) {
         data.putInt("Score", score);
     }
-
 
 
     public int getTotalExperience() {
@@ -215,12 +197,6 @@ public class PlayerDataWrapper {
         data.putInt("XpLevel", level);
         data.putFloat("XpP", (float) expProgress);
     }
-
-
-
-
-
-
 
 
     private static class DummyPlayerInventory extends InventoryWrapper implements PlayerInventory {

@@ -7,6 +7,7 @@ import fr.pandacube.lib.paper.reflect.wrapper.dataconverter.MCTypeRegistry;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.SharedConstants;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.NbtIo;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.Tag;
 import fr.pandacube.lib.paper.util.PlayerDataWrapper;
 import fr.pandacube.lib.paper.world.WorldUtil;
 import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
@@ -166,8 +167,13 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
                 .playerIo()
                 .getPlayerData(getUniqueId().toString());
         if (convertTag) {
-            int i = data.contains("DataVersion", 3) ? data.getInt("DataVersion") : -1;
-            data = MCDataConverter.convertTag(MCTypeRegistry.PLAYER(), data, i, SharedConstants.getCurrentVersion().getDataVersion().getVersion());
+            int srcVersion = data.contains("DataVersion", Tag.TAG_ANY_NUMERIC()) ? data.getInt("DataVersion") : -1;
+            int destVersion = SharedConstants.getCurrentVersion().getDataVersion().getVersion();
+            try {
+                data = MCDataConverter.convertTag(MCTypeRegistry.PLAYER(), data, srcVersion, destVersion);
+            } catch (Exception e) {
+                throw new RuntimeException("Unable to upgrade data format of player " + getName() + " (" + getUniqueId() + ") from version " + destVersion + " to " + destVersion);
+            }
         }
         return data;
     }
@@ -196,7 +202,7 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
         File old = getPlayerDataFile(true);
         old.delete();
         Files.move(file.toPath(), old.toPath());
-        NbtIo.writeCompressed(data.data, file.toPath());
+        NbtIo.writeCompressed(data.data(), file.toPath());
     }
 
     /**
