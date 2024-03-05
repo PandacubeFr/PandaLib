@@ -3,6 +3,7 @@ package fr.pandacube.lib.paper.reflect;
 import fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftItemStack;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftMapView;
+import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftMetaItem;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftNamespacedKey;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftPlayer;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftServer;
@@ -111,6 +112,7 @@ public class PandalibPaperReflect {
         // craftbukkit
         thAcc.catchThrowable(() -> initWrapper(CraftItemStack.class, CraftItemStack.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(CraftMapView.class, CraftMapView.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(CraftMetaItem.class, CraftMetaItem.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(CraftNamespacedKey.class, CraftNamespacedKey.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(CraftPlayer.class, CraftPlayer.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(CraftServer.class, CraftServer.REFLECT.get()));

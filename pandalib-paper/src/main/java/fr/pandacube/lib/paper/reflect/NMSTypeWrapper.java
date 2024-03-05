@@ -107,7 +107,7 @@ import fr.pandacube.lib.paper.reflect.NMSReflect.ClassMapping;
 	    	String classToPrint = type;
 	    	String classSimpleName = classToPrint.substring(classToPrint.lastIndexOf('.') + 1);
 	    	String htmlTitle = classSimpleName.equals(classToPrint) ? "" : (" title='" + classToPrint + "'");
-    		if (!htmlTitle.equals("")) {
+    		if (!htmlTitle.isEmpty()) {
     			typeHTML = "<span" + htmlTitle + " class='cl'>" + classSimpleName + "</span>";
         	}
         	else {
