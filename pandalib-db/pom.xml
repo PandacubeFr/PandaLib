@@ -73,12 +73,12 @@
                             </filters>
                             <relocations>
                                 <relocation>
-                                    <pattern>org.apache.commons</pattern>
-                                    <shadedPattern>fr.pandacube.lib.db.shaded.commons</shadedPattern>
+                                    <pattern>org.apache.commons.dbcp2</pattern>
+                                    <shadedPattern>fr.pandacube.lib.db.shaded.commons.dbcp2</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>org.apache.commons</pattern>
-                                    <shadedPattern>fr.pandacube.lib.db.shaded.commons</shadedPattern>
+                                    <pattern>org.apache.commons.pool2</pattern>
+                                    <shadedPattern>fr.pandacube.lib.db.shaded.commons.pool2</shadedPattern>
                                 </relocation>
                             </relocations>
                             <transformers>
