@@ -657,5 +657,6 @@ public class ChatUtil {
         return str;
     }
 
+    private ChatUtil() {}
 
 }

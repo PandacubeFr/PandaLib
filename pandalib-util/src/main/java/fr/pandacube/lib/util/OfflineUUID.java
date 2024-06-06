@@ -10,7 +10,7 @@ import java.util.UUID;
  * <p>
  * You can generate the UUID programmatically using {@link #getFromNickName(String)} and
  * {@link #getFromNickNames(String[])}.
- *
+ * <p>
  * To use this class as a program, type
  * <pre>
  *     java -cp&lt;anyClassPathContainingThisClass&gt; fr.pandacube.lib.util.OfflineUUID [playernames...]
@@ -67,4 +67,6 @@ public class OfflineUUID {
 				System.out.println(arg + "\t" + getFromNickName(arg));
 		}
 	}
+
+	private OfflineUUID() {}
 }

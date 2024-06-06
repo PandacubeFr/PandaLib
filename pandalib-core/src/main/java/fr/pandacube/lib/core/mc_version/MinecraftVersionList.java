@@ -58,6 +58,9 @@ public record MinecraftVersionList(
 
         private static final TypeToken<Map<String, Integer>> MAP_STR_INT_TYPE = new TypeToken<>() { };
         private static final TypeToken<Map<Integer, List<String>>> MAP_INT_LIST_STRING_TYPE = new TypeToken<>() { };
+
+        private MinecraftVersionListAdapter() {}
+
         @Override
         public MinecraftVersionList deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             if (!(json instanceof JsonObject jsonObj))

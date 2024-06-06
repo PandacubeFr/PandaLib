@@ -56,18 +56,21 @@
                                     <artifact>org.apache.commons:commons-dbcp2</artifact>
                                     <excludes>
                                         <exclude>META-INF/MANIFEST.MF</exclude>
+                                        <exclude>META-INF/versions/9/**</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
                                     <artifact>org.apache.commons:commons-pool2</artifact>
                                     <excludes>
                                         <exclude>META-INF/MANIFEST.MF</exclude>
+                                        <exclude>META-INF/versions/9/**</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
                                     <artifact>commons-logging:commons-logging</artifact>
                                     <excludes>
                                         <exclude>META-INF/MANIFEST.MF</exclude>
+                                        <exclude>META-INF/versions/9/**</exclude>
                                     </excludes>
                                 </filter>
                             </filters>

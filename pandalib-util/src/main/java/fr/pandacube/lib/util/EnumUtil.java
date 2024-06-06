@@ -84,4 +84,6 @@ public class EnumUtil {
 		return RandomUtil.arrayElement(enumType.getEnumConstants());
 	}
 
+	private EnumUtil() {}
+
 }

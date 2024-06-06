@@ -2,6 +2,10 @@ package fr.pandacube.lib.util.function;
 
 /**
  * A consumer that can possibly throw a checked exception.
+ * @param <T> the first parameter for this tri-consumer.
+ * @param <U> the second parameter for this tri-consumer.
+ * @param <V> the third parameter for this tri-consumer.
+ * @param <E> the exception type that this interface method can throw.
  */
 @FunctionalInterface
 public interface TriConsumerException<T, U, V, E extends Exception> {

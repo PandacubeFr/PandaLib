@@ -23,6 +23,11 @@ public class ChatColorGradient {
     private final List<GradientColor> colors = new ArrayList<>();
 
     /**
+     * Create the custom gradient.
+     */
+    public ChatColorGradient() {}
+
+    /**
      * Put a specific color at a specific location in the gradient.
      * @param gradientLocation the location in the gradient.
      * @param gradientColor the color to put at this location.

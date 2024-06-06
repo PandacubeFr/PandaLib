@@ -146,6 +146,6 @@ public class StringUtil {
 
 
 
-
+	private StringUtil() {}
 
 }

@@ -172,7 +172,7 @@ public class RandomUtil {
 		return String.valueOf(pw);
 	}
 	
-	
+	private RandomUtil() {}
 	
 
 }

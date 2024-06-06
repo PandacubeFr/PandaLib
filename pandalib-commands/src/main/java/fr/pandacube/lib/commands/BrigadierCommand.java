@@ -25,6 +25,11 @@ import java.util.function.Predicate;
  */
 public abstract class BrigadierCommand<S> {
 
+    /**
+     * Creates a Brigadier command.
+     */
+    public BrigadierCommand() {}
+
 
     /**
      * Returns a builder for this command.

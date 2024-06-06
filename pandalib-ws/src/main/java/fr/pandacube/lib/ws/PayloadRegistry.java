@@ -100,4 +100,6 @@ public class PayloadRegistry {
         registerPayloadType("login-succeed", LoginSucceedPayload.class);
     }
 
+    private PayloadRegistry() {}
+
 }

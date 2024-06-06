@@ -97,5 +97,7 @@ public class CLILogger {
 		t.start();
 		return ps;
 	}
+
+	private CLILogger() {}
 	
 }

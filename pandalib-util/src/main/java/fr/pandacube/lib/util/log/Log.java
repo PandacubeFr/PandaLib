@@ -159,4 +159,6 @@ public final class Log {
 		logger.info(message);
 	}
 
+	private Log() {}
+
 }

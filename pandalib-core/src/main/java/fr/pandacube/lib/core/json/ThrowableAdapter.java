@@ -30,6 +30,8 @@ public class ThrowableAdapter implements JsonSerializer<Throwable>, JsonDeserial
 
     /* package */ static final TypeAdapterFactory FACTORY = TreeTypeAdapter.newTypeHierarchyFactory(Throwable.class, new ThrowableAdapter());
 
+    private ThrowableAdapter() {}
+
 
     @Override
     public Throwable deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

@@ -293,4 +293,7 @@ public class ChatColorUtil {
     }
 
 
+
+    private ChatColorUtil() {}
+
 }

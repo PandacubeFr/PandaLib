@@ -2,6 +2,9 @@ package fr.pandacube.lib.util.function;
 
 /**
  * A consumer that can possibly throw a checked exception.
+ * @param <T> the first parameter for this bi-consumer.
+ * @param <U> the second parameter for this bi-consumer.
+ * @param <E> the exception type that this interface method can throw.
  */
 @FunctionalInterface
 public interface BiConsumerException<T, U, E extends Exception> {

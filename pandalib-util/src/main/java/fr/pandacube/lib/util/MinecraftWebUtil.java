@@ -97,6 +97,8 @@ public class MinecraftWebUtil {
 		return builder.toString();
 		
 	}
+
+	private MinecraftWebUtil() {}
 	
 	
 

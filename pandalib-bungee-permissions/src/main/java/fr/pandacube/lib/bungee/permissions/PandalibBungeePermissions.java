@@ -25,7 +25,6 @@ import java.util.function.Function;
  */
 public class PandalibBungeePermissions implements Listener {
 
-
     /**
      * Registers event listener to redirect permission checks to {@code pandalib-permissions}.
      * @param bungeePlugin a BungeeCord plugin.
@@ -34,6 +33,8 @@ public class PandalibBungeePermissions implements Listener {
         ProxyServer.getInstance().getPluginManager().registerListener(bungeePlugin, new PandalibBungeePermissions());
     }
 
+
+    private PandalibBungeePermissions() {}
 
     /**
      * Event handler called when a plugin asks if a player has a permission.

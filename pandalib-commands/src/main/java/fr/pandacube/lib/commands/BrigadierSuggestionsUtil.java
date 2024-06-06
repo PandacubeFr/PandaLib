@@ -140,4 +140,8 @@ public class BrigadierSuggestionsUtil {
     }
 
 
+
+    private BrigadierSuggestionsUtil() {}
+
+
 }

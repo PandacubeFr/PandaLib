@@ -5,4 +5,8 @@ package fr.pandacube.lib.ws.payloads;
  */
 public abstract class Payload {
 
+    /**
+     * Creates a new {@link Payload}.
+     */
+    public Payload() {}
 }

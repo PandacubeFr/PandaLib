@@ -52,4 +52,7 @@ public class FileUtils {
 			Files.copy(source.toPath(), target.toPath());
 		}
 	}
+
+
+	private FileUtils() {}
 }

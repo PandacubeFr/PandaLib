@@ -232,12 +232,8 @@ public class SQLField<E extends SQLElement<E>, T> {
     }
 
 
-
-
-
-
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public Object fromJavaTypeToJDBCType(Object value) throws DBException {
+    /* package */ Object fromJavaTypeToJDBCType(Object value) throws DBException {
         Object ret = value;
         if (value != null && type instanceof SQLCustomType customType) {
             try {
@@ -250,7 +246,7 @@ public class SQLField<E extends SQLElement<E>, T> {
         return ret;
     }
 
-    public Collection<Object> fromListJavaTypeToJDBCType(Collection<?> values) throws DBException {
+    /* package */ Collection<Object> fromListJavaTypeToJDBCType(Collection<?> values) throws DBException {
         if (values == null)
             return null;
         List<Object> ret = new ArrayList<>(values.size());

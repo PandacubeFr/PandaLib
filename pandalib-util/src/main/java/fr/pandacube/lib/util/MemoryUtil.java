@@ -158,5 +158,7 @@ public class MemoryUtil {
 			unitMultiplier = uMultiplier;
 		}
 	}
+
+	private MemoryUtil() {}
 	
 }

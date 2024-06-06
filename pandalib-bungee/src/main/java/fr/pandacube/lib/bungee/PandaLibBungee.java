@@ -43,4 +43,7 @@ public class PandaLibBungee {
     public static Plugin getPlugin() {
         return plugin;
     }
+
+    private PandaLibBungee() {}
+
 }

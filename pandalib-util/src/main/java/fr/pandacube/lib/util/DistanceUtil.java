@@ -104,4 +104,7 @@ public class DistanceUtil {
 		}
 	}
 
+
+	private DistanceUtil() {}
+
 }

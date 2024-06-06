@@ -35,4 +35,11 @@ public class BungeeBackupConfig {
      * A list of ignored files or directory in the workdir to exclude from the backup.
      */
     public List<String> workdirIgnoreList = new ArrayList<>();
+
+    /**
+     * Creates a new {@link BungeeBackupConfig}.
+     */
+    public BungeeBackupConfig() {
+
+    }
 }

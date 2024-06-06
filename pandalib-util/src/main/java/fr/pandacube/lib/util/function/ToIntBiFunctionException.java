@@ -2,6 +2,9 @@ package fr.pandacube.lib.util.function;
 
 /**
  * A function that can possibly throw a checked exception.
+ * @param <T> the first parameter for this bi-function.
+ * @param <U> the second parameter for this bi-function.
+ * @param <E> the exception type that this interface method can throw.
  */
 @FunctionalInterface
 public interface ToIntBiFunctionException<T, U, E extends Exception> {

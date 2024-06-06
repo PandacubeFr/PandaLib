@@ -82,6 +82,12 @@ public class PandalibPaperPermissions implements Listener {
 		}
 	}
 
+
+	/**
+	 * Creates a {@link PandalibPaperPermissions} instance.
+	 */
+	private PandalibPaperPermissions() {}
+
 	/**
 	 * Player login event handler.
 	 * @param event the event.

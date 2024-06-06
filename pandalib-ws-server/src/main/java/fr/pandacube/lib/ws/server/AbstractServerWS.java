@@ -14,6 +14,11 @@ import java.time.Duration;
 public abstract class AbstractServerWS extends WebSocketAdapter implements AbstractWS {
 
 	private boolean isClosed = false;
+
+	/**
+	 * Creates a Websocket server endpoint.
+	 */
+	public AbstractServerWS() {}
 	
 	@Override
 	public final void onWebSocketConnect(Session session)

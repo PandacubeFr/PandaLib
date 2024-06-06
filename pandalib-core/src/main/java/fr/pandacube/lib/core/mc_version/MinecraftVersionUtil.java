@@ -135,4 +135,7 @@ public class MinecraftVersionUtil {
         return set;
     }
 
+
+    private MinecraftVersionUtil() {}
+
 }

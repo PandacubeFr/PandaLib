@@ -679,5 +679,10 @@ public abstract class ChatStatic {
         return builder.style(c.style()).append(c.children());
     }
 
+    /**
+     * Creates a new {@link ChatStatic} instance.
+     */
+    protected ChatStatic() {}
+
 
 }

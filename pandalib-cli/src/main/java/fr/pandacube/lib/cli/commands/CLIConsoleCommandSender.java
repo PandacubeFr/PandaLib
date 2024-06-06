@@ -11,6 +11,12 @@ import org.jetbrains.annotations.NotNull;
  * The console command sender.
  */
 public class CLIConsoleCommandSender implements CLICommandSender {
+
+    /**
+     * Creates a new console command sender.
+     */
+    protected CLIConsoleCommandSender() {}
+
     public String getName() {
         return "Console";
     }

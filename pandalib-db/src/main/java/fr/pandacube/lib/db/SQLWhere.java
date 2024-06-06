@@ -13,6 +13,11 @@ import fr.pandacube.lib.util.log.Log;
  */
 public abstract class SQLWhere<E extends SQLElement<E>> {
 
+    /**
+     * Creates a SQL WHERE expression.
+     */
+    protected SQLWhere() {}
+
     /* package */ abstract ParameterizedSQLString toSQL() throws DBException;
 
     @Override
@@ -69,6 +74,7 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
      * Create a custom SQL {@code WHERE} expression.
      * @param whereExpr the raw SQL {@code WHERE} expression.
      * @return a new SQL {@code WHERE} expression.
+     * @param <E> the table type.
      */
     public static <E extends SQLElement<E>> SQLWhere<E> expression(String whereExpr) {
         return expression(whereExpr, List.of());
@@ -79,6 +85,7 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
      * @param whereExpr the raw SQL {@code WHERE} expression.
      * @param params the parameters of the provided expression.
      * @return a new SQL {@code WHERE} expression.
+     * @param <E> the table type.
      */
     public static <E extends SQLElement<E>> SQLWhere<E> expression(String whereExpr, List<Object> params) {
         return new SQLWhereCustomExpression<>(whereExpr, params);
@@ -89,6 +96,7 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
      * @param leftExpr the raw SQL left operand.
      * @param valuesIn the values on the right of the {@code IN} operator.
      * @return a new SQL {@code WHERE} expression.
+     * @param <E> the table type.
      */
     public static <E extends SQLElement<E>> SQLWhere<E> expressionIn(String leftExpr, Collection<?> valuesIn) {
         return expressionIn(leftExpr, List.of(), valuesIn);
@@ -100,6 +108,7 @@ public abstract class SQLWhere<E extends SQLElement<E>> {
      * @param leftParams the parameters of the left operand.
      * @param valuesIn the values on the right of the {@code IN} operator.
      * @return a new SQL {@code WHERE} expression.
+     * @param <E> the table type.
      */
     public static <E extends SQLElement<E>> SQLWhere<E> expressionIn(String leftExpr, List<Object> leftParams, Collection<?> valuesIn) {
         return new SQLWhereInCustom<>(leftExpr, leftParams, valuesIn);

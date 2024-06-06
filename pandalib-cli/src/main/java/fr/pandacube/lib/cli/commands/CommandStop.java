@@ -9,6 +9,11 @@ import fr.pandacube.lib.cli.CLIApplication;
  */
 public class CommandStop extends CLIBrigadierCommand {
 
+	/**
+	 * Initializes the admin command.
+	 */
+	public CommandStop() {}
+
 	@Override
 	protected LiteralArgumentBuilder<CLICommandSender> buildCommand() {
 		return literal("stop")

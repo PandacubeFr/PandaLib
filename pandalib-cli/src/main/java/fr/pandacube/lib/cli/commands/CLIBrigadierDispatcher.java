@@ -25,6 +25,9 @@ public class CLIBrigadierDispatcher extends BrigadierDispatcher<CLICommandSender
 	public static final CLICommandSender CLI_CONSOLE_COMMAND_SENDER = new CLIConsoleCommandSender();
 
 
+	private CLIBrigadierDispatcher() {}
+
+
 	/**
 	 * Executes the provided command as the console.
 	 * @param commandWithoutSlash the command, without the eventual slash at the beginning.

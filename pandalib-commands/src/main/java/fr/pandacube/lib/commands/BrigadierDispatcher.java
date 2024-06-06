@@ -21,6 +21,11 @@ public abstract class BrigadierDispatcher<S> {
 
     private final CommandDispatcher<S> dispatcher = new CommandDispatcher<>();
 
+    /**
+     * Creates a new Dispatcher instance.
+     */
+    public BrigadierDispatcher() {}
+
 
     /**
      * Registers the provided command node into this dispatcher.

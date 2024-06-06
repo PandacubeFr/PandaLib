@@ -54,7 +54,7 @@ public class CronScheduler {
                 long now = System.currentTimeMillis();
 
                 if (!tasks.isEmpty()) {
-                    CronTask next = tasks.get(0);
+                    CronTask next = tasks.getFirst();
                     if (next.nextRun <= now) {
                         next.runAsync();
                         setLastRun(next.taskId, now);
@@ -224,5 +224,6 @@ public class CronScheduler {
                 .toEpochMilli();
     }
 
+    private CronScheduler() {}
 
 }

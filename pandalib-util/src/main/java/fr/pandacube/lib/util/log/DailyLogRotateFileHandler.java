@@ -30,6 +30,11 @@ public class DailyLogRotateFileHandler extends Handler {
 	private String currentFileDate = getCurrentDay();
 	private boolean closed = false;
 
+	/**
+	 * Creates a new {@link DailyLogRotateFileHandler}.
+	 */
+	public DailyLogRotateFileHandler() {}
+
 
 	@Override
 	public synchronized void close() throws SecurityException {

@@ -70,6 +70,11 @@ public abstract class BackupCleaner implements UnaryOperator<TreeSet<LocalDateTi
         };
     }
 
+    /**
+     * Create a backup cleaner.
+     */
+    public BackupCleaner() {}
+
 
     /**
      * Creates a new {@link BackupCleaner} that keeps the archives kept by this {@link BackupCleaner} or by the provided

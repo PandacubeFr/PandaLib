@@ -199,5 +199,7 @@ public class Permissions {
 		checkInitialized();
 		return backendReader.getFullPermissionsList();
 	}
+
+	private Permissions() {}
 	
 }

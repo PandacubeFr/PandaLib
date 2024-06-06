@@ -17,6 +17,11 @@ import java.util.stream.Collectors;
 public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 
     /**
+     * Creates an empty list of sql elements.
+     */
+    public SQLElementList() {}
+
+    /**
      * Stores all the values modified by {@link #setCommon(SQLField, Object)}.
      */
     private final Map<SQLField<E, ?>, Object> modifiedValues = new LinkedHashMap<>();

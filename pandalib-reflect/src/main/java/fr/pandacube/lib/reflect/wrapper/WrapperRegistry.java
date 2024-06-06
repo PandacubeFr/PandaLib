@@ -78,4 +78,7 @@ public class WrapperRegistry {
                                  ReflectConstructor<? extends ReflectWrapperI> objectWrapperConstructor) {
     }
 
+
+    private WrapperRegistry() {}
+
 }

@@ -36,6 +36,11 @@ import static fr.pandacube.lib.chat.ChatStatic.text;
  */
 public class CommandAdmin extends CLIBrigadierCommand {
 
+	/**
+	 * Initializes the admin command.
+	 */
+	public CommandAdmin() {}
+
 	@Override
 	protected LiteralArgumentBuilder<CLICommandSender> buildCommand() {
 		return literal("admin")

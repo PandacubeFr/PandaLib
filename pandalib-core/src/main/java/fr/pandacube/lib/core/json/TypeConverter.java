@@ -237,5 +237,8 @@ public class TypeConverter {
 		}
 		
 	}
+
+
+	private TypeConverter() {}
 	
 }

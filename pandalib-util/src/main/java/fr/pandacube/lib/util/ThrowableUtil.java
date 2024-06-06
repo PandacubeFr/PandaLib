@@ -147,5 +147,6 @@ public class ThrowableUtil {
 		return new RuntimeException(t);
 	}
 
+	private ThrowableUtil() {}
 
 }

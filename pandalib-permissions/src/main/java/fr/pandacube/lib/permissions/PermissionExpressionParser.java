@@ -119,5 +119,7 @@ public class PermissionExpressionParser {
 			return super.evaluate(constant, evaluationContext);
 		}
 	}
+
+	private PermissionExpressionParser() {}
 	
 }

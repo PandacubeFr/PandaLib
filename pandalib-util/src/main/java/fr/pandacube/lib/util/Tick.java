@@ -56,4 +56,6 @@ public class Tick {
 		return Duration.ofMillis(toMs(tick));
 	}
 
+	private Tick() {}
+
 }

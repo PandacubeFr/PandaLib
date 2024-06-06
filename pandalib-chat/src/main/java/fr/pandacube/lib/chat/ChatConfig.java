@@ -157,5 +157,9 @@ public class ChatConfig {
                     .thenText("] ");
         }
 
+        private PandaTheme() {}
+
     }
+
+    private ChatConfig() {}
 }

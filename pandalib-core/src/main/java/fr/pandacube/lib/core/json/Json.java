@@ -163,4 +163,6 @@ public class Json {
 		}
 	}*/
 
+	private Json() {}
+
 }

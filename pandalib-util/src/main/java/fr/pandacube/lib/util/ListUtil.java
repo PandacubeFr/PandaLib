@@ -21,4 +21,8 @@ public class ListUtil {
 			list.add(i);
 		}
 	}
+
+
+	private ListUtil() {}
+
 }
