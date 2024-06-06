@@ -264,7 +264,7 @@ public abstract class ChatStatic {
      * @return a new {@link FormatableChat} with the provided translation key and parameters.
      */
     public static FormatableChat translation(String key, Object... with) {
-        return new FormatableChat(Component.translatable().key(key).args(Chat.filterObjToComponentLike(with)));
+        return new FormatableChat(Component.translatable().key(key).arguments(Chat.filterObjToTranslationArgumentLike(with)));
     }
 
     /**
@@ -632,50 +632,32 @@ public abstract class ChatStatic {
 
 
     private static ComponentBuilder<?, ?> componentToBuilder(Component c) {
-        ComponentBuilder<?, ?> builder;
-        if (c instanceof TextComponent) {
-            builder = Component.text()
-                    .content(((TextComponent) c).content());
-        }
-        else if (c instanceof TranslatableComponent) {
-            builder = Component.translatable()
-                    .key(((TranslatableComponent) c).key())
-                    .args(((TranslatableComponent) c).args());
-        }
-        else if (c instanceof SelectorComponent) {
-            builder = Component.selector()
-                    .pattern(((SelectorComponent) c).pattern());
-        }
-        else if (c instanceof ScoreComponent) {
-            builder = Component.score()
-                    .name(((ScoreComponent) c).name())
-                    .objective(((ScoreComponent) c).objective());
-        }
-        else if (c instanceof KeybindComponent) {
-            builder = Component.keybind()
-                    .keybind(((KeybindComponent) c).keybind());
-        }
-        else if (c instanceof BlockNBTComponent) {
-            builder = Component.blockNBT()
-                    .interpret(((BlockNBTComponent) c).interpret())
-                    .nbtPath(((BlockNBTComponent) c).nbtPath())
-                    .pos(((BlockNBTComponent) c).pos());
-        }
-        else if (c instanceof EntityNBTComponent) {
-            builder = Component.entityNBT()
-                    .interpret(((EntityNBTComponent) c).interpret())
-                    .nbtPath(((EntityNBTComponent) c).nbtPath())
-                    .selector(((EntityNBTComponent) c).selector());
-        }
-        else if (c instanceof StorageNBTComponent) {
-            builder = Component.storageNBT()
-                    .interpret(((StorageNBTComponent) c).interpret())
-                    .nbtPath(((StorageNBTComponent) c).nbtPath())
-                    .storage(((StorageNBTComponent) c).storage());
-        }
-        else {
-            throw new IllegalArgumentException("Unknown component type " + c.getClass());
-        }
+        ComponentBuilder<?, ?> builder = switch (c) {
+            case TextComponent textComponent -> Component.text()
+                    .content(textComponent.content());
+            case TranslatableComponent translatableComponent -> Component.translatable()
+                    .key(translatableComponent.key()).arguments(translatableComponent.arguments());
+            case SelectorComponent selectorComponent -> Component.selector()
+                    .pattern(selectorComponent.pattern());
+            case ScoreComponent scoreComponent -> Component.score()
+                    .name(scoreComponent.name())
+                    .objective(scoreComponent.objective());
+            case KeybindComponent keybindComponent -> Component.keybind()
+                    .keybind(keybindComponent.keybind());
+            case BlockNBTComponent blockNBTComponent -> Component.blockNBT()
+                    .interpret(blockNBTComponent.interpret())
+                    .nbtPath(blockNBTComponent.nbtPath())
+                    .pos(blockNBTComponent.pos());
+            case EntityNBTComponent entityNBTComponent -> Component.entityNBT()
+                    .interpret(entityNBTComponent.interpret())
+                    .nbtPath(entityNBTComponent.nbtPath())
+                    .selector(entityNBTComponent.selector());
+            case StorageNBTComponent storageNBTComponent -> Component.storageNBT()
+                    .interpret(storageNBTComponent.interpret())
+                    .nbtPath(storageNBTComponent.nbtPath())
+                    .storage(storageNBTComponent.storage());
+            case null, default -> throw new IllegalArgumentException("Unknown component type " + (c == null ? "null" : c.getClass()));
+        };
         return builder.style(c.style()).append(c.children());
     }
 

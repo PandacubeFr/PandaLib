@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * A custom gradient with at least 2 colors in it.
  */
 public class ChatColorGradient {
+
     private record GradientColor(
             float location,
             TextColor color
@@ -48,7 +49,7 @@ public class ChatColorGradient {
         if (colors.isEmpty())
             throw new IllegalStateException("Must define at least one color in this ChatColorGradient instance.");
         if (colors.size() == 1)
-            return colors.get(0).color();
+            return colors.getFirst().color();
 
         int i = 0;
         for (; i < colors.size(); i++) {
@@ -59,7 +60,7 @@ public class ChatColorGradient {
         if (i == 0)
             return colors.get(i).color();
         if (i == colors.size())
-            return colors.get(colors.size() - 1).color();
+            return colors.getLast().color();
 
         int p = i - 1;
         float pLoc = colors.get(p).location();

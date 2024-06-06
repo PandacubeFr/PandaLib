@@ -1,6 +1,5 @@
 package fr.pandacube.lib.paper.util;
 
-import com.destroystokyo.paper.Namespaced;
 import com.google.common.collect.Streams;
 import fr.pandacube.lib.chat.Chat;
 import net.kyori.adventure.text.Component;
@@ -13,10 +12,8 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import static fr.pandacube.lib.chat.ChatStatic.chatComponent;
@@ -183,7 +180,7 @@ public class ItemStackBuilder {
 
 	public ItemStackBuilder fakeEnchant(boolean apply) {
 		if (apply) {
-			enchant(Enchantment.DURABILITY, 1);
+			enchant(Enchantment.UNBREAKING, 1);
 			return hideEnchants();
 		}
 		return this;
@@ -195,22 +192,6 @@ public class ItemStackBuilder {
 
 	public ItemStackBuilder unbreakable(boolean unbreakable) {
 		return meta(m -> m.setUnbreakable(unbreakable));
-	}
-
-	public ItemStackBuilder canDestroy(Set<Material> destroyable) {
-		return canDestroy(destroyable.stream().map(m -> (Namespaced) m.getKey()).toList());
-	}
-
-	public ItemStackBuilder canPlaceOn(Set<Material> placeOn) {
-		return canPlaceOn(placeOn.stream().map(m -> (Namespaced) m.getKey()).toList());
-	}
-
-	public ItemStackBuilder canDestroy(Collection<Namespaced> destroyable) {
-		return meta(m -> m.setDestroyableKeys(destroyable));
-	}
-
-	public ItemStackBuilder canPlaceOn(Collection<Namespaced> placeOn) {
-		return meta(m -> m.setPlaceableKeys(placeOn));
 	}
 	
 	public ItemStackBuilder damage(int d) {

@@ -5,6 +5,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentBuilder;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.TranslationArgument;
+import net.kyori.adventure.text.TranslationArgumentLike;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.event.HoverEventSource;
@@ -972,21 +974,38 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
 
 
 
+    /* package */ static ComponentLike filterObjToComponentLike(Object v) {
+        return switch (v) {
+            case BaseComponent[] baseComponents -> toAdventure(baseComponents);
+            case BaseComponent baseComponent -> toAdventure(baseComponent);
+            case ComponentLike componentLike -> componentLike;
+            case null, default -> Component.text(Objects.toString(v));
+        };
+    }
 
     /* package */ static ComponentLike[] filterObjToComponentLike(Object[] values) {
         if (values == null)
             return null;
         ComponentLike[] ret = new ComponentLike[values.length];
         for (int i = 0; i < values.length; i++) {
+            ret[i] = filterObjToComponentLike(values[i]);
+        }
+        return ret;
+    }
+
+
+    /* package */ static TranslationArgumentLike[] filterObjToTranslationArgumentLike(Object[] values) {
+        if (values == null)
+            return null;
+        TranslationArgumentLike[] ret = new TranslationArgumentLike[values.length];
+        for (int i = 0; i < values.length; i++) {
             Object v = values[i];
-            if (v instanceof BaseComponent[])
-                ret[i] = toAdventure((BaseComponent[]) v);
-            else if (v instanceof BaseComponent)
-                ret[i] = toAdventure((BaseComponent) v);
-            else if (v instanceof ComponentLike)
-                ret[i] = (ComponentLike) v;
+            if (v instanceof Number n)
+                ret[i] = TranslationArgument.numeric(n);
+            else if (v instanceof Boolean b)
+                ret[i] = TranslationArgument.bool(b);
             else
-                ret[i] = Component.text(Objects.toString(v));
+                ret[i] = TranslationArgument.component(filterObjToComponentLike(values[i]));
         }
         return ret;
     }

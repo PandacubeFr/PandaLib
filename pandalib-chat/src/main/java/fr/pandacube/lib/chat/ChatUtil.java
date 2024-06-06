@@ -14,6 +14,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.TranslationArgument;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -265,8 +266,8 @@ public class ChatUtil {
             count += strWidth(((TextComponent)component).content(), console, actuallyBold);
         }
         else if (component instanceof TranslatableComponent) {
-            for (Component c : ((TranslatableComponent)component).args())
-                count += componentWidth(c, console, actuallyBold);
+            for (TranslationArgument c : ((TranslatableComponent)component).arguments())
+                count += componentWidth(c.asComponent(), console, actuallyBold);
         }
 
         for (Component c : component.children())
@@ -480,7 +481,7 @@ public class ChatUtil {
                 spacedRow.thenText(space);
             }
             if (!row.isEmpty())
-                spacedRow.then(row.get(row.size() - 1));
+                spacedRow.then(row.getLast());
             spacedRows.add(spacedRow.getAdv());
         }
 

@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.function.IntUnaryOperator;
@@ -98,7 +99,7 @@ public record PlayerDataWrapper(CompoundTag data) {
         Inventory inv = Bukkit.createInventory(null, bukkitType);
         if (stacks.isEmpty())
             return inv;
-        for (Map.Entry<Integer, ItemStack> is : stacks.entrySet()) {
+        for (Entry<Integer, ItemStack> is : stacks.entrySet()) {
             inv.setItem(nbtToBukkitSlotConverter.applyAsInt(is.getKey()), is.getValue());
         }
         return inv;
@@ -142,7 +143,7 @@ public record PlayerDataWrapper(CompoundTag data) {
 
     private void setRawInventoryContent(String key, Map<Integer, ItemStack> stacks) {
         ListTag list = new ListTag();
-        for (Map.Entry<Integer, ItemStack> is : stacks.entrySet()) {
+        for (Entry<Integer, ItemStack> is : stacks.entrySet()) {
             ItemStack stack = filterStack(is.getValue());
             if (stack == null)
                 continue;
@@ -312,6 +313,7 @@ public record PlayerDataWrapper(CompoundTag data) {
                 case LEGS -> Objects.requireNonNullElseGet(this.getLeggings(), () -> new ItemStack(Material.AIR));
                 case CHEST -> Objects.requireNonNullElseGet(this.getChestplate(), () -> new ItemStack(Material.AIR));
                 case HEAD -> Objects.requireNonNullElseGet(this.getHelmet(), () -> new ItemStack(Material.AIR));
+                case BODY -> new ItemStack(Material.AIR); // for horses/wolves armor
             };
         }
 
