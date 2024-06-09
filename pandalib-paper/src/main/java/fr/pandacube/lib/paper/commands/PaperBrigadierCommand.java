@@ -1,7 +1,7 @@
 package fr.pandacube.lib.paper.commands;
 
-import com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
@@ -11,10 +11,10 @@ import fr.pandacube.lib.chat.Chat;
 import fr.pandacube.lib.commands.BadCommandUsage;
 import fr.pandacube.lib.commands.BrigadierCommand;
 import fr.pandacube.lib.commands.SuggestionsSupplier;
-import fr.pandacube.lib.paper.reflect.PandalibPaperReflect;
-import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftServer;
+import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftVector;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.VanillaCommandWrapper;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Commands;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Coordinates;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Vec3Argument;
 import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
 import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
 import fr.pandacube.lib.players.standalone.AbstractPlayerManager;
@@ -32,6 +32,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.Vector;
 
 import java.util.HashSet;
 import java.util.List;
@@ -39,25 +40,23 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
-
 /**
  * Abstract class to hold a command to be integrated into a Paper server vanilla command dispatcher.
  */
 @SuppressWarnings("UnstableApiUsage")
 public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSourceStack> implements Listener {
 
+    private static CommandDispatcher<CommandSourceStack> vanillaPaperDispatcher = null;
 
-    private static final Commands vanillaCommandDispatcher;
-    private static final CommandDispatcher<BukkitBrigadierCommandSource> nmsDispatcher;
-
-    static {
-        wrapEx(PandalibPaperReflect::init);
-        vanillaCommandDispatcher = ReflectWrapper.wrapTyped(Bukkit.getServer(), CraftServer.class)
-                .getServer()
-                .vanillaCommandDispatcher();
-        nmsDispatcher = vanillaCommandDispatcher.dispatcher();
+    public static CommandDispatcher<CommandSourceStack> getVanillaPaperDispatcher() {
+        return vanillaPaperDispatcher;
     }
+
+    public static RootCommandNode<CommandSourceStack> getRootNode() {
+        return vanillaPaperDispatcher == null ? null : vanillaPaperDispatcher.getRoot();
+    }
+
+
 
     /**
      * Removes a plugin command that overrides a vanilla command, so the vanilla command functionalities are fully
@@ -66,6 +65,13 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
      */
     public static void restoreVanillaCommand(String name) {
         CommandMap bukkitCmdMap = Bukkit.getCommandMap();
+
+        Command vanillaCommand = bukkitCmdMap.getCommand("minecraft:" + name);
+        if (vanillaCommand == null || !VanillaCommandWrapper.REFLECT.get().isInstance(vanillaCommand)) {
+            Log.warning("There is no vanilla command '" + name + "' to restore.");
+            return;
+        }
+
         Command bukkitCommand = bukkitCmdMap.getCommand(name);
         if (bukkitCommand != null) {
             if (VanillaCommandWrapper.REFLECT.get().isInstance(bukkitCommand)) {
@@ -73,37 +79,12 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
                 return;
             }
             Log.info("Removing Bukkit command /" + name + " (" + getCommandIdentity(bukkitCommand) + ")");
-            Log.warning("[1.20.6 update] Please test that the bukkit command removal is actually working.");
+            Log.warning("[1.20.6 update] Please test that the bukkit command removal is actually working, and being replaced back by the vanilla one.");
             bukkitCmdMap.getKnownCommands().remove(name.toLowerCase(java.util.Locale.ENGLISH));
             bukkitCommand.unregister(bukkitCmdMap);
-
-            LiteralCommandNode<BukkitBrigadierCommandSource> node = (LiteralCommandNode<BukkitBrigadierCommandSource>) getRootNode().getChild(name);
-            Command newCommand = new VanillaCommandWrapper(vanillaCommandDispatcher, node).__getRuntimeInstance();
-            bukkitCmdMap.getKnownCommands().put(name.toLowerCase(), newCommand);
-            newCommand.register(bukkitCmdMap);
+            bukkitCmdMap.getKnownCommands().put(name.toLowerCase(java.util.Locale.ENGLISH), vanillaCommand);
         }
     }
-
-
-    /**
-     * Returns the vanilla instance of the Brigadier dispatcher.
-     * @return the vanilla instance of the Brigadier dispatcher.
-     */
-    public static CommandDispatcher<BukkitBrigadierCommandSource> getNMSDispatcher() {
-        return nmsDispatcher;
-    }
-
-    /**
-     * Returns the root command node of the Brigadier dispatcher.
-     * @return the root command node of the Brigadier dispatcher.
-     */
-    protected static RootCommandNode<BukkitBrigadierCommandSource> getRootNode() {
-        return nmsDispatcher.getRoot();
-    }
-
-
-
-
 
 
 
@@ -159,6 +140,10 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
 
     private void register() {
         plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
+
+            if (vanillaPaperDispatcher == null) {
+                vanillaPaperDispatcher = event.registrar().getDispatcher();
+            }
 
             registeredAliases = new HashSet<>(event.registrar().register(commandNode, description, List.of(aliases)));
 
@@ -363,6 +348,30 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
     /*
      * Minecraft's argument type
      */
+
+    /**
+     * Creates a new instance of the Brigadier argument type {@code minecraft:vec3}.
+     * @return the {@code minecraft:vec3} argument type.
+     */
+    public static ArgumentType<Object> argumentMinecraftVec3() {
+        return Vec3Argument.vec3(true);
+    }
+
+    /**
+     * Gets the value of the provided argument of type {@code minecraft:vec3}, from the provided context.
+     * @param context the command execution context.
+     * @param argument the argument name.
+     * @param deflt a default value if the argument is not found.
+     * @return the value of the argument.
+     */
+    public Vector tryGetMinecraftVec3Argument(CommandContext<CommandSourceStack> context, String argument,
+                                              Vector deflt) {
+        return tryGetArgument(context, argument, Coordinates.MAPPING.runtimeClass(),
+                nmsCoordinate -> CraftVector.toBukkit(
+                        ReflectWrapper.wrap(nmsCoordinate, Coordinates.class).getPosition(context.getSource())
+                ),
+                deflt);
+    }
 
 
 
