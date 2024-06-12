@@ -366,7 +366,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
      */
     public Vector tryGetMinecraftVec3Argument(CommandContext<CommandSourceStack> context, String argument,
                                               Vector deflt) {
-        return tryGetArgument(context, argument, Coordinates.MAPPING.runtimeClass(),
+        return tryGetArgument(context, argument, Coordinates.REFLECT.get(),
                 nmsCoordinate -> CraftVector.toBukkit(
                         ReflectWrapper.wrap(nmsCoordinate, Coordinates.class).getPosition(context.getSource())
                 ),

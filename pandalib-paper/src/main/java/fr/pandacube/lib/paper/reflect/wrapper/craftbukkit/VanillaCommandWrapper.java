@@ -17,7 +17,7 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class VanillaCommandWrapper extends ReflectWrapperTyped<BukkitCommand> {
     public static final ReflectClass<?> REFLECT = wrapEx(() -> OBCReflect.ofClass("command.VanillaCommandWrapper"));
-    public static final ReflectConstructor<?> CONSTRUCTOR = wrapEx(() -> REFLECT.constructor(Commands.MAPPING.runtimeClass(), CommandNode.class));
+    public static final ReflectConstructor<?> CONSTRUCTOR = wrapEx(() -> REFLECT.constructor(Commands.REFLECT.get(), CommandNode.class));
     public static final ReflectField<?> vanillaCommand = wrapEx(() -> REFLECT.field("vanillaCommand"));
     public static final ReflectMethod<?> getListener = wrapEx(() -> REFLECT.method("getListener", CommandSender.class));
 

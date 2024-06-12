@@ -1,18 +1,15 @@
 package fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt;
 
-import fr.pandacube.lib.paper.reflect.NMSReflect;
-import fr.pandacube.lib.paper.reflect.NMSReflect.ClassMapping;
+import fr.pandacube.lib.reflect.Reflect;
+import fr.pandacube.lib.reflect.ReflectClass;
 import fr.pandacube.lib.reflect.ReflectMethod;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
-
-import java.io.File;
-import java.nio.file.Path;
 
 import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 
 public class NbtAccounter extends ReflectWrapper {
-	public static final ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.nbt.NbtAccounter"));
-	private static final ReflectMethod<?> unlimitedHeap = wrapEx(() -> MAPPING.mojMethod("unlimitedHeap"));
+	public static final ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("net.minecraft.nbt.NbtAccounter"));
+	private static final ReflectMethod<?> unlimitedHeap = wrapEx(() -> REFLECT.method("unlimitedHeap"));
 
 	private NbtAccounter(Object obj) {
 		super(obj);

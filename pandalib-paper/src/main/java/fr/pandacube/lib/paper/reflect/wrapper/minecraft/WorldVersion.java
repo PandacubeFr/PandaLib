@@ -1,8 +1,8 @@
 package fr.pandacube.lib.paper.reflect.wrapper.minecraft;
 
-import fr.pandacube.lib.paper.reflect.NMSReflect;
-import fr.pandacube.lib.paper.reflect.NMSReflect.ClassMapping;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.DataVersion;
+import fr.pandacube.lib.reflect.Reflect;
+import fr.pandacube.lib.reflect.ReflectClass;
 import fr.pandacube.lib.reflect.ReflectMethod;
 import fr.pandacube.lib.reflect.wrapper.ConcreteWrapper;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
@@ -14,8 +14,8 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 @ConcreteWrapper(WorldVersion.__concrete.class)
 public interface WorldVersion extends ReflectWrapperI {
-    ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.WorldVersion"));
-    ReflectMethod<?> getDataVersion = wrapEx(() -> MAPPING.mojMethod("getDataVersion"));
+    ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("net.minecraft.WorldVersion"));
+    ReflectMethod<?> getDataVersion = wrapEx(() -> REFLECT.method("getDataVersion"));
 
     default DataVersion getDataVersion() {
         return wrap(wrapReflectEx(() -> getDataVersion.invoke(__getRuntimeInstance())), DataVersion.class);

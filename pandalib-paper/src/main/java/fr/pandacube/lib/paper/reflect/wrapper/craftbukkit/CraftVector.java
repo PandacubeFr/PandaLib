@@ -15,8 +15,8 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class CraftVector extends ReflectWrapper {
     public static final ReflectClass<?> REFLECT = wrapEx(() -> OBCReflect.ofClass("util.CraftVector"));
-    public static final ReflectMethod<?> toBukkit_Vec3 = ThrowableUtil.wrapEx(() -> REFLECT.method("toBukkit", Vec3.MAPPING.runtimeClass()));
-    public static final ReflectMethod<?> toBukkit_BlockPos = ThrowableUtil.wrapEx(() -> REFLECT.method("toBukkit", BlockPos.MAPPING.runtimeClass()));
+    public static final ReflectMethod<?> toBukkit_Vec3 = ThrowableUtil.wrapEx(() -> REFLECT.method("toBukkit", Vec3.REFLECT.get()));
+    public static final ReflectMethod<?> toBukkit_BlockPos = ThrowableUtil.wrapEx(() -> REFLECT.method("toBukkit", BlockPos.REFLECT.get()));
     public static final ReflectMethod<?> toNMS = wrapEx(() -> REFLECT.method("toNMS", Vector.class));
     public static final ReflectMethod<?> toBlockPos = wrapEx(() -> REFLECT.method("toNMS", Vector.class));
 

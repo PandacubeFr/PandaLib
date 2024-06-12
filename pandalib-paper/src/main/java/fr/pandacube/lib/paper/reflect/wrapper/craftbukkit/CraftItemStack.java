@@ -12,7 +12,7 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class CraftItemStack extends ReflectWrapperTyped<ItemStack> {
     public static final ReflectClass<?> REFLECT = wrapEx(() -> OBCReflect.ofClass("inventory.CraftItemStack"));
-    public static final ReflectMethod<?> asCraftMirror = wrapEx(() -> REFLECT.method("asCraftMirror", fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ItemStack.MAPPING.runtimeClass()));
+    public static final ReflectMethod<?> asCraftMirror = wrapEx(() -> REFLECT.method("asCraftMirror", fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ItemStack.REFLECT.get()));
     public static final ReflectMethod<?> asNMSCopy = wrapEx(() -> REFLECT.method("asNMSCopy", ItemStack.class));
 
     public static ItemStack asCraftMirror(fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ItemStack original) {

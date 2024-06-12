@@ -11,7 +11,7 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class MCDataConverter extends ReflectWrapper {
     public static final ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("ca.spottedleaf.dataconverter.minecraft.MCDataConverter"));
-    private static final ReflectMethod<?> convertTag = wrapEx(() -> REFLECT.method("convertTag", MCDataType.REFLECT.get(), CompoundTag.MAPPING.runtimeClass(), int.class, int.class));
+    private static final ReflectMethod<?> convertTag = wrapEx(() -> REFLECT.method("convertTag", MCDataType.REFLECT.get(), CompoundTag.REFLECT.get(), int.class, int.class));
 
     public static CompoundTag convertTag(MCDataType type, CompoundTag data, int fromVersion, int toVersion) {
         return wrap(wrapReflectEx(() -> convertTag.invokeStatic(unwrap(type), unwrap(data), fromVersion, toVersion)), CompoundTag.class);

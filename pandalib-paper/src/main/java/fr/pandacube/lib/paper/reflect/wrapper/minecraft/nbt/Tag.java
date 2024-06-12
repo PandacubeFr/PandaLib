@@ -1,23 +1,23 @@
 package fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt;
 
-import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
-import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
-
+import fr.pandacube.lib.reflect.Reflect;
+import fr.pandacube.lib.reflect.ReflectClass;
 import fr.pandacube.lib.reflect.ReflectField;
 import fr.pandacube.lib.reflect.ReflectMethod;
-import fr.pandacube.lib.paper.reflect.NMSReflect;
-import fr.pandacube.lib.paper.reflect.NMSReflect.ClassMapping;
 import fr.pandacube.lib.reflect.wrapper.ConcreteWrapper;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapperI;
 
+import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
+import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
+
 @ConcreteWrapper(Tag.__concrete.class)
 public interface Tag extends ReflectWrapperI {
-	ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.nbt.Tag"));
-	ReflectMethod<?> getAsString = wrapEx(() -> MAPPING.mojMethod("getAsString"));
-	ReflectField<?> TAG_LIST = wrapEx(() -> MAPPING.mojField("TAG_LIST"));
-	ReflectField<?> TAG_COMPOUND = wrapEx(() -> MAPPING.mojField("TAG_COMPOUND"));
-	ReflectField<?> TAG_ANY_NUMERIC = wrapEx(() -> MAPPING.mojField("TAG_ANY_NUMERIC"));
+	ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("net.minecraft.nbt.Tag"));
+	ReflectMethod<?> getAsString = wrapEx(() -> REFLECT.method("getAsString"));
+	ReflectField<?> TAG_LIST = wrapEx(() -> REFLECT.field("TAG_LIST"));
+	ReflectField<?> TAG_COMPOUND = wrapEx(() -> REFLECT.field("TAG_COMPOUND"));
+	ReflectField<?> TAG_ANY_NUMERIC = wrapEx(() -> REFLECT.field("TAG_ANY_NUMERIC"));
 
 	
 	default String getAsString() {

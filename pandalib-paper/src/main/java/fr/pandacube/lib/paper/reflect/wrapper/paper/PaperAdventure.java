@@ -11,7 +11,7 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class PaperAdventure extends ReflectWrapper {
     public static final ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("io.papermc.paper.adventure.PaperAdventure"));
-    private static final ReflectMethod<?> asAdventure = wrapEx(() -> REFLECT.method("asAdventure", Component.MAPPING.runtimeClass()));
+    private static final ReflectMethod<?> asAdventure = wrapEx(() -> REFLECT.method("asAdventure", Component.REFLECT.get()));
 
     public static net.kyori.adventure.text.Component asAdventure(Component component) {
         return (net.kyori.adventure.text.Component) wrapReflectEx(() -> asAdventure.invokeStatic(unwrap(component)));

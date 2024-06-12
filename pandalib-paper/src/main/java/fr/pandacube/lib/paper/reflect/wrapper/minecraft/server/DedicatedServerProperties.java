@@ -1,11 +1,12 @@
 package fr.pandacube.lib.paper.reflect.wrapper.minecraft.server;
 
-import fr.pandacube.lib.paper.reflect.NMSReflect;
+import fr.pandacube.lib.reflect.Reflect;
+import fr.pandacube.lib.reflect.ReflectClass;
 
 import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 
 public class DedicatedServerProperties extends Settings {
-    public static final NMSReflect.ClassMapping MAPPING = wrapEx(() -> NMSReflect.mojClass("net.minecraft.server.dedicated.DedicatedServerProperties"));
+    public static final ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("net.minecraft.server.dedicated.DedicatedServerProperties"));
 
     protected DedicatedServerProperties(Object obj) {
         super(obj);
