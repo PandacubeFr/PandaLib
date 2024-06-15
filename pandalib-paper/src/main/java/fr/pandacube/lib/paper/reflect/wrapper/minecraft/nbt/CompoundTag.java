@@ -51,7 +51,7 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 
 	private static final ReflectMethod<?> get = wrapEx(() -> REFLECT.method("get", String.class));
 	private static final ReflectMethod<?> getAllKeys = wrapEx(() -> REFLECT.method("getAllKeys"));
-	private static final ReflectMethod<?> entries = wrapEx(() -> REFLECT.method("entries"));
+	private static final ReflectMethod<?> entrySet = wrapEx(() -> REFLECT.method("entrySet"));
 	private static final ReflectMethod<?> size = wrapEx(() -> REFLECT.method("size"));
 	private static final ReflectMethod<?> contains = wrapEx(() -> REFLECT.method("contains", String.class));
 	private static final ReflectMethod<?> containsStringInt = wrapEx(() -> REFLECT.method("contains", String.class, int.class));
@@ -166,9 +166,9 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 	 * The values in the returned Map are not wrapped.
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<String, ?> entries() {
+	public Set<Map.Entry<String, ?>> entrySet() {
 		// we cannot easily wrap every value of the map without being able to synchronize the returned map with the wrapped map
-		return (Map<String, ?>) wrapReflectEx(() -> entries.invoke(__getRuntimeInstance()));
+		return (Set<Map.Entry<String, ?>>) wrapReflectEx(() -> entrySet.invoke(__getRuntimeInstance()));
 	}
 	public int size() {
 		return (int) wrapReflectEx(() -> size.invoke(__getRuntimeInstance()));

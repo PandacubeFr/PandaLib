@@ -2,12 +2,8 @@ package fr.pandacube.lib.paper.players;
 
 import fr.pandacube.lib.paper.reflect.util.PrimaryWorlds;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftServer;
-import fr.pandacube.lib.paper.reflect.wrapper.dataconverter.MCDataConverter;
-import fr.pandacube.lib.paper.reflect.wrapper.dataconverter.MCTypeRegistry;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.SharedConstants;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.NbtIo;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.Tag;
 import fr.pandacube.lib.paper.util.PlayerDataWrapper;
 import fr.pandacube.lib.paper.world.WorldUtil;
 import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
@@ -154,29 +150,17 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
     /**
      * Gets the NBT data from the player-data file.
      * It will not work if the player is online, because the data on the file are not synchronized with real-time values.
-     * @param convertTag true to convert the data to the current MC version, false to keep the saved version
-     * @return the NBT data from the player-data file, or null if the file does not exists.
+     * @return the NBT data from the player-data file, or null if the file does not exist.
      * @throws IllegalStateException if the player is online.
-     * @throws IOException if an error occurs reading the data.
      */
-    default CompoundTag getPlayerData(boolean convertTag) throws IOException {
+    default CompoundTag getPlayerData() {
         if (isOnline())
             throw new IllegalStateException("Cannot access data file of " + getName() + " because they’re online.");
-        CompoundTag data = ReflectWrapper.wrapTyped(Bukkit.getServer(), CraftServer.class)
+        return ReflectWrapper.wrapTyped(Bukkit.getServer(), CraftServer.class)
                 .getServer()
                 .getPlayerList()
                 .playerIo()
-                .getPlayerData(getUniqueId().toString());
-        if (data != null && convertTag) {
-            int srcVersion = data.contains("DataVersion", Tag.TAG_ANY_NUMERIC()) ? data.getInt("DataVersion") : -1;
-            int destVersion = SharedConstants.getCurrentVersion().getDataVersion().getVersion();
-            try {
-                data = MCDataConverter.convertTag(MCTypeRegistry.PLAYER(), data, srcVersion, destVersion);
-            } catch (Exception e) {
-                throw new IOException("Unable to upgrade data format of player " + getName() + " (" + getUniqueId() + ") from version " + destVersion + " to " + destVersion);
-            }
-        }
-        return data;
+                .load(getName(), getUniqueId().toString()).orElse(null);
     }
 
     /**
@@ -184,10 +168,9 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
      * It will not work if the player is online, because the data on the file are not synchronized with real-time values.
      * @return the NBT data from the player-data file.
      * @throws IllegalStateException if the player is online.
-     * @throws IOException if an error occurs reading the data.
      */
-    default PlayerDataWrapper getPlayerDataWrapper() throws IOException {
-        return new PlayerDataWrapper(getPlayerData(true));
+    default PlayerDataWrapper getPlayerDataWrapper() {
+        return new PlayerDataWrapper(getPlayerData());
     }
 
     /**
@@ -213,25 +196,23 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
      * @return the file where the player-data is stored.
      */
     default File getPlayerDataFile(boolean old) {
-        File playerDataDir = new File(WorldUtil.worldDir(PrimaryWorlds.PRIMARY_WORLDS.get(0)), "playerdata");
+        File playerDataDir = new File(WorldUtil.worldDir(PrimaryWorlds.PRIMARY_WORLDS.getFirst()), "playerdata");
         return new File(playerDataDir, getUniqueId() + (old ? ".dat_old" : ".dat"));
     }
 
     /**
      * Gets the player’s inventory.
      * @return the player’s inventory.
-     * @throws IOException if an error occurs reading the data.
      */
-    default PlayerInventory getInventory() throws IOException {
+    default PlayerInventory getInventory() {
         return getPlayerDataWrapper().getInventory();
     }
 
     /**
      * Gets the player’s enderchest.
      * @return the player’s enderchest.
-     * @throws IOException if an error occurs reading the data.
      */
-    default Inventory getEnderChest() throws IOException {
+    default Inventory getEnderChest() {
         return getPlayerDataWrapper().getEnderChest();
     }
 

@@ -24,6 +24,8 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.GameProfileArgu
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.ResourceLocationArgument;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Vec3Argument;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.core.BlockPos;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.core.HolderLookupProvider;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.core.RegistryAccess;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.core.Vec3i;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CollectionTag;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
@@ -130,6 +132,8 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(Vec3Argument.class, Vec3Argument.REFLECT.get()));
         // minecraft.core
         thAcc.catchThrowable(() -> initWrapper(BlockPos.class, BlockPos.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(HolderLookupProvider.class, HolderLookupProvider.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(RegistryAccess.class, RegistryAccess.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(Vec3i.class, Vec3i.REFLECT.get()));
         // minecraft.nbt
         thAcc.catchThrowable(() -> initWrapper(CollectionTag.class, CollectionTag.REFLECT.get()));

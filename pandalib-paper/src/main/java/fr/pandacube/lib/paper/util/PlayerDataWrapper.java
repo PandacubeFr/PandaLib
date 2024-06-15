@@ -116,10 +116,9 @@ public record PlayerDataWrapper(CompoundTag data) {
         for (int i = 0; i < list.size(); i++) {
             CompoundTag itemTag = list.getCompound(i);
             int nbtSlot = itemTag.getByte("Slot") & 255;
-            ItemStack is = filterStack(CraftItemStack.asCraftMirror(itemTag));
-            if (is != null) {
-                stacks.put(nbtSlot, CraftItemStack.asCraftMirror(itemTag));
-            }
+            fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ItemStack.parse(itemTag)
+                    .map(nms -> filterStack(CraftItemStack.asCraftMirror(nms)))
+                    .ifPresent(is -> stacks.put(nbtSlot, is));
         }
         return stacks;
     }
@@ -148,9 +147,8 @@ public record PlayerDataWrapper(CompoundTag data) {
             if (stack == null)
                 continue;
             CompoundTag itemTag = new CompoundTag();
-            CraftItemStack.asNMSCopy(is.getValue()).save(itemTag);
             itemTag.putByte("Slot", is.getKey().byteValue());
-            list.add(list.size(), itemTag);
+            list.add(list.size(), CraftItemStack.asNMSCopy(is.getValue()).save(itemTag));
         }
         data.put(key, list);
     }

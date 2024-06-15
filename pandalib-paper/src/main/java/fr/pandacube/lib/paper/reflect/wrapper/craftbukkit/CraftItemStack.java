@@ -1,7 +1,6 @@
 package fr.pandacube.lib.paper.reflect.wrapper.craftbukkit;
 
 import fr.pandacube.lib.paper.reflect.OBCReflect;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
 import fr.pandacube.lib.reflect.ReflectClass;
 import fr.pandacube.lib.reflect.ReflectMethod;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapperTyped;
@@ -17,11 +16,6 @@ public class CraftItemStack extends ReflectWrapperTyped<ItemStack> {
 
     public static ItemStack asCraftMirror(fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ItemStack original) {
         return (ItemStack) wrapReflectEx(() -> asCraftMirror.invokeStatic(unwrap(original)));
-    }
-
-
-    public static ItemStack asCraftMirror(CompoundTag nbt) {
-        return asCraftMirror(fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ItemStack.of(nbt));
     }
 
 
