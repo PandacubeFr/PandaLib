@@ -10,7 +10,7 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 
 @ConcreteWrapper(HolderLookupProvider.__concrete.class)
 public interface HolderLookupProvider extends ReflectWrapperI {
-    ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("net.minecraft.core.HolderLookup.Provider"));
+    ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("net.minecraft.core.HolderLookup$Provider"));
 
     class __concrete extends ReflectWrapper implements HolderLookupProvider {
         protected __concrete(Object obj) {
