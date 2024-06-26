@@ -32,7 +32,7 @@ public class Reflect {
 	 * @throws ClassNotFoundException if the provided class was not found.
 	 */
     public static ReflectClass<?> ofClass(String className) throws ClassNotFoundException {
-    	return ofClass(Class.forName(className));
+    	return ofClass(ReflectionWrapperBypass.getClass(className));
     }
 
 	/**

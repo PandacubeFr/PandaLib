@@ -75,6 +75,7 @@ import fr.pandacube.lib.paper.reflect.wrapper.paper.PaperAdventure;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.QueuedChangesMapLong2Object;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.configuration.FallbackValue_Int;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.configuration.WorldConfiguration;
+import fr.pandacube.lib.reflect.ReflectionWrapperBypass;
 import fr.pandacube.lib.util.ThrowableAccumulator;
 
 import static fr.pandacube.lib.reflect.wrapper.WrapperRegistry.initWrapper;
@@ -96,6 +97,9 @@ public class PandalibPaperReflect {
                 return;
             isInit = true;
         }
+
+        ReflectionWrapperBypass.enable();
+
         initWrapperClasses();
     }
 
