@@ -78,7 +78,7 @@ public interface PermissibleOffPlayer extends AbstractOffPlayer {
 	default boolean hasPermission(String permission) {
 		PermissibleOnlinePlayer online = getOnlineInstance();
 		
-		if (online != null)
+		if (online != null && online != this)
 			return online.hasPermission(permission);
 		
 		// at this point, the player is offline
@@ -99,7 +99,7 @@ public interface PermissibleOffPlayer extends AbstractOffPlayer {
 	default boolean hasPermissionExpression(String permissionExpression) {
 		PermissibleOnlinePlayer online = getOnlineInstance();
 		
-		if (online != null)
+		if (online != null && online != this)
 			return online.hasPermissionExpression(permissionExpression);
 		
 		// at this point, the player is offline
@@ -122,7 +122,7 @@ public interface PermissibleOffPlayer extends AbstractOffPlayer {
 	default LongStream getPermissionRangeValues(String permissionPrefix) {
 		PermissibleOnlinePlayer online = getOnlineInstance();
 		
-		if (online != null)
+		if (online != null && online != this)
 			return online.getPermissionRangeValues(permissionPrefix);
 		
 		// at this point, the player is offline
@@ -137,7 +137,7 @@ public interface PermissibleOffPlayer extends AbstractOffPlayer {
 	default OptionalLong getPermissionRangeMax(String permissionPrefix) {
 		PermissibleOnlinePlayer online = getOnlineInstance();
 		
-		if (online != null)
+		if (online != null && online != this)
 			return online.getPermissionRangeMax(permissionPrefix);
 		
 		// at this point, the player is offline
