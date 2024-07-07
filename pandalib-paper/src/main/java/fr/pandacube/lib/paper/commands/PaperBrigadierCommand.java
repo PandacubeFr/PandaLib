@@ -145,6 +145,11 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
                 vanillaPaperDispatcher = event.registrar().getDispatcher();
             }
 
+            if (vanillaPaperDispatcher.getRoot().getChild(commandNode.getName()) != null) {
+                Log.info("There is already a /" + commandNode.getName() + " in the vanilla dispatcher. Is it a vanilla command? Replacing it anyway.");
+                vanillaPaperDispatcher.getRoot().getChildren().removeIf(c -> c.getName().equals(commandNode.getName()));
+            }
+
             registeredAliases = new HashSet<>(event.registrar().register(commandNode, description, List.of(aliases)));
 
             if (registrationPolicy == RegistrationPolicy.ALL) {
