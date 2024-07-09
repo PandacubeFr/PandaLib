@@ -73,6 +73,7 @@ import fr.pandacube.lib.paper.reflect.wrapper.netty.ByteBuf;
 import fr.pandacube.lib.paper.reflect.wrapper.netty.Unpooled;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.PaperAdventure;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.QueuedChangesMapLong2Object;
+import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.ShadowBrigNode;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.configuration.FallbackValue_Int;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.configuration.WorldConfiguration;
 import fr.pandacube.lib.reflect.ReflectionWrapperBypass;
@@ -201,6 +202,8 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(ByteBuf.class, ByteBuf.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(Unpooled.class, Unpooled.REFLECT.get()));
 
+        // paper.commands
+        thAcc.catchThrowable(() -> initWrapper(ShadowBrigNode.class, ShadowBrigNode.REFLECT.get()));
         // paper.configuration
         thAcc.catchThrowable(() -> initWrapper(FallbackValue_Int.class, FallbackValue_Int.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(WorldConfiguration.class, WorldConfiguration.REFLECT.get()));
