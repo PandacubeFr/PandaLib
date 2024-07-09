@@ -14,7 +14,7 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class PaperBrigadier extends ReflectWrapperTyped<LiteralCommandNode<CommandSourceStack>> {
     public static final ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("io.papermc.paper.command.brigadier.PaperBrigadier"));
-    private static final ReflectMethod<?> wrapNode = wrapEx(() -> REFLECT.method("wrapNode"));
+    private static final ReflectMethod<?> wrapNode = wrapEx(() -> REFLECT.method("wrapNode", CommandNode.class));
 
 
     public static Command wrapNode(CommandNode<CommandSourceStack> node) {
