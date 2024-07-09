@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
+import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
 import fr.pandacube.lib.chat.Chat;
@@ -15,10 +16,13 @@ import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftVector;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.VanillaCommandWrapper;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Coordinates;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Vec3Argument;
+import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.BukkitCommandNode;
+import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.PaperBrigadier;
+import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.PluginCommandNode;
+import fr.pandacube.lib.paper.util.BukkitEvent;
 import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
 import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
 import fr.pandacube.lib.players.standalone.AbstractPlayerManager;
-import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 import fr.pandacube.lib.util.log.Log;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -31,6 +35,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
@@ -39,6 +44,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+
+import static fr.pandacube.lib.reflect.wrapper.ReflectWrapper.wrap;
 
 /**
  * Abstract class to hold a command to be integrated into a Paper server vanilla command dispatcher.
@@ -73,17 +80,28 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
         }
 
         Command bukkitCommand = bukkitCmdMap.getCommand(name);
+        if (bukkitCommand != null && VanillaCommandWrapper.REFLECT.get().isInstance(bukkitCommand)) {
+            //Log.info("Command /" + name + " is already a vanilla command.");
+            return;
+        }
+
+        if (unregisterBukkitCommand(name))
+            bukkitCmdMap.getKnownCommands().put(name.toLowerCase(java.util.Locale.ENGLISH), vanillaCommand);
+    }
+
+
+    private static boolean unregisterBukkitCommand(String name) {
+        CommandMap bukkitCmdMap = Bukkit.getCommandMap();
+
+        Command bukkitCommand = bukkitCmdMap.getCommand(name);
         if (bukkitCommand != null) {
-            if (VanillaCommandWrapper.REFLECT.get().isInstance(bukkitCommand)) {
-                //Log.info("Command /" + name + " is already a vanilla command.");
-                return;
-            }
             Log.info("Removing Bukkit command /" + name + " (" + getCommandIdentity(bukkitCommand) + ")");
             Log.warning("[1.20.6 update] Please test that the bukkit command removal is actually working, and being replaced back by the vanilla one.");
             bukkitCmdMap.getKnownCommands().remove(name.toLowerCase(java.util.Locale.ENGLISH));
             bukkitCommand.unregister(bukkitCmdMap);
-            bukkitCmdMap.getKnownCommands().put(name.toLowerCase(java.util.Locale.ENGLISH), vanillaCommand);
+            return true;
         }
+        return false;
     }
 
 
@@ -146,7 +164,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
             }
 
             if (vanillaPaperDispatcher.getRoot().getChild(commandNode.getName()) != null) {
-                Log.info("There is already a /" + commandNode.getName() + " in the vanilla dispatcher. Is it a vanilla command? Replacing it anyway.");
+                Log.info("Command /" + commandNode.getName() + " found in the vanilla dispatcher during initial command registration. Replacing it by force.");
                 vanillaPaperDispatcher.getRoot().getChildren().removeIf(c -> c.getName().equals(commandNode.getName()));
             }
 
@@ -159,6 +177,30 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
                         registeredAliases.addAll(event.registrar().register(getAliasNode(alias), description));
                 }
             }
+
+        });
+
+        BukkitEvent.register(ServerLoadEvent.class, event -> {
+            if (vanillaPaperDispatcher == null)
+                return;
+
+            CommandNode<CommandSourceStack> actualNode = vanillaPaperDispatcher.getRoot().getChild(commandNode.getName());
+            if (actualNode != null) {
+                if (PluginCommandNode.REFLECT.get().isInstance(actualNode)) {
+                    PluginCommandNode pcn = wrap(actualNode, PluginCommandNode.class);
+                    if (pcn.getPlugin().equals(plugin))
+                        return;
+                    Log.info("Brigadier command /" + commandNode.getName() + " from " + pcn.getPlugin().getName() + " found in the dispatcher. Replacing it by force.");
+                }
+                else if (BukkitCommandNode.REFLECT.get().isInstance(actualNode)) {
+                    Log.info("Bukkit command /" + commandNode.getName() + " found in the dispatcher. Replacing it by force.");
+                }
+                vanillaPaperDispatcher.getRoot().getChildren().removeIf(c -> c.getName().equals(commandNode.getName()));
+                unregisterBukkitCommand(commandNode.getName());
+            }
+            LiteralCommandNode<CommandSourceStack> newPCN = new PluginCommandNode(commandNode.getName(), plugin.getPluginMeta(), commandNode, description).__getRuntimeInstance();
+            vanillaPaperDispatcher.getRoot().addChild(newPCN);
+            Bukkit.getCommandMap().register(commandNode.getName(), PaperBrigadier.wrapNode(newPCN));
 
         });
     }
@@ -181,6 +223,10 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
         }
         else
             return bukkitCmd.getClass().getName() + ": /" + bukkitCmd.getName();
+    }
+
+    protected Set<String> getRegisteredAliases() {
+        return Set.copyOf(registeredAliases);
     }
 
 
@@ -373,7 +419,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
                                               Vector deflt) {
         return tryGetArgument(context, argument, Coordinates.REFLECT.get(),
                 nmsCoordinate -> CraftVector.toBukkit(
-                        ReflectWrapper.wrap(nmsCoordinate, Coordinates.class).getPosition(context.getSource())
+                        wrap(nmsCoordinate, Coordinates.class).getPosition(context.getSource())
                 ),
                 deflt);
     }

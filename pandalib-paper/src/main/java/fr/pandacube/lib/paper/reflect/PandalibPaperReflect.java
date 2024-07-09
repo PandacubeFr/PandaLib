@@ -73,6 +73,9 @@ import fr.pandacube.lib.paper.reflect.wrapper.netty.ByteBuf;
 import fr.pandacube.lib.paper.reflect.wrapper.netty.Unpooled;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.PaperAdventure;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.QueuedChangesMapLong2Object;
+import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.BukkitCommandNode;
+import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.PaperBrigadier;
+import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.PluginCommandNode;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.ShadowBrigNode;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.configuration.FallbackValue_Int;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.configuration.WorldConfiguration;
@@ -203,6 +206,9 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(Unpooled.class, Unpooled.REFLECT.get()));
 
         // paper.commands
+        thAcc.catchThrowable(() -> initWrapper(BukkitCommandNode.class, BukkitCommandNode.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(PaperBrigadier.class, PaperBrigadier.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(PluginCommandNode.class, PluginCommandNode.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(ShadowBrigNode.class, ShadowBrigNode.REFLECT.get()));
         // paper.configuration
         thAcc.catchThrowable(() -> initWrapper(FallbackValue_Int.class, FallbackValue_Int.REFLECT.get()));
