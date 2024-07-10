@@ -19,7 +19,6 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Vec3Argument;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.BukkitCommandNode;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.PaperBrigadier;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.PluginCommandNode;
-import fr.pandacube.lib.paper.util.BukkitEvent;
 import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
 import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
 import fr.pandacube.lib.players.standalone.AbstractPlayerManager;
@@ -35,7 +34,6 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
@@ -180,7 +178,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
 
         });
 
-        BukkitEvent.register(ServerLoadEvent.class, event -> {
+        Bukkit.getServer().getScheduler().runTask(plugin, () -> {
             if (vanillaPaperDispatcher == null)
                 return;
 
