@@ -98,9 +98,9 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
                 vanillaPaperDispatcher.getRoot().getChildren().removeIf(c -> c.getName().equals(name));
                 vanillaPaperDispatcher.getRoot().addChild(getAliasNode(targetCommand, name));
             }
-            else if (isPluginCommand == null) {
+            /*else if (isPluginCommand == null) {
                 Log.info(getCommandIdentity(eventuallyBadCommandToReplace) + " found in the dispatcher. Unsure if we restore the vanilla command.");
-            }
+            }*/
         });
     }
 
@@ -191,7 +191,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
             for (String aliasToForce : forceRegistrationAgain) {
                 CommandNode<CommandSourceStack> actualNode = vanillaPaperDispatcher.getRoot().getChild(aliasToForce);
                 if (actualNode != null) {
-                    Log.info("Forcing registration of alias /" + aliasToForce + " for command /" + commandNode.getName() + ": replacing " + getCommandIdentity(actualNode) + "?");
+                    //Log.info("Forcing registration of alias /" + aliasToForce + " for command /" + commandNode.getName() + ": replacing " + getCommandIdentity(actualNode) + "?");
                     if (PluginCommandNode.REFLECT.get().isInstance(actualNode)) {
                         PluginCommandNode pcn = wrap(actualNode, PluginCommandNode.class);
                         if (pcn.getPlugin().equals(plugin))
@@ -204,9 +204,9 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
                     }
                     vanillaPaperDispatcher.getRoot().getChildren().removeIf(c -> c.getName().equals(aliasToForce));
                 }
-                else {
+                /*else {
                     Log.info("Forcing registration of alias /" + aliasToForce + " for command /" + commandNode.getName() + ": no command found for alias. Adding alias.");
-                }
+                }*/
                 LiteralCommandNode<CommandSourceStack> newPCN = unwrap(new PluginCommandNode(aliasToForce, plugin.getPluginMeta(), commandNode, description));
                 vanillaPaperDispatcher.getRoot().addChild(newPCN);
             }
