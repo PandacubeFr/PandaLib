@@ -205,7 +205,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
                     }
                     vanillaPaperDispatcher.getRoot().getChildren().removeIf(c -> c.getName().equals(aliasToForce));
                 }
-                LiteralCommandNode<CommandSourceStack> newPCN = unwrap(new PluginCommandNode(commandNode.getName(), plugin.getPluginMeta(), commandNode, description));
+                LiteralCommandNode<CommandSourceStack> newPCN = unwrap(new PluginCommandNode(aliasToForce, plugin.getPluginMeta(), commandNode, description));
                 vanillaPaperDispatcher.getRoot().addChild(newPCN);
             }
         });
@@ -255,7 +255,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
         else if (BukkitCommandNode.REFLECT.get().isInstance(command)) {
             BukkitCommandNode wrappedBCN = wrap(command, BukkitCommandNode.class);
             Command bukkitCmd = wrappedBCN.getBukkitCommand();
-            if (bukkitCmd instanceof PluginCommand cmd) {
+            if (bukkitCmd instanceof PluginCommand) {
                 return true;
             }
             else if (VanillaCommandWrapper.REFLECT.get().isInstance(bukkitCmd)) {
