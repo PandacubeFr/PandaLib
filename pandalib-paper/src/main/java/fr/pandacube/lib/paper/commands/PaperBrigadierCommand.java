@@ -77,9 +77,8 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
      */
     public static void restoreVanillaCommand(String name) {
 
-        PandaLibPaper.getPlugin().getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
-            updateVanillaPaperDispatcher(event.registrar().getDispatcher());
-        });
+        PandaLibPaper.getPlugin().getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS,
+                event -> updateVanillaPaperDispatcher(event.registrar().getDispatcher()));
 
 
         Bukkit.getServer().getScheduler().runTask(PandaLibPaper.getPlugin(), () -> {
@@ -222,17 +221,6 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
                 .build();
     }
 
-    private static String getCommandIdentity(Command bukkitCmd) {
-        if (bukkitCmd instanceof PluginCommand cmd) {
-            return "Bukkit command /" + cmd.getName() + " from plugin " + cmd.getPlugin().getName();
-        }
-        else if (VanillaCommandWrapper.REFLECT.get().isInstance(bukkitCmd)) {
-            return "Vanilla command /" + bukkitCmd.getName();
-        }
-        else
-            return bukkitCmd.getClass().getName() + " /" + bukkitCmd.getName();
-    }
-
     private static String getCommandIdentity(CommandNode<CommandSourceStack> command) {
         if (PluginCommandNode.REFLECT.get().isInstance(command)) {
             PluginCommandNode wrappedPCN = wrap(command, PluginCommandNode.class);
@@ -240,7 +228,15 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
         }
         else if (BukkitCommandNode.REFLECT.get().isInstance(command)) {
             BukkitCommandNode wrappedBCN = wrap(command, BukkitCommandNode.class);
-            return getCommandIdentity(wrappedBCN.getBukkitCommand());
+            Command bukkitCmd = wrappedBCN.getBukkitCommand();
+            if (bukkitCmd instanceof PluginCommand cmd) {
+                return "Bukkit command /" + command.getName() + " from plugin " + cmd.getPlugin().getName();
+            }
+            else if (VanillaCommandWrapper.REFLECT.get().isInstance(bukkitCmd)) {
+                return "Bukkit wrapped vanilla command /" + command.getName();
+            }
+            else
+                return bukkitCmd.getClass().getName() + " /" + bukkitCmd.getName();
         }
         else {
             return "Vanilla command /" + command.getName();
