@@ -167,8 +167,10 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
             if (registrationPolicy == RegistrationPolicy.ALL) {
                 // enforce registration of aliases
                 for (String alias : aliases) {
-                    if (!registeredAliases.contains(alias))
+                    if (!registeredAliases.contains(alias)) {
+                        Log.info("For command /" + commandNode.getName() + ": forcing registration of alias " + alias);
                         registeredAliases.addAll(event.registrar().register(getAliasNode(commandNode, alias), description));
+                    }
                 }
             }
 
@@ -187,6 +189,9 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
                     Log.info(getCommandIdentity(commandNode) + " found in the dispatcher. Replacing it by force.");
                 }
                 else if (BukkitCommandNode.REFLECT.get().isInstance(actualNode)) {
+                    BukkitCommandNode bcn = wrap(actualNode, BukkitCommandNode.class);
+                    if (bcn.getBukkitCommand() instanceof PluginCommand pc && pc.getPlugin().equals(plugin))
+                        return;
                     Log.info(getCommandIdentity(commandNode) + " found in the dispatcher. Replacing it by force.");
                 }
                 vanillaPaperDispatcher.getRoot().getChildren().removeIf(c -> c.getName().equals(commandNode.getName()));
@@ -208,26 +213,26 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
 
     private static String getCommandIdentity(Command bukkitCmd) {
         if (bukkitCmd instanceof PluginCommand cmd) {
-            return "Bukkit command: /" + cmd.getName() + " from plugin " + cmd.getPlugin().getName();
+            return "Bukkit command /" + cmd.getName() + " from plugin " + cmd.getPlugin().getName();
         }
         else if (VanillaCommandWrapper.REFLECT.get().isInstance(bukkitCmd)) {
-            return "Vanilla command: /" + bukkitCmd.getName();
+            return "Vanilla command /" + bukkitCmd.getName();
         }
         else
-            return bukkitCmd.getClass().getName() + ": /" + bukkitCmd.getName();
+            return bukkitCmd.getClass().getName() + " /" + bukkitCmd.getName();
     }
 
     private static String getCommandIdentity(CommandNode<CommandSourceStack> command) {
         if (PluginCommandNode.REFLECT.get().isInstance(command)) {
             PluginCommandNode wrappedPCN = wrap(command, PluginCommandNode.class);
-            return "Brigadier plugin command: /" + command.getName() + " from plugin " + wrappedPCN.getPlugin().getName();
+            return "Brigadier plugin command /" + command.getName() + " from plugin " + wrappedPCN.getPlugin().getName();
         }
         else if (BukkitCommandNode.REFLECT.get().isInstance(command)) {
             BukkitCommandNode wrappedBCN = wrap(command, BukkitCommandNode.class);
             return getCommandIdentity(wrappedBCN.getBukkitCommand());
         }
         else {
-            return "Vanilla command: /" + command.getName();
+            return "Vanilla command /" + command.getName();
         }
     }
 
