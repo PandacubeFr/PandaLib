@@ -43,6 +43,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static fr.pandacube.lib.reflect.wrapper.ReflectWrapper.unwrap;
 import static fr.pandacube.lib.reflect.wrapper.ReflectWrapper.wrap;
 
 /**
@@ -78,6 +79,12 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
 
         PandaLibPaper.getPlugin().getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             updateVanillaPaperDispatcher(event.registrar().getDispatcher());
+        });
+
+
+        Bukkit.getServer().getScheduler().runTask(PandaLibPaper.getPlugin(), () -> {
+            if (vanillaPaperDispatcher == null)
+                return;
 
             CommandNode<CommandSourceStack> targetCommand = vanillaPaperDispatcher.getRoot().getChild("minecraft:" + name);
             if (targetCommand == null) {
@@ -96,7 +103,6 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
                 vanillaPaperDispatcher.getRoot().getChildren().removeIf(c -> c.getName().equals(name));
                 vanillaPaperDispatcher.getRoot().addChild(newCommand);
             }
-
         });
     }
 
@@ -162,13 +168,12 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
             }
 
             registeredAliases = new HashSet<>(event.registrar().register(commandNode, description, List.of(aliases)));
-            Log.info("For command /" + commandNode.getName() + ": registered aliases are " + registeredAliases);
 
             if (registrationPolicy == RegistrationPolicy.ALL) {
                 // enforce registration of aliases
                 for (String alias : aliases) {
                     if (!registeredAliases.contains(alias)) {
-                        Log.info("For command /" + commandNode.getName() + ": forcing registration of alias " + alias);
+                        Log.info("Command /" + commandNode.getName() + ": forcing registration of alias " + alias);
                         registeredAliases.addAll(event.registrar().register(getAliasNode(commandNode, alias), description));
                     }
                 }
@@ -180,25 +185,31 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
             if (vanillaPaperDispatcher == null)
                 return;
 
-            CommandNode<CommandSourceStack> actualNode = vanillaPaperDispatcher.getRoot().getChild(commandNode.getName());
-            if (actualNode != null) {
-                if (PluginCommandNode.REFLECT.get().isInstance(actualNode)) {
-                    PluginCommandNode pcn = wrap(actualNode, PluginCommandNode.class);
-                    if (pcn.getPlugin().equals(plugin))
-                        return;
-                    Log.info(getCommandIdentity(commandNode) + " found in the dispatcher. Replacing it by force.");
-                }
-                else if (BukkitCommandNode.REFLECT.get().isInstance(actualNode)) {
-                    BukkitCommandNode bcn = wrap(actualNode, BukkitCommandNode.class);
-                    if (bcn.getBukkitCommand() instanceof PluginCommand pc && pc.getPlugin().equals(plugin))
-                        return;
-                    Log.info(getCommandIdentity(commandNode) + " found in the dispatcher. Replacing it by force.");
-                }
-                vanillaPaperDispatcher.getRoot().getChildren().removeIf(c -> c.getName().equals(commandNode.getName()));
-            }
-            LiteralCommandNode<CommandSourceStack> newPCN = new PluginCommandNode(commandNode.getName(), plugin.getPluginMeta(), commandNode, description).__getRuntimeInstance();
-            vanillaPaperDispatcher.getRoot().addChild(newPCN);
+            Set<String> forceRegistrationAgain = new HashSet<>();
+            forceRegistrationAgain.add(commandNode.getName());
+            if (registrationPolicy == RegistrationPolicy.ALL)
+                forceRegistrationAgain.addAll(List.of(aliases));
 
+            for (String aliasToForce : forceRegistrationAgain) {
+                CommandNode<CommandSourceStack> actualNode = vanillaPaperDispatcher.getRoot().getChild(aliasToForce);
+                if (actualNode != null) {
+                    if (PluginCommandNode.REFLECT.get().isInstance(actualNode)) {
+                        PluginCommandNode pcn = wrap(actualNode, PluginCommandNode.class);
+                        if (pcn.getPlugin().equals(plugin))
+                            return;
+                        Log.info(getCommandIdentity(actualNode) + " found in the dispatcher. Replacing it by force.");
+                    }
+                    else if (BukkitCommandNode.REFLECT.get().isInstance(actualNode)) {
+                        BukkitCommandNode bcn = wrap(actualNode, BukkitCommandNode.class);
+                        if (bcn.getBukkitCommand() instanceof PluginCommand pc && pc.getPlugin().equals(plugin))
+                            return;
+                        Log.info(getCommandIdentity(actualNode) + " found in the dispatcher. Replacing it by force.");
+                    }
+                    vanillaPaperDispatcher.getRoot().getChildren().removeIf(c -> c.getName().equals(aliasToForce));
+                }
+                LiteralCommandNode<CommandSourceStack> newPCN = unwrap(new PluginCommandNode(commandNode.getName(), plugin.getPluginMeta(), commandNode, description));
+                vanillaPaperDispatcher.getRoot().addChild(newPCN);
+            }
         });
     }
 
