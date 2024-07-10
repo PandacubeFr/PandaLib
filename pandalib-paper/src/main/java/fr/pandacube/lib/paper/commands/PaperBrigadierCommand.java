@@ -92,15 +92,14 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
             }
 
             CommandNode<CommandSourceStack> eventuallyBadCommandToReplace = vanillaPaperDispatcher.getRoot().getChild(name);
-            if (BukkitCommandNode.REFLECT.get().isInstance(eventuallyBadCommandToReplace)
-                    || PluginCommandNode.REFLECT.get().isInstance(eventuallyBadCommandToReplace)) {
+            Boolean isPluginCommand = isPluginCommand(eventuallyBadCommandToReplace);
+            if (isPluginCommand != null && isPluginCommand) {
                 Log.info(getCommandIdentity(eventuallyBadCommandToReplace) + " found in the dispatcher. Restoring the vanilla command.");
-                while (targetCommand.getRedirect() != null) {
-                    targetCommand = targetCommand.getRedirect();
-                }
-                CommandNode<CommandSourceStack> newCommand = getAliasNode(targetCommand, name);
                 vanillaPaperDispatcher.getRoot().getChildren().removeIf(c -> c.getName().equals(name));
-                vanillaPaperDispatcher.getRoot().addChild(newCommand);
+                vanillaPaperDispatcher.getRoot().addChild(getAliasNode(targetCommand, name));
+            }
+            else if (isPluginCommand == null) {
+                Log.info(getCommandIdentity(eventuallyBadCommandToReplace) + " found in the dispatcher. Unsure if we restore the vanilla command.");
             }
         });
     }
@@ -224,22 +223,54 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
     private static String getCommandIdentity(CommandNode<CommandSourceStack> command) {
         if (PluginCommandNode.REFLECT.get().isInstance(command)) {
             PluginCommandNode wrappedPCN = wrap(command, PluginCommandNode.class);
-            return "Brigadier plugin command /" + command.getName() + " from plugin " + wrappedPCN.getPlugin().getName();
+            return "Node /" + command.getName() + " from plugin " + wrappedPCN.getPlugin().getName();
         }
         else if (BukkitCommandNode.REFLECT.get().isInstance(command)) {
             BukkitCommandNode wrappedBCN = wrap(command, BukkitCommandNode.class);
             Command bukkitCmd = wrappedBCN.getBukkitCommand();
             if (bukkitCmd instanceof PluginCommand cmd) {
-                return "Bukkit command /" + command.getName() + " from plugin " + cmd.getPlugin().getName();
+                return "Node /" + command.getName() + " wrapping Bukkit command /" + bukkitCmd.getName() + " from plugin " + cmd.getPlugin().getName();
             }
             else if (VanillaCommandWrapper.REFLECT.get().isInstance(bukkitCmd)) {
-                return "Bukkit wrapped vanilla command /" + command.getName();
+                VanillaCommandWrapper vcw = wrap(bukkitCmd, VanillaCommandWrapper.class);
+                CommandNode<CommandSourceStack> vanillaCmd = vcw.vanillaCommand();
+                if (vanillaCmd != command)
+                    return "Node /" + command.getName() + " wrapping non-plugin command /" + bukkitCmd.getName() + " wrapping: " + getCommandIdentity(vcw.vanillaCommand());
+                else
+                    return "Node /" + command.getName() + " wrapping non-plugin command /" + bukkitCmd.getName() + " wrapping back the node (risk of StackOverflow?)";
             }
             else
-                return bukkitCmd.getClass().getName() + " /" + bukkitCmd.getName();
+                return "Node /" + command.getName() + " wrapping " + bukkitCmd.getClass().getName() + " /" + bukkitCmd.getName();
         }
         else {
-            return "Vanilla command /" + command.getName();
+            return "Node /" + command.getName() + " (unspecific)";
+        }
+    }
+
+
+    private static Boolean isPluginCommand(CommandNode<CommandSourceStack> command) {
+        if (PluginCommandNode.REFLECT.get().isInstance(command)) {
+            return true;
+        }
+        else if (BukkitCommandNode.REFLECT.get().isInstance(command)) {
+            BukkitCommandNode wrappedBCN = wrap(command, BukkitCommandNode.class);
+            Command bukkitCmd = wrappedBCN.getBukkitCommand();
+            if (bukkitCmd instanceof PluginCommand cmd) {
+                return true;
+            }
+            else if (VanillaCommandWrapper.REFLECT.get().isInstance(bukkitCmd)) {
+                VanillaCommandWrapper vcw = wrap(bukkitCmd, VanillaCommandWrapper.class);
+                CommandNode<CommandSourceStack> vanillaCmd = vcw.vanillaCommand();
+                if (vanillaCmd != command)
+                    return isPluginCommand(vcw.vanillaCommand());
+                else
+                    return false;
+            }
+            else
+                return null;
+        }
+        else {
+            return false;
         }
     }
 
