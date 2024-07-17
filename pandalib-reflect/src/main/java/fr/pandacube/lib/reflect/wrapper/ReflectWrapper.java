@@ -7,6 +7,7 @@ import fr.pandacube.lib.reflect.ReflectConstructor;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 
@@ -98,7 +99,7 @@ public abstract class ReflectWrapper implements ReflectWrapperI {
 			Class<?> runtimeClass = runtimeObj.getClass();
 			Class<?> expectedRuntimeClass = (expectedWrapperClass == null) ? null : WrapperRegistry.getRuntimeClassOfWrapperClass(expectedWrapperClass);
 			if (expectedRuntimeClass != null && !expectedRuntimeClass.isAssignableFrom(runtimeClass)) {
-				throw new ClassCastException("Runtime class " + runtimeClass + " is not a sub-class or a sub-interface of expected runtime class " + expectedRuntimeClass + "" +
+				throw new ClassCastException("Runtime class " + runtimeClass + " is not a sub-class or a sub-interface of expected runtime class " + expectedRuntimeClass +
 						" (expected wrapper class " + expectedWrapperClass + ").");
 			}
 			Class<? extends ReflectWrapperI> wrapperClass = WrapperRegistry.getWrapperOfRuntimeClass(runtimeClass);
@@ -137,6 +138,27 @@ public abstract class ReflectWrapper implements ReflectWrapperI {
 	public static <W extends ReflectWrapperI> ReflectListWrapper<W> wrapList(List<Object> runtimeList, Class<W> expectedWrapperClass) {
 		return new ReflectListWrapper<>(runtimeList, expectedWrapperClass);
 	}
+
+
+	/**
+	 * Maps the provided {@link Optional} containing a runtime object to the reflection wrapper.
+	 * @param runtimeOptional the object to wrap.
+	 * @param expectedWrapperClass the reflection wrapper class expected to be returned.
+	 * @param <W> the type of the reflection wrapper.
+	 * @throws ClassCastException if the runtime class of the object is not handled by the expected wrapper class or its
+	 *                            subclasses.
+	 * @throws IllegalArgumentException if the runtime class of the object is not handled by any of the registered
+	 *                                  wrapper classes.
+	 * @implNote Despite that the convention is to not assign null values as Optional, this method properly handles null
+	 *           value for parameter runtimeOptional.
+	 * @return an optional of the wrapper.
+	 */
+	@SuppressWarnings("OptionalAssignedToNull")
+	public static <W extends ReflectWrapperI> Optional<W> wrapOptional(Optional<Object> runtimeOptional, Class<W> expectedWrapperClass) {
+		return runtimeOptional == null ? null : runtimeOptional.map(o -> wrap(o, expectedWrapperClass));
+	}
+
+
 
 
 
