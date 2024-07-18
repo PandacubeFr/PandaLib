@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.function.IntUnaryOperator;
 
 /**
@@ -360,6 +361,16 @@ public record PlayerDataWrapper(CompoundTag data) {
         @Override
         public @Nullable HumanEntity getHolder() {
             return null;
+        }
+    }
+
+
+
+
+
+    public static class PlayerDataLoadException extends RuntimeException {
+        public PlayerDataLoadException(String playerName,  UUID playerId, Throwable cause) {
+            super("Unable to load data of player " + playerName + " (" + playerId + ")", cause);
         }
     }
 }

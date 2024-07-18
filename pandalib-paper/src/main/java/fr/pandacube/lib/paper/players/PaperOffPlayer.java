@@ -5,6 +5,7 @@ import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftServer;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.NbtIo;
 import fr.pandacube.lib.paper.util.PlayerDataWrapper;
+import fr.pandacube.lib.paper.util.PlayerDataWrapper.PlayerDataLoadException;
 import fr.pandacube.lib.paper.world.WorldUtil;
 import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
@@ -155,12 +156,16 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
      */
     default CompoundTag getPlayerData() {
         if (isOnline())
-            throw new IllegalStateException("Cannot access data file of " + getName() + " because they’re online.");
-        return ReflectWrapper.wrapTyped(Bukkit.getServer(), CraftServer.class)
-                .getServer()
-                .getPlayerList()
-                .playerIo()
-                .load(getName(), getUniqueId().toString()).orElse(null);
+            throw new IllegalStateException("Cannot access data file of " + getName() + " because they're online.");
+        try {
+            return ReflectWrapper.wrapTyped(Bukkit.getServer(), CraftServer.class)
+                    .getServer()
+                    .getPlayerList()
+                    .playerIo()
+                    .load(getName(), getUniqueId().toString()).orElse(null);
+        } catch (Exception|LinkageError e) {
+            throw new PlayerDataLoadException(getName(), getUniqueId(), e);
+        }
     }
 
     /**
