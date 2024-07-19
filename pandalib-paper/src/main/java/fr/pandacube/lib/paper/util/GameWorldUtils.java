@@ -103,7 +103,8 @@ public class GameWorldUtils implements Listener {
 		}
 		w.setAutoSave(false);
 		gameWorld.put(world, w);
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mvm set hidden true "+copiedName);
+		if (Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null)
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mvm set hidden true "+copiedName);
 		operationOnLoad.accept(w);
 		return w;
 	}
