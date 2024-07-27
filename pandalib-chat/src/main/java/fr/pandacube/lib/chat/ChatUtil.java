@@ -1,15 +1,6 @@
 package fr.pandacube.lib.chat;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
+import fr.pandacube.lib.chat.Chat.FormatableChat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
@@ -19,9 +10,17 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.format.TextDecoration.State;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
-import fr.pandacube.lib.chat.Chat.FormatableChat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import static fr.pandacube.lib.chat.ChatStatic.chat;
 
@@ -351,7 +350,7 @@ public class ChatUtil {
 
         do {
             char c = legacyText.charAt(index);
-            if (c == ChatColor.COLOR_CHAR && index < legacyText.length() - 1) {
+            if (c == LegacyComponentSerializer.SECTION_CHAR && index < legacyText.length() - 1) {
                 currentWord.append(c);
                 c = legacyText.charAt(++index);
                 currentWord.append(c);
@@ -482,7 +481,7 @@ public class ChatUtil {
             }
             if (!row.isEmpty())
                 spacedRow.then(row.getLast());
-            spacedRows.add(spacedRow.getAdv());
+            spacedRows.add(spacedRow.get());
         }
 
         return spacedRows;
@@ -504,14 +503,14 @@ public class ChatUtil {
      */
     public static Component customWidthSpace(int width, boolean console) {
         if (console)
-            return Chat.text(" ".repeat(width)).getAdv();
+            return Chat.text(" ".repeat(width)).get();
         return switch (width) {
             case 0, 1 -> Component.empty();
-            case 2 -> Chat.text(".").black().getAdv();
-            case 3 -> Chat.text("`").black().getAdv();
-            case 6 -> Chat.text(". ").black().getAdv();
-            case 7 -> Chat.text("` ").black().getAdv();
-            case 11 -> Chat.text("`  ").black().getAdv();
+            case 2 -> Chat.text(".").black().get();
+            case 3 -> Chat.text("`").black().get();
+            case 6 -> Chat.text(". ").black().get();
+            case 7 -> Chat.text("` ").black().get();
+            case 11 -> Chat.text("`  ").black().get();
             default -> {
                 int nbSpace = width / 4;
                 int nbBold = width % 4;
@@ -520,13 +519,13 @@ public class ChatUtil {
                     if (nbBold > 0) {
                         yield Chat.text(" ".repeat(nbNotBold)).bold(false)
                                 .then(Chat.text(" ".repeat(nbBold)).bold(true))
-                                .getAdv();
+                                .get();
                     }
                     else
-                        yield Chat.text(" ".repeat(nbNotBold)).bold(false).getAdv();
+                        yield Chat.text(" ".repeat(nbNotBold)).bold(false).get();
                 }
                 else if (nbBold > 0) {
-                    yield Chat.text(" ".repeat(nbBold)).bold(true).getAdv();
+                    yield Chat.text(" ".repeat(nbBold)).bold(true).get();
                 }
                 throw new IllegalStateException("Should not be here (width=" + width + "; nbSpace=" + nbSpace + "; nbBold=" + nbBold + "; nbNotBold=" + nbNotBold + ")");
             }

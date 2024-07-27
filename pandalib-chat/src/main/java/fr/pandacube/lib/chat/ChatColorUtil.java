@@ -1,14 +1,14 @@
 package fr.pandacube.lib.chat;
 
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.format.TextFormat;
+import net.kyori.adventure.util.RGBLike;
+
 import java.util.regex.Pattern;
 
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.util.RGBLike;
-import net.md_5.bungee.api.ChatColor;
-
 /**
- * Provides methods to manipulate legacy colors and {@link ChatColor} class.
+ * Provides methods to manipulate legacy colors.
  */
 public class ChatColorUtil {
 
@@ -38,12 +38,12 @@ public class ChatColorUtil {
         int length = legacyText.length();
 
         for (int index = length - 2; index >= 0; index--) {
-            if (legacyText.charAt(index) == ChatColor.COLOR_CHAR) {
+            if (legacyText.charAt(index) == LegacyChatFormat.COLOR_CHAR) {
 
                 // detection of rgb color §x§0§1§2§3§4§5
                 String rgb;
                 if (index > 11
-                        && legacyText.charAt(index - 12) == ChatColor.COLOR_CHAR
+                        && legacyText.charAt(index - 12) == LegacyChatFormat.COLOR_CHAR
                         && (legacyText.charAt(index - 11) == 'x'
                         || legacyText.charAt(index - 11) == 'X')
                         && HEX_COLOR_PATTERN.matcher(rgb = legacyText.substring(index - 12, index + 2)).matches()) {
@@ -64,7 +64,7 @@ public class ChatColorUtil {
 
                 // try detect non-rgb format
                 char colorChar = legacyText.charAt(index + 1);
-                ChatColor legacyColor = getChatColorByChar(colorChar);
+                LegacyChatFormat legacyColor = LegacyChatFormat.of(colorChar);
 
                 if (legacyColor != null) {
                     result.insert(0, legacyColor);
@@ -83,15 +83,6 @@ public class ChatColorUtil {
         return result.toString();
     }
 
-    /**
-     * Returns the {@link ChatColor} associated with the provided char, case-insensitive.
-     * @param code the case-insensitive char code.
-     * @return the corresponding {@link ChatColor}.
-     */
-    public static ChatColor getChatColorByChar(char code) {
-        return ChatColor.getByChar(Character.toLowerCase(code));
-    }
-
 
 
 
@@ -99,7 +90,7 @@ public class ChatColorUtil {
      * Translate the color code of the provided string, that uses the alt color char, to the {@code §} color code
      * format.
      * <p>
-     * This method is the improved version of {@link ChatColor#translateAlternateColorCodes(char, String)},
+     * This method is the improved version of Bukkit’s {@code ChatColor.translateAlternateColorCodes(char, String)},
      * because it takes into account essentials RGB color code, and {@code altColorChar} escaping (by doubling it).
      * Essentials RGB color code are converted to Bungee chat RGB format, so the returned string can be converted
      * to component (see {@link Chat#legacyText(Object)}).
@@ -112,7 +103,7 @@ public class ChatColorUtil {
      */
     public static String translateAlternateColorCodes(char altColorChar, String textToTranslate)
     {
-        char colorChar = ChatColor.COLOR_CHAR;
+        char colorChar = LegacyChatFormat.COLOR_CHAR;
         StringBuilder acc = new StringBuilder();
         char[] b = textToTranslate.toCharArray();
         for ( int i = 0; i < b.length; i++ )
@@ -180,7 +171,7 @@ public class ChatColorUtil {
      * @return the text fully italic.
      */
     public static String forceItalic(String legacyText) {
-        return forceFormat(legacyText, ChatColor.ITALIC);
+        return forceFormat(legacyText, TextDecoration.ITALIC);
     }
 
     /**
@@ -190,7 +181,7 @@ public class ChatColorUtil {
      * @return the text fully bold.
      */
     public static String forceBold(String legacyText) {
-        return forceFormat(legacyText, ChatColor.BOLD);
+        return forceFormat(legacyText, TextDecoration.BOLD);
     }
 
     /**
@@ -200,7 +191,7 @@ public class ChatColorUtil {
      * @return the text fully underlined.
      */
     public static String forceUnderline(String legacyText) {
-        return forceFormat(legacyText, ChatColor.UNDERLINE);
+        return forceFormat(legacyText, TextDecoration.UNDERLINED);
     }
 
     /**
@@ -210,7 +201,7 @@ public class ChatColorUtil {
      * @return the text fully stroked through.
      */
     public static String forceStrikethrough(String legacyText) {
-        return forceFormat(legacyText, ChatColor.STRIKETHROUGH);
+        return forceFormat(legacyText, TextDecoration.STRIKETHROUGH);
     }
 
     /**
@@ -220,15 +211,16 @@ public class ChatColorUtil {
      * @return the text fully obfuscated.
      */
     public static String forceObfuscated(String legacyText) {
-        return forceFormat(legacyText, ChatColor.MAGIC);
+        return forceFormat(legacyText, TextDecoration.OBFUSCATED);
     }
 
 
 
-    private static String forceFormat(String legacyText, ChatColor format) {
+    private static String forceFormat(String legacyText, TextFormat format) {
+        String formatStr = LegacyChatFormat.of(format).toString();
         return format + legacyText
-                .replace(format.toString(), "") // remove previous tag to make the result cleaner
-                .replaceAll("§([a-frA-FR\\d])", "§$1" + format);
+                .replace(formatStr, "") // remove previous tag to make the result cleaner
+                .replaceAll("§([a-frA-FR\\d])", "§$1" + formatStr);
     }
 
 
@@ -243,38 +235,10 @@ public class ChatColorUtil {
      * @return the resulting text.
      */
     public static String resetToColor(String legacyText, String color) {
-        return legacyText.replace(ChatColor.RESET.toString(), color);
+        return legacyText.replace(LegacyChatFormat.RESET.toString(), color);
     }
 
 
-
-
-    /**
-     * Converts the provided {@link ChatColor} to its Adventure counterpart.
-     * @param bungee a BungeeCord {@link ChatColor} instance.
-     * @return the {@link TextColor} equivalent to the provided {@link ChatColor}.
-     */
-    public static TextColor toAdventure(ChatColor bungee) {
-        if (bungee == null)
-            return null;
-        if (bungee.getColor() == null)
-            throw new IllegalArgumentException("The provided Bungee ChatColor must be an actual color (not format nor reset).");
-        return TextColor.color(bungee.getColor().getRGB());
-    }
-
-    /**
-     * Converts the provided {@link TextColor} to its BungeeCord counterpart.
-     * @param col a Adventure {@link TextColor} instance.
-     * @return the {@link ChatColor} equivalent to the provided {@link TextColor}.
-     */
-    public static ChatColor toBungee(TextColor col) {
-        if (col == null)
-            return null;
-        if (col instanceof NamedTextColor) {
-            return ChatColor.of(((NamedTextColor) col).toString());
-        }
-        return ChatColor.of(col.asHexString());
-    }
 
 
     /**

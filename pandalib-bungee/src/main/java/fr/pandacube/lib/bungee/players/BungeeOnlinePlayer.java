@@ -1,6 +1,6 @@
 package fr.pandacube.lib.bungee.players;
 
-import fr.pandacube.lib.chat.Chat;
+import fr.pandacube.lib.bungee.chat.ChatBungee;
 import fr.pandacube.lib.core.mc_version.ProtocolVersion;
 import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
 import fr.pandacube.lib.reflect.Reflect;
@@ -84,13 +84,13 @@ public interface BungeeOnlinePlayer extends BungeeOffPlayer, AbstractOnlinePlaye
 
     @Override
     default void sendMessage(Component message) {
-        getBungeeProxiedPlayer().sendMessage(Chat.toBungee(message));
+        getBungeeProxiedPlayer().sendMessage(ChatBungee.toBungee(message));
     }
 
     @Override
     default void sendTitle(Component title, Component subtitle, int fadeIn, int stay, int fadeOut) {
         ProxyServer.getInstance().createTitle()
-                .title(Chat.toBungee(title)).subTitle(Chat.toBungee(subtitle))
+                .title(ChatBungee.toBungee(title)).subTitle(ChatBungee.toBungee(subtitle))
                 .fadeIn(fadeIn).stay(stay).fadeOut(fadeOut)
                 .send(getBungeeProxiedPlayer());
     }

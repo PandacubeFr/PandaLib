@@ -73,6 +73,12 @@
 
         <dependency>
             <groupId>fr.pandacube.lib</groupId>
+            <artifactId>pandalib-bungee-chat</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.pandacube.lib</groupId>
             <artifactId>pandalib-paper-permissions</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>

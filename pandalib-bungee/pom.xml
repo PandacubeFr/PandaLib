@@ -33,7 +33,7 @@
         </dependency>
         <dependency>
             <groupId>fr.pandacube.lib</groupId>
-            <artifactId>pandalib-chat</artifactId>
+            <artifactId>pandalib-bungee-chat</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

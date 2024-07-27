@@ -1,8 +1,8 @@
 package fr.pandacube.lib.core.backup;
 
 import com.google.common.io.Files;
+import fr.pandacube.lib.chat.LegacyChatFormat;
 import fr.pandacube.lib.util.log.Log;
-import net.md_5.bungee.api.ChatColor;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,7 +53,7 @@ public class RotatedLogsBackupProcess extends BackupProcess {
         if (!getSourceDir().isDirectory())
             return;
 
-        Log.info("[Backup] Starting for " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET + " ...");
+        Log.info("[Backup] Starting for " + LegacyChatFormat.GRAY + getDisplayName() + LegacyChatFormat.RESET + " ...");
 
         try {
             // wait a little after the log message above, in case the log file rotation has to be performed.
@@ -82,9 +82,9 @@ public class RotatedLogsBackupProcess extends BackupProcess {
 
             success = true;
 
-            Log.info("[Backup] Finished for " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET);
+            Log.info("[Backup] Finished for " + LegacyChatFormat.GRAY + getDisplayName() + LegacyChatFormat.RESET);
         } catch (Exception e) {
-            Log.severe("[Backup] Failed for : " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET, e);
+            Log.severe("[Backup] Failed for : " + LegacyChatFormat.GRAY + getDisplayName() + LegacyChatFormat.RESET, e);
         } finally {
             onBackupEnd(success);
 

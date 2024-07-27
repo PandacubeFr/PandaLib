@@ -1,10 +1,10 @@
 package fr.pandacube.lib.core.backup;
 
 import fc.cron.CronExpression;
+import fr.pandacube.lib.chat.LegacyChatFormat;
 import fr.pandacube.lib.core.cron.CronScheduler;
 import fr.pandacube.lib.util.FileUtils;
 import fr.pandacube.lib.util.log.Log;
-import net.md_5.bungee.api.ChatColor;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -209,7 +209,7 @@ public abstract class BackupProcess implements Comparable<BackupProcess>, Runnab
             File sourceDir = getSourceDir();
 
             if (!sourceDir.exists()) {
-                Log.warning("[Backup] Unable to compress " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET + ": source directory " + sourceDir + " doesn't exist");
+                Log.warning("[Backup] Unable to compress " + LegacyChatFormat.GRAY + getDisplayName() + LegacyChatFormat.RESET + ": source directory " + sourceDir + " doesn't exist");
                 return;
             }
 
@@ -219,7 +219,7 @@ public abstract class BackupProcess implements Comparable<BackupProcess>, Runnab
             onBackupStart();
 
             new Thread(() -> {
-                Log.info("[Backup] Starting for " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET + " ...");
+                Log.info("[Backup] Starting for " + LegacyChatFormat.GRAY + getDisplayName() + LegacyChatFormat.RESET + " ...");
 
                 compressor = new ZipCompressor(sourceDir, target, 9, filter);
 
@@ -229,7 +229,7 @@ public abstract class BackupProcess implements Comparable<BackupProcess>, Runnab
 
                     success = true;
 
-                    Log.info("[Backup] Finished for " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET);
+                    Log.info("[Backup] Finished for " + LegacyChatFormat.GRAY + getDisplayName() + LegacyChatFormat.RESET);
 
                     try {
                         BackupCleaner cleaner = getBackupCleaner();
@@ -267,7 +267,7 @@ public abstract class BackupProcess implements Comparable<BackupProcess>, Runnab
      * Logs the scheduling status of this backup process.
      */
     public void displayNextSchedule() {
-        Log.info("[Backup] " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET + " next backup on "
+        Log.info("[Backup] " + LegacyChatFormat.GRAY + getDisplayName() + LegacyChatFormat.RESET + " next backup on "
                 + DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG).format(new Date(getNext())));
     }
 
@@ -297,7 +297,7 @@ public abstract class BackupProcess implements Comparable<BackupProcess>, Runnab
     public void logProgress() {
         if (compressor == null)
             return;
-        Log.info("[Backup] " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET + ": " + compressor.getState().getLegacyText());
+        Log.info("[Backup] " + LegacyChatFormat.GRAY + getDisplayName() + LegacyChatFormat.RESET + ": " + compressor.getState().getLegacyText());
     }
 
 

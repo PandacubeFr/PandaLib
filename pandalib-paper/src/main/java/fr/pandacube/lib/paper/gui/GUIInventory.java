@@ -38,7 +38,7 @@ public class GUIInventory implements Listener {
 		if (title == null)
 			inv = Bukkit.createInventory(null, nbLines * 9);
 		else
-			inv = Bukkit.createInventory(null, nbLines * 9, title.getAdv());
+			inv = Bukkit.createInventory(null, nbLines * 9, title.get());
 
 		setCloseEvent(closeEventAction);
 

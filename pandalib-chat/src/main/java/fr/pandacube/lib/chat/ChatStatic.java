@@ -1,7 +1,6 @@
 package fr.pandacube.lib.chat;
 
-import java.util.Objects;
-
+import fr.pandacube.lib.chat.Chat.FormatableChat;
 import net.kyori.adventure.text.BlockNBTComponent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentBuilder;
@@ -18,9 +17,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.md_5.bungee.api.chat.BaseComponent;
 
-import fr.pandacube.lib.chat.Chat.FormatableChat;
+import java.util.Objects;
 
 /**
  * Abstract class holding the publicly accessible methods to create an instance of {@link Chat} component.
@@ -31,15 +29,6 @@ public abstract class ChatStatic {
 
     private static FormatableChat chatComponent(Component c) {
         return new FormatableChat(componentToBuilder(c));
-    }
-
-    /**
-     * Creates a {@link FormatableChat} from the provided Bungee {@link BaseComponent}.
-     * @param c the {@link BaseComponent}.
-     * @return a new {@link FormatableChat}.
-     */
-    public static FormatableChat chatComponent(BaseComponent c) {
-        return new FormatableChat(componentToBuilder(Chat.toAdventure(c)));
     }
 
     /**
@@ -59,15 +48,6 @@ public abstract class ChatStatic {
      */
     public static FormatableChat chat() {
         return new FormatableChat(Component.text());
-    }
-
-    /**
-     * Creates a {@link FormatableChat} from the provided Bungee {@link BaseComponent BaseComponent[]}.
-     * @param c the array of {@link BaseComponent}.
-     * @return a new {@link FormatableChat}.
-     */
-    public static FormatableChat chatComponent(BaseComponent[] c) {
-        return chatComponent(Chat.toAdventure(c));
     }
 
 

@@ -1,6 +1,6 @@
 package fr.pandacube.lib.bungee.commands;
 
-import fr.pandacube.lib.chat.Chat;
+import fr.pandacube.lib.bungee.chat.ChatBungee;
 import fr.pandacube.lib.commands.BrigadierDispatcher;
 import net.kyori.adventure.text.ComponentLike;
 import net.md_5.bungee.api.CommandSender;
@@ -71,6 +71,6 @@ public class BungeeBrigadierDispatcher extends BrigadierDispatcher<CommandSender
 
 	@Override
 	protected void sendSenderMessage(CommandSender sender, ComponentLike message) {
-		sender.sendMessage(Chat.toBungee(message.asComponent()));
+		sender.sendMessage(ChatBungee.toBungee(message.asComponent()));
 	}
 }

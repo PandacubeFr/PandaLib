@@ -87,7 +87,7 @@ public class ChatConfig {
      */
     public static int getPrefixWidth(boolean console) {
         Chat c;
-        return prefix == null ? 0 : (c = prefix.get()) == null ? 0 : ChatUtil.componentWidth(c.getAdv(), console);
+        return prefix == null ? 0 : (c = prefix.get()) == null ? 0 : ChatUtil.componentWidth(c.get(), console);
     }
 
 

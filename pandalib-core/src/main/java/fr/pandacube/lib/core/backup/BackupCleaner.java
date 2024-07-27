@@ -1,8 +1,8 @@
 package fr.pandacube.lib.core.backup;
 
 import fr.pandacube.lib.chat.Chat;
+import fr.pandacube.lib.chat.LegacyChatFormat;
 import fr.pandacube.lib.util.log.Log;
-import net.md_5.bungee.api.ChatColor;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -107,14 +107,14 @@ public abstract class BackupCleaner implements UnaryOperator<TreeSet<LocalDateTi
         if (files == null)
             return;
 
-        Log.info("[Backup] Cleaning up backup directory " + ChatColor.GRAY + compressDisplayName + ChatColor.RESET + "...");
+        Log.info("[Backup] Cleaning up backup directory " + LegacyChatFormat.GRAY + compressDisplayName + LegacyChatFormat.RESET + "...");
 
         TreeMap<LocalDateTime, File> datedFiles = new TreeMap<>();
 
         for (String filename : files) {
             File file = new File(archiveDir, filename);
             if (!filename.matches("\\d{8}-\\d{6}\\.zip")) {
-                Log.warning("[Backup] " + ChatColor.GRAY + compressDisplayName + ChatColor.RESET + " Invalid file in backup directory: " + filename);
+                Log.warning("[Backup] " + LegacyChatFormat.GRAY + compressDisplayName + LegacyChatFormat.RESET + " Invalid file in backup directory: " + filename);
                 continue;
             }
 
@@ -123,7 +123,7 @@ public abstract class BackupCleaner implements UnaryOperator<TreeSet<LocalDateTi
             try {
                 ldt = LocalDateTime.parse(dateTimeStr, BackupProcess.dateFileNameFormatter);
             } catch (DateTimeParseException e) {
-                Log.warning("[Backup] " + ChatColor.GRAY + compressDisplayName + ChatColor.RESET + " Unable to parse file name to a date-time: " + filename, e);
+                Log.warning("[Backup] " + LegacyChatFormat.GRAY + compressDisplayName + LegacyChatFormat.RESET + " Unable to parse file name to a date-time: " + filename, e);
                 continue;
             }
 
@@ -156,7 +156,7 @@ public abstract class BackupCleaner implements UnaryOperator<TreeSet<LocalDateTi
         if (testOnly || oneDeleted)
             Log.warning(c.getLegacyText());
 
-        Log.info("[Backup] Backup directory " + ChatColor.GRAY + compressDisplayName + ChatColor.RESET + " cleaned.");
+        Log.info("[Backup] Backup directory " + LegacyChatFormat.GRAY + compressDisplayName + LegacyChatFormat.RESET + " cleaned.");
     }
 
 

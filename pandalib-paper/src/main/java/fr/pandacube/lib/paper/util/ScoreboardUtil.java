@@ -116,9 +116,9 @@ public class ScoreboardUtil {
 	public static void updateScoreboardSidebar(Scoreboard scBrd, Chat title, Chat[] lines) {
 		Component[] cmpLines = new Component[lines.length];
 		for (int i = 0; i < lines.length; i++) {
-			cmpLines[i] = lines[i].getAdv();
+			cmpLines[i] = lines[i].get();
 		}
-		updateScoreboardSidebar(scBrd, title.getAdv(), cmpLines);
+		updateScoreboardSidebar(scBrd, title.get(), cmpLines);
 	}
 
 
@@ -135,9 +135,9 @@ public class ScoreboardUtil {
 	public static void updateScoreboardSidebar(Scoreboard scBrd, Chat title, List<Chat> lines) {
 		Component[] cmpLines = new Component[lines.size()];
 		for (int i = 0; i < cmpLines.length; i++) {
-			cmpLines[i] = lines.get(i).getAdv();
+			cmpLines[i] = lines.get(i).get();
 		}
-		updateScoreboardSidebar(scBrd, title.getAdv(), cmpLines);
+		updateScoreboardSidebar(scBrd, title.get(), cmpLines);
 	}
 	
 	

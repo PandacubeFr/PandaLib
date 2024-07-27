@@ -1,5 +1,18 @@
 package fr.pandacube.lib.permissions;
 
+import com.google.common.base.Preconditions;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import fr.pandacube.lib.chat.Chat;
+import fr.pandacube.lib.chat.ChatTreeNode;
+import fr.pandacube.lib.chat.LegacyChatFormat;
+import fr.pandacube.lib.permissions.PermissionsCachedBackendReader.CachedEntity;
+import fr.pandacube.lib.permissions.PermissionsCachedBackendReader.CachedGroup;
+import fr.pandacube.lib.permissions.PermissionsCachedBackendReader.CachedPlayer;
+import fr.pandacube.lib.permissions.SQLPermissions.EntityType;
+import fr.pandacube.lib.util.log.Log;
+import net.kyori.adventure.text.format.NamedTextColor;
+
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
@@ -11,19 +24,6 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
-import com.google.common.base.Preconditions;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import net.md_5.bungee.api.ChatColor;
-
-import fr.pandacube.lib.chat.Chat;
-import fr.pandacube.lib.chat.ChatTreeNode;
-import fr.pandacube.lib.permissions.PermissionsCachedBackendReader.CachedEntity;
-import fr.pandacube.lib.permissions.PermissionsCachedBackendReader.CachedGroup;
-import fr.pandacube.lib.permissions.PermissionsCachedBackendReader.CachedPlayer;
-import fr.pandacube.lib.permissions.SQLPermissions.EntityType;
-import fr.pandacube.lib.util.log.Log;
 
 /* package */ class PermissionsResolver {
 
@@ -105,7 +105,7 @@ import fr.pandacube.lib.util.log.Log;
 			Log.warning("For data " + dataType + ":\n"
 					+ resolutionResult.toDisplayTreeNode().render(true).stream()
 					.map(Chat::getLegacyText)
-					.collect(Collectors.joining(ChatColor.RESET + "\n")));
+					.collect(Collectors.joining(LegacyChatFormat.RESET + "\n")));
 		}
 		
 		return resolutionResult.result != null ? resolutionResult.result : "";
@@ -167,7 +167,7 @@ import fr.pandacube.lib.util.log.Log;
 			if (result == null)
 				c.then(Chat.text(" (non défini)").gray());
 			else
-				c.thenLegacyText(" \"" + ChatColor.RESET + result + ChatColor.RESET + "\"");
+				c.thenLegacyText(" \"" + LegacyChatFormat.RESET + result + LegacyChatFormat.RESET + "\"");
 			if (conflictMessage != null)
 				c.thenFailure(" " + conflictMessage);
 			ChatTreeNode node = new ChatTreeNode(c);
@@ -307,7 +307,7 @@ import fr.pandacube.lib.util.log.Log;
 			Log.warning("For permission " + permission + ":\n"
 					+ resolutionResult.toDisplayTreeNode().render(true).stream()
 					.map(Chat::getLegacyText)
-					.collect(Collectors.joining(ChatColor.RESET + "\n")));
+					.collect(Collectors.joining(LegacyChatFormat.RESET + "\n")));
 		}
 		
 		return resolutionResult.result;
@@ -487,7 +487,7 @@ import fr.pandacube.lib.util.log.Log;
 			Chat c = Chat.chat()
 					.then(result == PermState.UNDEFINED ? Chat.dataText("■") : result == PermState.GRANTED ? Chat.successText("✔") : Chat.failureText("✘"))
 					.then(Chat.text(entity instanceof CachedPlayer cp ? Permissions.playerNameGetter.apply(cp.playerId) : entity.name)
-							.color(entity instanceof CachedPlayer ? ChatColor.GOLD : ChatColor.DARK_AQUA)
+							.color(entity instanceof CachedPlayer ? NamedTextColor.GOLD : NamedTextColor.DARK_AQUA)
 					);
 			if (server != null)
 				c.thenData(" s=" + server);
@@ -523,7 +523,7 @@ import fr.pandacube.lib.util.log.Log;
 		public ChatTreeNode toDisplayTreeNode() {
 			return new ChatTreeNode(Chat.chat()
 					.then(result ? Chat.successText("✔") : Chat.failureText("✘"))
-					.then(Chat.text(permission).color(type == PermType.WILDCARD ? ChatColor.YELLOW : type == PermType.SPECIAL ? ChatColor.LIGHT_PURPLE : ChatColor.WHITE)));
+					.then(Chat.text(permission).color(type == PermType.WILDCARD ? NamedTextColor.YELLOW : type == PermType.SPECIAL ? NamedTextColor.LIGHT_PURPLE : NamedTextColor.WHITE)));
 		}
 	}
 	

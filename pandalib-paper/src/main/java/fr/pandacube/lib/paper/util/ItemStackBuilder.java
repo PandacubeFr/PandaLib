@@ -113,7 +113,7 @@ public class ItemStackBuilder {
 	public ItemStackBuilder lore(List<? extends ComponentLike> lore) {
 		if (lore != null) {
 			return rawLore(lore.stream()
-					.map(line -> Chat.italicFalseIfNotSet(chatComponent(line)).getAdv())
+					.map(line -> Chat.italicFalseIfNotSet(chatComponent(line)).get())
 					.toList());
 		}
 		else
@@ -128,7 +128,7 @@ public class ItemStackBuilder {
 					Streams.concat(
 							baseLore.stream(),
 							lores.stream()
-							.map(line -> Chat.italicFalseIfNotSet(chatComponent(line)).getAdv())
+							.map(line -> Chat.italicFalseIfNotSet(chatComponent(line)).get())
 					)
 					.toList());
 		}

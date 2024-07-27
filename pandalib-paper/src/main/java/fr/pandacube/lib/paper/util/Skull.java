@@ -99,10 +99,10 @@ public enum Skull {
         boolean b = meta.setOwner(name);
         
         if (displayName != null)
-        	meta.displayName(displayName.getAdv());
+        	meta.displayName(displayName.get());
         
         if (lore != null)
-        	meta.lore(lore.stream().map(Chat::getAdv).collect(Collectors.toList()));
+        	meta.lore(lore.stream().map(Chat::get).collect(Collectors.toList()));
         
         itemStack.setItemMeta(meta);
         return itemStack;
@@ -172,10 +172,10 @@ public enum Skull {
         headMeta.setPlayerProfile(profile);
         
         if (displayName != null)
-        	headMeta.displayName(displayName.getAdv());
+        	headMeta.displayName(displayName.get());
         
         if (lore != null)
-        	headMeta.lore(lore.stream().map(Chat::getAdv).collect(Collectors.toList()));
+        	headMeta.lore(lore.stream().map(Chat::get).collect(Collectors.toList()));
         
         head.setItemMeta(headMeta);
         

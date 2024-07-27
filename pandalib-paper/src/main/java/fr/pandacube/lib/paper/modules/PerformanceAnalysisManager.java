@@ -4,7 +4,6 @@ import com.destroystokyo.paper.event.server.ServerTickEndEvent;
 import com.destroystokyo.paper.event.server.ServerTickStartEvent;
 import fr.pandacube.lib.chat.Chat;
 import fr.pandacube.lib.chat.ChatColorGradient;
-import fr.pandacube.lib.chat.ChatColorUtil;
 import fr.pandacube.lib.chat.ChatConfig.PandaTheme;
 import fr.pandacube.lib.paper.PandaLibPaper;
 import fr.pandacube.lib.paper.players.PaperOffPlayer;
@@ -13,16 +12,16 @@ import fr.pandacube.lib.paper.scheduler.SchedulerUtil;
 import fr.pandacube.lib.paper.util.AutoUpdatedBossBar;
 import fr.pandacube.lib.paper.util.AutoUpdatedBossBar.BarUpdater;
 import fr.pandacube.lib.players.standalone.AbstractPlayerManager;
-import fr.pandacube.lib.util.log.Log;
 import fr.pandacube.lib.util.MemoryUtil;
 import fr.pandacube.lib.util.MemoryUtil.MemoryUnit;
 import fr.pandacube.lib.util.TimeUtil;
+import fr.pandacube.lib.util.log.Log;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.bossbar.BossBar.Color;
 import net.kyori.adventure.bossbar.BossBar.Overlay;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -299,15 +298,17 @@ public class PerformanceAnalysisManager implements Listener {
 					
 					// keep the legacy text when generating the bar to save space when converting to component
 					StringBuilder s = new StringBuilder();
-					ChatColor prevC = ChatColor.RESET;
+					TextColor prevC = null;
 					for (int i = 58; i >= 0; i--) {
 						int t = tpsHistory[i];
-						ChatColor newC = ChatColorUtil.toBungee(tps1sGradient.pickColorAt(t));
+						TextColor newC = tps1sGradient.pickColorAt(t);
 						if (!newC.equals(prevC)) {
-							s.append(newC);
+							s.append(text("|").color(newC).getLegacyText());
 							prevC = newC;
 						}
-						s.append("|");
+						else {
+							s.append("|");
+						}
 					}
 					
 					

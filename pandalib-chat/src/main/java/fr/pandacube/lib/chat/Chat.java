@@ -16,15 +16,13 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.format.TextDecoration.State;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
@@ -67,24 +65,8 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
      * Builds the component into Adventure Component instance.
      * @return the {@link Component} built from this {@link Chat} component.
      */
-    public Component getAdv() {
+    public Component get() {
         return builder.build();
-    }
-
-    /**
-     * Builds the component into BungeeCord {@link BaseComponent} instance.
-     * @return the {@link BaseComponent} built from this {@link Chat} component.
-     */
-    public BaseComponent get() {
-        return toBungee(getAdv());
-    }
-
-    /**
-     * Builds the component into BungeeCord {@link BaseComponent} array.
-     * @return the {@link BaseComponent} array built from this {@link Chat} component.
-     */
-    public BaseComponent[] getAsArray() {
-        return toBungeeArray(getAdv());
     }
 
     private static final LegacyComponentSerializer LEGACY_SERIALIZER_BUNGEE_FRIENDLY = LegacyComponentSerializer.builder()
@@ -97,7 +79,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
      * @return the legacy text. RGB colors are in BungeeCord format.
      */
     public String getLegacyText() {
-        return LEGACY_SERIALIZER_BUNGEE_FRIENDLY.serialize(getAdv());
+        return LEGACY_SERIALIZER_BUNGEE_FRIENDLY.serialize(get());
     }
 
     /**
@@ -105,12 +87,12 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
      * @return the plain text of this component.
      */
     public String getPlainText() {
-        return PlainTextComponentSerializer.plainText().serializeOr(getAdv(), "");
+        return PlainTextComponentSerializer.plainText().serializeOr(get(), "");
     }
 
     @Override
     public @NotNull HoverEvent<Component> asHoverEvent(@NotNull UnaryOperator<Component> op) {
-        return HoverEvent.showText(op.apply(getAdv()));
+        return HoverEvent.showText(op.apply(get()));
     }
 
     /**
@@ -119,7 +101,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
      */
     @Override
     public @NotNull Component asComponent() {
-        return getAdv();
+        return get();
     }
 
     /**
@@ -127,7 +109,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
      * @return the {@link Component} built from this {@link Chat} component, with down-sampled colors.
      */
     public Component getAsDownSampledColorsComponent() {
-        String json = GsonComponentSerializer.colorDownsamplingGson().serialize(getAdv());
+        String json = GsonComponentSerializer.colorDownsamplingGson().serialize(get());
         return GsonComponentSerializer.gson().deserialize(json);
     }
 
@@ -144,7 +126,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
      * @return the MiniMessage representation if this {@link Chat} component.
      */
     public String getMiniMessage() {
-        return MiniMessage.miniMessage().serialize(getAdv());
+        return MiniMessage.miniMessage().serialize(get());
     }
 
 
@@ -185,15 +167,6 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
     }
 
     /**
-     * Appends a BungeeCord {@link BaseComponent} to this component.
-     * @param comp the component to append.
-     * @return this.
-     */
-    public Chat then(BaseComponent comp) {
-        return then(toAdventure(comp));
-    }
-
-    /**
      * Appends a component to this component.
      * @param comp the component to append.
      * @return this.
@@ -205,15 +178,6 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
                 ac.maxWidth(maxWidth);
         }
         return then(comp.asComponent());
-    }
-
-    /**
-     * Appends a BungeeCord {@link BaseComponent} array to this component.
-     * @param comp the components to append.
-     * @return this.
-     */
-    public Chat then(BaseComponent[] comp) {
-        return then(toAdventure(comp));
     }
 
 
@@ -497,34 +461,12 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
 
     /**
      * Appends a component filling a chat line with the configured decoration character and
-     * color and a left-aligned text.
-     * @param leftText the text aligned to the left.
-     * @return a new {@link FormatableChat} filling a chat line with the configured decoration character
-     *         and color and a left-aligned text.
-     * @deprecated uses Bungeecord chat API.
-     */
-    @Deprecated
-    public Chat thenLeftText(BaseComponent leftText) { return thenLeftText(chatComponent(leftText)); }
-
-    /**
-     * Appends a component filling a chat line with the configured decoration character and
      * color and a right-aligned text.
      * @param rightText the text aligned to the right.
      * @return a new {@link FormatableChat} filling a chat line with the configured decoration character
      *         and color and a right-aligned text.
      */
     public Chat thenRightText(ComponentLike rightText) { return then(rightText(rightText, console)); }
-
-    /**
-     * Appends a component filling a chat line with the configured decoration character and
-     * color and a right-aligned text.
-     * @param rightText the text aligned to the right.
-     * @return a new {@link FormatableChat} filling a chat line with the configured decoration character
-     *         and color and a right-aligned text.
-     * @deprecated uses Bungeecord chat API.
-     */
-    @Deprecated
-    public Chat thenRightText(BaseComponent rightText) { return thenRightText(chatComponent(rightText)); }
 
     /**
      * Appends a component filling a chat line with the configured decoration character and
@@ -535,19 +477,6 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
      */
     public Chat thenCenterText(ComponentLike centerText) {
         return then(centerText(centerText, console));
-    }
-
-    /**
-     * Appends a component filling a chat line with the configured decoration character and
-     * color and a centered text.
-     * @param centerText the text aligned to the center.
-     * @return a new {@link FormatableChat} filling a chat line with the configured decoration character
-     *         and color and a centered text.
-     * @deprecated uses Bungeecord chat API.
-     */
-    @Deprecated
-    public Chat thenCenterText(BaseComponent centerText) {
-        return thenCenterText(chatComponent(centerText));
     }
 
     /**
@@ -634,19 +563,22 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
          * @param c the color.
          * @return this.
          */
-        public FormatableChat color(ChatColor c) { return color(c == null ? null : TextColor.color(c.getColor().getRGB())); }
-        /**
-         * Sets the color of this component.
-         * @param c the color.
-         * @return this.
-         */
         public FormatableChat color(Color c) { return color(c == null ? null : TextColor.color(c.getRGB())); }
         /**
          * Sets the color of this component.
          * @param c the color.
          * @return this.
          */
-        public FormatableChat color(String c) { return color(c == null ? null : ChatColor.of(c)); }
+        public FormatableChat color(String c) {
+            if (c == null)
+                return color((TextColor) null);
+            TextColor tc = c.startsWith("#")
+                    ? TextColor.fromCSSHexString(c)
+                    : NamedTextColor.NAMES.value(c.toLowerCase(Locale.ROOT));
+            if (tc == null)
+                throw new IllegalArgumentException("Invalid color string '" + c + "'.");
+            return color(tc);
+        }
 
 
         /**
@@ -925,18 +857,6 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
          */
         public FormatableChat hover(ComponentLike v) { return hover(v.asComponent()); }
         /**
-         * Configure this component to show the provided component when hovered.
-         * @param v the component to show.
-         * @return this.
-         */
-        public FormatableChat hover(BaseComponent v) { return hover(toAdventure(v)); }
-        /**
-         * Configure this component to show the provided component when hovered.
-         * @param v the component to show.
-         * @return this.
-         */
-        public FormatableChat hover(BaseComponent[] v) { return hover(toAdventure(v)); }
-        /**
          * Configure this component to show the provided legacy text when hovered.
          * @param legacyText the legacy text to show.
          * @return this.
@@ -963,7 +883,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
 
     @Override
     public int hashCode() {
-        return getAdv().hashCode();
+        return get().hashCode();
     }
 
     @Override
@@ -976,8 +896,6 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
 
     /* package */ static ComponentLike filterObjToComponentLike(Object v) {
         return switch (v) {
-            case BaseComponent[] baseComponents -> toAdventure(baseComponents);
-            case BaseComponent baseComponent -> toAdventure(baseComponent);
             case ComponentLike componentLike -> componentLike;
             case null, default -> Component.text(Objects.toString(v));
         };
@@ -1011,40 +929,6 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
     }
 
 
-    /**
-     * Converts the Bungee {@link BaseComponent} array into Adventure {@link Component}.
-     * @param components the Bungee {@link BaseComponent} array.
-     * @return a {@link Component}.
-     */
-    public static Component toAdventure(BaseComponent[] components) {
-        return BungeeComponentSerializer.get().deserialize(components);
-    }
-    /**
-     * Converts the Bungee {@link BaseComponent} into Adventure {@link Component}.
-     * @param component the Bungee {@link BaseComponent}.
-     * @return a {@link Component}.
-     */
-    public static Component toAdventure(BaseComponent component) {
-        return toAdventure(new BaseComponent[] { component });
-    }
-
-    /**
-     * Converts the Adventure {@link Component} into Bungee {@link BaseComponent} array.
-     * @param component the Adventure {@link Component}.
-     * @return a {@link BaseComponent} array.
-     */
-    public static BaseComponent[] toBungeeArray(Component component) {
-        return BungeeComponentSerializer.get().serialize(component);
-    }
-    /**
-     * Converts the Adventure {@link Component} into Bungee {@link BaseComponent}.
-     * @param component the Adventure {@link Component}.
-     * @return a {@link BaseComponent}.
-     */
-    public static BaseComponent toBungee(Component component) {
-        BaseComponent[] arr = toBungeeArray(component);
-        return arr.length == 1 ? arr[0] : new net.md_5.bungee.api.chat.TextComponent(arr);
-    }
 
     /**
      * Force the italic formatting to be set to false if it is not explicitly set in the component.

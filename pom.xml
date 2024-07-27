@@ -58,10 +58,13 @@
         <bungeecord.version>1.21-R0.1-SNAPSHOT</bungeecord.version>
         <paper.version>1.20.6-R0.1</paper.version>
         <mc.version>1.20.6</mc.version>
+
+        <guava.version>32.1.2-jre</guava.version> <!-- Match the version imported by Paper API/BungeeCord API if possible -->
     </properties>
 	
     <modules>
         <module>pandalib-bungee</module>
+        <module>pandalib-bungee-chat</module>
         <module>pandalib-bungee-permissions</module>
         <module>pandalib-chat</module>
         <module>pandalib-cli</module>
