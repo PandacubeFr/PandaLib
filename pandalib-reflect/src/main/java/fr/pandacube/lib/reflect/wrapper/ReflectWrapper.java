@@ -1,8 +1,7 @@
 package fr.pandacube.lib.reflect.wrapper;
 
-import com.google.common.collect.MapMaker;
-
 import fr.pandacube.lib.reflect.ReflectConstructor;
+import org.plumelib.util.WeakIdentityHashMap;
 
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,10 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 public abstract class ReflectWrapper implements ReflectWrapperI {
 
 
-	private static final Map<Object, ReflectWrapperI> objectWrapperCache = new MapMaker().weakKeys().makeMap();
+	private static final Map<Object, ReflectWrapperI> objectWrapperCache = new WeakIdentityHashMap<>();
+	/*
+	 * WeakHashMap is not suitable because we want the keys to be compared by reference (==) and not by the .equals() method.
+	 */
 
 	/**
 	 * Unwraps the object from the provided reflect wrapper.

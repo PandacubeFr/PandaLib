@@ -25,9 +25,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>32.1.2-jre</version> <!-- Match the version imported by Paper API/BungeeCord API if possible -->
+            <groupId>org.plumelib</groupId>
+            <artifactId>hashmap-util</artifactId>
+            <version>0.0.1</version>
         </dependency>
     </dependencies>
 
@@ -47,11 +47,32 @@
                             <artifactSet>
                                 <includes>
                                     <include>io.github.classgraph:classgraph</include>
+                                    <include>org.plumelib:*</include>
                                 </includes>
                             </artifactSet>
                             <filters>
                                 <filter>
                                     <artifact>io.github.classgraph:classgraph</artifact>
+                                    <excludes>
+                                        <exclude>module-info.class</exclude>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>org.plumelib:hashmap-util</artifact>
+                                    <excludes>
+                                        <exclude>module-info.class</exclude>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>org.plumelib:reflection-util</artifact>
                                     <excludes>
                                         <exclude>module-info.class</exclude>
                                         <exclude>META-INF/*.SF</exclude>
@@ -69,6 +90,10 @@
                                 <relocation>
                                     <pattern>nonapi.io.github.classgraph</pattern>
                                     <shadedPattern>fr.pandacube.lib.reflect.shaded.classgraph.nonapi</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.plumelib</pattern>
+                                    <shadedPattern>fr.pandacube.lib.reflect.shaded.plumelib</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
