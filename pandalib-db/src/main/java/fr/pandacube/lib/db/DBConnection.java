@@ -23,7 +23,8 @@ public class DBConnection {
     public DBConnection(String host, int port, String dbname, String login, String password) {
         this("jdbc:mysql://" + host + ":" + port + "/" + dbname
                         + "?useUnicode=true"
-                        + "&useSSL=false"
+                        + "&sslMode=DISABLED"
+                        + "&allowPublicKeyRetrieval=true"
                         + "&characterEncoding=utf8"
                         + "&characterSetResults=utf8"
                         + "&character_set_server=utf8mb4"
