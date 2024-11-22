@@ -23,6 +23,8 @@ import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.PluginCommandNode;
 import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
 import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
 import fr.pandacube.lib.players.standalone.AbstractPlayerManager;
+import fr.pandacube.lib.reflect.Reflect;
+import fr.pandacube.lib.reflect.ReflectClass;
 import fr.pandacube.lib.util.log.Log;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -37,6 +39,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -65,6 +68,19 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
     private static void updateVanillaPaperDispatcher(CommandDispatcher<CommandSourceStack> newDispatcher) {
         if (vanillaPaperDispatcher == null || newDispatcher != vanillaPaperDispatcher) {
             vanillaPaperDispatcher = newDispatcher;
+
+            // vanillaPaperDispatcher.getRoot() is not the real root but a wrapped root. Trying to map the fake root with the real one to trick the Paper/Brigadier (un)wrapper
+            RootCommandNode<CommandSourceStack> wrappedRoot = vanillaPaperDispatcher.getRoot();
+            ReflectClass<?> apiMirrorRootNodeClass = Reflect.ofClassOfInstance(wrappedRoot);
+            try {
+                RootCommandNode<?> actualRoot = ((CommandDispatcher<?>) apiMirrorRootNodeClass.method("getDispatcher").invoke(wrappedRoot)).getRoot();
+
+                Reflect.ofClass(CommandNode.class).field("unwrappedCached").setValue(wrappedRoot, actualRoot);
+                Reflect.ofClass(CommandNode.class).field("wrappedCached").setValue(actualRoot, wrappedRoot);
+
+            } catch (InvocationTargetException|IllegalAccessException|NoSuchMethodException|NoSuchFieldException e) {
+                Log.severe("Unable to trick the Paper/Brigadier unwrapper to properly handle redirecting to root command node.", e);
+            }
         }
     }
 
