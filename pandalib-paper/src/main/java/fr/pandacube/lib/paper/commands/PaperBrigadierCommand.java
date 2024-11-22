@@ -113,7 +113,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
     /**
      * The command node of this command.
      */
-    protected final LiteralCommandNode<CommandSourceStack> commandNode;
+    protected LiteralCommandNode<CommandSourceStack> commandNode;
     /**
      * The command requested aliases.
      */
@@ -134,11 +134,9 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
     public PaperBrigadierCommand(Plugin pl, RegistrationPolicy regPolicy) {
         plugin = pl;
         registrationPolicy = regPolicy;
-        commandNode = buildCommand().build();
         String[] aliasesTmp = getAliases();
         aliases = aliasesTmp == null ? new String[0] : aliasesTmp;
         description = getDescription();
-        postBuildCommand(commandNode);
         register();
         //try {
         //    PandalibPaperPermissions.addPermissionMapping("minecraft.command." + commandNode.getLiteral().toLowerCase(), getTargetPermission().toLowerCase());
@@ -160,6 +158,9 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
         plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             updateVanillaPaperDispatcher(event.registrar().getDispatcher());
 
+            commandNode = buildCommand().build();
+            postBuildCommand(commandNode);
+
             if (vanillaPaperDispatcher.getRoot().getChild(commandNode.getName()) != null) {
                 Log.info("Command /" + commandNode.getName() + " found in the vanilla dispatcher during initial command registration. Replacing it by force.");
                 vanillaPaperDispatcher.getRoot().getChildren().removeIf(c -> c.getName().equals(commandNode.getName()));
@@ -177,40 +178,42 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
                 }
             }
 
-        });
 
-        Bukkit.getServer().getScheduler().runTask(plugin, () -> {
-            if (vanillaPaperDispatcher == null)
-                return;
+            Bukkit.getServer().getScheduler().runTask(plugin, () -> {
+                if (vanillaPaperDispatcher == null)
+                    return;
 
-            Set<String> forceRegistrationAgain = new HashSet<>();
-            forceRegistrationAgain.add(commandNode.getName());
-            if (registrationPolicy == RegistrationPolicy.ALL)
-                forceRegistrationAgain.addAll(List.of(aliases));
+                Set<String> forceRegistrationAgain = new HashSet<>();
+                forceRegistrationAgain.add(commandNode.getName());
+                if (registrationPolicy == RegistrationPolicy.ALL)
+                    forceRegistrationAgain.addAll(List.of(aliases));
 
-            for (String aliasToForce : forceRegistrationAgain) {
-                CommandNode<CommandSourceStack> actualNode = vanillaPaperDispatcher.getRoot().getChild(aliasToForce);
-                if (actualNode != null) {
-                    //Log.info("Forcing registration of alias /" + aliasToForce + " for command /" + commandNode.getName() + ": replacing " + getCommandIdentity(actualNode) + "?");
-                    if (PluginCommandNode.REFLECT.get().isInstance(actualNode)) {
-                        PluginCommandNode pcn = wrap(actualNode, PluginCommandNode.class);
-                        if (pcn.getPlugin().equals(plugin))
-                            return;
+                for (String aliasToForce : forceRegistrationAgain) {
+                    CommandNode<CommandSourceStack> actualNode = vanillaPaperDispatcher.getRoot().getChild(aliasToForce);
+                    if (actualNode != null) {
+                        //Log.info("Forcing registration of alias /" + aliasToForce + " for command /" + commandNode.getName() + ": replacing " + getCommandIdentity(actualNode) + "?");
+                        if (PluginCommandNode.REFLECT.get().isInstance(actualNode)) {
+                            PluginCommandNode pcn = wrap(actualNode, PluginCommandNode.class);
+                            if (pcn.getPlugin().equals(plugin))
+                                return;
+                        }
+                        else if (BukkitCommandNode.REFLECT.get().isInstance(actualNode)) {
+                            BukkitCommandNode bcn = wrap(actualNode, BukkitCommandNode.class);
+                            if (bcn.getBukkitCommand() instanceof PluginCommand pc && pc.getPlugin().equals(plugin))
+                                return;
+                        }
+                        vanillaPaperDispatcher.getRoot().getChildren().removeIf(c -> c.getName().equals(aliasToForce));
                     }
-                    else if (BukkitCommandNode.REFLECT.get().isInstance(actualNode)) {
-                        BukkitCommandNode bcn = wrap(actualNode, BukkitCommandNode.class);
-                        if (bcn.getBukkitCommand() instanceof PluginCommand pc && pc.getPlugin().equals(plugin))
-                            return;
-                    }
-                    vanillaPaperDispatcher.getRoot().getChildren().removeIf(c -> c.getName().equals(aliasToForce));
-                }
                 /*else {
                     Log.info("Forcing registration of alias /" + aliasToForce + " for command /" + commandNode.getName() + ": no command found for alias. Adding alias.");
                 }*/
-                LiteralCommandNode<CommandSourceStack> newPCN = unwrap(new PluginCommandNode(aliasToForce, plugin.getPluginMeta(), commandNode, description));
-                vanillaPaperDispatcher.getRoot().addChild(newPCN);
-            }
+                    LiteralCommandNode<CommandSourceStack> newPCN = unwrap(new PluginCommandNode(aliasToForce, plugin.getPluginMeta(), commandNode, description));
+                    vanillaPaperDispatcher.getRoot().addChild(newPCN);
+                }
+            });
+
         });
+
     }
 
 
