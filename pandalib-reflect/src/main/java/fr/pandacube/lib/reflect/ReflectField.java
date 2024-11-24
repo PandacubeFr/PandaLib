@@ -9,7 +9,7 @@ import java.lang.reflect.Modifier;
  */
 public final class ReflectField<T> extends ReflectMember<T, String, Field, NoSuchFieldException> {
 
-    /* Those fields are used to modify the value of a static variable. Depending on the current Java version,
+    /* Those fields are used to modify the value of a final variable. Depending on the current Java version,
      * one of them will be used for this purpose.
      */
     private static sun.misc.Unsafe sunMiscUnsafeInstance;
@@ -122,13 +122,30 @@ public final class ReflectField<T> extends ReflectMember<T, String, Field, NoSuc
             // if the field is final, we have to do some unsafe stuff :/
             if (sunMiscUnsafeInstance != null) { // Java >= 16
                 // set the value of the field, directly in the memory
-                if (Modifier.isStatic(realModifiers)) {
-                    long offset = sunMiscUnsafeInstance.staticFieldOffset(f);
-                    sunMiscUnsafeInstance.putObject(sunMiscUnsafeInstance.staticFieldBase(f), offset, value);
-                } else {
-                    long offset = sunMiscUnsafeInstance.objectFieldOffset(f);
-                    sunMiscUnsafeInstance.putObject(instance, offset, value);
-                }
+                Object unsafeObjInstance = Modifier.isStatic(realModifiers)
+                        ? sunMiscUnsafeInstance.staticFieldBase(f)
+                        : instance;
+                long offset = Modifier.isStatic(realModifiers)
+                        ? sunMiscUnsafeInstance.staticFieldOffset(f)
+                        : sunMiscUnsafeInstance.objectFieldOffset(f);
+                if (char.class.isAssignableFrom(f.getType()))
+                    sunMiscUnsafeInstance.putChar(unsafeObjInstance, offset, (char)value);
+                else if (byte.class.isAssignableFrom(f.getType()))
+                    sunMiscUnsafeInstance.putByte(unsafeObjInstance, offset, (byte)value);
+                else if (short.class.isAssignableFrom(f.getType()))
+                    sunMiscUnsafeInstance.putShort(unsafeObjInstance, offset, (short)value);
+                else if (int.class.isAssignableFrom(f.getType()))
+                    sunMiscUnsafeInstance.putInt(unsafeObjInstance, offset, (int)value);
+                else if (long.class.isAssignableFrom(f.getType()))
+                    sunMiscUnsafeInstance.putLong(unsafeObjInstance, offset, (long)value);
+                else if (boolean.class.isAssignableFrom(f.getType()))
+                    sunMiscUnsafeInstance.putBoolean(unsafeObjInstance, offset, (boolean)value);
+                else if (float.class.isAssignableFrom(f.getType()))
+                    sunMiscUnsafeInstance.putFloat(unsafeObjInstance, offset, (float)value);
+                else if (double.class.isAssignableFrom(f.getType()))
+                    sunMiscUnsafeInstance.putDouble(unsafeObjInstance, offset, (double)value);
+                else
+                    sunMiscUnsafeInstance.putObject(unsafeObjInstance, offset, value);
             } else { // Java < 16
                 // change the modifier in the Field instance so the method #set(instance, value) doesn't throw an exception
                 try {
