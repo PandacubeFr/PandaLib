@@ -73,13 +73,13 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
             RootCommandNode<CommandSourceStack> wrappedRoot = vanillaPaperDispatcher.getRoot();
             ReflectClass<?> apiMirrorRootNodeClass = Reflect.ofClassOfInstance(wrappedRoot);
             try {
-                RootCommandNode<?> actualRoot = ((CommandDispatcher<?>) apiMirrorRootNodeClass.method("getDispatcher").invoke(wrappedRoot)).getRoot();
+                RootCommandNode<?> unwrappedRoot = ((CommandDispatcher<?>) apiMirrorRootNodeClass.method("getDispatcher").invoke(wrappedRoot)).getRoot();
 
-                Reflect.ofClass(CommandNode.class).field("unwrappedCached").setValue(wrappedRoot, actualRoot);
-                Reflect.ofClass(CommandNode.class).field("wrappedCached").setValue(actualRoot, wrappedRoot);
+                Reflect.ofClass(CommandNode.class).field("unwrappedCached").setValue(wrappedRoot, unwrappedRoot);
+                Reflect.ofClass(CommandNode.class).field("wrappedCached").setValue(unwrappedRoot, wrappedRoot);
 
             } catch (InvocationTargetException|IllegalAccessException|NoSuchMethodException|NoSuchFieldException e) {
-                Log.severe("Unable to trick the Paper/Brigadier unwrapper to properly handle redirecting to root command node.", e);
+                Log.severe("Unable to trick the Paper/Brigadier unwrapper to properly handle commands redirecting to root command node.", e);
             }
         }
     }
@@ -183,6 +183,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
             }
 
             registeredAliases = new HashSet<>(event.registrar().register(commandNode, description, List.of(aliases)));
+            doPostRegistrationFixes();
 
             if (registrationPolicy == RegistrationPolicy.ALL) {
                 // enforce registration of aliases
@@ -230,6 +231,43 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
 
         });
 
+    }
+
+
+
+
+    private void doPostRegistrationFixes() {
+        postRegistrationFixNode(new HashSet<>(), commandNode);
+    }
+
+    private void postRegistrationFixNode(Set<CommandNode<CommandSourceStack>> fixedNodes, CommandNode<CommandSourceStack> originalNode) {
+        if (originalNode instanceof RootCommandNode)
+            return;
+        if (fixedNodes.contains(originalNode))
+            return;
+        fixedNodes.add(originalNode);
+        if (originalNode.getRedirect() != null) {
+            try {
+                ReflectClass<CommandNode> cmdNodeClass = Reflect.ofClass(CommandNode.class);
+                CommandNode<CommandSourceStack> unwrappedNode = (CommandNode<CommandSourceStack>) cmdNodeClass.field("unwrappedCached").getValue(originalNode);
+                if (unwrappedNode != null) {
+                    cmdNodeClass.field("modifier").setValue(unwrappedNode, cmdNodeClass.field("modifier").getValue(originalNode));
+                    cmdNodeClass.field("forks").setValue(unwrappedNode, cmdNodeClass.field("forks").getValue(originalNode));
+                }
+            } catch (IllegalAccessException | NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            }
+
+            postRegistrationFixNode(fixedNodes, originalNode.getRedirect());
+        }
+        else {
+            try {
+                for (CommandNode<CommandSourceStack> child : originalNode.getChildren())
+                    postRegistrationFixNode(fixedNodes, child);
+            } catch (UnsupportedOperationException ignored) {
+                // in case getChildren is not possible (vanilla commands are wrapped by Paper API)
+            }
+        }
     }
 
 
