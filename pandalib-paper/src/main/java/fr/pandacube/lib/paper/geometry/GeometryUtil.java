@@ -2,24 +2,29 @@ package fr.pandacube.lib.paper.geometry;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.BoundingBox;
+import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
+/**
+ * Utility class related to geometry and Minecraft.
+ */
 public class GeometryUtil {
-	
+
 	/**
 	 * Value equal to <code>{@link Math#PI}</code>.
 	 */
-	public static final double PI   = Math.PI;
-	
+	static final double PI   = Math.PI;
+
 	/**
 	 * Value equal to <code>{@link Math#PI} / 2</code>.
 	 */
-	public static final double PId2 = PI/2;
-	
+	static final double PId2 = PI/2;
+
 	/**
 	 * Value equal to <code>{@link Math#PI} * 2</code>.
 	 */
-	public static final double PIx2 = PI*2;
+	static final double PIx2 = PI*2;
 	
 	
 	
@@ -55,11 +60,22 @@ public class GeometryUtil {
 	 * Value provided by net.minecraft.world.entity.player.Player#getStandingEyeHeight
 	 */
 	public static final double PLAYER_EYE_HEIGHT_SNEAK = 1.27;
+	/**
+	 * The size of a skin pixel.
+	 */
 	public static final double PLAYER_SKIN_PIXEL_SIZE = PLAYER_SKIN_HEIGHT / 32;
+	/**
+	 * The height of the center of rotation of the head, that is the distance between neck and the player's foot.
+	 */
 	public static final double PLAYER_HEAD_ROTATION_HEIGHT = PLAYER_SKIN_PIXEL_SIZE * 24;
+	/**
+	 * The height of the center of rotation of the head, that is the distance between neck and the player's foot, but when the player is sneaking.
+	 */
 	public static final double PLAYER_HEAD_ROTATION_HEIGHT_SNEAK = PLAYER_HEAD_ROTATION_HEIGHT - (PLAYER_SKIN_HEIGHT - PLAYER_SKIN_HEIGHT_SNEAK);
+	/**
+	 * The size of the first layer of the players head.
+	 */
 	public static final double PLAYER_HEAD_SIZE = PLAYER_SKIN_PIXEL_SIZE * 8;
-	
 	
 	
 	
@@ -76,7 +92,7 @@ public class GeometryUtil {
 	/**
 	 * Get the {@link Location}s of the 8 vertex of the player head<br/>
 	 * This method only work if the player is standing up
-	 * (not dead, not gliding, not sleeping).
+	 * (not dead, not gliding, not sleeping, not swimming).
 	 * @param playerLocation the location of the player, generally provided by {@link Player#getLocation()}
 	 * @param isSneaking if the player is sneaking. Generally {@link Player#isSneaking()}
 	 * @return an array of 8 {@link Location}s with x, y, and z values filled (yaw and pitch are ignored).
@@ -129,27 +145,22 @@ public class GeometryUtil {
 	/**
 	 * Check if the path from <i>start</i> location to <i>end</i> pass through
 	 * the axis aligned bounding box defined by <i>min</i> and <i>max</i>.
+	 * @param start the start of the path.
+	 * @param end the end of the path.
+	 * @param min the min of the bounding box.
+	 * @param max the max of the bounding box.
+	 * @return true if the path intersects the bounding box.
+	 * @deprecated use {@link BoundingBox#rayTrace(Vector, Vector, double)} instead.
 	 */
+	@Deprecated
     public static boolean hasIntersection(Vector start, Vector end, Vector min, Vector max) {
-        final double epsilon = 0.0001f;
- 
-        Vector d = end.clone().subtract(start).multiply(0.5);
-        Vector e = max.clone().subtract(min).multiply(0.5);
-        Vector c = start.clone().add(d).subtract(min.clone().add(max).multiply(0.5));
-        Vector ad = d.clone();
-        ad.setX(Math.abs(ad.getX()));
-        ad.setY(Math.abs(ad.getY()));
-        ad.setZ(Math.abs(ad.getZ()));
-
-        return !(
-				Math.abs(c.getX()) > e.getX() + ad.getX()
-				|| Math.abs(c.getY()) > e.getY() + ad.getY()
-				|| Math.abs(c.getZ()) > e.getX() + ad.getZ()
-				|| Math.abs(d.getY() * c.getZ() - d.getZ() * c.getY()) > e.getY() * ad.getZ() + e.getZ() * ad.getY() + epsilon
-				|| Math.abs(d.getZ() * c.getX() - d.getX() * c.getZ()) > e.getZ() * ad.getX() + e.getX() * ad.getZ() + epsilon
-				|| Math.abs(d.getX() * c.getY() - d.getY() * c.getX()) > e.getX() * ad.getY() + e.getY() * ad.getX() + epsilon
-		);
+        RayTraceResult res = BoundingBox.of(min, max).rayTrace(start, end.clone().subtract(start), end.distance(start));
+		return res != null;
     }
+
+
+
+	private GeometryUtil() {}
 
 
 }

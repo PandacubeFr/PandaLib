@@ -63,6 +63,7 @@ public class DirectionalVector {
      * contained in the provided {@link Location}.
      * {@link Location#getYaw()} and {@link Location#getPitch()} values are automatically
      * converted to conform {@link #yaw} and {@link #pitch} specification.
+     * @param l the location.
      */
     public DirectionalVector(Location l) {
         this(
@@ -79,6 +80,7 @@ public class DirectionalVector {
 
 
     /**
+     * Creates a new {@link DirectionalVector} from a simple {@link Vector}.
      * @param v the vector representing the direction. If v.getX() and v.getZ() are 0,
      *          the yaw will be 0. This may have inconsistency if the vector is calculated
      *          from a {@link Location}'s yaw and pitch. In this case, prefer using
@@ -126,7 +128,10 @@ public class DirectionalVector {
 
     }
 
-
+    /**
+     * Gets a Vector using the internal X, Y and Z values, that is a simple directional 3D vector.
+     * @return this vector as a simple 3D {@link Vector}.
+     */
     public Vector toVector() {
         return new Vector(x, y, z);
     }
@@ -135,7 +140,8 @@ public class DirectionalVector {
     /**
      * Set the yaw and the pitch of the provided {@link Location}
      * with the values inside the current {@link DirectionalVector}
-     * after conversion of these values
+     * after conversion of these values.
+     * @param l the location.
      */
     public void putIntoLocation(Location l) {
         /*              std   : -PI/2         : <0 ? +2PI : MC
@@ -148,7 +154,10 @@ public class DirectionalVector {
         l.setPitch((float) Math.toDegrees(-pitch));
     }
 
-
+    /**
+     * Gets the vector pointing to the opposite direction.
+     * @return the opposite vector.
+     */
     public DirectionalVector getOpposite() {
         return new DirectionalVector(
                 -x,
@@ -163,6 +172,7 @@ public class DirectionalVector {
      * If the current direction is the player face direction,
      * this method return the direction of the back of the head.
      * This is an alias of {@link #getOpposite()}
+     * @return the opposite of this vector.
      */
     public DirectionalVector getBackDirection() {
         return getOpposite();
@@ -171,6 +181,7 @@ public class DirectionalVector {
     /**
      * If the current direction is the player face direction,
      * this method return the direction of the bottom of the head.
+     * @return the vector pointing on the bottom, as if this vector was the front orientation of a player head.
      */
     public DirectionalVector getBottomDirection() {
         return new DirectionalVector(
@@ -182,6 +193,7 @@ public class DirectionalVector {
     /**
      * If the current direction is the player face direction,
      * this method return the direction of the top of the head.
+     * @return the vector pointing on the top, as if this vector was the front orientation of a player head.
      */
     public DirectionalVector getTopDirection() {
         return new DirectionalVector(
@@ -194,6 +206,7 @@ public class DirectionalVector {
     /**
      * If the current direction is the player face direction,
      * this method return the direction of the left of the head.
+     * @return the vector pointing on the left, as if this vector was the front orientation of a player head.
      */
     public DirectionalVector getLeftDirection() {
         return new DirectionalVector(
@@ -206,6 +219,7 @@ public class DirectionalVector {
     /**
      * If the current direction is the player face direction,
      * this method return the direction of the right of the head.
+     * @return the vector pointing on the right, as if this vector was the front orientation of a player head.
      */
     public DirectionalVector getRightDirection() {
         return new DirectionalVector(

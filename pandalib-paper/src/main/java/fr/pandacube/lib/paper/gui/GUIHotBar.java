@@ -69,7 +69,7 @@ public class GUIHotBar implements Listener {
 	
 	/**
 	 * Add the hot bar elements to this player, or update them if applicable.
-	 * 
+	 * <br>
 	 * The player is automatically removed when they quit. You can remove it before by calling {@link #removePlayer(Player, boolean)}.
 	 */
 	public void addPlayer(Player p) {
@@ -144,7 +144,7 @@ public class GUIHotBar implements Listener {
 	
 
 	@EventHandler
-	public void onPlayerDropItem(PlayerDropItemEvent event) {
+	void onPlayerDropItem(PlayerDropItemEvent event) {
 		if (!currentPlayers.contains(event.getPlayer()))
 			return;
 		
@@ -159,7 +159,7 @@ public class GUIHotBar implements Listener {
 	
 	
 	@EventHandler
-	public void onPlayerInteract(PlayerInteractEvent event) {
+	void onPlayerInteract(PlayerInteractEvent event) {
 		if (!currentPlayers.contains(event.getPlayer()))
 			return;
 		
@@ -188,7 +188,7 @@ public class GUIHotBar implements Listener {
 	
 	
 	@EventHandler
-	public void onInventoryClick(InventoryClickEvent event) {
+	void onInventoryClick(InventoryClickEvent event) {
 		if (event.getClickedInventory() == null || !(event.getClickedInventory() instanceof PlayerInventory inv))
 			return;
 
@@ -213,20 +213,20 @@ public class GUIHotBar implements Listener {
 
 	
 	@EventHandler
-	public void onPlayerQuit(PlayerQuitEvent event) {
+	void onPlayerQuit(PlayerQuitEvent event) {
 		removePlayer(event.getPlayer());
 	}
 	
 	
 	@EventHandler
-	public void onPlayerDeath(PlayerDeathEvent event) {
+	void onPlayerDeath(PlayerDeathEvent event) {
 		if (!currentPlayers.contains(event.getEntity()))
 			return;
 		event.getDrops().removeAll(itemsAndSetters.keySet());
 	}
 	
 	@EventHandler
-	public void onPlayerRespawn(PlayerRespawnEvent event) {
+	void onPlayerRespawn(PlayerRespawnEvent event) {
 		if (!currentPlayers.contains(event.getPlayer()))
 			return;
 

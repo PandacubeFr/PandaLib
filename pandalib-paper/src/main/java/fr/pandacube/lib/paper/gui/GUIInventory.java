@@ -49,7 +49,11 @@ public class GUIInventory implements Listener {
 		Bukkit.getPluginManager().registerEvents(this, PandaLibPaper.getPlugin());
 
 	}
-	
+
+	/**
+	 * Sets the action when the player closes the inventory window.
+	 * @param closeEventAction the action to run.
+	 */
 	protected void setCloseEvent(Consumer<InventoryCloseEvent> closeEventAction) {
 		onCloseEvent = closeEventAction;
 	}
@@ -188,13 +192,13 @@ public class GUIInventory implements Listener {
 			onCloseEvent.accept(event);
 		isOpened = false;
 	}
-	
-	
 
-	
 
-	
-	
+	/**
+	 * Tells the number of inventory line needed to show the provided number of slot.
+	 * @param nb the number of slot.
+	 * @return the number of line.
+	 */
 	public static int nbLineForNbElements(int nb) {
 		return nb / 9 + ((nb % 9 == 0) ? 0 : 1);
 	}

@@ -7,6 +7,9 @@ import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 
+/**
+ * Utility class to ease conversion between our Adventure backed Chat API and BungeeCord chat API.
+ */
 public class ChatBungee {
 
 

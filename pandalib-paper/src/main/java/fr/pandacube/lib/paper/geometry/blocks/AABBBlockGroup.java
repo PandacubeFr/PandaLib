@@ -12,19 +12,33 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * A group of {@link AABBBlock}.
+ */
 public class AABBBlockGroup implements BlockSet {
-	
+
+	/**
+	 * The list of {@link AABBBlock} contained in this group. This list is unmodifiable.
+	 */
 	public final List<AABBBlock> subAABB;
 
 	private final AABBBlock englobingAABB;
 
+	/**
+	 * Creates a new {@link AABBBlockGroup}.
+	 * @param in the list of {@link AABBBlock} that will be contained in this group.
+	 */
 	public AABBBlockGroup(Collection<AABBBlock> in) {
 		if (in.isEmpty())
 			throw new IllegalArgumentException("Provided collection must not be empty.");
 		subAABB = List.copyOf(in);
 		englobingAABB = initEnglobingAABB();
 	}
-	
+
+	/**
+	 * Creates a new {@link AABBBlockGroup}.
+	 * @param in an array of {@link AABBBlock} that will be contained in this group.
+	 */
 	public AABBBlockGroup(AABBBlock... in) {
 		this(Arrays.asList(in));
 	}

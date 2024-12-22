@@ -23,12 +23,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 
+/**
+ * The backup manager for Paper servers.
+ */
 public class PaperBackupManager extends BackupManager implements Listener {
 
 	private final Map<String, PaperWorldProcess> compressWorlds = new HashMap<>();
 
 	PaperBackupConfig config;
-	
+
+	/**
+	 * Instantiate a new backup manager.
+	 * @param config the configuration of the backups.
+	 */
 	public PaperBackupManager(PaperBackupConfig config) {
 		super(config.backupDirectory);
 		setConfig(config);
@@ -49,13 +56,17 @@ public class PaperBackupManager extends BackupManager implements Listener {
 		super.addProcess(process);
 	}
 
+	/**
+	 * Updates the backups config
+	 * @param config the new config.
+	 */
 	public void setConfig(PaperBackupConfig config) {
 		this.config = config;
 		backupQueue.forEach(this::updateProcessConfig);
 	}
 
 
-	public void updateProcessConfig(BackupProcess process) {
+	private void updateProcessConfig(BackupProcess process) {
 		if (process instanceof PaperWorkdirProcess) {
 			process.setEnabled(config.workdirBackupEnabled);
 			process.setBackupCleaner(config.workdirBackupCleaner);

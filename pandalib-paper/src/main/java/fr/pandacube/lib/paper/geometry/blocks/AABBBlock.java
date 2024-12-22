@@ -2,11 +2,10 @@ package fr.pandacube.lib.paper.geometry.blocks;
 
 import fr.pandacube.lib.util.RandomUtil;
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.util.BlockVector;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
@@ -30,10 +29,19 @@ public class AABBBlock implements BlockSet, Cloneable {
 		volume = original.volume;
 	}
 
+	/**
+	 * Construct a {@link AABBBlock} based on the two provided Bukkit's {@link Vector}.
+	 * @param p1 the first vector.
+	 * @param p2 the second vector.
+	 */
 	public AABBBlock(Vector p1, Vector p2) {
 		this(p1.getBlockX(), p1.getBlockY(), p1.getBlockZ(), p2.getBlockX(), p2.getBlockY(), p2.getBlockZ());
 	}
 
+	/**
+	 * Construct a {@link AABBBlock} based on the provided Bukkit's {@link BoundingBox}.
+	 * @param bb the bounding box.
+	 */
 	public AABBBlock(BoundingBox bb) {
 		pos1 = bb.getMin();
 		pos2 = bb.getMax();
@@ -41,15 +49,35 @@ public class AABBBlock implements BlockSet, Cloneable {
 		volume = (int) bb.getVolume();
 		bukkitBoundingBox = bb;
 	}
-	
+
+	/**
+	 * Construct a {@link AABBBlock} based on the two provided Bukkit's {@link Location}.
+	 * The worlds defined in the provided locations are ignored.
+	 * @param l1 the first location.
+	 * @param l2 the second location.
+	 */
 	public AABBBlock(Location l1, Location l2) {
 		this(l1.getBlockX(), l1.getBlockY(), l1.getBlockZ(), l2.getBlockX(), l2.getBlockY(), l2.getBlockZ());
 	}
-	
+
+	/**
+	 * Construct a {@link AABBBlock} based on the two provided Bukkit's {@link BlockVector}.
+	 * @param l1 the first block vector.
+	 * @param l2 the second block vector.
+	 */
 	public AABBBlock(BlockVector l1, BlockVector l2) {
 		this(l1.getBlockX(), l1.getBlockY(), l1.getBlockZ(), l2.getBlockX(), l2.getBlockY(), l2.getBlockZ());
 	}
-	
+
+	/**
+	 * Construct a {@link AABBBlock} based on the individual coordinates of the 2 vectors.
+	 * @param p1x the x value of the first vector.
+	 * @param p1y the y value of the first vector.
+	 * @param p1z the z value of the first vector.
+	 * @param p2x the x value of the second vector.
+	 * @param p2y the y value of the second vector.
+	 * @param p2z the z value of the second vector.
+	 */
 	public AABBBlock(int p1x, int p1y, int p1z, int p2x, int p2y, int p2z) {
 		/*
 		 * Prends les points extérieurs permettant de former un bounding box englobant
@@ -74,22 +102,45 @@ public class AABBBlock implements BlockSet, Cloneable {
 		return this;
 	}
 
+	/**
+	 * Gets the value of the "minimum" {@link Vector}, that is the vector with the lowest coordinates that is inside this bounding box.
+	 * @return the minimum vector.
+	 */
 	public Vector getMin() {
 		return pos1.clone();
 	}
 
+	/**
+	 * Gets the value of the "maximum" {@link Vector}, that is the vector with the highest coordinates that is inside this bounding box.
+	 * @return the maximum vector.
+	 */
 	public Vector getMax() {
 		return pos2.clone();
 	}
 
+	/**
+	 * Gets the {@link BlockVector} with the lowest coordinates in this bounding box.
+	 * @return the minimum block vector.
+	 */
 	public BlockVector getMinBlock() {
 		return pos1.toBlockVector();
 	}
 
+	/**
+	 * Gets the {@link BlockVector} with the highest coordinates in this bounding box.
+	 * @return the maximum block vector.
+	 */
 	public BlockVector getMaxBlock() {
 		return pos2.clone().add(new Vector(-1, -1, -1)).toBlockVector();
 	}
 
+	/**
+	 * Gets a new {@link AABBBlock} with its coordinates shifted by the provided amount.
+	 * @param x the x shift.
+	 * @param y the y shift.
+	 * @param z the z shift.
+	 * @return a shifted bounding box.
+	 */
 	public AABBBlock shift(int x, int y, int z) {
 		return new AABBBlock(this, x, y, z);
 	}
@@ -101,7 +152,6 @@ public class AABBBlock implements BlockSet, Cloneable {
 	}
 
 
-	
 	public boolean overlaps(BoundingBox bb) {
 		return asBukkitBoundingBox().overlaps(bb);
 	}
@@ -109,15 +159,23 @@ public class AABBBlock implements BlockSet, Cloneable {
 	public boolean isInside(Vector v) {
 		return asBukkitBoundingBox().contains(v);
 	}
-	
+
+	/**
+	 * Gets the coordinate of the center of this bounding box.
+	 * @return the center of this bounding box.
+	 */
 	public Vector getCenter() {
 		return center.clone();
 	}
-	
+
 	public long getVolume() {
 		return volume;
 	}
-	
+
+	/**
+	 * Gets the Bukkit equivalent of this bounding box.
+	 * @return a {@link BoundingBox} corresponding to this {@link AABBBlock}.
+	 */
 	public BoundingBox asBukkitBoundingBox() {
 		if (bukkitBoundingBox == null) {
 			bukkitBoundingBox = new BoundingBox(pos1.getX(), pos1.getY(), pos1.getZ(),
@@ -134,7 +192,7 @@ public class AABBBlock implements BlockSet, Cloneable {
 	}
 	
 	@Override
-	public Iterator<BlockVector> iterator() {
+	public @NotNull Iterator<BlockVector> iterator() {
 		return new Iterator<>() {
 			private int x = pos1.getBlockX(),
 					y = pos1.getBlockY(),
@@ -159,22 +217,6 @@ public class AABBBlock implements BlockSet, Cloneable {
 				}
 
 				return bv;
-			}
-		};
-	}
-	
-	
-	public Iterable<Block> asBlockIterable(World w) {
-		return () -> new Iterator<>() {
-			final Iterator<BlockVector> nested = AABBBlock.this.iterator();
-			@Override
-			public boolean hasNext() {
-				return nested.hasNext();
-			}
-			@Override
-			public Block next() {
-				BlockVector bv = nested.next();
-				return w.getBlockAt(bv.getBlockX(), bv.getBlockY(), bv.getBlockZ());
 			}
 		};
 	}
