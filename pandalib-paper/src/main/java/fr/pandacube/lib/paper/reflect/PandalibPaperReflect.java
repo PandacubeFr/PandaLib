@@ -64,6 +64,7 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ItemStack;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Level;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.MapItemSavedData;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.PlayerDataStorage;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.RegionFileStorage;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.SavedData;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Vec3;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.VoxelShape;
@@ -72,13 +73,13 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.block.Block;
 import fr.pandacube.lib.paper.reflect.wrapper.netty.ByteBuf;
 import fr.pandacube.lib.paper.reflect.wrapper.netty.Unpooled;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.PaperAdventure;
-import fr.pandacube.lib.paper.reflect.wrapper.paper.QueuedChangesMapLong2Object;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.BukkitCommandNode;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.PaperBrigadier;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.PluginCommandNode;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.ShadowBrigNode;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.configuration.FallbackValue_Int;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.configuration.WorldConfiguration;
+import fr.pandacube.lib.paper.reflect.wrapper.spottedleaf.moonrise.ChunkSystemChunkStorage;
 import fr.pandacube.lib.reflect.ReflectionWrapperBypass;
 import fr.pandacube.lib.util.ThrowableAccumulator;
 
@@ -193,6 +194,7 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(Level.class, Level.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(MapItemSavedData.class, MapItemSavedData.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(PlayerDataStorage.class, PlayerDataStorage.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(RegionFileStorage.class, RegionFileStorage.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(SavedData.class, SavedData.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(Vec3.class, Vec3.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(VoxelShape.class, VoxelShape.REFLECT.get()));
@@ -216,7 +218,9 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(WorldConfiguration.Chunks.class, WorldConfiguration.Chunks.REFLECT.get()));
         // paper
         thAcc.catchThrowable(() -> initWrapper(PaperAdventure.class, PaperAdventure.REFLECT.get()));
-        thAcc.catchThrowable(() -> initWrapper(QueuedChangesMapLong2Object.class, QueuedChangesMapLong2Object.REFLECT.get()));
+
+        // spottedleaf
+        thAcc.catchThrowable(() -> initWrapper(ChunkSystemChunkStorage.class, ChunkSystemChunkStorage.REFLECT.get()));
 
 
         thAcc.throwCaught();
