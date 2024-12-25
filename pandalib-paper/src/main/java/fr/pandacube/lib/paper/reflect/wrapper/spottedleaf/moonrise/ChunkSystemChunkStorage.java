@@ -1,6 +1,6 @@
 package fr.pandacube.lib.paper.reflect.wrapper.spottedleaf.moonrise;
 
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.DataVersion;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.RegionFileStorage;
 import fr.pandacube.lib.reflect.Reflect;
 import fr.pandacube.lib.reflect.ReflectClass;
 import fr.pandacube.lib.reflect.ReflectMethod;
@@ -17,8 +17,8 @@ public interface ChunkSystemChunkStorage extends ReflectWrapperI {
     ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("ca.spottedleaf.moonrise.patches.chunk_system.storage.ChunkSystemChunkStorage"));
     ReflectMethod<?> moonrise$getRegionStorage = wrapEx(() -> REFLECT.method("moonrise$getRegionStorage"));
 
-    default DataVersion moonrise$getRegionStorage() {
-        return wrap(wrapReflectEx(() -> moonrise$getRegionStorage.invoke(__getRuntimeInstance())), DataVersion.class);
+    default RegionFileStorage moonrise$getRegionStorage() {
+        return wrap(wrapReflectEx(() -> moonrise$getRegionStorage.invoke(__getRuntimeInstance())), RegionFileStorage.class);
     }
 
 
