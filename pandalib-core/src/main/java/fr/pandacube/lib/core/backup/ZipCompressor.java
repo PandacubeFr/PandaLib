@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
@@ -117,7 +118,11 @@ public class ZipCompressor {
 			}
 			
 			for (Entry entry : entriesToCompress) {
-				entry.zip();
+				try {
+					entry.zip();
+				} catch (NoSuchFileException ignored) {
+					// file has been deleted since
+				}
 			}
 			
 			synchronized (stateLock) {
