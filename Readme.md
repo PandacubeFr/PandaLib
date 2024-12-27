@@ -18,8 +18,9 @@ that are detailed in their respective Readme file (if any).
 - `pandalib-players` A library to handle classes representing online or offline players;
 - `pandalib-players-permissible` An extension of `pandalib-players` with support for the permission system `pandalib-permissions`;
 - `pandalib-netapi` A poorly designed, but working TCP network library;
+- `pandalib-config` Utility and helper classes to handle configuration related files and folders;
 - `pandalib-commands` An abstract command manager working on top of [Brigadier](https://github.com/Mojang/brigadier);
-- `pandalib-cli` Utility and helper classes for a standalone CLI Java application.
+- `pandalib-cli` Utility and helper classes for a standalone CLI Java application;
 - `pandalib-core` A catch-all module for some helper classes that didn't have their own module yet;
 
 ### Use in your projects

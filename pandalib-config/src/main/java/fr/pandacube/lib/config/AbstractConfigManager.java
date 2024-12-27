@@ -1,4 +1,4 @@
-package fr.pandacube.lib.core.config;
+package fr.pandacube.lib.config;
 
 import java.io.File;
 import java.io.IOException;

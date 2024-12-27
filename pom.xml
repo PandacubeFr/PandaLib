@@ -69,6 +69,7 @@
         <module>pandalib-chat</module>
         <module>pandalib-cli</module>
         <module>pandalib-commands</module>
+        <module>pandalib-config</module>
         <module>pandalib-core</module>
         <module>pandalib-db</module>
         <module>pandalib-netapi</module>

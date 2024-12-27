@@ -1,7 +1,4 @@
-package fr.pandacube.lib.core.config;
-
-import fr.pandacube.lib.chat.ChatColorUtil;
-import fr.pandacube.lib.util.log.Log;
+package fr.pandacube.lib.config;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -56,7 +53,7 @@ public abstract class AbstractConfig {
 		while ((line = reader.readLine()) != null) {
 			String trimmedLine = line.trim();
 			
-			if (ignoreEmpty && trimmedLine.equals(""))
+			if (ignoreEmpty && trimmedLine.isEmpty())
 				continue;
 			
 			if (ignoreHashtagComment && trimmedLine.startsWith("#"))
@@ -111,25 +108,6 @@ public abstract class AbstractConfig {
 		if (perms == null || perms.equals("*"))
 			return null;
 		return List.of(perms.split(";"));
-	}
-
-
-	/**
-	 * Utility method to that translate the {@code '&'} formatted string to the legacy format.
-	 * @param string the string to convert.
-	 * @return a legacy formatted string (using {@code '§'}).
-	 */
-	public static String getTranslatedColorCode(String string) {
-		return ChatColorUtil.translateAlternateColorCodes('&', string);
-	}
-
-
-	/**
-	 * Logs the message as a warning into console, prefixed with the context of this config.
-	 * @param message the message to log.
-	 */
-	protected void warning(String message) {
-		Log.warning("Error in configuration '"+configFile.getName()+"': " + message);
 	}
 
 
