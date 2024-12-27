@@ -16,15 +16,27 @@ public class ReflectionWrapperBypass {
 
     private static final AtomicBoolean enabled = new AtomicBoolean(false);
 
+    /**
+     * Enables bypassing the eventual translation of the class names when using {@link Class#forName(String)}.
+     */
     public static void enable() {
         enabled.set(true);
     }
 
+    /**
+     * Disables bypassing the eventual translation of the class names when using {@link Class#forName(String)}.
+     */
     public static void disable() {
         enabled.set(false);
     }
 
-
+    /**
+     * Calls {@link Class#forName(String)}, but detects if the returned class has been translated and if so, uses
+     * reflection to call {@link Class#forName(String)} (some sort of reflection-ception).
+     * @param className the binary name of the class or the string representing an array type.
+     * @return the {@link Class} object for the class with the specified name.
+     * @throws ClassNotFoundException if the class cannot be located.
+     */
     public static Class<?> getClass(String className) throws ClassNotFoundException {
         if (!enabled.get()) {
             return Class.forName(className);
@@ -49,6 +61,10 @@ public class ReflectionWrapperBypass {
             throw ThrowableUtil.uncheck(e.getCause(), false);
         }
     }
+
+
+
+    private ReflectionWrapperBypass() {}
 
 
 }

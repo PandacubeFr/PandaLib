@@ -71,4 +71,7 @@ public class ChatBungee {
         BaseComponent[] arr = toBungeeArray(component);
         return arr.length == 1 ? arr[0] : new net.md_5.bungee.api.chat.TextComponent(arr);
     }
+
+
+    private ChatBungee() {}
 }
