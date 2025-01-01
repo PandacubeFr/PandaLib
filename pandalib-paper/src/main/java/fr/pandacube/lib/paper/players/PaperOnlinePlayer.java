@@ -170,7 +170,7 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
         @Override
         public boolean isChatFullyVisible() {
             ChatVisibility v = getChatVisibility();
-            return v == ChatVisibility.FULL || v == ChatVisibility.UNKNOWN;
+            return v == ChatVisibility.FULL;
         }
 
         @Override
@@ -283,7 +283,7 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
      * @param relZ the relative z coordinate.
      */
     default void teleportRelatively(float relX, float relY, float relZ) {
-        getBukkitPlayer().teleport(getBukkitPlayer().getLocation().add(relX, relY, relZ), Relative.X, Relative.Y, Relative.Z, Relative.YAW, Relative.PITCH);
+        getBukkitPlayer().teleport(getBukkitPlayer().getLocation().add(relX, relY, relZ), Relative.VELOCITY_X, Relative.VELOCITY_Y, Relative.VELOCITY_Z, Relative.VELOCITY_ROTATION);
     }
 
     /**
@@ -291,7 +291,7 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
      * @param destination the destination.
      */
     default void teleportRelatively(Location destination) {
-        getBukkitPlayer().teleport(destination, Relative.X, Relative.Y, Relative.Z, Relative.YAW, Relative.PITCH);
+        getBukkitPlayer().teleport(destination, Relative.VELOCITY_X, Relative.VELOCITY_Y, Relative.VELOCITY_Z, Relative.VELOCITY_ROTATION);
     }
 
 
