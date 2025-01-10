@@ -14,4 +14,7 @@ public class PaperJson {
         Json.registerTypeAdapterFactory(ItemStackAdapter.FACTORY);
         Json.registerTypeAdapterFactory(ConfigurationSerializableAdapter.FACTORY);
     }
+
+
+    private PaperJson() {}
 }

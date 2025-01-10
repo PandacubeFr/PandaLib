@@ -3,8 +3,15 @@ package fr.pandacube.lib.paper.backup;
 import java.io.File;
 import java.util.function.BiPredicate;
 
+/**
+ * A backup process with specific logic around Paper server working directory.
+ */
 public class PaperWorkdirProcess extends PaperBackupProcess {
-	
+
+	/**
+	 * Instantiates a new backup process for the paper server working directory.
+	 * @param bm the associated backup manager.
+	 */
 	protected PaperWorkdirProcess(PaperBackupManager bm) {
 		super(bm, "workdir");
 	}

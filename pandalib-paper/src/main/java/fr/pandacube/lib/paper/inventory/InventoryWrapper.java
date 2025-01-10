@@ -1,4 +1,4 @@
-package fr.pandacube.lib.paper.util;
+package fr.pandacube.lib.paper.inventory;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,12 +13,22 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Objects;
 
+/**
+ * Wrapper for an {@link Inventory}.
+ * Can be overridden to add specific behaviour to some methods.
+ */
 public class InventoryWrapper implements Inventory {
     private final Inventory base;
 
+    /**
+     * Creates a wrapper for the provided inventory.
+     * @param base the wrapped inventory. Cannot be null.
+     * @throws NullPointerException if the base inventory is null.
+     */
     public InventoryWrapper(Inventory base) {
-        this.base = base;
+        this.base = Objects.requireNonNull(base, "base inventory cannot be null.");
     }
 
 

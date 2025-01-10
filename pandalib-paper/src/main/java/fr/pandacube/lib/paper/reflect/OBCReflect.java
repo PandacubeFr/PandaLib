@@ -23,4 +23,6 @@ public class OBCReflect {
 		return Reflect.ofClass(CRAFTBUKKIT_PACKAGE + "." + obcClass);
 	}
 
+	private OBCReflect() { }
+
 }

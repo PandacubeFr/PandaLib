@@ -1,39 +1,33 @@
-package fr.pandacube.lib.paper.util;
+package fr.pandacube.lib.paper.players;
 
-import com.google.common.base.Preconditions;
+import fr.pandacube.lib.paper.inventory.DummyPlayerInventory;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftItemStack;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.ListTag;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.Tag;
+import fr.pandacube.lib.paper.util.ExperienceUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.function.IntUnaryOperator;
 
 /**
- * A wrapper to easily manipulate vanilla player data.
+ * A wrapper to easily manipulate the player data file.
  *
- * @param data The data as they are stored in the player file.
+ * @param data The NBT data structure as it is stored in the player file.
  */
 public record PlayerDataWrapper(CompoundTag data) {
 
     /**
      * Creates a new wrapper for the provided player data.
-     * @param data the data to wrap.
+     * @param data the NBT data to wrap.
      */
     public PlayerDataWrapper(CompoundTag data) {
         this.data = data == null ? new CompoundTag() : data;
@@ -41,8 +35,9 @@ public record PlayerDataWrapper(CompoundTag data) {
 
     /**
      * Gets a snapshot of the inventory of this player.
-     * If modified, call the {@link #setInventory(PlayerInventory)} to update the data.
-     * @return the player inventory
+     * If the inventory is modified, the {@link #setInventory(PlayerInventory)} method should be called to update the
+     * data in this wrapper.
+     * @return the player inventory.
      */
     public PlayerInventory getInventory() {
         return new DummyPlayerInventory(
@@ -67,6 +62,11 @@ public record PlayerDataWrapper(CompoundTag data) {
         throw new IllegalArgumentException("Unrecognized NBT player inventory slot " + nbtSlot);
     }
 
+    /**
+     * Sets the player inventory to the content of the provided one.
+     * The internal data of this wrapper will be updated.
+     * @param inv the inventory to store in this player data in place of the old one.
+     */
     public void setInventory(PlayerInventory inv) {
         setBukkitInventory("Inventory", inv, this::fromBukkitToNBTInventorySlot);
         setHeldItemSlot(inv.getHeldItemSlot());
@@ -86,10 +86,21 @@ public record PlayerDataWrapper(CompoundTag data) {
     }
 
 
+    /**
+     * Gets a snapshot of the enderchest of this player.
+     * If the enderchest is modified, the {@link #setEnderChest(Inventory)} method should be called to update the
+     * data in this wrapper.
+     * @return the player enderchest.
+     */
     public Inventory getEnderChest() {
         return getBukkitInventory("EnderItems", InventoryType.ENDER_CHEST, IntUnaryOperator.identity());
     }
 
+    /**
+     * Sets the player enderchest to the content of the provided one.
+     * The internal data of this wrapper will be updated.
+     * @param inv the enderchest content to store in this player data in place of the old enderchest.
+     */
     public void setEnderChest(Inventory inv) {
         setBukkitInventory("EnderItems", inv, IntUnaryOperator.identity());
     }
@@ -171,6 +182,10 @@ public record PlayerDataWrapper(CompoundTag data) {
     }
 
 
+    /**
+     * Gets the score of the player, as stored in the data with the key {@code Score}.
+     * @return the value of Score.
+     */
     public int getScore() {
         if (!data.contains("Score"))
             return 0;
@@ -178,17 +193,29 @@ public record PlayerDataWrapper(CompoundTag data) {
 
     }
 
+    /**
+     * Sets the score of the player, as stored in the data with the key {@code Score}.
+     * @param score the value of Score to set.
+     */
     public void setScore(int score) {
         data.putInt("Score", score);
     }
 
 
+    /**
+     * Gets the total experience of the player, as stored in the data with the key {@code XpTotal}.
+     * @return the value of XpTotal.
+     */
     public int getTotalExperience() {
         if (!data.contains("XpTotal"))
             return 0;
         return data.getInt("XpTotal");
     }
 
+    /**
+     * Sets the total experience of the player, as stored in the data with the key {@code XpTotal}.
+     * @param xp the value of XpTotal to set.
+     */
     public void setTotalExperience(int xp) {
         data.putInt("XpTotal", xp);
         double levelAndExp = ExperienceUtil.getLevelFromExp(xp);
@@ -198,178 +225,11 @@ public record PlayerDataWrapper(CompoundTag data) {
         data.putFloat("XpP", (float) expProgress);
     }
 
-
-    private static class DummyPlayerInventory extends InventoryWrapper implements PlayerInventory {
-
-        private int heldItemSlot;
-
-        public DummyPlayerInventory(Inventory base, int heldItemSlot) {
-            super(base);
-            this.heldItemSlot = heldItemSlot;
-        }
-
-        @Override
-        public @Nullable ItemStack @NotNull [] getStorageContents() {
-            return Arrays.copyOfRange(getContents(), 0, 36);
-        }
-
-        @Override
-        public @Nullable ItemStack @NotNull [] getArmorContents() {
-            return Arrays.copyOfRange(getContents(), 36, 40);
-        }
-
-        @Override
-        public void setArmorContents(@Nullable ItemStack[] items) {
-            this.setSlots(items, 36, 4);
-        }
-
-        @Override
-        public @Nullable ItemStack @NotNull [] getExtraContents() {
-            return Arrays.copyOfRange(getContents(), 40, getSize());
-        }
-
-        @Override
-        public void setExtraContents(@Nullable ItemStack[] items) {
-            this.setSlots(items, 40, getSize() - 40);
-        }
-
-        private void setSlots(ItemStack[] items, int baseSlot, int length) {
-            if (items == null) {
-                items = new ItemStack[length];
-            }
-            Preconditions.checkArgument(items.length <= length, "items.length must be < %s", length);
-
-            for (int i = 0; i < length; i++) {
-                if (i >= items.length) {
-                    this.setItem(baseSlot + i, null);
-                } else {
-                    this.setItem(baseSlot + i, items[i]);
-                }
-            }
-        }
-
-        @Override
-        public ItemStack getHelmet() {
-            return getItem(39);
-        }
-
-        @Override
-        public void setHelmet(@Nullable ItemStack helmet) {
-            setItem(39, helmet);
-        }
-
-        @Override
-        public ItemStack getChestplate() {
-            return getItem(38);
-        }
-
-        @Override
-        public void setChestplate(@Nullable ItemStack chestplate) {
-            setItem(38, chestplate);
-        }
-
-        @Override
-        public ItemStack getLeggings() {
-            return getItem(37);
-        }
-
-        @Override
-        public void setLeggings(@Nullable ItemStack leggings) {
-            setItem(37, leggings);
-        }
-
-        @Override
-        public ItemStack getBoots() {
-            return getItem(36);
-        }
-
-        @Override
-        public void setBoots(@Nullable ItemStack boots) {
-            setItem(36, boots);
-        }
-
-        @Override
-        public void setItem(EquipmentSlot slot, ItemStack item) {
-            Preconditions.checkArgument(slot != null, "slot must not be null");
-
-            switch (slot) {
-                case HAND -> this.setItemInMainHand(item);
-                case OFF_HAND -> this.setItemInOffHand(item);
-                case FEET -> this.setBoots(item);
-                case LEGS -> this.setLeggings(item);
-                case CHEST -> this.setChestplate(item);
-                case HEAD -> this.setHelmet(item);
-                default -> throw new IllegalArgumentException("Not implemented. This is a bug");
-            }
-        }
-
-        @Override
-        public @NotNull ItemStack getItem(@NotNull EquipmentSlot slot) {
-            return switch (slot) {
-                case HAND -> this.getItemInMainHand();
-                case OFF_HAND -> this.getItemInOffHand();
-                case FEET -> Objects.requireNonNullElseGet(this.getBoots(), () -> new ItemStack(Material.AIR));
-                case LEGS -> Objects.requireNonNullElseGet(this.getLeggings(), () -> new ItemStack(Material.AIR));
-                case CHEST -> Objects.requireNonNullElseGet(this.getChestplate(), () -> new ItemStack(Material.AIR));
-                case HEAD -> Objects.requireNonNullElseGet(this.getHelmet(), () -> new ItemStack(Material.AIR));
-                case BODY -> new ItemStack(Material.AIR); // for horses/wolves armor
-            };
-        }
-
-        @Override
-        public @NotNull ItemStack getItemInMainHand() {
-            return Objects.requireNonNullElse(getItem(heldItemSlot), new ItemStack(Material.AIR));
-        }
-
-        @Override
-        public void setItemInMainHand(@Nullable ItemStack item) {
-            setItem(heldItemSlot, item);
-        }
-
-        @Override
-        public @NotNull ItemStack getItemInOffHand() {
-            return Objects.requireNonNullElse(getItem(40), new ItemStack(Material.AIR));
-        }
-
-        @Override
-        public void setItemInOffHand(@Nullable ItemStack item) {
-            setItem(40, item);
-        }
-
-        @Override
-        public @NotNull ItemStack getItemInHand() {
-            return getItemInMainHand();
-        }
-
-        @Override
-        public void setItemInHand(@Nullable ItemStack stack) {
-            setItemInMainHand(stack);
-        }
-
-        @Override
-        public int getHeldItemSlot() {
-            return heldItemSlot;
-        }
-
-        @Override
-        public void setHeldItemSlot(int slot) {
-            if (slot < 0 || slot > 8)
-                throw new IllegalArgumentException("Slot is not between 0 and 8 inclusive");
-            heldItemSlot = slot;
-        }
-
-        @Override
-        public @Nullable HumanEntity getHolder() {
-            return null;
-        }
-    }
-
-
-
-
-
+    /**
+     * Thrown to indicate that an error occurred while loading the data of the player from the file.
+     */
     public static class PlayerDataLoadException extends RuntimeException {
-        public PlayerDataLoadException(String playerName,  UUID playerId, Throwable cause) {
+        /* package */ PlayerDataLoadException(String playerName,  UUID playerId, Throwable cause) {
             super("Unable to load data of player " + playerName + " (" + playerId + ")", cause);
         }
     }

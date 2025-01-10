@@ -10,11 +10,19 @@ import net.kyori.adventure.bossbar.BossBar.Color;
 import net.kyori.adventure.bossbar.BossBar.Overlay;
 import org.bukkit.Bukkit;
 
+/**
+ * A backup process with specific logic around Paper server.
+ */
 public abstract class PaperBackupProcess extends BackupProcess {
 
 
 	private BossBar bossBar;
-	
+
+	/**
+	 * Instantiates a new backup process.
+	 * @param bm the associated backup manager.
+	 * @param id the process identifier.
+	 */
 	protected PaperBackupProcess(PaperBackupManager bm, String id) {
 		super(bm, id);
 	}

@@ -54,12 +54,12 @@ public class ExperienceUtil {
 
 	/**
 	 * @see <a href="http://minecraft.gamepedia.com/Experience#Leveling_up">Experience (#leveling up) - Minecraft Wiki</a>
-	 *
-	 *      "The formulas for figuring out how many experience orbs you need to
+	 * <p>
+	 * <q>The formulas for figuring out how many experience orbs you need to
 	 *      get to the next level are as follows:
 	 *      Experience Required = 2[Current Level] + 7 (at levels 0-15)
 	 *      5[Current Level] - 38 (at levels 16-30)
-	 *      9[Current Level] - 158 (at level 31+)"
+	 *      9[Current Level] - 158 (at level 31+)</q>
 	 */
 	private static int getExpToNext(int level) {
 		if (level > 30) return 9 * level - 158;
@@ -88,5 +88,8 @@ public class ExperienceUtil {
 		player.setLevel(level);
 		player.setExp((float) (levelAndExp - level));
 	}
+
+
+	private ExperienceUtil() {}
 
 }

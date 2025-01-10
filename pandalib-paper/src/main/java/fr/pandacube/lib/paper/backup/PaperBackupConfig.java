@@ -13,6 +13,11 @@ import java.util.List;
 public class PaperBackupConfig {
 
     /**
+     * Creates a new Paper backup config.
+     */
+    public PaperBackupConfig() {}
+
+    /**
      * Set to true to enable worlds backup.
      * Defaults to true.
      */

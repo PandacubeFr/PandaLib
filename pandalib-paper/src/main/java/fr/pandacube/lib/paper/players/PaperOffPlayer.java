@@ -1,11 +1,10 @@
 package fr.pandacube.lib.paper.players;
 
-import fr.pandacube.lib.paper.reflect.util.PrimaryWorlds;
+import fr.pandacube.lib.paper.world.PrimaryWorlds;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftServer;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.NbtIo;
-import fr.pandacube.lib.paper.util.PlayerDataWrapper;
-import fr.pandacube.lib.paper.util.PlayerDataWrapper.PlayerDataLoadException;
+import fr.pandacube.lib.paper.players.PlayerDataWrapper.PlayerDataLoadException;
 import fr.pandacube.lib.paper.world.WorldUtil;
 import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
@@ -116,26 +115,31 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
      * Player config
      */
 
+    @SuppressWarnings("RedundantThrows") // may be thrown by concrete implementation
     @Override
     default String getConfig(String key) throws Exception {
         return PaperPlayerConfigStorage.get(getUniqueId(), key);
     }
 
+    @SuppressWarnings("RedundantThrows") // may be thrown by concrete implementation
     @Override
     default String getConfig(String key, String deflt) throws Exception {
         return PaperPlayerConfigStorage.get(getUniqueId(), key, deflt);
     }
 
+    @SuppressWarnings("RedundantThrows") // may be thrown by concrete implementation
     @Override
     default void setConfig(String key, String value) throws Exception {
         PaperPlayerConfigStorage.set(getUniqueId(), key, value);
     }
 
+    @SuppressWarnings("RedundantThrows") // may be thrown by concrete implementation
     @Override
     default void updateConfig(String key, String deflt, UnaryOperator<String> updater) throws Exception {
         PaperPlayerConfigStorage.update(getUniqueId(), key, deflt, updater);
     }
 
+    @SuppressWarnings("RedundantThrows") // may be thrown by concrete implementation
     @Override
     default void unsetConfig(String key) throws Exception {
         PaperPlayerConfigStorage.unset(getUniqueId(), key);

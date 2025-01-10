@@ -1,9 +1,11 @@
 package fr.pandacube.lib.paper.util;
 
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.function.Predicate;
-
+import fr.pandacube.lib.chat.Chat;
+import fr.pandacube.lib.paper.PandaLibPaper;
+import fr.pandacube.lib.util.log.Log;
+import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.bossbar.BossBar.Color;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,26 +16,37 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
-import fr.pandacube.lib.chat.Chat;
-import fr.pandacube.lib.util.log.Log;
-import fr.pandacube.lib.paper.PandaLibPaper;
-import net.kyori.adventure.bossbar.BossBar;
-import net.kyori.adventure.bossbar.BossBar.Color;
-import net.kyori.adventure.text.Component;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.function.Predicate;
 
+/**
+ * A {@link BossBar} capable of automatically updating itself by registering a {@link BukkitTask} or using a {@link Timer}.
+ */
 public class AutoUpdatedBossBar implements Listener {
-	
+
+	/**
+	 * The boss bar itself.
+	 */
 	public final BossBar bar;
+	/**
+	 * the function executed to update the boss bar.
+	 */
 	public final BarUpdater updater;
-	
+
 	private Timer timer = null;
 	private BukkitTask bukkitTask = null;
 	
 	private boolean scheduled = false;
 	
-	private boolean followPlayerList = false;
+	private LoginLogoutListener followPlayerList = null;
 	private Predicate<Player> playerCondition = null;
-	
+
+	/**
+	 * Wraps the provided boss bar into a new instance of {@link AutoUpdatedBossBar}.
+	 * @param bar the boss bar itself.
+	 * @param updater the updater that will be run to update the boss bar.
+	 */
 	public AutoUpdatedBossBar(BossBar bar, BarUpdater updater) {
 		this.bar = bar;
 		this.updater = updater;
@@ -66,10 +79,9 @@ public class AutoUpdatedBossBar implements Listener {
 	}
 	
 	/**
-	 * Schedule the update of this boss bar with synchronisation with the main Thread of the
-	 * current Minecraft server (follow the tick count progress).
+	 * Schedule the update of this boss bar with synchronisation with the ticking of this Minecraft server.
 	 * The underlying method called is {@link BukkitScheduler#runTaskTimer(org.bukkit.plugin.Plugin, Runnable, long, long)}.
-	 * The updater is executed by the Server Thread.
+	 * The updater is executed by the main Server Thread.
 	 * @param tickDelay number of server tick before running the first update of this boss bar
 	 * @param tickPeriod number of server tick between each call of the updater
 	 */
@@ -90,55 +102,65 @@ public class AutoUpdatedBossBar implements Listener {
 				}, tickDelay, tickPeriod);
 		
 	}
-	
-	
-	
+
+
+	/**
+	 * Auto-update the boss bar on player join and quit.
+	 * @param condition an additional test that if it's true on player join/quit, will actually run the update. Can be null.
+	 */
 	public synchronized void followLoginLogout(Predicate<Player> condition) {
 		playerCondition = condition;
-		if (followPlayerList)
+		if (followPlayerList != null)
 			return;
-		followPlayerList = true;
-		BukkitEvent.register(this);
-		Bukkit.getServer().getOnlinePlayers().forEach(p -> onPlayerJoin(new PlayerJoinEvent(p, Component.text(""))));
+		followPlayerList = new LoginLogoutListener();
+		BukkitEvent.register(followPlayerList);
+		Bukkit.getServer().getOnlinePlayers().forEach(p -> followPlayerList.onPlayerJoin(new PlayerJoinEvent(p, Component.text(""))));
 	}
-	
+
+	/**
+	 * Cancel the auto-update on player join and quit.
+	 */
 	public synchronized void unfollowPlayerList() {
-		if (!followPlayerList)
+		if (followPlayerList == null)
 			return;
-		followPlayerList = false;
 		playerCondition = null;
-		PlayerJoinEvent.getHandlerList().unregister(this);
-		PlayerQuitEvent.getHandlerList().unregister(this);
+		BukkitEvent.unregister(followPlayerList);
+		followPlayerList = null;
 	}
 
-	@EventHandler(priority=EventPriority.MONITOR)
-	public synchronized void onPlayerJoin(PlayerJoinEvent event) {
-		if (!followPlayerList)
-			return;
-		if (playerCondition != null && !playerCondition.test(event.getPlayer()))
-			return;
-		synchronized (bar) {
-			event.getPlayer().showBossBar(bar);
+	private class LoginLogoutListener implements Listener {
+
+		@EventHandler(priority=EventPriority.MONITOR)
+		public void onPlayerJoin(PlayerJoinEvent event) {
+			if (playerCondition != null && !playerCondition.test(event.getPlayer()))
+				return;
+			synchronized (bar) {
+				event.getPlayer().showBossBar(bar);
+			}
 		}
-	}
-	
-	@EventHandler(priority=EventPriority.HIGH)
-	public synchronized void onPlayerQuit(PlayerQuitEvent event) {
-		if (!followPlayerList)
-			return;
-		synchronized (bar) {
-			event.getPlayer().hideBossBar(bar);
+
+		@EventHandler(priority=EventPriority.HIGH)
+		public void onPlayerQuit(PlayerQuitEvent event) {
+			synchronized (bar) {
+				event.getPlayer().hideBossBar(bar);
+			}
 		}
 	}
 
+
+	/**
+	 * Hides this boss bar from all players.
+	 */
 	public void removeAll() {
 		synchronized (bar) {
 			for (Player p : Bukkit.getOnlinePlayers())
 				p.hideBossBar(bar);
 		}
 	}
-	
-	
+
+	/**
+	 * Cancel any auto-updating of this boss bar.
+	 */
 	public synchronized void cancel() {
 		if (!scheduled)
 			return;
@@ -151,13 +173,19 @@ public class AutoUpdatedBossBar implements Listener {
 			bukkitTask.cancel();
 			bukkitTask = null;
 		}
-		
+		unfollowPlayerList();
 	}
-	
-	
-	
+
+
+	/**
+	 * Functional interface taking an instance of {@link AutoUpdatedBossBar} to update it. Returns nothing.
+	 */
 	@FunctionalInterface
 	public interface BarUpdater {
+		/**
+		 * Updates the boss bar.
+		 * @param bar the auto-updated boss bar instance.
+		 */
 		void update(AutoUpdatedBossBar bar);
 	}
 	
@@ -165,6 +193,7 @@ public class AutoUpdatedBossBar implements Listener {
 	
 	/**
 	 * Utility method to update the title of the boss bar without unnecessary packet.
+	 * @param title the new title.
 	 */
 	public void setTitle(Chat title) {
 		synchronized (bar) {
@@ -174,6 +203,7 @@ public class AutoUpdatedBossBar implements Listener {
 	
 	/**
 	 * Utility method to update the color of the boss bar without unnecessary packet.
+	 * @param color the new color.
 	 */
 	public void setColor(Color color) {
 		synchronized (bar) {
@@ -183,6 +213,7 @@ public class AutoUpdatedBossBar implements Listener {
 	
 	/**
 	 * Utility method to update the progress of the boss bar without unnecessary packet.
+	 * @param progress the new progress value.
 	 */
 	public void setProgress(double progress) {
 		synchronized (bar) {

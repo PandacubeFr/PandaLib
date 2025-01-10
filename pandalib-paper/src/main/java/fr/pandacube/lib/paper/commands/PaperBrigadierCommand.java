@@ -57,10 +57,21 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
 
     private static CommandDispatcher<CommandSourceStack> vanillaPaperDispatcher = null;
 
+    /**
+     * Gets the Brigadier dispatcher provided by paper API during {@link LifecycleEvents#COMMANDS}.
+     * <p>
+     * This Dispatcher is not the vanilla one. Instead, Paper implementation wraps the vanilla one to handle proper registration
+     * of commands from plugins.
+     * @return the Brigadier dispatcher.
+     */
     public static CommandDispatcher<CommandSourceStack> getVanillaPaperDispatcher() {
         return vanillaPaperDispatcher;
     }
 
+    /**
+     * Gets the root node of the dispatcher from {@link #getVanillaPaperDispatcher()}.
+     * @return the root node, or null if {@link #getVanillaPaperDispatcher()} is also null.
+     */
     public static RootCommandNode<CommandSourceStack> getRootNode() {
         return vanillaPaperDispatcher == null ? null : vanillaPaperDispatcher.getRoot();
     }
@@ -135,6 +146,9 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
      */
     protected final String[] aliases;
 
+    /**
+     * The command description.
+     */
     protected final String description;
 
     private final RegistrationPolicy registrationPolicy;
@@ -248,7 +262,9 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
         fixedNodes.add(originalNode);
         if (originalNode.getRedirect() != null) {
             try {
+                @SuppressWarnings("rawtypes")
                 ReflectClass<CommandNode> cmdNodeClass = Reflect.ofClass(CommandNode.class);
+                @SuppressWarnings("unchecked")
                 CommandNode<CommandSourceStack> unwrappedNode = (CommandNode<CommandSourceStack>) cmdNodeClass.field("unwrappedCached").getValue(originalNode);
                 if (unwrappedNode != null) {
                     cmdNodeClass.field("modifier").setValue(unwrappedNode, cmdNodeClass.field("modifier").getValue(originalNode));
@@ -333,6 +349,10 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
         }
     }
 
+    /**
+     * Gets the aliases that are actually registered in the server.
+     * @return the actually registered aliases.
+     */
     protected Set<String> getRegisteredAliases() {
         return Set.copyOf(registeredAliases);
     }
@@ -379,12 +399,15 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
 
 
 
+    @Override
     public boolean isConsole(CommandSourceStack wrapper) {
         return isConsole(getCommandSender(wrapper));
     }
+    @Override
     public boolean isPlayer(CommandSourceStack wrapper) {
         return isPlayer(getCommandSender(wrapper));
     }
+    @Override
     public Predicate<CommandSourceStack> hasPermission(String permission) {
         return wrapper -> getCommandSender(wrapper).hasPermission(permission);
     }

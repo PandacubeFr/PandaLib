@@ -226,4 +226,6 @@ public class PandalibPaperReflect {
         thAcc.throwCaught();
 
     }
+
+    private PandalibPaperReflect() {}
 }

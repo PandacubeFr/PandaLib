@@ -124,11 +124,6 @@
                 <configuration>
                     <tags>
                         <tag>
-                            <name>apiNote</name>
-                            <placement>a</placement>
-                            <head>API Note:</head>
-                        </tag>
-                        <tag>
                             <name>implSpec</name>
                             <placement>a</placement>
                             <head>Implementation Requirements:</head>

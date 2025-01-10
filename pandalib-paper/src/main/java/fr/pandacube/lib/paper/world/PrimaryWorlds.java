@@ -1,4 +1,4 @@
-package fr.pandacube.lib.paper.reflect.util;
+package fr.pandacube.lib.paper.world;
 
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftServer;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
@@ -36,5 +36,5 @@ public class PrimaryWorlds {
 	}
 	
 
-	
+	private PrimaryWorlds() {}
 }

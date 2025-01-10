@@ -1,9 +1,9 @@
 package fr.pandacube.lib.paper.backup;
 
+import fr.pandacube.lib.chat.LegacyChatFormat;
 import fr.pandacube.lib.paper.scheduler.SchedulerUtil;
 import fr.pandacube.lib.paper.world.WorldUtil;
 import fr.pandacube.lib.util.log.Log;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
@@ -11,14 +11,22 @@ import java.io.File;
 import java.text.DateFormat;
 import java.util.Date;
 
+/**
+ * A backup process with specific logic around Paper server world.
+ */
 public class PaperWorldProcess extends PaperBackupProcess {
 	private final String worldName;
 	
-	private boolean autoSave = true; 
-	
-	protected PaperWorldProcess(PaperBackupManager bm, final String n) {
-		super(bm, "worlds/" + n);
-		worldName = n;
+	private boolean autoSave = true;
+
+	/**
+	 * Instantiates a new backup process for a world.
+	 * @param bm the associated backup manager.
+	 * @param worldName the name of the world.
+	 */
+	protected PaperWorldProcess(PaperBackupManager bm, final String worldName) {
+		super(bm, "worlds/" + worldName);
+		this.worldName = worldName;
 	}
 	
 	private World getWorld() {
@@ -62,11 +70,11 @@ public class PaperWorldProcess extends PaperBackupProcess {
 
 	public void displayNextSchedule() {
 		if (hasNextScheduled()) {
-			Log.info("[Backup] " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET + " is dirty. Next backup on "
+			Log.info("[Backup] " + LegacyChatFormat.GRAY + getDisplayName() + LegacyChatFormat.RESET + " is dirty. Next backup on "
 					+ DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG).format(new Date(getNext())));
 		}
 		else {
-			Log.info("[Backup] " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET + " is clean. Next backup not scheduled.");
+			Log.info("[Backup] " + LegacyChatFormat.GRAY + getDisplayName() + LegacyChatFormat.RESET + " is clean. Next backup not scheduled.");
 		}
 	}
 
@@ -80,7 +88,7 @@ public class PaperWorldProcess extends PaperBackupProcess {
 	public void setDirtyAfterSave() {
 		if (!isDirty()) { // don't set dirty if it is already
 			setDirtySinceNow();
-			Log.info("[Backup] " + ChatColor.GRAY + getDisplayName() + ChatColor.RESET + " was saved and is now dirty. Next backup on "
+			Log.info("[Backup] " + LegacyChatFormat.GRAY + getDisplayName() + LegacyChatFormat.RESET + " was saved and is now dirty. Next backup on "
 					+ DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG)
 					.format(new Date(getNext()))
 			);

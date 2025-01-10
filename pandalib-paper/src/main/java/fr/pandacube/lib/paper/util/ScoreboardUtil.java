@@ -140,6 +140,8 @@ public class ScoreboardUtil {
 		updateScoreboardSidebar(scBrd, title.get(), cmpLines);
 	}
 	
-	
+
+
+	private ScoreboardUtil() {}
 
 }

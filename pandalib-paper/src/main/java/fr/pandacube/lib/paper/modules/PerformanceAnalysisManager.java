@@ -21,7 +21,6 @@ import net.kyori.adventure.bossbar.BossBar.Color;
 import net.kyori.adventure.bossbar.BossBar.Overlay;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -44,10 +43,17 @@ import static fr.pandacube.lib.chat.ChatStatic.infoText;
 import static fr.pandacube.lib.chat.ChatStatic.successText;
 import static fr.pandacube.lib.chat.ChatStatic.text;
 
+/**
+ * Various tools to supervise the JVM RAM and the CPU usage of the main server thread.
+ */
 public class PerformanceAnalysisManager implements Listener {
 
 	private static PerformanceAnalysisManager instance;
 
+	/**
+	 * Gets the instance of {@link PerformanceAnalysisManager}.
+	 * @return the instance of {@link PerformanceAnalysisManager}.
+	 */
 	public static synchronized PerformanceAnalysisManager getInstance() {
 		if (instance == null)
 			instance = new PerformanceAnalysisManager();
@@ -76,14 +82,22 @@ public class PerformanceAnalysisManager implements Listener {
 	private final LinkedList<Long> interTPSDurations = new LinkedList<>();
 
 
-
-
+	/**
+	 * The boss bar that shows in real time the CPU performance of the main server thread.
+	 */
 	public final AutoUpdatedBossBar tpsBar;
+
+	/**
+	 * The boss bar that shows in real time the JVM RAM usage.
+	 */
 	public final AutoUpdatedBossBar memoryBar;
 	private final List<Player> barPlayers = new ArrayList<>();
 	private final List<BossBar> relatedBossBars = new ArrayList<>();
-	
-	
+
+
+	/**
+	 * The gradient of color covering the common range of TPS values.
+	 */
 	public final ChatColorGradient tps1sGradient = new ChatColorGradient()
 			.add(0, NamedTextColor.BLACK)
 			.add(1, NamedTextColor.DARK_RED)
@@ -94,23 +108,7 @@ public class PerformanceAnalysisManager implements Listener {
 			.add(21, PandaTheme.CHAT_GREEN_1_NORMAL)
 			.add(26, NamedTextColor.BLUE);
 
-
-	public final ChatColorGradient tps10sGradient = new ChatColorGradient()
-			.add(0, NamedTextColor.DARK_RED)
-			.add(5, NamedTextColor.RED)
-			.add(10, NamedTextColor.GOLD)
-			.add(14, NamedTextColor.YELLOW)
-			.add(19, PandaTheme.CHAT_GREEN_1_NORMAL);
-
-
-	public final ChatColorGradient tps1mGradient = new ChatColorGradient()
-			.add(0, NamedTextColor.DARK_RED)
-			.add(8, NamedTextColor.RED)
-			.add(14, NamedTextColor.GOLD)
-			.add(17, NamedTextColor.YELLOW)
-			.add(19, PandaTheme.CHAT_GREEN_1_NORMAL);
-
-	public final ChatColorGradient memoryUsageGradient = new ChatColorGradient()
+	private final ChatColorGradient memoryUsageGradient = new ChatColorGradient()
 			.add(.60f, PandaTheme.CHAT_GREEN_1_NORMAL)
 			.add(.70f, NamedTextColor.YELLOW)
 			.add(.80f, NamedTextColor.GOLD)
@@ -132,10 +130,19 @@ public class PerformanceAnalysisManager implements Listener {
 		
 	}
 
+	/**
+	 * Tells if the provided players is seeing the performance boss bars.
+	 * @param p the player to verify.
+	 * @return true if the provided players is seeing the performance boss bars, false otherwise.
+	 */
 	public boolean barsContainsPlayer(Player p) {
 		return barPlayers.contains(p);
 	}
-	
+
+	/**
+	 * Shows the performance boss bars to the provided player.
+	 * @param p the player.
+	 */
 	public synchronized void addPlayerToBars(Player p) {
 		barPlayers.add(p);
 		p.showBossBar(tpsBar.bar);
@@ -143,7 +150,11 @@ public class PerformanceAnalysisManager implements Listener {
 		for (BossBar bar : relatedBossBars)
 			p.showBossBar(bar);
 	}
-	
+
+	/**
+	 * Hides the performance boss bars from the provided player.
+	 * @param p the player.
+	 */
 	public synchronized void removePlayerToBars(Player p) {
 		p.hideBossBar(tpsBar.bar);
 		p.hideBossBar(memoryBar.bar);
@@ -151,7 +162,11 @@ public class PerformanceAnalysisManager implements Listener {
 			p.hideBossBar(bar);
 		barPlayers.remove(p);
 	}
-	
+
+	/**
+	 * Show an additional boss bar to the players currently seeing the performance ones.
+	 * @param bar the new bar to show.
+	 */
 	public synchronized void addBossBar(BossBar bar) {
 		if (relatedBossBars.contains(bar))
 			return;
@@ -159,7 +174,11 @@ public class PerformanceAnalysisManager implements Listener {
 		for (Player p : barPlayers)
 			p.showBossBar(bar);
 	}
-	
+
+	/**
+	 * Hides an additional boss bar from the players currently seeing the performance ones.
+	 * @param bar the additional bar to hide.
+	 */
 	public synchronized void removeBossBar(BossBar bar) {
 		if (!relatedBossBars.contains(bar))
 			return;
@@ -167,8 +186,11 @@ public class PerformanceAnalysisManager implements Listener {
 		for (Player p : barPlayers)
 			p.hideBossBar(bar);
 	}
-	
-	public synchronized void cancelInternalBossBar() {
+
+	/**
+	 * De-initialize the performance analyzer.
+	 */
+	public synchronized void deinit() {
 		tpsBar.cancel();
 		memoryBar.cancel();
 	}
@@ -178,7 +200,7 @@ public class PerformanceAnalysisManager implements Listener {
 	
 	
 	@EventHandler
-	public synchronized void onTickStart(ServerTickStartEvent event) {
+	synchronized void onTickStart(ServerTickStartEvent event) {
 		tickStartNanoTime = System.nanoTime();
 		tickStartCPUTime = threadMXBean.isThreadCpuTimeSupported() ? threadMXBean.getCurrentThreadCpuTime() : 0;
 		
@@ -186,7 +208,7 @@ public class PerformanceAnalysisManager implements Listener {
 	}
 	
 	@EventHandler
-	public synchronized void onTickEnd(ServerTickEndEvent event) {
+	synchronized void onTickEnd(ServerTickEndEvent event) {
 		tickEndNanoTime = System.nanoTime();
 		long tickEndCPUTime = threadMXBean.isThreadCpuTimeSupported() ? threadMXBean.getCurrentThreadCpuTime() : 0;
 		
@@ -213,7 +235,7 @@ public class PerformanceAnalysisManager implements Listener {
 
 	
 	@EventHandler
-	public void onPlayerJoin(PlayerJoinEvent event) {
+	void onPlayerJoin(PlayerJoinEvent event) {
 		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 			@SuppressWarnings("unchecked")
 			AbstractPlayerManager<PaperOnlinePlayer, PaperOffPlayer> playerManager = (AbstractPlayerManager<PaperOnlinePlayer, PaperOffPlayer>) AbstractPlayerManager.getInstance();
@@ -233,7 +255,7 @@ public class PerformanceAnalysisManager implements Listener {
 
 
 	@EventHandler
-	public void onPlayerQuit(PlayerQuitEvent event) {
+	void onPlayerQuit(PlayerQuitEvent event) {
 		removePlayerToBars(event.getPlayer());
 	}
 
@@ -375,28 +397,34 @@ public class PerformanceAnalysisManager implements Listener {
 	}
 	
 	private Chat alteredTPSTitle = null;
-	
+
+	/**
+	 * Temporary change the title of the TPS boss bar.
+	 * @param title the title override. null to restore to the normal TPS title.
+	 */
 	public synchronized void setAlteredTPSTitle(Chat title) {
 		alteredTPSTitle = title;
 	}
-	
-	
-	
-	
-	
-	
-	
-	// special case where the getTPS method always returns a whole number when retrieving the TPS for 1 sec
+
+
+
+
+
+
+
+	/**
+	 * Gets the number of tick in the last second.
+	 * @return the number of tick in the last second.
+	 */
 	public int getTPS1s() {
 		return (int) getTPS(1_000);
 	}
 
 	/**
-	 * 
 	 * @param nbTicks number of ticks when the avg value is computed from history
 	 * @return the avg number of TPS in the interval
 	 */
-	public synchronized float getAvgNano(List<Long> data, int nbTicks) {
+	private synchronized float getAvgNano(List<Long> data, int nbTicks) {
 		if (data.isEmpty())
 			return 0;
 
@@ -410,7 +438,7 @@ public class PerformanceAnalysisManager implements Listener {
 	}
 
 	/**
-	 * 
+	 * Gets the average number of tick per second in the n last milliseconds.
 	 * @param nbMillis number of milliseconds when the avg TPS is computed from history
 	 * @return the avg number of TPS in the interval
 	 */
@@ -429,8 +457,12 @@ public class PerformanceAnalysisManager implements Listener {
 
 		return count * (1000 / (float) nbMillis);
 	}
-	
-	
+
+
+	/**
+	 * Gets the history of TPS performance.
+	 * @return an array of TPS values from the last minute. The value at 0 is in the last second (current second on the clock - 1), the value at index 1 is now - 2, ...
+	 */
 	public synchronized int[] getTPSHistory() {
 		int[] history = new int[60];
 
@@ -448,15 +480,22 @@ public class PerformanceAnalysisManager implements Listener {
 	}
 
 
-
+	/**
+	 * Gets the current server's target tick rate.
+	 * Usually 20 but the server can be configured to tick at a different rate.
+	 * @return the current server's target tick rate.
+	 */
 	public static int getTargetTickRate() {
 		return Math.round(Bukkit.getServerTickManager().getTickRate());
 	}
-	
-	
-	
-	
-	
+
+
+	/**
+	 * Runs the garbage collector on the server.
+	 * Depending on the server load and the used memory, this can freeze the server for a second.
+	 * @param sender the command sender that triggers the garbase collector. Can be null (the report will be sent to the
+	 *               console)
+	 */
 	public static void gc(CommandSender sender) {
 		long t1 = System.currentTimeMillis();
 		long alloc1 = Runtime.getRuntime().totalMemory();
@@ -478,7 +517,7 @@ public class PerformanceAnalysisManager implements Listener {
 			Log.info(finalMessage.getLegacyText());
 	}
 
-	public static String displayRound10(double val) {
+	private static String displayRound10(double val) {
 		long v = (long) Math.ceil(val * 10);
 		return "" + (v / 10f);
 	}

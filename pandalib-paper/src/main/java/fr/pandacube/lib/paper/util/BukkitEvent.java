@@ -16,45 +16,102 @@ import org.bukkit.scheduler.BukkitTask;
 import fr.pandacube.lib.paper.PandaLibPaper;
 import fr.pandacube.lib.reflect.Reflect;
 
+/**
+ * Utility class to more concisely handle Bukkit Events
+ */
 public class BukkitEvent {
-	
+
+	/**
+	 * Register a single event executor.
+	 * <p>
+	 * The priority if the event executor is {@link EventPriority#NORMAL}.
+	 * Does not ignore cancelled events.
+	 * @param eventClass the class of the event to listen to.
+	 * @param eventExecutor the executor.
+	 * @return the {@link Listener} instance, that is in our case the provided executor.
+	 * @param <E> the event type.
+	 */
 	public static <E extends Event> Listener register(Class<E> eventClass, EventListener<E> eventExecutor) {
 		return register(eventClass, eventExecutor, EventPriority.NORMAL, false);
 	}
-	
+
+	/**
+	 * Register a single event executor.
+	 * <p>
+	 * Does not ignore cancelled events.
+	 * @param eventClass the class of the event to listen to.
+	 * @param eventExecutor the executor.
+	 * @param priority the event priority.
+	 * @return the {@link Listener} instance, that is in our case the provided executor.
+	 * @param <E> the event type.
+	 */
 	public static <E extends Event> Listener register(Class<E> eventClass, EventListener<E> eventExecutor, EventPriority priority) {
 		return register(eventClass, eventExecutor, priority, false);
 	}
-	
+
+	/**
+	 * Register a single event executor.
+	 * <p>
+	 * The priority if the event executor is {@link EventPriority#NORMAL}.
+	 * @param eventClass the class of the event to listen to.
+	 * @param eventExecutor the executor.
+	 * @param ignoreCancelled whether to pass cancelled events or not.
+	 * @return the {@link Listener} instance, that is in our case the provided executor.
+	 * @param <E> the event type.
+	 */
 	public static <E extends Event> Listener register(Class<E> eventClass, EventListener<E> eventExecutor, boolean ignoreCancelled) {
 		return register(eventClass, eventExecutor, EventPriority.NORMAL, ignoreCancelled);
 	}
-	
+
+	/**
+	 * Register a single event executor.
+	 * @param eventClass the class of the event to listen to.
+	 * @param eventExecutor the executor.
+	 * @param priority the event priority.
+	 * @param ignoreCancelled whether to pass cancelled events or not.
+	 * @return the {@link Listener} instance, that is in our case the provided executor.
+	 * @param <E> the event type.
+	 */
 	public static <E extends Event> Listener register(Class<E> eventClass, EventListener<E> eventExecutor, EventPriority priority, boolean ignoreCancelled) {
 		Bukkit.getPluginManager().registerEvent(eventClass, eventExecutor, priority, eventExecutor, PandaLibPaper.getPlugin(), ignoreCancelled);
 		return eventExecutor;
 	}
-	
+
+	/**
+	 * Register a listener.
+	 * This is equivalent to calling {@code Bukkit.getPluginManager().registerEvents(l, PandaLibPaper.getPlugin());}
+	 * @param l the listener.
+	 */
 	public static void register(Listener l) {
 		Bukkit.getPluginManager().registerEvents(l, PandaLibPaper.getPlugin());
 	}
-	
-	
-	
+
+
+	/**
+	 * Unregister a listener
+	 * @param listener the listener to unregister.
+	 */
 	public static void unregister(Listener listener) {
 		HandlerList.unregisterAll(listener);
 	}
-	
 
 
+	/**
+	 * Lists all existing subclasses of {@link Event}.
+	 * @return a list of all existing subclasses of {@link Event}.
+	 */
 	public static List<Class<? extends Event>> getAllEventClasses() {
 		List<Class<? extends Event>> classes = Reflect.ofClass(Event.class).getAllSubclasses(false);
 		classes.removeIf(e -> getHandlerList(e) == null);
 		return classes;
 	}
-	
-	
-	
+
+
+	/**
+	 * Gets the handlerList of the provided Event class.
+	 * @param type the event class.
+	 * @return the handlerList.
+	 */
     // method retrieved from OB.plugin.SimplePluginManager#getEventListeners
     public static HandlerList getHandlerList(Class<? extends Event> type) {
         try {
@@ -81,11 +138,18 @@ public class BukkitEvent {
             return null;
         }
     }
-	
-	
-	
+
+
+	/**
+	 * An single executor event listener. Used for the {@link #register(Class, EventListener)} static method and the other variants.
+	 * @param <E> the event type.
+	 */
 	public interface EventListener<E extends Event> extends Listener, EventExecutor {
-		
+
+		/**
+		 * The event handler.
+		 * @param event the event.
+		 */
 		void onEvent(E event);
 		
 		@SuppressWarnings("unchecked")
@@ -99,12 +163,17 @@ public class BukkitEvent {
 	 * Abstract implementation of {@link EventListener} that ensure as good as it can,
 	 * that it is the last listener called to handle the event.
 	 *
-	 * @param <E> the type of the event
+	 * @param <E> the type of the event.
 	 */
 	public static abstract class EnforcedLastListener<E extends Event> implements EventListener<E> {
 		private final Class<E> eventClass;
 		private final boolean ignoreCancelled;
-		
+
+		/**
+		 * Creates a new {@link EnforcedLastListener}.
+		 * @param eventClass the event to listen.
+		 * @param ignoreCancelled whether to pass cancelled events or not.
+		 */
 		public EnforcedLastListener(Class<E> eventClass, boolean ignoreCancelled) {
 			this.eventClass = eventClass;
 			this.ignoreCancelled = ignoreCancelled;
@@ -143,6 +212,9 @@ public class BukkitEvent {
 			}
 		}
 	}
+
+
+	private BukkitEvent() {}
 	
 
 }

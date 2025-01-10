@@ -3,7 +3,7 @@ package fr.pandacube.lib.paper.players;
 import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.ClientOption.ChatVisibility;
 import com.destroystokyo.paper.SkinParts;
-import fr.pandacube.lib.paper.players.PlayerNonPersistentConfig.Expiration;
+import fr.pandacube.lib.paper.players.PlayerNonPersistentConfig.ExpirationPolicy;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftPlayer;
 import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
@@ -304,18 +304,39 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
      * Player config
      */
 
+    /**
+     * Gets the non-persistent value of the provided configuration key of this player.
+     * @param key the configuration key.
+     * @return the value of the configuration, or null if the configuration is not set.
+     */
     default String getNonPersistentConfig(String key) {
         return PlayerNonPersistentConfig.getData(getUniqueId(), key);
     }
 
+    /**
+     * Gets the non-persistent value of the provided configuration key of this player.
+     * @param key the configuration key.
+     * @param deflt the default value if the configuration is not set.
+     * @return the value of the configuration, or {@code deflt} if the configuration is not set.
+     */
     default String getNonPersistentConfig(String key, String deflt) {
         return PlayerNonPersistentConfig.getData(getUniqueId(), key);
     }
 
-    default void setNonPersistentConfig(String key, String value, Expiration expiration) {
-        PlayerNonPersistentConfig.setData(getUniqueId(), key, value, expiration);
+    /**
+     * Sets the non-persistent value of the provided configuration key for this player.
+     * @param key the configuration key to set.
+     * @param value the new value.
+     * @param expirationPolicy the expiration policy.
+     */
+    default void setNonPersistentConfig(String key, String value, ExpirationPolicy expirationPolicy) {
+        PlayerNonPersistentConfig.setData(getUniqueId(), key, value, expirationPolicy);
     }
 
+    /**
+     * Unsets the non-persistent value of the provided configuration key for this player.
+     * @param key the configuration key to update.
+     */
     default void unsetNonPersistentConfig(String key) {
         PlayerNonPersistentConfig.unsetData(getUniqueId(), key);
     }

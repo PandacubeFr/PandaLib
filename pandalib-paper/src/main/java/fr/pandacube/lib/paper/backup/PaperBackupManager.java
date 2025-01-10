@@ -130,12 +130,12 @@ public class PaperBackupManager extends BackupManager implements Listener {
 	private final Set<String> dirtyForSave = new HashSet<>();
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onWorldLoad(WorldLoadEvent event) {
+	void onWorldLoad(WorldLoadEvent event) {
 		initWorldProcess(event.getWorld().getName());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onWorldSave(WorldSaveEvent event) {
+	void onWorldSave(WorldSaveEvent event) {
 		if (event.getWorld().getLoadedChunks().length > 0
 				|| dirtyForSave.contains(event.getWorld().getName())) {
 			compressWorlds.get(event.getWorld().getName()).setDirtyAfterSave();
@@ -148,18 +148,18 @@ public class PaperBackupManager extends BackupManager implements Listener {
 
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerChangeWorldEvent(PlayerChangedWorldEvent event) {
+	void onPlayerChangeWorldEvent(PlayerChangedWorldEvent event) {
 		dirtyForSave.add(event.getFrom().getName());
 		dirtyForSave.add(event.getPlayer().getWorld().getName());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerJoin(PlayerJoinEvent event) {
+	void onPlayerJoin(PlayerJoinEvent event) {
 		dirtyForSave.add(event.getPlayer().getWorld().getName());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerQuit(PlayerQuitEvent event) {
+	void onPlayerQuit(PlayerQuitEvent event) {
 		dirtyForSave.add(event.getPlayer().getWorld().getName());
 	}
 
