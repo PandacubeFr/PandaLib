@@ -11,27 +11,31 @@ import java.util.logging.Logger;
  */
 public class BadCommandUsage extends RuntimeException {
 
-	/** Constructs a new runtime exception with no message or cause.
+	/**
+	 * Constructs a new runtime exception with no message or cause.
 	 */
 	public BadCommandUsage() {
 		super();
 	}
 
-	/** Constructs a new runtime exception with the specified cause.
+	/**
+	 * Constructs a new runtime exception with the specified cause.
 	 * @param cause the cause.
 	 */
 	public BadCommandUsage(Throwable cause) {
 		super(cause);
 	}
 
-	/** Constructs a new runtime exception with the specified message.
+	/**
+	 * Constructs a new runtime exception with the specified message.
 	 * @param message the message.
 	 */
 	public BadCommandUsage(String message) {
 		super(message);
 	}
 
-	/** Constructs a new runtime exception with the specified message and cause.
+	/**
+	 * Constructs a new runtime exception with the specified message and cause.
 	 * @param message the message.
 	 * @param cause the cause.
 	 */
