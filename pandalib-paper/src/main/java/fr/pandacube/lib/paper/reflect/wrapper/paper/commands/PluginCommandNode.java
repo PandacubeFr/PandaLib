@@ -19,7 +19,7 @@ public class PluginCommandNode extends ReflectWrapperTyped<LiteralCommandNode<Co
     public static final ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("io.papermc.paper.command.brigadier.PluginCommandNode"));
     private static final ReflectMethod<?> getPlugin = wrapEx(() -> REFLECT.method("getPlugin"));
     private static final ReflectMethod<?> getDescription = wrapEx(() -> REFLECT.method("getDescription"));
-    private static final ReflectConstructor CONSTRUCTOR = wrapEx(() -> REFLECT.constructor(String.class, PluginMeta.class, LiteralCommandNode.class, String.class));
+    private static final ReflectConstructor<?> CONSTRUCTOR = wrapEx(() -> REFLECT.constructor(String.class, PluginMeta.class, LiteralCommandNode.class, String.class));
 
 
     public PluginCommandNode(@NotNull String literal, @NotNull PluginMeta plugin, @NotNull LiteralCommandNode<CommandSourceStack> rootLiteral, @Nullable String description) {

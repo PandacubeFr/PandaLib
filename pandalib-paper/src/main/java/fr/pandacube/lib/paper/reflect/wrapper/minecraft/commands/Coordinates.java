@@ -14,7 +14,7 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 @ConcreteWrapper(Coordinates.__concrete.class)
 public interface Coordinates extends ReflectWrapperI {
-    public static final ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("net.minecraft.commands.arguments.coordinates.Coordinates"));
+    ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("net.minecraft.commands.arguments.coordinates.Coordinates"));
     ReflectMethod<?> getPosition = wrapEx(() -> REFLECT.method("getPosition", CommandSourceStack.REFLECT.get()));
 
     default Vec3 getPosition(io.papermc.paper.command.brigadier.CommandSourceStack source) {

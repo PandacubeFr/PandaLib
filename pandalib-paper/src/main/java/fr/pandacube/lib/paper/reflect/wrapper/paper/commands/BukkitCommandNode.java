@@ -7,7 +7,6 @@ import fr.pandacube.lib.reflect.ReflectMethod;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapperTyped;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.command.Command;
-import org.bukkit.plugin.Plugin;
 
 import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;

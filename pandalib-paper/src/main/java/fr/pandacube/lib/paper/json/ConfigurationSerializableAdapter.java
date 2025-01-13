@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Gson adapter for ConfigurationSerializable, an interface implemented by several classes in the Bukkit API to ease
  * serialization to YAML.
- *
+ * <p>
  * To not reinvent the wheel, this class uses the Bukkit’s Yaml API to convert the objects from/to json.
  */
 /* package */ class ConfigurationSerializableAdapter implements JsonSerializer<ConfigurationSerializable>, JsonDeserializer<ConfigurationSerializable> {
