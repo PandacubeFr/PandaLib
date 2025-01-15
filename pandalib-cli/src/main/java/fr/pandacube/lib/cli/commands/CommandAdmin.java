@@ -14,7 +14,7 @@ import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
 import fr.pandacube.lib.chat.Chat;
-import fr.pandacube.lib.chat.Chat.FormatableChat;
+import fr.pandacube.lib.chat.Chat.FormattableChat;
 import fr.pandacube.lib.chat.ChatTreeNode;
 import fr.pandacube.lib.cli.CLIApplication;
 import fr.pandacube.lib.util.log.Log;
@@ -195,13 +195,13 @@ public class CommandAdmin extends CLIBrigadierCommand {
 	private Component displayCurrentNode(CommandNode<CLICommandSender> node, boolean redirectTarget, CLICommandSender sender) {
 		if (node == null)
 			throw new IllegalArgumentException("node must not be null");
-		FormatableChat d;
+		FormattableChat d;
 		if (node instanceof RootCommandNode) {
 			d = text("(root)").italic()
 				.hover("Root command node");
 		}
-		else if (node instanceof ArgumentCommandNode) {
-			ArgumentType<?> type = ((ArgumentCommandNode<?, ?>) node).getType();
+		else if (node instanceof ArgumentCommandNode<?, ?> argNode) {
+			ArgumentType<?> type = argNode.getType();
 			String typeStr = type.getClass().getSimpleName();
 			if (type instanceof IntegerArgumentType
 					|| type instanceof LongArgumentType
@@ -260,10 +260,10 @@ public class CommandAdmin extends CLIBrigadierCommand {
 		return d.get();
 		
 	}
-	
-	
-	
-	
+
+
+
+
 	private static class DisplayCommandNode {
 		final List<CommandNode<CLICommandSender>> nodes = new ArrayList<>();
 		final List<DisplayCommandNode> children = new ArrayList<>();

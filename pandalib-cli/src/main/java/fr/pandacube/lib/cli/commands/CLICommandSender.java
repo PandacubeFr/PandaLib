@@ -41,6 +41,9 @@ public interface CLICommandSender extends Audience {
      */
     void sendMessage(String message);
 
+    @SuppressWarnings({"UnstableApiUsage", "deprecation"})
     @Override // force implementation of super-interface default method
     void sendMessage(@NotNull Identity source, @NotNull Component message, @NotNull MessageType type);
+
+
 }

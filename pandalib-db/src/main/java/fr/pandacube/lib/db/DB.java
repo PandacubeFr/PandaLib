@@ -227,7 +227,7 @@ public final class DB {
      */
     public static <E extends SQLElement<E>> E getFirst(Class<E> elemClass, SQLWhere<E> where, SQLOrderBy<E> orderBy, Integer offset) throws DBException {
         SQLElementList<E> elements = getAll(elemClass, where, orderBy, 1, offset);
-        return (elements.size() == 0) ? null : elements.get(0);
+        return (elements.isEmpty()) ? null : elements.get(0);
     }
 
     /**

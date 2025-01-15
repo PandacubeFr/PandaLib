@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class that holds the configuration varables for {@link BungeeBackupManager}.
+ * Class that holds the configuration variables for {@link BungeeBackupManager}.
  */
 @SuppressWarnings("CanBeFinal")
 public class BungeeBackupConfig {

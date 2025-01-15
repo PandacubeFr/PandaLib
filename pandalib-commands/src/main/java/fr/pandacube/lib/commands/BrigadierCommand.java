@@ -223,14 +223,14 @@ public abstract class BrigadierCommand<S> {
     /**
      * Wraps the provided {@link SuggestionsSupplier} into a Brigadier’s {@link SuggestionProvider}.
      * @param suggestions the suggestions to wrap.
-     * @param senderUnwrapper function to convert the command sender provided by brigadier into the command sender
+     * @param senderUnWrapper function to convert the command sender provided by brigadier into the command sender
      *                        supported by {@link SuggestionsSupplier}.
      * @return a {@link SuggestionProvider} generating the suggestions from the provided {@link SuggestionsSupplier}.
      * @param <AS> the type of command sender supported by the {@link SuggestionsSupplier}.
      */
-    protected <AS> SuggestionProvider<S> wrapSuggestions(SuggestionsSupplier<AS> suggestions, Function<S, AS> senderUnwrapper) {
+    protected <AS> SuggestionProvider<S> wrapSuggestions(SuggestionsSupplier<AS> suggestions, Function<S, AS> senderUnWrapper) {
         return (context, builder) -> {
-            AS sender = senderUnwrapper.apply(context.getSource());
+            AS sender = senderUnWrapper.apply(context.getSource());
             String message = builder.getInput();
             try {
                 int tokenStartPos = builder.getStart();

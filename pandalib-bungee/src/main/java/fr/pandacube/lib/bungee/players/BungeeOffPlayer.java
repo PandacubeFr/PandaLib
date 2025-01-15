@@ -6,7 +6,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
 
 /**
- * Represents any player on a Bungeecord proxy, either offline or online.
+ * Represents any player on a BungeeCord proxy, either offline or online.
  */
 public interface BungeeOffPlayer extends AbstractOffPlayer {
 

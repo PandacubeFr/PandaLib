@@ -1,6 +1,6 @@
 package fr.pandacube.lib.chat;
 
-import fr.pandacube.lib.chat.Chat.FormatableChat;
+import fr.pandacube.lib.chat.Chat.FormattableChat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
@@ -152,7 +152,7 @@ public class ChatUtil {
             else
                 first = false;
 
-            FormatableChat pDisplay = Chat.clickableCommand(Chat.text(page), String.format(cmdFormat, page), Chat.text("Aller à la page " + page));
+            FormattableChat pDisplay = Chat.clickableCommand(Chat.text(page), String.format(cmdFormat, page), Chat.text("Aller à la page " + page));
             if (page == currentPage) {
                 pDisplay.highlightedCommandColor();
             }
@@ -180,12 +180,12 @@ public class ChatUtil {
      * @param elements the components to join.
      * @return a new {@link Chat} instance with all the provided {@code component} joined using the separators.
      */
-    public static FormatableChat joinGrammatically(ComponentLike regularSeparator, ComponentLike finalSeparator, List<? extends ComponentLike> elements) {
+    public static FormattableChat joinGrammatically(ComponentLike regularSeparator, ComponentLike finalSeparator, List<? extends ComponentLike> elements) {
         int size = elements == null ? 0 : elements.size();
         int last = size - 1;
         return switch (size) {
             case 0, 1, 2 -> join(finalSeparator, elements);
-            default -> (FormatableChat) join(regularSeparator, elements.subList(0, last))
+            default -> (FormattableChat) join(regularSeparator, elements.subList(0, last))
                     .then(finalSeparator)
                     .then(elements.get(last));
         };
@@ -202,8 +202,8 @@ public class ChatUtil {
      * @param elements the components to join.
      * @return a new {@link Chat} instance with all the provided {@code component} joined using the separators.
      */
-    public static FormatableChat join(ComponentLike separator, Iterable<? extends ComponentLike> elements) {
-        FormatableChat c = chat();
+    public static FormattableChat join(ComponentLike separator, Iterable<? extends ComponentLike> elements) {
+        FormattableChat c = chat();
         if (elements == null)
             return c;
         boolean first = true;
@@ -596,7 +596,7 @@ public class ChatUtil {
         for (int i = 0; i < sizes.length; i++) {
             sumSizes += sizes[i];
 
-            FormatableChat subC = ChatStatic.text(repeatedChar(PROGRESS_BAR_FULL_CHAR, sizes[i]));
+            FormattableChat subC = ChatStatic.text(repeatedChar(PROGRESS_BAR_FULL_CHAR, sizes[i]));
 
             if (colors != null && i < colors.length && colors[i] != null)
                 subC.color(colors[i]);

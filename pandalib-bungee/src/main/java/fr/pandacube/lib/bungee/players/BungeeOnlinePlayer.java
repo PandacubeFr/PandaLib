@@ -20,7 +20,7 @@ import net.md_5.bungee.protocol.packet.PluginMessage;
 import java.util.Locale;
 
 /**
- * Represents any online player on a Bungeecord proxy.
+ * Represents any online player on a BungeeCord proxy.
  */
 public interface BungeeOnlinePlayer extends BungeeOffPlayer, AbstractOnlinePlayer {
 

@@ -6,10 +6,10 @@ import java.util.stream.Collectors;
 
 /**
  * Utility class to track and limit the amount of a specific value for a specified amount of duration.
- *
+ * <p>
  * An exemple of application is for rolling expense limit of a debit card: you cannot expense more that {@code $X}
  * during a rolling period of {@code $Y} time.
- *
+ * <p>
  * Here is an example usage of this class:
  * <pre>
  *     AmountPerTimeLimiter instance = new AmountPerTimeLimiter(X, Y);

@@ -141,7 +141,7 @@ public class BukkitEvent {
 
 
 	/**
-	 * An single executor event listener. Used for the {@link #register(Class, EventListener)} static method and the other variants.
+	 * A single executor event listener. Used for the {@link #register(Class, EventListener)} static method and the other variants.
 	 * @param <E> the event type.
 	 */
 	public interface EventListener<E extends Event> extends Listener, EventExecutor {

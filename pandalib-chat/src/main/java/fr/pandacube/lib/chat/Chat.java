@@ -35,8 +35,8 @@ import java.util.function.UnaryOperator;
  * This class implements {@link ComponentLike} and {@link HoverEventSource} so they can be used directly in
  * Adventure API and its implementation without using the final methods of this builder.
  * <p>
- * The unique possible concrete subclass of this class, {@link FormatableChat}, takes care of the formatting of the
- * built component. The rationale for this design is explained in the documentation of {@link FormatableChat}.
+ * The unique possible concrete subclass of this class, {@link FormattableChat}, takes care of the formatting of the
+ * built component. The rationale for this design is explained in the documentation of {@link FormattableChat}.
  */
 public abstract sealed class Chat extends ChatStatic implements HoverEventSource<Component>, ComponentLike {
 
@@ -296,7 +296,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
      * @param key the keybinding to display.
      * @return this.
      */
-    public Chat thenKeyBind(String key) { return then(keybind(key)); }
+    public Chat thenKeyBind(String key) { return then(keyBind(key)); }
 
     /**
      * Appends a component with the provided score name and objective.
@@ -454,7 +454,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
      * Appends a component filling a chat line with the configured decoration character and
      * color and a left-aligned text.
      * @param leftText the text aligned to the left.
-     * @return a new {@link FormatableChat} filling a chat line with the configured decoration character
+     * @return a new {@link FormattableChat} filling a chat line with the configured decoration character
      *         and color and a left-aligned text.
      */
     public Chat thenLeftText(ComponentLike leftText) { return then(leftText(leftText, console)); }
@@ -463,7 +463,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
      * Appends a component filling a chat line with the configured decoration character and
      * color and a right-aligned text.
      * @param rightText the text aligned to the right.
-     * @return a new {@link FormatableChat} filling a chat line with the configured decoration character
+     * @return a new {@link FormattableChat} filling a chat line with the configured decoration character
      *         and color and a right-aligned text.
      */
     public Chat thenRightText(ComponentLike rightText) { return then(rightText(rightText, console)); }
@@ -472,7 +472,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
      * Appends a component filling a chat line with the configured decoration character and
      * color and a centered text.
      * @param centerText the text aligned to the center.
-     * @return a new {@link FormatableChat} filling a chat line with the configured decoration character
+     * @return a new {@link FormattableChat} filling a chat line with the configured decoration character
      *         and color and a centered text.
      */
     public Chat thenCenterText(ComponentLike centerText) {
@@ -481,7 +481,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
 
     /**
      * Appends a component filling a chat line with the configured decoration character and color.
-     * @return a new {@link FormatableChat} filling a chat line with a decoration character and color.
+     * @return a new {@link FormattableChat} filling a chat line with a decoration character and color.
      */
     public Chat thenFilledLine() { return then(filledLine(console)); }
 
@@ -520,10 +520,10 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
      *         .thenText("!"); // short for .then(Chat.text("!"))
      *         // the red color for "!" is not needed because the parent component is already red.
      * }</pre>
-     * When calling {@link #then(Component) #then(...)} on a {@link FormatableChat}, the method returns itself, cast
+     * When calling {@link #then(Component) #then(...)} on a {@link FormattableChat}, the method returns itself, cast
      * to {@link Chat}, to prevent future formatting (that the programmer would think it formats the previously appended
      * subcomponent). If the formatting of the currently built component is needed, since {@link Chat} is a sealed
-     * class which only subclass is {@link FormatableChat}, you can cast the builder, and use the format methods again.
+     * class which only subclass is {@link FormattableChat}, you can cast the builder, and use the format methods again.
      * <pre>{@code
      * Chat component = Chat.text("Hello ").red()
      *         .then(Chat.text("world").darkRed().bold())
@@ -532,8 +532,8 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
      * ((FormatableChat)component).underlined(); // this will not format only the last appended text.
      * }</pre>
      */
-    public static final class FormatableChat extends Chat {
-        /* package */ FormatableChat(ComponentBuilder<?, ?> c) {
+    public static final class FormattableChat extends Chat {
+        /* package */ FormattableChat(ComponentBuilder<?, ?> c) {
             super(c);
         }
 
@@ -543,33 +543,33 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
          * @param c true for console, false for game UI.
          * @return this.
          */
-        public FormatableChat console(boolean c) { console = c; return this; }
+        public FormattableChat console(boolean c) { console = c; return this; }
         /**
          * Configure the width of the line.
          * @param w the width to consider when rendering the line. In pixel for game UI rendering, n character for
          *                 console rendering.
          * @return this.
          */
-        public FormatableChat maxWidth(int w) { maxWidth = w; return this; }
+        public FormattableChat maxWidth(int w) { maxWidth = w; return this; }
 
         /**
          * Sets the color of this component.
          * @param c the color.
          * @return this.
          */
-        public FormatableChat color(TextColor c) { builder.color(c); return this; }
+        public FormattableChat color(TextColor c) { builder.color(c); return this; }
         /**
          * Sets the color of this component.
          * @param c the color.
          * @return this.
          */
-        public FormatableChat color(Color c) { return color(c == null ? null : TextColor.color(c.getRGB())); }
+        public FormattableChat color(Color c) { return color(c == null ? null : TextColor.color(c.getRGB())); }
         /**
          * Sets the color of this component.
          * @param c the color.
          * @return this.
          */
-        public FormatableChat color(String c) {
+        public FormattableChat color(String c) {
             if (c == null)
                 return color((TextColor) null);
             TextColor tc = c.startsWith("#")
@@ -585,138 +585,138 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
          * Sets the color of this component to {@link NamedTextColor#BLACK}.
          * @return this.
          */
-        public FormatableChat black() { return color(NamedTextColor.BLACK); }
+        public FormattableChat black() { return color(NamedTextColor.BLACK); }
         /**
          * Sets the color of this component to {@link NamedTextColor#DARK_BLUE}.
          * @return this.
          */
-        public FormatableChat darkBlue() { return color(NamedTextColor.DARK_BLUE); }
+        public FormattableChat darkBlue() { return color(NamedTextColor.DARK_BLUE); }
         /**
          * Sets the color of this component to {@link NamedTextColor#DARK_GREEN}.
          * @return this.
          */
-        public FormatableChat darkGreen() { return color(NamedTextColor.DARK_GREEN); }
+        public FormattableChat darkGreen() { return color(NamedTextColor.DARK_GREEN); }
         /**
          * Sets the color of this component to {@link NamedTextColor#DARK_AQUA}.
          * @return this.
          */
-        public FormatableChat darkAqua() { return color(NamedTextColor.DARK_AQUA); }
+        public FormattableChat darkAqua() { return color(NamedTextColor.DARK_AQUA); }
         /**
          * Sets the color of this component to {@link NamedTextColor#DARK_RED}.
          * @return this.
          */
-        public FormatableChat darkRed() { return color(NamedTextColor.DARK_RED); }
+        public FormattableChat darkRed() { return color(NamedTextColor.DARK_RED); }
         /**
          * Sets the color of this component to {@link NamedTextColor#DARK_PURPLE}.
          * @return this.
          */
-        public FormatableChat darkPurple() { return color(NamedTextColor.DARK_PURPLE); }
+        public FormattableChat darkPurple() { return color(NamedTextColor.DARK_PURPLE); }
         /**
          * Sets the color of this component to {@link NamedTextColor#GOLD}.
          * @return this.
          */
-        public FormatableChat gold() { return color(NamedTextColor.GOLD); }
+        public FormattableChat gold() { return color(NamedTextColor.GOLD); }
         /**
          * Sets the color of this component to {@link NamedTextColor#GRAY}.
          * @return this.
          */
-        public FormatableChat gray() { return color(NamedTextColor.GRAY); }
+        public FormattableChat gray() { return color(NamedTextColor.GRAY); }
         /**
          * Sets the color of this component to {@link NamedTextColor#DARK_GRAY}.
          * @return this.
          */
-        public FormatableChat darkGray() { return color(NamedTextColor.DARK_GRAY); }
+        public FormattableChat darkGray() { return color(NamedTextColor.DARK_GRAY); }
         /**
          * Sets the color of this component to {@link NamedTextColor#BLUE}.
          * @return this.
          */
-        public FormatableChat blue() { return color(NamedTextColor.BLUE); }
+        public FormattableChat blue() { return color(NamedTextColor.BLUE); }
         /**
          * Sets the color of this component to {@link NamedTextColor#GREEN}.
          * @return this.
          */
-        public FormatableChat green() { return color(NamedTextColor.GREEN); }
+        public FormattableChat green() { return color(NamedTextColor.GREEN); }
         /**
          * Sets the color of this component to {@link NamedTextColor#AQUA}.
          * @return this.
          */
-        public FormatableChat aqua() { return color(NamedTextColor.AQUA); }
+        public FormattableChat aqua() { return color(NamedTextColor.AQUA); }
         /**
          * Sets the color of this component to {@link NamedTextColor#RED}.
          * @return this.
          */
-        public FormatableChat red() { return color(NamedTextColor.RED); }
+        public FormattableChat red() { return color(NamedTextColor.RED); }
         /**
          * Sets the color of this component to {@link NamedTextColor#LIGHT_PURPLE}.
          * @return this.
          */
-        public FormatableChat lightPurple() { return color(NamedTextColor.LIGHT_PURPLE); }
+        public FormattableChat lightPurple() { return color(NamedTextColor.LIGHT_PURPLE); }
         /**
          * Sets the color of this component to {@link NamedTextColor#YELLOW}.
          * @return this.
          */
-        public FormatableChat yellow() { return color(NamedTextColor.YELLOW); }
+        public FormattableChat yellow() { return color(NamedTextColor.YELLOW); }
         /**
          * Sets the color of this component to {@link NamedTextColor#WHITE}.
          * @return this.
          */
-        public FormatableChat white() { return color(NamedTextColor.WHITE); }
+        public FormattableChat white() { return color(NamedTextColor.WHITE); }
 
 
         /**
          * Sets the color of this component to {@link ChatConfig#successColor}.
          * @return this.
          */
-        public FormatableChat successColor() { return color(ChatConfig.successColor); }
+        public FormattableChat successColor() { return color(ChatConfig.successColor); }
         /**
          * Sets the color of this component to {@link ChatConfig#failureColor}.
          * @return this.
          */
-        public FormatableChat failureColor() { return color(ChatConfig.failureColor); }
+        public FormattableChat failureColor() { return color(ChatConfig.failureColor); }
         /**
          * Sets the color of this component to {@link ChatConfig#infoColor}.
          * @return this.
          */
-        public FormatableChat infoColor() { return color(ChatConfig.infoColor); }
+        public FormattableChat infoColor() { return color(ChatConfig.infoColor); }
         /**
          * Sets the color of this component to {@link ChatConfig#warningColor}.
          * @return this.
          */
-        public FormatableChat warningColor() { return color(ChatConfig.warningColor); }
+        public FormattableChat warningColor() { return color(ChatConfig.warningColor); }
         /**
          * Sets the color of this component to {@link ChatConfig#dataColor}.
          * @return this.
          */
-        public FormatableChat dataColor() { return color(ChatConfig.dataColor); }
+        public FormattableChat dataColor() { return color(ChatConfig.dataColor); }
         /**
          * Sets the color of this component to {@link ChatConfig#decorationColor}.
          * @return this.
          */
-        public FormatableChat decorationColor() { return color(ChatConfig.decorationColor); }
+        public FormattableChat decorationColor() { return color(ChatConfig.decorationColor); }
         /**
          * Sets the color of this component to {@link ChatConfig#urlColor}.
          * @return this.
          */
-        public FormatableChat urlColor() { return color(ChatConfig.urlColor); }
+        public FormattableChat urlColor() { return color(ChatConfig.urlColor); }
         /**
          * Sets the color of this component to {@link ChatConfig#commandColor}.
          * @return this.
          */
-        public FormatableChat commandColor() { return color(ChatConfig.commandColor); }
+        public FormattableChat commandColor() { return color(ChatConfig.commandColor); }
         /**
          * Sets the color of this component to {@link ChatConfig#highlightedCommandColor}.
          * @return this.
          */
-        public FormatableChat highlightedCommandColor() { return color(ChatConfig.highlightedCommandColor); }
+        public FormattableChat highlightedCommandColor() { return color(ChatConfig.highlightedCommandColor); }
         /**
          * Sets the color of this component to {@link ChatConfig#broadcastColor}.
          * @return this.
          */
-        public FormatableChat broadcastColor() { return color(ChatConfig.broadcastColor); }
+        public FormattableChat broadcastColor() { return color(ChatConfig.broadcastColor); }
 
 
-        private FormatableChat setStyle(Consumer<Style.Builder> styleOp) { builder.style(styleOp); return this; }
-        private FormatableChat setDecoration(TextDecoration deco, Boolean state) {
+        private FormattableChat setStyle(Consumer<Style.Builder> styleOp) { builder.style(styleOp); return this; }
+        private FormattableChat setDecoration(TextDecoration deco, Boolean state) {
             return setStyle(b -> b.decoration(deco, State.byBoolean(state)));
         }
 
@@ -726,56 +726,56 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
          * @param b true to enable, false to disable, or null to inherit from parent.
          * @return this.
          */
-        public FormatableChat bold(Boolean b) { return setDecoration(TextDecoration.BOLD, b); }
+        public FormattableChat bold(Boolean b) { return setDecoration(TextDecoration.BOLD, b); }
         /**
          * Enables the bold status of this component.
          * @return this.
          */
-        public FormatableChat bold() { return bold(true); }
+        public FormattableChat bold() { return bold(true); }
         /**
          * Sets the italic status of this component.
          * @param i true to enable, false to disable, or null to inherit from parent.
          * @return this.
          */
-        public FormatableChat italic(Boolean i) { return setDecoration(TextDecoration.ITALIC, i); }
+        public FormattableChat italic(Boolean i) { return setDecoration(TextDecoration.ITALIC, i); }
         /**
          * Enables the italic status of this component.
          * @return this.
          */
-        public FormatableChat italic() { return italic(true); }
+        public FormattableChat italic() { return italic(true); }
         /**
          * Sets the underlined status of this component.
          * @param u true to enable, false to disable, or null to inherit from parent.
          * @return this.
          */
-        public FormatableChat underlined(Boolean u) { return setDecoration(TextDecoration.UNDERLINED, u); }
+        public FormattableChat underlined(Boolean u) { return setDecoration(TextDecoration.UNDERLINED, u); }
         /**
          * Enables the underlined status of this component.
          * @return this.
          */
-        public FormatableChat underlined() { return underlined(true); }
+        public FormattableChat underlined() { return underlined(true); }
         /**
          * Sets the strikethrough status of this component.
          * @param s true to enable, false to disable, or null to inherit from parent.
          * @return this.
          */
-        public FormatableChat strikethrough(Boolean s) { return setDecoration(TextDecoration.STRIKETHROUGH, s); }
+        public FormattableChat strikethrough(Boolean s) { return setDecoration(TextDecoration.STRIKETHROUGH, s); }
         /**
          * Enables the strikethrough status of this component.
          * @return this.
          */
-        public FormatableChat strikethrough() { return strikethrough(true); }
+        public FormattableChat strikethrough() { return strikethrough(true); }
         /**
          * Sets the obfuscated status of this component.
          * @param o true to enable, false to disable, or null to inherit from parent.
          * @return this.
          */
-        public FormatableChat obfuscated(Boolean o) { return setDecoration(TextDecoration.OBFUSCATED, o); }
+        public FormattableChat obfuscated(Boolean o) { return setDecoration(TextDecoration.OBFUSCATED, o); }
         /**
          * Enables the obfuscated status of this component.
          * @return this.
          */
-        public FormatableChat obfuscated() { return obfuscated(true); }
+        public FormattableChat obfuscated() { return obfuscated(true); }
 
 
         /**
@@ -783,7 +783,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
          * @param f the font namespaced key.
          * @return this.
          */
-        public FormatableChat font(Key f) { return setStyle(s -> s.font(f)); }
+        public FormattableChat font(Key f) { return setStyle(s -> s.font(f)); }
 
 
         /**
@@ -791,7 +791,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
          * @param i the text to insert.
          * @return this.
          */
-        public FormatableChat shiftClickInsertion(String i) { builder.insertion(i); return this; }
+        public FormattableChat shiftClickInsertion(String i) { builder.insertion(i); return this; }
 
 
         /**
@@ -799,37 +799,37 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
          * @param e the {@link ClickEvent}.
          * @return this.
          */
-        private FormatableChat click(ClickEvent e) { builder.clickEvent(e); return this; }
+        private FormattableChat click(ClickEvent e) { builder.clickEvent(e); return this; }
         /**
          * Configure this component to execute the specified command when clicked.
          * @param cmdWithSlash the command to execute.
          * @return this.
          */
-        public FormatableChat clickCommand(String cmdWithSlash) { return click(ClickEvent.runCommand(cmdWithSlash)); }
+        public FormattableChat clickCommand(String cmdWithSlash) { return click(ClickEvent.runCommand(cmdWithSlash)); }
         /**
          * Configure this component to insert in the chat-box the specified command when clicked.
          * @param cmdWithSlash the command to suggest.
          * @return this.
          */
-        public FormatableChat clickSuggest(String cmdWithSlash) { return click(ClickEvent.suggestCommand(cmdWithSlash)); }
+        public FormattableChat clickSuggest(String cmdWithSlash) { return click(ClickEvent.suggestCommand(cmdWithSlash)); }
         /**
          * Configure this component to copy into clipboard the specified text when clicked.
          * @param value the text to copy.
          * @return this.
          */
-        public FormatableChat clickClipboard(String value) { return click(ClickEvent.copyToClipboard(value)); }
+        public FormattableChat clickClipboard(String value) { return click(ClickEvent.copyToClipboard(value)); }
         /**
          * Configure this component to open the specified URL when clicked.
          * @param url the URL to open.
          * @return this.
          */
-        public FormatableChat clickURL(String url) { return click(ClickEvent.openUrl(url)); }
+        public FormattableChat clickURL(String url) { return click(ClickEvent.openUrl(url)); }
         /**
          * Configure this component to change the page of the opened book when clicked.
          * @param page the page to go to.
          * @return this.
          */
-        public FormatableChat clickBookPage(int page) { return click(ClickEvent.changePage(page)); }
+        public FormattableChat clickBookPage(int page) { return click(ClickEvent.changePage(page)); }
 
 
         /**
@@ -837,31 +837,31 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
          * @param e the {@link HoverEventSource}.
          * @return this.
          */
-        public FormatableChat hover(HoverEventSource<?> e) { builder.hoverEvent(e); return this; }
+        public FormattableChat hover(HoverEventSource<?> e) { builder.hoverEvent(e); return this; }
         /**
          * Configure this component to show the provided component when hovered.
          * @param v the component to show.
          * @return this.
          */
-        public FormatableChat hover(Component v) { return hover((HoverEventSource<Component>) v); }
+        public FormattableChat hover(Component v) { return hover((HoverEventSource<Component>) v); }
         /**
          * Configure this component to show the provided component when hovered.
          * @param v the component to show.
          * @return this.
          */
-        public FormatableChat hover(Chat v) { return hover((HoverEventSource<Component>) v); }
+        public FormattableChat hover(Chat v) { return hover((HoverEventSource<Component>) v); }
         /**
          * Configure this component to show the provided component when hovered.
          * @param v the component to show.
          * @return this.
          */
-        public FormatableChat hover(ComponentLike v) { return hover(v.asComponent()); }
+        public FormattableChat hover(ComponentLike v) { return hover(v.asComponent()); }
         /**
          * Configure this component to show the provided legacy text when hovered.
          * @param legacyText the legacy text to show.
          * @return this.
          */
-        public FormatableChat hover(String legacyText) { return hover(legacyText(legacyText)); }
+        public FormattableChat hover(String legacyText) { return hover(legacyText(legacyText)); }
 
     }
 
@@ -932,14 +932,14 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
 
     /**
      * Force the italic formatting to be set to false if it is not explicitly set in the component.
-     * This is useful for item lores that defaults to italic in the game UI.
+     * This is useful for item lore that defaults to italic in the game UI.
      * @param c the {@link Chat} in which to set the italic property if needed.
      * @return the provided {@link Chat} instance.
      */
     public static Chat italicFalseIfNotSet(Chat c) {
         c.builder.style(b -> {
             if (b.build().decoration(TextDecoration.ITALIC) == State.NOT_SET) {
-                ((FormatableChat) c).italic(false);
+                ((FormattableChat) c).italic(false);
             }
         });
         return c;

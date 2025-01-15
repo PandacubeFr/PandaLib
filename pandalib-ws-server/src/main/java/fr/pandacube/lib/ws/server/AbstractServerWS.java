@@ -61,7 +61,7 @@ public abstract class AbstractServerWS extends WebSocketAdapter implements Abstr
 	}
 
 	@Override
-	public final void sendClose(int code, String reason) throws IOException {
+	public final void sendClose(int code, String reason) {
 		getSession().close(code, reason);
 		isClosed = true;
 	}

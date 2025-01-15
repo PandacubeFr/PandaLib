@@ -71,9 +71,7 @@ import fr.pandacube.lib.util.log.Log;
 		try {
             DB.getAll(SQLPermissions.class, SQLPermissions.type.eq(EntityType.User.getCode()))
 					.stream()
-					.collect(Collectors.groupingBy(el -> el.get(SQLPermissions.name),
-							Collectors.toCollection(() -> new SQLElementList<SQLPermissions>())
-							)
+					.collect(Collectors.groupingBy(el -> el.get(SQLPermissions.name))
 					)
 					.forEach((idStr, pData) -> {
 						try {
@@ -100,7 +98,7 @@ import fr.pandacube.lib.util.log.Log;
 		return initPlayer(playerId, playerData);
 	}
 
-	private CachedPlayer initPlayer(UUID playerId, SQLElementList<SQLPermissions> playerData) {
+	private CachedPlayer initPlayer(UUID playerId, List<SQLPermissions> playerData) {
 		
 		Map<String, List<SQLPermissions>> playerRawData = playerData.stream()
 				.collect(

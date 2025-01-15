@@ -134,30 +134,30 @@ public class ThrowableAdapter implements JsonSerializer<Throwable>, JsonDeserial
     }
 
     private static <T extends Throwable> ThrowableSubAdapter<T> defaultSubAdapter(Class<T> clazz) {
-        BiFunction<String, Throwable, T> constructor = null;
+        BiFunction<String, Throwable, T> constructionFunction = null;
 
         // try (String, Throwable) constructor
         try {
-            Constructor<T> constr = clazz.getConstructor(String.class, Throwable.class);
-            if (constr.canAccess(null)) {
-                constructor = (m, t) -> ThrowableUtil.wrapReflectEx(() -> constr.newInstance(m, t));
+            Constructor<T> constructor = clazz.getConstructor(String.class, Throwable.class);
+            if (constructor.canAccess(null)) {
+                constructionFunction = (m, t) -> ThrowableUtil.wrapReflectEx(() -> constructor.newInstance(m, t));
             }
         } catch (ReflectiveOperationException ignore) { }
 
         // try (String) constructor
         try {
-            Constructor<T> constr = clazz.getConstructor(String.class);
-            if (constr.canAccess(null)) {
-                constructor = ThrowableSubAdapter.messageOnly((m) -> ThrowableUtil.wrapReflectEx(() -> constr.newInstance(m)));
+            Constructor<T> constructor = clazz.getConstructor(String.class);
+            if (constructor.canAccess(null)) {
+                constructionFunction = ThrowableSubAdapter.messageOnly((m) -> ThrowableUtil.wrapReflectEx(() -> constructor.newInstance(m)));
             }
         } catch (ReflectiveOperationException ignore) { }
 
-        if (constructor == null) {
+        if (constructionFunction == null) {
             Log.warning("Provided Throwable class '" + clazz + "' does not have any of those constructors or are not accessible: (String, Throwable), (String).");
             return null;
         }
 
-        return new ThrowableSubAdapter<>(constructor);
+        return new ThrowableSubAdapter<>(constructionFunction);
     }
 
 

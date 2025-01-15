@@ -39,7 +39,7 @@ public class ReflectListWrapper<W extends ReflectWrapperI> extends MappedListVie
      */
     @Override
     public boolean equals(Object o) {
-        return o instanceof List l && backend.equals(l instanceof ReflectListWrapper<?> rw ? rw.backend : l);
+        return o instanceof List<?> l && backend.equals(l instanceof ReflectListWrapper<?> rw ? rw.backend : l);
     }
 
     @Override

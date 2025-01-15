@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.function.BiPredicate;
 
 /**
- * The backup process responsible for the working directory of the current Bungeecord instance.
+ * The backup process responsible for the working directory of the current BungeeCord instance.
  */
 public class BungeeWorkdirProcess extends BackupProcess {
 

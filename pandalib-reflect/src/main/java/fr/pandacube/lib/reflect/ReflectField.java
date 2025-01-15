@@ -122,9 +122,11 @@ public final class ReflectField<T> extends ReflectMember<T, String, Field, NoSuc
             // if the field is final, we have to do some unsafe stuff :/
             if (sunMiscUnsafeInstance != null) { // Java >= 16
                 // set the value of the field, directly in the memory
+                @SuppressWarnings("deprecation") // no other options yet. VarHandle blocks edition of final fields
                 Object unsafeObjInstance = Modifier.isStatic(realModifiers)
                         ? sunMiscUnsafeInstance.staticFieldBase(f)
                         : instance;
+                @SuppressWarnings("deprecation") // no other options yet. VarHandle blocks edition of final fields
                 long offset = Modifier.isStatic(realModifiers)
                         ? sunMiscUnsafeInstance.staticFieldOffset(f)
                         : sunMiscUnsafeInstance.objectFieldOffset(f);

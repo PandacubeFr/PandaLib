@@ -19,16 +19,16 @@ import net.md_5.bungee.event.EventHandler;
  * <p>
  * Usage example, in your plugin init code:
  * <pre>{@code
- * PluginMessagePassthrough.init(yourPluginInstance);
- * PluginMessagePassthrough.register("worldedit:cui"); // plugin message used by WorldEdit
+ * PluginMessagePassThrough.init(yourPluginInstance);
+ * PluginMessagePassThrough.register("worldedit:cui"); // plugin message used by WorldEdit
  * }</pre>
  */
-public class PluginMessagePassthrough implements Listener {
+public class PluginMessagePassThrough implements Listener {
     private static final List<String> channels = Collections.synchronizedList(new ArrayList<>());
-    private static final PluginMessagePassthrough instance = new PluginMessagePassthrough();
+    private static final PluginMessagePassThrough instance = new PluginMessagePassThrough();
 
     /**
-     * Initialize the {@link PluginMessagePassthrough}.
+     * Initialize the {@link PluginMessagePassThrough}.
      * It registers the required event listener.
      * @param plugin the plugin instance.
      */
@@ -92,7 +92,7 @@ public class PluginMessagePassthrough implements Listener {
     }
 
 
-    private PluginMessagePassthrough() { }
+    private PluginMessagePassThrough() { }
 
 
     /**

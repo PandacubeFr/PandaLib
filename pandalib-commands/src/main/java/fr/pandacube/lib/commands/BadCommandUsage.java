@@ -3,8 +3,8 @@ package fr.pandacube.lib.commands;
 import java.util.logging.Logger;
 
 /**
- * Throw an instance of this exception to indicate to the plugin command handler that the user has missused the command.
- * The message, if provided, must indicate the reason of the mussusage of the command. It will be displayed on the
+ * Throw an instance of this exception to indicate to the plugin command handler that the user has badly used the command.
+ * The message, if provided, must indicate the reason of the bad usage of the command. It will be displayed on the
  * screen with eventual indications of how to use the command (help command for example).
  * If a {@link Throwable} cause is provided, it will be relayed to the plugin {@link Logger}.
  * 

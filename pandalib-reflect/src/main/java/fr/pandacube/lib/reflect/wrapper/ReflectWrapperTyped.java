@@ -16,11 +16,6 @@ public abstract class ReflectWrapperTyped<T> extends ReflectWrapper implements R
         super(obj);
     }
 
-    @Override
-    public Class<? extends T> __getRuntimeClass() {
-        return ReflectWrapperTypedI.super.__getRuntimeClass();
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public T __getRuntimeInstance() {

@@ -55,7 +55,7 @@ public class EnumUtil {
 	 * Search for a specific enum entry in the provided enum type, using the case-insensitive search string.
 	 * unlike {@link #searchEnum(Class, String)}, this method does not statically check the enum type, in case it is not
 	 * known at compilation time.
-	 *
+	 * <p>
 	 * For a statically checked enum type, uses {@link #searchEnum(Class, String)} instead.
 	 *
 	 * @param enumType the class of the enum in which to search

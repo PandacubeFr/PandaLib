@@ -68,12 +68,12 @@ public class ProtocolVersion implements Comparable<ProtocolVersion> {
 
     private static void init() {
         // try online source first
-        try {
-            HttpResponse<String> response = HttpClient.newBuilder()
-                    .connectTimeout(Duration.ofSeconds(5))
-                    .build()
-                    .send(HttpRequest.newBuilder(URI.create(ONLINE_DATA_URL)).build(),
-                            BodyHandlers.ofString()
+        try (HttpClient cl = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(5))
+                .build()) {
+            HttpResponse<String> response = cl.send(
+                    HttpRequest.newBuilder(URI.create(ONLINE_DATA_URL)).build(),
+                    BodyHandlers.ofString()
                     );
             if (response.statusCode() == 200) {
                 MinecraftVersionList data = Json.gson.fromJson(response.body(), MinecraftVersionList.class);
@@ -123,7 +123,7 @@ public class ProtocolVersion implements Comparable<ProtocolVersion> {
 
     /**
      * Gets the {@link ProtocolVersion} associated with the provided Minecraft version.
-     * @param version The Minecraft version, in the format "X.X[.X]" (eg. "1.17" or "1.8.8").
+     * @param version The Minecraft version, in the format "X.X[.X]" (e.g. "1.17" or "1.8.8").
      * @return an instance of {@link ProtocolVersion}.
      */
     public static ProtocolVersion ofVersion(String version) {

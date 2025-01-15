@@ -39,7 +39,7 @@ public class GUIHotBar implements Listener {
 	private final List<Player> currentPlayers = new ArrayList<>();
 
 	/**
-	 * Setup a new gui hot  bar. You should not instantiate more than one hot bar.
+	 * Set up a new gui hot  bar. You should not instantiate more than one hot bar.
 	 * @param defaultSlot the default slot (currently held item) when the player joins the hot bar.
 	 */
 	public GUIHotBar(int defaultSlot) {

@@ -9,11 +9,11 @@ that are detailed in their respective Readme file (if any).
 - `pandalib-util` General purpose utility and helper classes;
 - `pandalib-chat` A chat API working on top of the Adventure API;
 - `pandalib-db` An ORM working with a MySQL server through JDBC;
-- `pandalib-bungee` Utility and helper classes to use in Bungeecord plugins. Also provides platform implementation for `pandalib-players` and `pandalib-commands`;
+- `pandalib-bungee` Utility and helper classes to use in BungeeCord plugins. Also provides platform implementation for `pandalib-players` and `pandalib-commands`;
 - `pandalib-paper` Utility and helper classes to use in Spigot/Paper plugins. Also provides platform implementation for `pandalib-players` and `pandalib-commands`;
 - `pandalib-reflect` A reflection wrapper to make reflective operation easier;
 - `pandalib-permissions` A general purpose permission system;
-- `pandalib-bungee-permissions` Integration of the permission system `pandalib-permissions` into Bungeecord;
+- `pandalib-bungee-permissions` Integration of the permission system `pandalib-permissions` into BungeeCord;
 - `pandalib-paper-permissions` Integration of the permission system `pandalib-permissions` into Bukkit, Vault and WEPIF permission systems;
 - `pandalib-players` A library to handle classes representing online or offline players;
 - `pandalib-players-permissible` An extension of `pandalib-players` with support for the permission system `pandalib-permissions`;

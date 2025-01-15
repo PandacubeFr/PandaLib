@@ -38,7 +38,7 @@ public class CLIConsoleCommandSender implements CLICommandSender {
     }
 
     @Override
-    public void sendMessage(@NotNull Identity source, @NotNull Component message, @NotNull MessageType type) {
+    public void sendMessage(@NotNull Identity source, @NotNull Component message, @SuppressWarnings({"UnstableApiUsage", "deprecation"}) @NotNull MessageType type) {
         sendMessage(Chat.chatComponent(message).getLegacyText());
     }
 }

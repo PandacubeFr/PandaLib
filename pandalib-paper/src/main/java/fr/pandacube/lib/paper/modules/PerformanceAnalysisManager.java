@@ -493,7 +493,7 @@ public class PerformanceAnalysisManager implements Listener {
 	/**
 	 * Runs the garbage collector on the server.
 	 * Depending on the server load and the used memory, this can freeze the server for a second.
-	 * @param sender the command sender that triggers the garbase collector. Can be null (the report will be sent to the
+	 * @param sender the command sender that triggers the garbage collector. Can be null (the report will be sent to the
 	 *               console)
 	 */
 	public static void gc(CommandSender sender) {

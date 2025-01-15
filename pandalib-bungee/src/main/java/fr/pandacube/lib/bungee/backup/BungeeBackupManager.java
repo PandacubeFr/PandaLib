@@ -7,14 +7,14 @@ import fr.pandacube.lib.core.backup.RotatedLogsBackupProcess;
 import java.io.File;
 
 /**
- * Handles the backup processes for a Bungeecord instance.
+ * Handles the backup processes for a BungeeCord instance.
  */
 public class BungeeBackupManager extends BackupManager {
 
 	BungeeBackupConfig config;
 
 	/**
-	 * Instanciate a new {@link BungeeBackupManager}.
+	 * Creates a new {@link BungeeBackupManager}.
 	 * @param config the configuration.
 	 */
 	public BungeeBackupManager(BungeeBackupConfig config) {

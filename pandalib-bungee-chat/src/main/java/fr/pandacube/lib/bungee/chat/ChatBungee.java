@@ -1,7 +1,7 @@
 package fr.pandacube.lib.bungee.chat;
 
 import fr.pandacube.lib.chat.Chat;
-import fr.pandacube.lib.chat.Chat.FormatableChat;
+import fr.pandacube.lib.chat.Chat.FormattableChat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
@@ -15,22 +15,22 @@ public class ChatBungee {
 
 
     /**
-     * Creates a {@link FormatableChat} from the provided Bungee {@link BaseComponent}.
+     * Creates a {@link FormattableChat} from the provided Bungee {@link BaseComponent}.
      * @param c the {@link BaseComponent}.
-     * @return a new {@link FormatableChat}.
+     * @return a new {@link FormattableChat}.
      */
-    public static FormatableChat chatComponent(BaseComponent c) {
+    public static FormattableChat chatComponent(BaseComponent c) {
         return Chat.chatComponent(toAdventure(c));
     }
 
 
 
     /**
-     * Creates a {@link FormatableChat} from the provided Bungee {@link BaseComponent BaseComponent[]}.
+     * Creates a {@link FormattableChat} from the provided Bungee {@link BaseComponent BaseComponent[]}.
      * @param c the array of {@link BaseComponent}.
-     * @return a new {@link FormatableChat}.
+     * @return a new {@link FormattableChat}.
      */
-    public static FormatableChat chatComponent(BaseComponent[] c) {
+    public static FormattableChat chatComponent(BaseComponent[] c) {
         return Chat.chatComponent(toAdventure(c));
     }
 

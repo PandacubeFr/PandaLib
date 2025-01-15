@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 /**
  * Utility class to easily log info into a provided logger. This class avoid the needs to fetch the logger everytime it
  * is needed.
- *
+ * <p>
  * For instance, this piece of code:
  * <pre>
  * getTheLoggerFromSomewhere().info(message);
@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  * Log.info(message);
  * </pre>
  *
- * This the {@link #setLogger(Logger)} method is not called, thi class will use the logger returned by
+ * If the {@link #setLogger(Logger)} method is not called, this class will use the logger returned by
  * {@link Logger#getGlobal()}.
  */
 public final class Log {

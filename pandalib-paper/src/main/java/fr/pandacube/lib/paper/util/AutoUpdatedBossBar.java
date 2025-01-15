@@ -57,8 +57,8 @@ public class AutoUpdatedBossBar implements Listener {
 	 * Schedule the update of this boss bar with synchronisation with the system clock.
 	 * The underlying method called is {@link Timer#schedule(TimerTask, long, long)}.
 	 * The updater is executed in a separate Thread.
-	 * @param msDelay ms before running the first update of this bossbar
-	 * @param msPeriod ms between each call of the updater
+	 * @param msDelay ms before running the first update of this boss bar.
+	 * @param msPeriod ms between each call of the updater.
 	 */
 	public synchronized void scheduleUpdateTimeSyncThreadAsync(long msDelay, long msPeriod) {
 		if (scheduled)
@@ -82,8 +82,8 @@ public class AutoUpdatedBossBar implements Listener {
 	 * Schedule the update of this boss bar with synchronisation with the ticking of this Minecraft server.
 	 * The underlying method called is {@link BukkitScheduler#runTaskTimer(org.bukkit.plugin.Plugin, Runnable, long, long)}.
 	 * The updater is executed by the main Server Thread.
-	 * @param tickDelay number of server tick before running the first update of this boss bar
-	 * @param tickPeriod number of server tick between each call of the updater
+	 * @param tickDelay number of server tick before running the first update of this boss bar.
+	 * @param tickPeriod number of server tick between each call of the updater.
 	 */
 	public synchronized void scheduleUpdateTickSyncThreadSync(long tickDelay, long tickPeriod) {
 		if (scheduled)

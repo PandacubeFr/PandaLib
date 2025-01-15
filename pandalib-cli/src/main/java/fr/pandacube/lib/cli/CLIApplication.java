@@ -32,6 +32,7 @@ public abstract class CLIApplication {
     /**
      * Creates a new application instance.
      */
+    @SuppressWarnings("CallToPrintStackTrace")
     protected CLIApplication() {
         instance = this;
         CLI tmpCLI = null;

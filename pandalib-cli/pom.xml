@@ -29,17 +29,7 @@
         </dependency>
         <dependency>
             <groupId>fr.pandacube.lib</groupId>
-            <artifactId>pandalib-reflect</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>fr.pandacube.lib</groupId>
             <artifactId>pandalib-commands</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>fr.pandacube.lib</groupId>
-            <artifactId>pandalib-config</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

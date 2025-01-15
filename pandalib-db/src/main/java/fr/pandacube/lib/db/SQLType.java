@@ -42,7 +42,7 @@ public class SQLType<T> {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof SQLType o
+        return obj instanceof SQLType<?> o
                 && toString().equals(o.toString());
     }
 

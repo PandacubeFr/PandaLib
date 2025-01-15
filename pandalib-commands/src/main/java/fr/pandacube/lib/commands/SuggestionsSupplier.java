@@ -241,7 +241,7 @@ public interface SuggestionsSupplier<S> {
 			return (s, ti, token, a) -> {
 				try {
 					List<Long> proposedValues = new ArrayList<>();
-					if (token.length() == 0) {
+					if (token.isEmpty()) {
 						long start = Math.max(Math.max(Math.min(-4, max - 9), min), -9);
 						long end = Math.min(Math.min(start + 9, max), 9);
 						ListUtil.addLongRangeToList(proposedValues, start, end);
@@ -399,7 +399,7 @@ public interface SuggestionsSupplier<S> {
 	 */
 	default SuggestionsSupplier<S> quotableString() {
 		return (s, ti, token, a) -> {
-			boolean startWithQuote = token.length() > 0 && (token.charAt(0) == '"' || token.charAt(0) == '\'');
+			boolean startWithQuote = !token.isEmpty() && (token.charAt(0) == '"' || token.charAt(0) == '\'');
 			String realToken = startWithQuote ? unescapeBrigadierQuotable(token.substring(1), token.charAt(0)) : token;
 			String[] argsCopy = Arrays.copyOf(a, a.length);
 			argsCopy[a.length - 1] = realToken;

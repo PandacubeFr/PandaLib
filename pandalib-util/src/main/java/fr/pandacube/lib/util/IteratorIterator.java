@@ -15,7 +15,7 @@ public class IteratorIterator<T> implements Iterator<T> {
 
 	/**
 	 * Create an {@link IteratorIterator} with the provided {@link Collection} of {@link Iterable}.
-	 * The iterables’ iterators will be concatenated in the order of the collection’s iterator.
+	 * The iterable's iterators will be concatenated in the order of the collection’s iterator.
 	 * @param coll the collection of iterables.
 	 * @return a new instance of {@link IteratorIterator} iterating over the elements of the provided iterables.
 	 * @param <T> the type of the values in the iterables.
@@ -37,7 +37,7 @@ public class IteratorIterator<T> implements Iterator<T> {
 
 	/**
 	 * Create an {@link IteratorIterator} with the provided array of {@link Iterable}.
-	 * The iterables’ iterators will be concatenated in the order of the array.
+	 * The iterable's iterators will be concatenated in the order of the array.
 	 * @param arr the array of iterables.
 	 * @return a new instance of {@link IteratorIterator} iterating over the elements of the provided iterables.
 	 * @param <T> the type of the values in the iterables.

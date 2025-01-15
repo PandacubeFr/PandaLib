@@ -32,7 +32,7 @@ public class Json {
 		boolean isFloat = value.contains(".");
 
 		if (isFloat) {
-			// if float, will only parse to Double
+			// if is float, will only parse to Double
 			//   (see org.yaml.snakeyaml.constructor.SafeConstructor.ConstructYamlFloat)
 			try {
 				Double d = Double.valueOf(value);

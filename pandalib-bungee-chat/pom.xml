@@ -23,11 +23,6 @@
     <dependencies>
         <dependency>
             <groupId>fr.pandacube.lib</groupId>
-            <artifactId>pandalib-util</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>fr.pandacube.lib</groupId>
             <artifactId>pandalib-chat</artifactId>
             <version>${project.version}</version>
         </dependency>

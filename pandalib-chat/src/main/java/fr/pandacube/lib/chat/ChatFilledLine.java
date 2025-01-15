@@ -5,7 +5,7 @@ import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 
-import fr.pandacube.lib.chat.Chat.FormatableChat;
+import fr.pandacube.lib.chat.Chat.FormattableChat;
 
 /**
  * Builder for a {@link Chat} component for filling a chat line, with decoration and eventual aligned text.
@@ -150,10 +150,10 @@ public class ChatFilledLine implements ComponentLike {
 
 
     /**
-     * Renders this line to a {@link FormatableChat}.
-     * @return a new {@link FormatableChat} built by this {@link ChatFilledLine}.
+     * Renders this line to a {@link FormattableChat}.
+     * @return a new {@link FormattableChat} built by this {@link ChatFilledLine}.
      */
-    public FormatableChat toChat() {
+    public FormattableChat toChat() {
         int maxWidth = (this.maxWidth != null)
                 ? this.maxWidth
                 : console ? ChatUtil.CONSOLE_NB_CHAR_DEFAULT : ChatUtil.DEFAULT_CHAT_WIDTH;
@@ -170,7 +170,7 @@ public class ChatFilledLine implements ComponentLike {
         int textWidth = ChatUtil.componentWidth(text.asComponent(), console);
 
         if (textWidth > maxWidth)
-            return (FormatableChat) text;
+            return (FormattableChat) text;
 
         int repeatedCharWidth = ChatUtil.charW(decorationChar, console, decorationBold);
         int nbCharLeft = 0, nbCharRight = 0;
@@ -179,12 +179,12 @@ public class ChatFilledLine implements ComponentLike {
             case CENTER -> {
                 nbCharLeft = nbCharRight = (maxWidth - textWidth) / 2 / repeatedCharWidth;
                 if (nbCharLeft == 0)
-                    return (FormatableChat) text;
+                    return (FormattableChat) text;
             }
             case LEFT, RIGHT -> {
                 int remWidth = textWidth + nbSide * repeatedCharWidth;
                 if (remWidth > maxWidth)
-                    return (FormatableChat) text;
+                    return (FormattableChat) text;
                 boolean left = alignment == Alignment.LEFT;
                 int nbOtherSide = (maxWidth - remWidth) / repeatedCharWidth;
                 nbCharLeft  = left ? nbSide : nbOtherSide;
@@ -197,7 +197,7 @@ public class ChatFilledLine implements ComponentLike {
                 .then(text);
         if (decorationChar != ' ' || spacesDecorationRightSide)
             d.then(Chat.text(ChatUtil.repeatedChar(decorationChar, nbCharRight)).color(decorationColor).bold(decorationBold));
-        return (FormatableChat) d;
+        return (FormattableChat) d;
     }
 
 

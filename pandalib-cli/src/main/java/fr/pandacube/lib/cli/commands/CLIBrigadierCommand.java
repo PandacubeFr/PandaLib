@@ -38,16 +38,9 @@ public abstract class CLIBrigadierCommand extends BrigadierCommand<CLICommandSen
 	}
 	
 	protected abstract LiteralArgumentBuilder<CLICommandSender> buildCommand();
-	
-	protected String[] getAliases() {
-		return new String[0];
-	}
 
 
-
-
-
-	public boolean isPlayer(CLICommandSender sender) {
+    public boolean isPlayer(CLICommandSender sender) {
 		return sender.isPlayer();
 	}
 

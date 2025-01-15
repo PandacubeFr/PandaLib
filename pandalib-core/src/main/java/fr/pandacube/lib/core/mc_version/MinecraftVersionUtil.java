@@ -37,8 +37,8 @@ public class MinecraftVersionUtil {
 
     /**
      * Decompose a version string into a series of integers.
-     * @param v a string representation of a version (eg. 1.19.1).
-     * @return an array of int representing the provided version (eg. [1, 19, 1]).
+     * @param v a string representation of a version (e.g. 1.19.1).
+     * @return an array of int representing the provided version (e.g. [1, 19, 1]).
      */
     public static int[] decomposedVersion(String v) {
         try {
