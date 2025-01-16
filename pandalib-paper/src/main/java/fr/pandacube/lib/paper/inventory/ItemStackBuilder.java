@@ -2,6 +2,11 @@ package fr.pandacube.lib.paper.inventory;
 
 import com.google.common.collect.Streams;
 import fr.pandacube.lib.chat.Chat;
+import io.papermc.paper.block.BlockPredicate;
+import io.papermc.paper.datacomponent.DataComponentType;
+import io.papermc.paper.datacomponent.DataComponentType.Valued;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.ItemAdventurePredicate;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Material;
@@ -70,14 +75,9 @@ public class ItemStackBuilder {
 	
 	
 	private final ItemStack stack;
-	private ItemMeta cachedMeta;
 	
 	private ItemStackBuilder(ItemStack base) {
 		stack = base;
-	}
-	
-	private ItemMeta getOrInitMeta() {
-		return (cachedMeta != null) ? cachedMeta : (cachedMeta = stack.getItemMeta());
 	}
 
 	/**
@@ -97,10 +97,7 @@ public class ItemStackBuilder {
 	 * @return itself.
 	 */
 	public <T extends ItemMeta> ItemStackBuilder meta(Consumer<T> metaUpdater, Class<T> metaType) {
-		stack.editMeta(metaType, m -> {
-			metaUpdater.accept(m);
-			cachedMeta = m;
-		});
+		stack.editMeta(metaType, metaUpdater);
 		return this;
 	}
 
@@ -166,7 +163,7 @@ public class ItemStackBuilder {
 	 */
 	public ItemStackBuilder addLoreAfter(List<? extends ComponentLike> lores) {
 		if (lores != null) {
-			List<Component> baseLore = getOrInitMeta().lore();
+			List<Component> baseLore = stack.getItemMeta().lore();
 			if (baseLore == null) baseLore = Collections.emptyList();
 			return rawLore(
 					Streams.concat(
@@ -299,6 +296,68 @@ public class ItemStackBuilder {
 	 */
 	public ItemStackBuilder damage(int d) {
 		return meta(m -> m.setDamage(d), Damageable.class);
+	}
+
+
+	/**
+	 * Sets a value for a data component of this item.
+	 * @param dataType the data component type.
+	 * @param dataValue the data component value.
+	 * @return itself.
+	 * @param <T> the data component API type.
+	 */
+	public <T> ItemStackBuilder data(Valued<T> dataType, T dataValue) {
+		stack.setData(dataType, dataValue);
+		return this;
+	}
+
+	/**
+	 * Unset (set to empty) a value for a data component of this item.
+	 * @param dataType the data component type.
+	 * @return itself.
+	 */
+	public ItemStackBuilder unsetData(DataComponentType dataType) {
+		stack.unsetData(dataType);
+		return this;
+	}
+
+	/**
+	 * Reset (act as default) a value for a data component of this item.
+	 * @param dataType the data component type.
+	 * @return itself.
+	 */
+	public ItemStackBuilder resetData(DataComponentType dataType) {
+		stack.resetData(dataType);
+		return this;
+	}
+
+
+	/**
+	 * Sets the {@code can_break} data component to the provided list of block predicate.
+	 * @param canBreak a list of block predicate. If empty, unsets the data component. If null, reset to default.
+	 * @return itself.
+	 */
+	public ItemStackBuilder canBreak(List<BlockPredicate> canBreak) {
+		if (canBreak == null)
+			return resetData(DataComponentTypes.CAN_BREAK);
+		else if (canBreak.isEmpty())
+			return unsetData(DataComponentTypes.CAN_BREAK);
+		else
+			return data(DataComponentTypes.CAN_BREAK, ItemAdventurePredicate.itemAdventurePredicate(canBreak));
+	}
+
+	/**
+	 * Sets the {@code can_place_on} data component to the provided list of block predicate.
+	 * @param canPlaceOn a list of block predicate. If empty, unsets the data component. If null, reset to default.
+	 * @return itself.
+	 */
+	public ItemStackBuilder canPlaceOn(List<BlockPredicate> canPlaceOn) {
+		if (canPlaceOn == null)
+			return resetData(DataComponentTypes.CAN_PLACE_ON);
+		else if (canPlaceOn.isEmpty())
+			return unsetData(DataComponentTypes.CAN_PLACE_ON);
+		else
+			return data(DataComponentTypes.CAN_PLACE_ON, ItemAdventurePredicate.itemAdventurePredicate(canPlaceOn));
 	}
 
 
