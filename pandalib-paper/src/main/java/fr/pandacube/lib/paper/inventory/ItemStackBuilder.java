@@ -2,14 +2,12 @@ package fr.pandacube.lib.paper.inventory;
 
 import com.google.common.collect.Streams;
 import fr.pandacube.lib.chat.Chat;
-import io.papermc.paper.block.BlockPredicate;
 import io.papermc.paper.datacomponent.DataComponentType;
 import io.papermc.paper.datacomponent.DataComponentType.Valued;
-import io.papermc.paper.datacomponent.DataComponentTypes;
-import io.papermc.paper.datacomponent.item.ItemAdventurePredicate;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -17,6 +15,7 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -333,31 +332,61 @@ public class ItemStackBuilder {
 
 
 	/**
-	 * Sets the {@code can_break} data component to the provided list of block predicate.
+	 * Sets the {@code can_break} data component to the provided list of {@link Material}.
+	 * @param canBreak a list of {@link Material}.
+	 * @return itself.
+	 */
+	public ItemStackBuilder canBreakMaterials(Collection<Material> canBreak) {
+		return canBreak(canBreak.stream().map(Material::getKey).toList());
+	}
+
+
+	/**
+	 * Sets the {@code can_break} data component to the provided list of {@link NamespacedKey}.
 	 * @param canBreak a list of block predicate. If empty, unsets the data component. If null, reset to default.
 	 * @return itself.
 	 */
-	public ItemStackBuilder canBreak(List<BlockPredicate> canBreak) {
+	@SuppressWarnings("removal")
+	public ItemStackBuilder canBreak(Collection<NamespacedKey> canBreak) {
+		@SuppressWarnings("unchecked")
+		Collection<com.destroystokyo.paper.Namespaced> nsCanBreak = (Collection<com.destroystokyo.paper.Namespaced>) (Collection<?>) canBreak;
+		return meta(m -> m.setPlaceableKeys(nsCanBreak));
+
+		/*
 		if (canBreak == null)
 			return resetData(DataComponentTypes.CAN_BREAK);
 		else if (canBreak.isEmpty())
 			return unsetData(DataComponentTypes.CAN_BREAK);
 		else
-			return data(DataComponentTypes.CAN_BREAK, ItemAdventurePredicate.itemAdventurePredicate(canBreak));
+			return data(DataComponentTypes.CAN_BREAK, ItemAdventurePredicate.itemAdventurePredicate(canBreak));*/
 	}
 
 	/**
-	 * Sets the {@code can_place_on} data component to the provided list of block predicate.
+	 * Sets the {@code can_place_on} data component to the provided list of {@link Material}.
+	 * @param canPlaceOn a list of {@link Material}.
+	 * @return itself.
+	 */
+	public ItemStackBuilder canPlaceOnMaterials(Collection<Material> canPlaceOn) {
+		return canPlaceOn(canPlaceOn.stream().map(Material::getKey).toList());
+	}
+
+	/**
+	 * Sets the {@code can_place_on} data component to the provided list of {@link NamespacedKey}.
 	 * @param canPlaceOn a list of block predicate. If empty, unsets the data component. If null, reset to default.
 	 * @return itself.
 	 */
-	public ItemStackBuilder canPlaceOn(List<BlockPredicate> canPlaceOn) {
-		if (canPlaceOn == null)
+	@SuppressWarnings("removal")
+	public ItemStackBuilder canPlaceOn(Collection<NamespacedKey> canPlaceOn) {
+		@SuppressWarnings("unchecked")
+		Collection<com.destroystokyo.paper.Namespaced> nsCanPlaceOn = (Collection<com.destroystokyo.paper.Namespaced>) (Collection<?>) canPlaceOn;
+		return meta(m -> m.setPlaceableKeys(nsCanPlaceOn));
+
+		/* if (canPlaceOn == null)
 			return resetData(DataComponentTypes.CAN_PLACE_ON);
 		else if (canPlaceOn.isEmpty())
 			return unsetData(DataComponentTypes.CAN_PLACE_ON);
 		else
-			return data(DataComponentTypes.CAN_PLACE_ON, ItemAdventurePredicate.itemAdventurePredicate(canPlaceOn));
+			return data(DataComponentTypes.CAN_PLACE_ON, ItemAdventurePredicate.itemAdventurePredicate(canPlaceOn)); */
 	}
 
 
