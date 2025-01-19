@@ -23,6 +23,7 @@ public abstract class AbstractClientWS implements AbstractWS {
     private final URI uri;
     private boolean autoReconnect;
     private boolean isConnecting;
+    private HttpClient httpClient = HttpClient.newHttpClient();
     private final AtomicReference<WebSocket> socket = new AtomicReference<>();
 
 
@@ -127,32 +128,33 @@ public abstract class AbstractClientWS implements AbstractWS {
     private void connect() {
         synchronized (socket) {
             isConnecting = true;
-            try (HttpClient cl = HttpClient.newHttpClient()) {
-                cl.newWebSocketBuilder()
-                        .connectTimeout(Duration.ofSeconds(5))
-                        .buildAsync(uri, receiveListener)
-                        .whenCompleteAsync((ws, ex) -> {
-                            synchronized (socket) {
-                                isConnecting = false;
-                                if (ws != null) {
-                                    // the value may already been set by the onOpen method of the receiveListener
-                                    // but just in case, we do it here too
-                                    socket.set(ws);
-                                    return;
-                                }
+            if (httpClient == null)
+                httpClient = HttpClient.newHttpClient();
+
+            httpClient.newWebSocketBuilder()
+                    .connectTimeout(Duration.ofSeconds(5))
+                    .buildAsync(uri, receiveListener)
+                    .whenCompleteAsync((ws, ex) -> {
+                        synchronized (socket) {
+                            isConnecting = false;
+                            if (ws != null) {
+                                // the value may already been set by the onOpen method of the receiveListener
+                                // but just in case, we do it here too
+                                socket.set(ws);
+                                return;
                             }
-                            if (ex instanceof CompletionException)
-                                ex = ex.getCause();
-                            if (ex instanceof IOException) {
-                                reconnectIfNecessary();
-                                log("Unable to connect. Trying again...: " + ex);
-                            }
-                            else {
-                                autoReconnect = false;
-                                logError("Error connecting (not trying to reconnect even if asked)", ex);
-                            }
-                        });
-            }
+                        }
+                        if (ex instanceof CompletionException)
+                            ex = ex.getCause();
+                        if (ex instanceof IOException) {
+                            reconnectIfNecessary();
+                            log("Unable to connect. Trying again...: " + ex);
+                        }
+                        else {
+                            autoReconnect = false;
+                            logError("Error connecting (not trying to reconnect even if asked)", ex);
+                        }
+                    });
 
 
         }
