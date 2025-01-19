@@ -115,7 +115,7 @@ public abstract class AbstractClientWS implements AbstractWS {
         synchronized (socket) {
             if (autoReconnect && !isConnecting && socket.get() == null) {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(2000);
                 } catch (InterruptedException ignored) {
                     Thread.currentThread().interrupt();
                 }
@@ -148,7 +148,7 @@ public abstract class AbstractClientWS implements AbstractWS {
                             ex = ex.getCause();
                         if (ex instanceof IOException) {
                             reconnectIfNecessary();
-                            log("Unable to connect. Trying again...: " + ex);
+                            log("Can't connect. Trying again. " + ex);
                         }
                         else {
                             autoReconnect = false;
