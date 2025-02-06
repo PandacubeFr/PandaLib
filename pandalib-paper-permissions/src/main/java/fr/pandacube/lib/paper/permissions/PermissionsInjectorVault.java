@@ -7,6 +7,7 @@ import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.ServicePriority;
 
 import java.util.List;
@@ -120,6 +121,13 @@ import java.util.List;
 			return true;
 		}
 
+		@Override
+		public boolean playerAdd(Player player, String permission) {
+			// override because the super class sets the permission on the current world of the player, that is probably
+			// not intended by the calling plugin
+			return playerAdd(null, player, permission);
+		}
+
 		@Deprecated
 		@Override
 		public boolean playerRemove(String world, String player, String permission) {
@@ -134,6 +142,14 @@ import java.util.List;
 			Permissions.clearPlayerCache(player.getUniqueId());
 			Log.info("A plugin removed permission " + permission + " (server=" + server + ",world=" + world + ") to player " + player.getName() + " through Vault.");
 			return true;
+		}
+
+		@Override
+		public boolean playerRemove(Player player, String permission) {
+			// to stay coherent with the override of #playerAdd(Player, String), we also override this method.
+			// Will try first to remove the permission on the world itself (like super-method), then if it doesn't exist,
+			// removes on the server level.
+			return super.playerRemove(player, permission) || playerRemove(null, player, permission);
 		}
 
 		@Override
