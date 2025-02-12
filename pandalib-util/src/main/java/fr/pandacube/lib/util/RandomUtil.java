@@ -1,6 +1,11 @@
 package fr.pandacube.lib.util;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -101,7 +106,7 @@ public class RandomUtil {
 	 * The probability of each value to be returned depends on the frequencies provided.
 	 * @param frequencies the frequencies of each entry
 	 * @return the index of an entry, or -1 if it is unable to pick anything (all the frequencies are 0 or there is no provided frequency)
-	 * @throws IllegalArgumentException if frequencies is null.
+	 * @throws IllegalArgumentException if frequencies is null or one of the values is negative.
 	 */
 	public static int randomIndexOfFrequencies(double... frequencies) {
 		if (frequencies == null)
@@ -121,6 +126,30 @@ public class RandomUtil {
 		}
 		return n - 1;
 	}
+
+
+	/**
+	 * Creates a new map with the values shuffled, and the key in the same iteration order as the provided map.
+	 * @param input the source map, untouched.
+	 * @return a new map with shuffled values.
+	 * @param <K> the key type.
+	 * @param <V> the value type.
+	 */
+	public static <K, V> Map<K, V> shuffleMap(Map<K, V> input) {
+		Map<K, V> ret = new LinkedHashMap<>();
+
+		List<V> values = new ArrayList<>(input.values());
+		Collections.shuffle(values, rand);
+
+		Iterator<K> iK = input.keySet().iterator();
+		Iterator<V> iV = values.iterator();
+		while (iK.hasNext() && iV.hasNext()) {
+			ret.put(iK.next(), iV.next());
+		}
+		return ret;
+	}
+
+
 
 
 	/**
