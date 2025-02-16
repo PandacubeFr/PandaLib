@@ -4,6 +4,8 @@ import com.google.common.collect.Streams;
 import fr.pandacube.lib.chat.Chat;
 import io.papermc.paper.datacomponent.DataComponentType;
 import io.papermc.paper.datacomponent.DataComponentType.Valued;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.ResolvableProfile;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Material;
@@ -387,6 +389,15 @@ public class ItemStackBuilder {
 			return unsetData(DataComponentTypes.CAN_PLACE_ON);
 		else
 			return data(DataComponentTypes.CAN_PLACE_ON, ItemAdventurePredicate.itemAdventurePredicate(canPlaceOn)); */
+	}
+
+	/**
+	 * Sets the {@code profile} data component to the provided profile.
+	 * @param profile the profile to use as the component value.
+	 * @return itself.
+	 */
+	public ItemStackBuilder profile(ResolvableProfile profile) {
+		return data(DataComponentTypes.PROFILE, profile);
 	}
 
 
