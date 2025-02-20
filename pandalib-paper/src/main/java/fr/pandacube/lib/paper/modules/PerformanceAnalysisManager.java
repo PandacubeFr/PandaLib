@@ -385,7 +385,7 @@ public class PerformanceAnalysisManager implements Listener {
 					}
 					
 					title = infoText("TPS [")
-							.thenLegacyText(history)
+							.then(history)
 							.thenText("] ")
 							.then(text(tps1sDisplay + "/" + getTargetTickRate() + " ").color(tps1sGradient.pickColorAt(tps1s)))
 							.then(timings);
