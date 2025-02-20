@@ -21,6 +21,7 @@ import net.kyori.adventure.bossbar.BossBar.Color;
 import net.kyori.adventure.bossbar.BossBar.Overlay;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -36,6 +37,7 @@ import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static fr.pandacube.lib.chat.ChatStatic.chat;
 import static fr.pandacube.lib.chat.ChatStatic.failureText;
@@ -317,22 +319,25 @@ public class PerformanceAnalysisManager implements Listener {
 					
 					
 					int[] tpsHistory = getTPSHistory();
-					
-					// keep the legacy text when generating the bar to save space when converting to component
-					StringBuilder s = new StringBuilder();
-					TextColor prevC = null;
+
+					List<Pair<TextColor, AtomicInteger>> barComponents = new ArrayList<>(60);
 					for (int i = 58; i >= 0; i--) {
 						int t = tpsHistory[i];
 						TextColor newC = tps1sGradient.pickColorAt(t);
-						if (!newC.equals(prevC)) {
-							s.append(text("|").color(newC).getLegacyText());
-							prevC = newC;
+						if (barComponents.isEmpty() || !newC.equals(barComponents.get(barComponents.size() - 1).getKey())) {
+							barComponents.add(Pair.of(newC, new AtomicInteger(1)));
 						}
 						else {
-							s.append("|");
+							barComponents.get(barComponents.size() - 1).getValue().incrementAndGet();
 						}
 					}
-					
+					Chat history = chat();
+					barComponents.forEach(p -> {
+						history.then(text("|".repeat(p.getValue().get()))
+								.color(p.getKey())
+						);
+					});
+
 					
 					
 					// tick time measurement
@@ -355,7 +360,7 @@ public class PerformanceAnalysisManager implements Listener {
 								: (avgTickCPUTime1s < 50) ? NamedTextColor.RED
 								: NamedTextColor.DARK_RED;
 						
-						float avgTickWaitingTime1s = avgTickDuration1s - avgTickCPUTime1s;
+						float avgTickWaitingTime1s = Math.max(0, avgTickDuration1s - avgTickCPUTime1s);
 						TextColor avgTickWaitingTime1sColor = (avgTickDuration1s < 46 || avgTickWaitingTime1s < 20) ? PandaTheme.CHAT_GREEN_1_NORMAL
 								: (avgTickWaitingTime1s < 30) ? NamedTextColor.YELLOW
 								: (avgTickWaitingTime1s < 40) ? NamedTextColor.GOLD
@@ -371,16 +376,16 @@ public class PerformanceAnalysisManager implements Listener {
 								: NamedTextColor.RED;
 						
 						timings = text("(R/W/S:")
-								.then(text(Math.round(avgTickCPUTime1s)).color(avgTickCPUTime1sColor))
+								.then(text("%02d".formatted(Math.round(avgTickCPUTime1s))).color(avgTickCPUTime1sColor))
 								.thenText("/")
-								.then(text(Math.round(avgTickWaitingTime1s)).color(avgTickWaitingTime1sColor))
+								.then(text("%02d".formatted(Math.round(avgTickWaitingTime1s))).color(avgTickWaitingTime1sColor))
 								.thenText("/")
-								.then(text(Math.round(avgInterTickDuration1s)).color(avgInterTickDuration1sColor))
+								.then(text("%02d".formatted(Math.round(avgInterTickDuration1s))).color(avgInterTickDuration1sColor))
 								.thenText("ms)");
 					}
 					
 					title = infoText("TPS [")
-							.thenLegacyText(s.toString())
+							.thenLegacyText(history)
 							.thenText("] ")
 							.then(text(tps1sDisplay + "/" + getTargetTickRate() + " ").color(tps1sGradient.pickColorAt(tps1s)))
 							.then(timings);
