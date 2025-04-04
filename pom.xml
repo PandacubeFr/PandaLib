@@ -55,7 +55,7 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         
-        <bungeecord.version>1.21-R0.1-SNAPSHOT</bungeecord.version>
+        <bungeecord.version>1.21-R0.3-SNAPSHOT</bungeecord.version>
         <paper.version>1.21.4-R0.1</paper.version>
         <mc.version>1.21.4</mc.version>
 

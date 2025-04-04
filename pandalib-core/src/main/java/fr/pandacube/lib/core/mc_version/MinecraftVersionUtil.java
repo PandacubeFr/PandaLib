@@ -114,7 +114,7 @@ public class MinecraftVersionUtil {
                 else {
                     // merge
                     if (i - firstConsecutive > 1)
-                        keptVersions.add(versions.get(firstConsecutive) + "-" + versions.get(i));
+                        keptVersions.add(versions.get(firstConsecutive) + " - " + versions.get(i));
                     else {
                         keptVersions.add(versions.get(firstConsecutive));
                         keptVersions.add(versions.get(i));
