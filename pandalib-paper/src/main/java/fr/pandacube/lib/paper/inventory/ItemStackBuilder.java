@@ -352,7 +352,7 @@ public class ItemStackBuilder {
 	public ItemStackBuilder canBreak(Collection<NamespacedKey> canBreak) {
 		@SuppressWarnings("unchecked")
 		Collection<com.destroystokyo.paper.Namespaced> nsCanBreak = (Collection<com.destroystokyo.paper.Namespaced>) (Collection<?>) canBreak;
-		return meta(m -> m.setPlaceableKeys(nsCanBreak));
+		return meta(m -> m.setDestroyableKeys(nsCanBreak));
 
 		/*
 		if (canBreak == null)
