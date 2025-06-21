@@ -3,8 +3,11 @@ package fr.pandacube.lib.cli.commands;
 import com.mojang.brigadier.suggestion.Suggestion;
 import com.mojang.brigadier.suggestion.Suggestions;
 import fr.pandacube.lib.commands.BrigadierDispatcher;
-import jline.console.completer.Completer;
 import net.kyori.adventure.text.ComponentLike;
+import org.jline.reader.Candidate;
+import org.jline.reader.Completer;
+import org.jline.reader.LineReader;
+import org.jline.reader.ParsedLine;
 
 import java.util.List;
 
@@ -39,17 +42,15 @@ public class CLIBrigadierDispatcher extends BrigadierDispatcher<CLICommandSender
 	
 	
 	@Override
-	public int complete(String buffer, int cursor, List<CharSequence> candidates) {
-		
-		String bufferBeforeCursor = buffer.substring(0, cursor);
-		
+	public void complete(LineReader lineReader, ParsedLine parsedLine, List<Candidate> candidates) {
+		String bufferBeforeCursor = parsedLine.line().substring(0, parsedLine.cursor());
+
 		Suggestions completeResult = getSuggestions(bufferBeforeCursor);
-		
+
 		completeResult.getList().stream()
 				.map(Suggestion::getText)
+				.map(Candidate::new)
 				.forEach(candidates::add);
-		
-		return completeResult.getRange().getStart();
 	}
 
 	/**

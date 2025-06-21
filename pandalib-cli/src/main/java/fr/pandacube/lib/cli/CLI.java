@@ -1,22 +1,25 @@
 package fr.pandacube.lib.cli;
 
+import fr.pandacube.lib.cli.commands.CLIBrigadierDispatcher;
+import fr.pandacube.lib.cli.log.CLILogger;
+import fr.pandacube.lib.util.log.Log;
+import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
+
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import fr.pandacube.lib.cli.commands.CLIBrigadierDispatcher;
-import fr.pandacube.lib.cli.log.CLILogger;
-import jline.console.ConsoleReader;
-import org.fusesource.jansi.AnsiConsole;
-
-import fr.pandacube.lib.util.log.Log;
-
 /**
- * Class to handle general standard IO operation for a CLI application. It uses Jline’s {@link ConsoleReader} for the
+ * Class to handle general standard IO operation for a CLI application. It uses Jline’s {@link LineReader} for the
  * console rendering, a JUL {@link Logger} for logging, and Brigadier to handle commands.
  */
 public class CLI extends Thread {
 	
-	private final ConsoleReader reader;
+	private final LineReader reader;
 	private final Logger logger;
 
 
@@ -28,10 +31,11 @@ public class CLI extends Thread {
 		super("Console Thread");
 		setDaemon(true);
 
-        AnsiConsole.systemInstall();
-		reader = new ConsoleReader();
-		reader.setPrompt(">");
-		reader.addCompleter(CLIBrigadierDispatcher.instance);
+		Terminal terminal = TerminalBuilder.builder().build();
+		reader = LineReaderBuilder.builder().terminal(terminal)
+				.completer(CLIBrigadierDispatcher.instance)
+				.build()
+		;
 
 		// configure logger's formatter
 		System.setProperty("net.md_5.bungee.log-date-format", "yyyy-MM-dd HH:mm:ss");
@@ -40,10 +44,10 @@ public class CLI extends Thread {
 
 
 	/**
-	 * Gets the Jline {@link ConsoleReader} of this CLI instance.
-	 * @return the Jline {@link ConsoleReader} of this CLI instance.
+	 * Gets the Jline {@link LineReader} of this CLI instance.
+	 * @return the Jline {@link LineReader} of this CLI instance.
 	 */
-	public ConsoleReader getConsoleReader() {
+	public LineReader getConsoleReader() {
 		return reader;
 	}
 
@@ -65,15 +69,14 @@ public class CLI extends Thread {
 		int i = 0;
 		String line;
 		try {
-			while((line = reader.readLine()) != null) {
+			while((line = reader.readLine(">")) != null) {
 				if (line.trim().isEmpty())
 					continue;
 				String cmdLine = line;
-				new Thread(() -> CLIBrigadierDispatcher.instance.execute(cmdLine), "CLICmdThread #"+(i++)).start();
+				Thread.ofVirtual().name("CLICmdThread #"+(i++))
+						.start(() -> CLIBrigadierDispatcher.instance.execute(cmdLine));
 			}
-		} catch (IOException e) {
-			Log.severe(e);
-		}
+		} catch (UserInterruptException | EndOfFileException ignore) { }
 		
 	}
 	
