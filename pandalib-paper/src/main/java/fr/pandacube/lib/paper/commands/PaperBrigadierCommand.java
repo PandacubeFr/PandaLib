@@ -227,7 +227,6 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
                     @SuppressWarnings("unchecked")
                     fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode<CommandSourceStack> wrappedCommandNode = wrap(actualNode, fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode.class);
                     if (actualNode != null) {
-                        Log.warning("Forcing registration of alias /" + aliasToForce + " for command /" + commandNode.getName() + ": replacing " + getCommandIdentity(actualNode) + "?");
                         if (wrappedCommandNode.pluginCommandMeta() != null) {
                             PluginCommandMeta meta = wrappedCommandNode.pluginCommandMeta();
                             if (meta.plugin().equals(plugin))
@@ -238,6 +237,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
                             if (bcn.getBukkitCommand() instanceof PluginCommand pc && pc.getPlugin().equals(plugin))
                                 return;
                         }
+                        Log.warning("Forcing registration of alias /" + aliasToForce + " for command /" + commandNode.getName() + ": replacing " + getCommandIdentity(actualNode));
                         vanillaPaperDispatcher.getRoot().getChildren().removeIf(c -> c.getName().equals(aliasToForce));
                     }
                     /*else {
