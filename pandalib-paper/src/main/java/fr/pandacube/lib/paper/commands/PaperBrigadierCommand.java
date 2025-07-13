@@ -19,7 +19,7 @@ import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.VanillaCommandWrapper;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Coordinates;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Vec3Argument;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.BukkitCommandNode;
-import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.PluginCommandNode;
+import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.PluginCommandMeta;
 import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
 import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
 import fr.pandacube.lib.players.standalone.AbstractPlayerManager;
@@ -46,7 +46,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static fr.pandacube.lib.reflect.wrapper.ReflectWrapper.unwrap;
 import static fr.pandacube.lib.reflect.wrapper.ReflectWrapper.wrap;
 
 /**
@@ -199,6 +198,10 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
             registeredAliases = new HashSet<>(event.registrar().register(commandNode, description, List.of(aliases)));
             doPostRegistrationFixes();
 
+            @SuppressWarnings("unchecked")
+            fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode<CommandSourceStack> registeredNode = wrap(vanillaPaperDispatcher.getRoot().getChild(commandNode.getName()), fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode.class);
+
+
             if (registrationPolicy == RegistrationPolicy.ALL) {
                 // enforce registration of aliases
                 for (String alias : aliases) {
@@ -221,11 +224,13 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
 
                 for (String aliasToForce : forceRegistrationAgain) {
                     CommandNode<CommandSourceStack> actualNode = vanillaPaperDispatcher.getRoot().getChild(aliasToForce);
+                    @SuppressWarnings("unchecked")
+                    fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode<CommandSourceStack> wrappedCommandNode = wrap(actualNode, fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode.class);
                     if (actualNode != null) {
-                        //Log.info("Forcing registration of alias /" + aliasToForce + " for command /" + commandNode.getName() + ": replacing " + getCommandIdentity(actualNode) + "?");
-                        if (PluginCommandNode.REFLECT.get().isInstance(actualNode)) {
-                            PluginCommandNode pcn = wrap(actualNode, PluginCommandNode.class);
-                            if (pcn.getPlugin().equals(plugin))
+                        Log.warning("Forcing registration of alias /" + aliasToForce + " for command /" + commandNode.getName() + ": replacing " + getCommandIdentity(actualNode) + "?");
+                        if (wrappedCommandNode.pluginCommandMeta() != null) {
+                            PluginCommandMeta meta = wrappedCommandNode.pluginCommandMeta();
+                            if (meta.plugin().equals(plugin))
                                 return;
                         }
                         else if (BukkitCommandNode.REFLECT.get().isInstance(actualNode)) {
@@ -235,10 +240,13 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
                         }
                         vanillaPaperDispatcher.getRoot().getChildren().removeIf(c -> c.getName().equals(aliasToForce));
                     }
-                /*else {
-                    Log.info("Forcing registration of alias /" + aliasToForce + " for command /" + commandNode.getName() + ": no command found for alias. Adding alias.");
-                }*/
-                    LiteralCommandNode<CommandSourceStack> newPCN = unwrap(new PluginCommandNode(aliasToForce, plugin.getPluginMeta(), commandNode, description));
+                    /*else {
+                        Log.info("Forcing registration of alias /" + aliasToForce + " for command /" + commandNode.getName() + ": no command found for alias. Adding alias.");
+                    }*/
+                    LiteralCommandNode<CommandSourceStack> newPCN = getAliasNode(commandNode, aliasToForce);
+                    @SuppressWarnings("unchecked")
+                    fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode<CommandSourceStack> wrappedNewPCN = wrap(newPCN, fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode.class);
+                    wrappedNewPCN.pluginCommandMeta(registeredNode.pluginCommandMeta());
                     vanillaPaperDispatcher.getRoot().addChild(newPCN);
                 }
             });
@@ -296,9 +304,12 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
     }
 
     private static String getCommandIdentity(CommandNode<CommandSourceStack> command) {
-        if (PluginCommandNode.REFLECT.get().isInstance(command)) {
-            PluginCommandNode wrappedPCN = wrap(command, PluginCommandNode.class);
-            return "Node /" + command.getName() + " from plugin " + wrappedPCN.getPlugin().getName();
+        @SuppressWarnings("unchecked")
+        fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode<CommandSourceStack> wrappedCommandNode = wrap(command, fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode.class);
+
+        if (wrappedCommandNode.pluginCommandMeta() != null) {
+            PluginCommandMeta meta = wrappedCommandNode.pluginCommandMeta();
+            return "Node /" + command.getName() + " from plugin " + meta.plugin().getName();
         }
         else if (BukkitCommandNode.REFLECT.get().isInstance(command)) {
             BukkitCommandNode wrappedBCN = wrap(command, BukkitCommandNode.class);
@@ -324,7 +335,9 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
 
 
     private static Boolean isPluginCommand(CommandNode<CommandSourceStack> command) {
-        if (PluginCommandNode.REFLECT.get().isInstance(command)) {
+        @SuppressWarnings("unchecked")
+        fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode<CommandSourceStack> wrappedCommandNode = wrap(command, fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode.class);
+        if (wrappedCommandNode.pluginCommandMeta() != null) {
             return true;
         }
         else if (BukkitCommandNode.REFLECT.get().isInstance(command)) {
