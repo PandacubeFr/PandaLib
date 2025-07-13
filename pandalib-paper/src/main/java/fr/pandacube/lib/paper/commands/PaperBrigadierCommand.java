@@ -304,14 +304,8 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
     }
 
     private static String getCommandIdentity(CommandNode<CommandSourceStack> command) {
-        @SuppressWarnings("unchecked")
-        fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode<CommandSourceStack> wrappedCommandNode = wrap(command, fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode.class);
 
-        if (wrappedCommandNode.pluginCommandMeta() != null) {
-            PluginCommandMeta meta = wrappedCommandNode.pluginCommandMeta();
-            return "Node /" + command.getName() + " from plugin " + meta.plugin().getName();
-        }
-        else if (BukkitCommandNode.REFLECT.get().isInstance(command)) {
+        if (BukkitCommandNode.REFLECT.get().isInstance(command)) {
             BukkitCommandNode wrappedBCN = wrap(command, BukkitCommandNode.class);
             Command bukkitCmd = wrappedBCN.getBukkitCommand();
             if (bukkitCmd instanceof PluginCommand cmd) {
@@ -329,18 +323,22 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
                 return "Node /" + command.getName() + " wrapping " + bukkitCmd.getClass().getName() + " /" + bukkitCmd.getName();
         }
         else {
-            return "Node /" + command.getName() + " (unspecific)";
+            @SuppressWarnings("unchecked")
+            fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode<CommandSourceStack> wrappedCommandNode = wrap(command, fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode.class);
+
+            if (wrappedCommandNode.pluginCommandMeta() != null) {
+                PluginCommandMeta meta = wrappedCommandNode.pluginCommandMeta();
+                return "Node /" + command.getName() + " from plugin " + meta.plugin().getName();
+            }
+            else {
+                return "Node /" + command.getName() + " (unspecific)";
+            }
         }
     }
 
 
     private static Boolean isPluginCommand(CommandNode<CommandSourceStack> command) {
-        @SuppressWarnings("unchecked")
-        fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode<CommandSourceStack> wrappedCommandNode = wrap(command, fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode.class);
-        if (wrappedCommandNode.pluginCommandMeta() != null) {
-            return true;
-        }
-        else if (BukkitCommandNode.REFLECT.get().isInstance(command)) {
+        if (BukkitCommandNode.REFLECT.get().isInstance(command)) {
             BukkitCommandNode wrappedBCN = wrap(command, BukkitCommandNode.class);
             Command bukkitCmd = wrappedBCN.getBukkitCommand();
             if (bukkitCmd instanceof PluginCommand) {
@@ -358,7 +356,9 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
                 return null;
         }
         else {
-            return false;
+            @SuppressWarnings("unchecked")
+            fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode<CommandSourceStack> wrappedCommandNode = wrap(command, fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode.class);
+            return wrappedCommandNode.pluginCommandMeta() != null;
         }
     }
 

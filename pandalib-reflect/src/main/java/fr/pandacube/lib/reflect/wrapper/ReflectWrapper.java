@@ -116,7 +116,7 @@ public abstract class ReflectWrapper implements ReflectWrapperI {
 			}
 
 			if (expectedWrapperClass != null && !expectedWrapperClass.isAssignableFrom(wrapperClass)) {
-				throw new ClassCastException("Wrapper class " + wrapperClass + " is not a sub-class or a sub-interface of expected wrapper class" + expectedWrapperClass);
+				throw new ClassCastException("Wrapper class " + wrapperClass + " is not a sub-class or a sub-interface of expected wrapper class " + expectedWrapperClass);
 			}
 			ReflectConstructor<? extends ReflectWrapperI> constructor = WrapperRegistry.getWrapperConstructorOfWrapperClass(wrapperClass);
 			if (constructor == null) {
