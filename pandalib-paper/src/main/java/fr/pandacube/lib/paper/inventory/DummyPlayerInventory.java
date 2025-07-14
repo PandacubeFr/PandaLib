@@ -18,6 +18,8 @@ import java.util.Objects;
  */
 public class DummyPlayerInventory extends InventoryWrapper implements PlayerInventory {
 
+    public static final int PLAYER_INVENTORY_SIZE = 43; // 36 base inventory + 4 armor slots + 1 off hand + 2 hidden slots (body and saddle)
+
     private int heldItemSlot;
 
     /**
@@ -27,8 +29,8 @@ public class DummyPlayerInventory extends InventoryWrapper implements PlayerInve
      */
     public DummyPlayerInventory(Inventory base, int heldItemSlot) {
         super(base);
-        if (base.getSize() < 41)
-            throw new IllegalArgumentException("base inventory should have a size of 41 (" + base.getSize() + " given).");
+        if (base.getSize() < PLAYER_INVENTORY_SIZE)
+            throw new IllegalArgumentException("base inventory should have a size of " + PLAYER_INVENTORY_SIZE + " (" + base.getSize() + " given).");
         if (heldItemSlot < 0 || heldItemSlot > 8)
             throw new IllegalArgumentException("heldItemSlot should be between 0 and 8 inclusive.");
         this.heldItemSlot = heldItemSlot;
@@ -114,6 +116,24 @@ public class DummyPlayerInventory extends InventoryWrapper implements PlayerInve
         setItem(36, boots);
     }
 
+    public ItemStack getSaddle() {
+        return getItem(42);
+    }
+
+    public void setSaddle(@Nullable ItemStack saddle) {
+        setItem(42, saddle);
+    }
+
+    public ItemStack getBody() {
+        return getItem(41);
+    }
+
+    public void setBody(@Nullable ItemStack body) {
+        setItem(41, body);
+    }
+
+
+
     @Override
     public void setItem(EquipmentSlot slot, ItemStack item) {
         Preconditions.checkArgument(slot != null, "slot must not be null");
@@ -125,7 +145,8 @@ public class DummyPlayerInventory extends InventoryWrapper implements PlayerInve
             case LEGS -> this.setLeggings(item);
             case CHEST -> this.setChestplate(item);
             case HEAD -> this.setHelmet(item);
-            default -> throw new IllegalArgumentException("Not implemented. This is a bug");
+            case BODY -> this.setBody(item);
+            case SADDLE -> this.setSaddle(item);
         }
     }
 
@@ -138,7 +159,8 @@ public class DummyPlayerInventory extends InventoryWrapper implements PlayerInve
             case LEGS -> Objects.requireNonNullElseGet(this.getLeggings(), () -> new ItemStack(Material.AIR));
             case CHEST -> Objects.requireNonNullElseGet(this.getChestplate(), () -> new ItemStack(Material.AIR));
             case HEAD -> Objects.requireNonNullElseGet(this.getHelmet(), () -> new ItemStack(Material.AIR));
-            case BODY -> new ItemStack(Material.AIR); // for horses/wolves armor
+            case BODY -> Objects.requireNonNullElseGet(this.getBody(), () -> new ItemStack(Material.AIR)); // for horses/wolves armor
+            case SADDLE -> Objects.requireNonNullElseGet(this.getSaddle(), () -> new ItemStack(Material.AIR));
         };
     }
 
