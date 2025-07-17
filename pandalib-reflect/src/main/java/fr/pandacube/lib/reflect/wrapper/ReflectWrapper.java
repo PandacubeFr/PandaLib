@@ -198,16 +198,20 @@ public abstract class ReflectWrapper implements ReflectWrapperI {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof ReflectWrapper wr) {
-			return Objects.equals(reflectObject, wr.reflectObject);
+			return reflectObject.equals(wr.reflectObject);
 		}
 		return false;
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(reflectObject);
+		return reflectObject.hashCode();
 	}
 
+	@Override
+	public String toString() {
+		return reflectObject.toString();
+	}
 
 
 }

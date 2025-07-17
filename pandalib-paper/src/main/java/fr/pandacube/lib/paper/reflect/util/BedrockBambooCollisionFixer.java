@@ -34,7 +34,7 @@ public final class BedrockBambooCollisionFixer implements Listener {
     public BedrockBambooCollisionFixer() {
         // Make the bamboo block have zero collision.
         try {
-            BambooStalkBlock.COLLISION_SHAPE(Block.box(8, 0, 8, 8, 0, 8));
+            BambooStalkBlock.SHAPE_COLLISION(Block.box(8, 0, 8, 8, 0, 8));
             Log.info("Bamboo block collision box removed successfully.");
         } catch (Exception e) {
             Log.severe("Unable to remove the collision box of the Bamboo block.", e);

@@ -8,20 +8,23 @@ import fr.pandacube.lib.reflect.wrapper.ConcreteWrapper;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapperI;
 
+import java.util.Optional;
+
 import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 @ConcreteWrapper(Tag.__concrete.class)
 public interface Tag extends ReflectWrapperI {
 	ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("net.minecraft.nbt.Tag"));
-	ReflectMethod<?> getAsString = wrapEx(() -> REFLECT.method("getAsString"));
+	ReflectMethod<?> asString = wrapEx(() -> REFLECT.method("asString"));
 	ReflectField<?> TAG_LIST = wrapEx(() -> REFLECT.field("TAG_LIST"));
 	ReflectField<?> TAG_COMPOUND = wrapEx(() -> REFLECT.field("TAG_COMPOUND"));
 	ReflectField<?> TAG_ANY_NUMERIC = wrapEx(() -> REFLECT.field("TAG_ANY_NUMERIC"));
 
 	
-	default String getAsString() {
-		return wrapReflectEx(() -> (String) getAsString.invoke(__getRuntimeInstance()));
+	@SuppressWarnings("unchecked")
+	default Optional<String> asString() {
+		return wrapReflectEx(() -> (Optional<String>) asString.invoke(__getRuntimeInstance()));
 	}
 
 	static byte TAG_LIST() {

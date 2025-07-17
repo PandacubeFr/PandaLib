@@ -1,5 +1,6 @@
 package fr.pandacube.lib.paper.players;
 
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.util.ProblemReporter;
 import fr.pandacube.lib.paper.world.PrimaryWorlds;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftServer;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
@@ -166,7 +167,7 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
                     .getServer()
                     .getPlayerList()
                     .playerIo()
-                    .load(getName(), getUniqueId().toString()).orElse(null);
+                    .load(getName(), getUniqueId().toString(), ProblemReporter.DISCARDING()).orElse(null);
         } catch (Exception|LinkageError e) {
             throw new PlayerDataLoadException(getName(), getUniqueId(), e);
         }

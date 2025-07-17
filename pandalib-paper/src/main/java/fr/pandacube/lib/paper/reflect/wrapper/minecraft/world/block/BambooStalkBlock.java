@@ -10,14 +10,14 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class BambooStalkBlock extends Block {
     public static final ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("net.minecraft.world.level.block.BambooStalkBlock"));
-    public static final ReflectField<?> COLLISION_SHAPE = wrapEx(() -> REFLECT.field("COLLISION_SHAPE"));
+    public static final ReflectField<?> SHAPE_COLLISION = wrapEx(() -> REFLECT.field("SHAPE_COLLISION"));
 
-    public static VoxelShape COLLISION_SHAPE() {
-        return wrap(wrapReflectEx(COLLISION_SHAPE::getStaticValue), VoxelShape.class);
+    public static VoxelShape SHAPE_COLLISION() {
+        return wrap(wrapReflectEx(SHAPE_COLLISION::getStaticValue), VoxelShape.class);
     }
 
-    public static void COLLISION_SHAPE(VoxelShape shape) {
-        wrapReflectEx(() -> COLLISION_SHAPE.setStaticValue(unwrap(shape)));
+    public static void SHAPE_COLLISION(VoxelShape shape) {
+        wrapReflectEx(() -> SHAPE_COLLISION.setStaticValue(unwrap(shape)));
     }
 
     protected BambooStalkBlock(Object obj) {

@@ -10,14 +10,9 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class SharedConstants extends ReflectWrapper {
     public static final ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("net.minecraft.SharedConstants"));
-    private static final ReflectMethod<?> getCurrentVersion = wrapEx(() -> REFLECT.method("getCurrentVersion"));
     private static final ReflectMethod<?> getProtocolVersion = wrapEx(() -> REFLECT.method("getProtocolVersion"));
 
 
-
-    public static WorldVersion getCurrentVersion() {
-        return wrap(wrapReflectEx(() -> getCurrentVersion.invokeStatic()), WorldVersion.class);
-    }
 
     public static int getProtocolVersion() {
         return (int) wrapReflectEx(() -> getProtocolVersion.invokeStatic());

@@ -14,9 +14,7 @@ import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.VanillaCommandWrapper;
 import fr.pandacube.lib.paper.reflect.wrapper.dataconverter.MCDataConverter;
 import fr.pandacube.lib.paper.reflect.wrapper.dataconverter.MCDataType;
 import fr.pandacube.lib.paper.reflect.wrapper.dataconverter.MCTypeRegistry;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.DetectedVersion;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.SharedConstants;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.WorldVersion;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.CommandSourceStack;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Commands;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Coordinates;
@@ -54,11 +52,11 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerGamePacketL
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerLevel;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerPlayer;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.Settings;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.util.ProblemReporter;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.util.ProgressListener;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.AABB;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ChunkPos;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ChunkStorage;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.DataVersion;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Entity;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ItemStack;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Level;
@@ -73,9 +71,9 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.block.Block;
 import fr.pandacube.lib.paper.reflect.wrapper.netty.ByteBuf;
 import fr.pandacube.lib.paper.reflect.wrapper.netty.Unpooled;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.PaperAdventure;
+import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.APICommandMeta;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.BukkitCommandNode;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.PaperBrigadier;
-import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.PluginCommandMeta;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.ShadowBrigNode;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.configuration.FallbackValue_Int;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.configuration.WorldConfiguration;
@@ -180,6 +178,7 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(ServerPlayer.class, ServerPlayer.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(Settings.class, Settings.REFLECT.get()));
         // minecraft.util
+        thAcc.catchThrowable(() -> initWrapper(ProblemReporter.class, ProblemReporter.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(ProgressListener.class, ProgressListener.REFLECT.get()));
         // minecraft.world.block
         thAcc.catchThrowable(() -> initWrapper(Block.class, Block.REFLECT.get()));
@@ -188,7 +187,6 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(AABB.class, AABB.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(ChunkPos.class, ChunkPos.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(ChunkStorage.class, ChunkStorage.REFLECT.get()));
-        thAcc.catchThrowable(() -> initWrapper(DataVersion.class, DataVersion.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(Entity.class, Entity.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(ItemStack.class, ItemStack.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(Level.class, Level.REFLECT.get()));
@@ -199,18 +197,16 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(Vec3.class, Vec3.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(VoxelShape.class, VoxelShape.REFLECT.get()));
         // minecraft
-        thAcc.catchThrowable(() -> initWrapper(DetectedVersion.class, DetectedVersion.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(SharedConstants.class, SharedConstants.REFLECT.get()));
-        thAcc.catchThrowable(() -> initWrapper(WorldVersion.class, WorldVersion.REFLECT.get()));
 
         // netty
         thAcc.catchThrowable(() -> initWrapper(ByteBuf.class, ByteBuf.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(Unpooled.class, Unpooled.REFLECT.get()));
 
         // paper.commands
+        thAcc.catchThrowable(() -> initWrapper(APICommandMeta.class, APICommandMeta.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(BukkitCommandNode.class, BukkitCommandNode.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(PaperBrigadier.class, PaperBrigadier.REFLECT.get()));
-        thAcc.catchThrowable(() -> initWrapper(PluginCommandMeta.class, PluginCommandMeta.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(ShadowBrigNode.class, ShadowBrigNode.REFLECT.get()));
         // paper.configuration
         thAcc.catchThrowable(() -> initWrapper(FallbackValue_Int.class, FallbackValue_Int.REFLECT.get()));

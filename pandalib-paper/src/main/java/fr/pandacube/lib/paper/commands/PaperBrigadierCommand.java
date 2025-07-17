@@ -18,8 +18,8 @@ import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftVector;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.VanillaCommandWrapper;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Coordinates;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Vec3Argument;
+import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.APICommandMeta;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.BukkitCommandNode;
-import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.PluginCommandMeta;
 import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
 import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
 import fr.pandacube.lib.players.standalone.AbstractPlayerManager;
@@ -227,8 +227,8 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
                     @SuppressWarnings("unchecked")
                     fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode<CommandSourceStack> wrappedCommandNode = wrap(actualNode, fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode.class);
                     if (actualNode != null) {
-                        if (wrappedCommandNode.pluginCommandMeta() != null) {
-                            PluginCommandMeta meta = wrappedCommandNode.pluginCommandMeta();
+                        if (wrappedCommandNode.apiCommandMeta() != null) {
+                            APICommandMeta meta = wrappedCommandNode.apiCommandMeta();
                             if (meta.plugin().equals(plugin))
                                 return;
                         }
@@ -246,7 +246,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
                     LiteralCommandNode<CommandSourceStack> newPCN = getAliasNode(commandNode, aliasToForce);
                     @SuppressWarnings("unchecked")
                     fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode<CommandSourceStack> wrappedNewPCN = wrap(newPCN, fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode.class);
-                    wrappedNewPCN.pluginCommandMeta(registeredNode.pluginCommandMeta());
+                    wrappedNewPCN.apiCommandMeta(registeredNode.apiCommandMeta());
                     vanillaPaperDispatcher.getRoot().addChild(newPCN);
                 }
             });
@@ -326,8 +326,8 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
             @SuppressWarnings("unchecked")
             fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode<CommandSourceStack> wrappedCommandNode = wrap(command, fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode.class);
 
-            if (wrappedCommandNode.pluginCommandMeta() != null) {
-                PluginCommandMeta meta = wrappedCommandNode.pluginCommandMeta();
+            if (wrappedCommandNode.apiCommandMeta() != null) {
+                APICommandMeta meta = wrappedCommandNode.apiCommandMeta();
                 return "Node /" + command.getName() + " from plugin " + meta.plugin().getName();
             }
             else {
@@ -358,7 +358,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
         else {
             @SuppressWarnings("unchecked")
             fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode<CommandSourceStack> wrappedCommandNode = wrap(command, fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode.class);
-            return wrappedCommandNode.pluginCommandMeta() != null;
+            return wrappedCommandNode.apiCommandMeta() != null;
         }
     }
 

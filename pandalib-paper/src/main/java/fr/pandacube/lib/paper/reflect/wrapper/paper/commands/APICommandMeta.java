@@ -11,8 +11,8 @@ import java.util.List;
 import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
-public class PluginCommandMeta extends ReflectWrapper {
-    public static final ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("io.papermc.paper.command.brigadier.PluginCommandMeta"));
+public class APICommandMeta extends ReflectWrapper {
+    public static final ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("io.papermc.paper.command.brigadier.APICommandMeta"));
     private static final ReflectMethod<?> plugin = wrapEx(() -> REFLECT.method("plugin"));
     private static final ReflectMethod<?> description = wrapEx(() -> REFLECT.method("description"));
     private static final ReflectMethod<?> aliases = wrapEx(() -> REFLECT.method("aliases"));
@@ -33,7 +33,7 @@ public class PluginCommandMeta extends ReflectWrapper {
 
 
 
-    protected PluginCommandMeta(Object obj) {
+    protected APICommandMeta(Object obj) {
         super(obj);
     }
 }
