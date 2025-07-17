@@ -19,7 +19,6 @@ public interface Tag extends ReflectWrapperI {
 	ReflectMethod<?> asString = wrapEx(() -> REFLECT.method("asString"));
 	ReflectField<?> TAG_LIST = wrapEx(() -> REFLECT.field("TAG_LIST"));
 	ReflectField<?> TAG_COMPOUND = wrapEx(() -> REFLECT.field("TAG_COMPOUND"));
-	ReflectField<?> TAG_ANY_NUMERIC = wrapEx(() -> REFLECT.field("TAG_ANY_NUMERIC"));
 
 	
 	@SuppressWarnings("unchecked")
@@ -33,10 +32,6 @@ public interface Tag extends ReflectWrapperI {
 
 	static byte TAG_COMPOUND() {
 		return wrapReflectEx(() -> (byte) TAG_COMPOUND.getStaticValue());
-	}
-
-	static byte TAG_ANY_NUMERIC() {
-		return wrapReflectEx(() -> (byte) TAG_ANY_NUMERIC.getStaticValue());
 	}
 
 	
