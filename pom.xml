@@ -60,6 +60,7 @@
         <mc.version>1.21.8</mc.version>
 
         <guava.version>33.3.1-jre</guava.version> <!-- Match the version imported by Paper API/BungeeCord API if possible -->
+        <datafixerupper.version>8.0.16</datafixerupper.version> <!-- Match the version used internally in Paper Server -->
     </properties>
 	
     <modules>

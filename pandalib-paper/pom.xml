@@ -22,6 +22,11 @@
             <id>fabricmc</id>
             <url>https://maven.fabricmc.net/</url>
         </repository>
+        <repository>
+            <id>minecraft-libraries</id>
+            <name>Minecraft Libraries</name>
+            <url>https://libraries.minecraft.net</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -82,6 +87,12 @@
             <artifactId>pandalib-paper-permissions</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>datafixerupper</artifactId>
+            <version>${datafixerupper.version}</version>
         </dependency>
 
         <!-- Paper -->

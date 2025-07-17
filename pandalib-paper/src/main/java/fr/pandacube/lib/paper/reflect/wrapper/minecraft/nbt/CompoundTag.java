@@ -6,7 +6,6 @@ import fr.pandacube.lib.reflect.ReflectConstructor;
 import fr.pandacube.lib.reflect.ReflectMethod;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -20,17 +19,14 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 	private static final ReflectMethod<?> putBoolean = wrapEx(() -> REFLECT.method("putBoolean", String.class, boolean.class));
 	private static final ReflectMethod<?> putByte = wrapEx(() -> REFLECT.method("putByte", String.class, byte.class));
 	private static final ReflectMethod<?> putByteArray = wrapEx(() -> REFLECT.method("putByteArray", String.class, byte[].class));
-	private static final ReflectMethod<?> putByteArray_List = wrapEx(() -> REFLECT.method("putByteArray", String.class, List.class));
 	private static final ReflectMethod<?> putDouble = wrapEx(() -> REFLECT.method("putDouble", String.class, double.class));
 	private static final ReflectMethod<?> putFloat = wrapEx(() -> REFLECT.method("putFloat", String.class, float.class));
 	private static final ReflectMethod<?> putInt = wrapEx(() -> REFLECT.method("putInt", String.class, int.class));
 	private static final ReflectMethod<?> putIntArray = wrapEx(() -> REFLECT.method("putIntArray", String.class, int[].class));
-	private static final ReflectMethod<?> putIntArray_List = wrapEx(() -> REFLECT.method("putIntArray", String.class, List.class));
 	private static final ReflectMethod<?> putString = wrapEx(() -> REFLECT.method("putString", String.class, String.class));
 	private static final ReflectMethod<?> putUUID = wrapEx(() -> REFLECT.method("putUUID", String.class, UUID.class));
 	private static final ReflectMethod<?> putLong = wrapEx(() -> REFLECT.method("putLong", String.class, long.class));
 	private static final ReflectMethod<?> putLongArray = wrapEx(() -> REFLECT.method("putLongArray", String.class, long[].class));
-	private static final ReflectMethod<?> putLongArray_List = wrapEx(() -> REFLECT.method("putLongArray", String.class, List.class));
 	private static final ReflectMethod<?> putShort = wrapEx(() -> REFLECT.method("putShort", String.class, short.class));
 	private static final ReflectMethod<?> put = wrapEx(() -> REFLECT.method("put", String.class, Tag.REFLECT.get()));
 
@@ -73,9 +69,6 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 	public void putByteArray(String key, byte[] value) {
 		wrapReflectEx(() -> putByteArray.invoke(__getRuntimeInstance(), key, value));
 	}
-	public void putByteArray(String key, List<Byte> value) {
-		wrapReflectEx(() -> putByteArray_List.invoke(__getRuntimeInstance(), key, value));
-	}
 	public void putDouble(String key, double value) {
 		wrapReflectEx(() -> putDouble.invoke(__getRuntimeInstance(), key, value));
 	}
@@ -88,9 +81,6 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 	public void putIntArray(String key, int[] value) {
 		wrapReflectEx(() -> putIntArray.invoke(__getRuntimeInstance(), key, value));
 	}
-	public void putIntArray(String key, List<Integer> value) {
-		wrapReflectEx(() -> putIntArray_List.invoke(__getRuntimeInstance(), key, value));
-	}
 	public void putString(String key, String value) {
 		wrapReflectEx(() -> putString.invoke(__getRuntimeInstance(), key, value));
 	}
@@ -102,9 +92,6 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 	}
 	public void putLongArray(String key, long[] value) {
 		wrapReflectEx(() -> putLongArray.invoke(__getRuntimeInstance(), key, value));
-	}
-	public void putLongArray(String key, List<Long> value) {
-		wrapReflectEx(() -> putLongArray_List.invoke(__getRuntimeInstance(), key, value));
 	}
 	public void putShort(String key, short value) {
 		wrapReflectEx(() -> putShort.invoke(__getRuntimeInstance(), key, value));

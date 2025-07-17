@@ -3,9 +3,14 @@ package fr.pandacube.lib.paper.players;
 import fr.pandacube.lib.paper.inventory.DummyPlayerInventory;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftItemStack;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.ListTag;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.Tag;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.util.ProblemReporter;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ItemStackWithSlot;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.TagValueInput;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.TagValueOutput;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ValueInput;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ValueOutputTypedOutputList;
 import fr.pandacube.lib.paper.util.ExperienceUtil;
+import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -14,6 +19,7 @@ import org.bukkit.inventory.PlayerInventory;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.function.IntUnaryOperator;
@@ -118,17 +124,17 @@ public record PlayerDataWrapper(CompoundTag data) {
     }
 
     private Map<Integer, ItemStack> getRawInventoryContent(String key) {
-        if (!data.contains(key, Tag.TAG_LIST()))
-            return Map.of();
-        ListTag list = data.getList(key, Tag.TAG_COMPOUND());
-        if (list == null)
-            return Map.of();
+
+        ValueInput vi = TagValueInput.createGlobal(ProblemReporter.DISCARDING(), data);
+        Iterable<?> listNMSItemStackWithSlot = ReflectWrapper.unwrap(vi.listOrEmpty(key, ItemStackWithSlot.CODEC()));
 
         Map<Integer, ItemStack> stacks = new TreeMap<>();
-        for (int i = 0; i < list.size(); i++) {
-            CompoundTag itemTag = list.getCompound(i);
-            int nbtSlot = itemTag.getByte("Slot") & 255;
-            fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ItemStack.parse(itemTag)
+
+        for (Object nmsISWS : listNMSItemStackWithSlot) {
+            ItemStackWithSlot isws = ReflectWrapper.wrap(nmsISWS, ItemStackWithSlot.class);
+
+            int nbtSlot = isws.slot() & 255;
+            Optional.of(isws.stack())
                     .map(nms -> filterStack(CraftItemStack.asCraftMirror(nms)))
                     .ifPresent(is -> stacks.put(nbtSlot, is));
         }
@@ -153,21 +159,22 @@ public record PlayerDataWrapper(CompoundTag data) {
     }
 
     private void setRawInventoryContent(String key, Map<Integer, ItemStack> stacks) {
-        ListTag list = new ListTag();
+
+        TagValueOutput vo = TagValueOutput.createWrappingGlobal(ProblemReporter.DISCARDING(), data);
+        ValueOutputTypedOutputList listNMSItemStackWithSlot = vo.list(key, ItemStackWithSlot.CODEC());
+
         for (Entry<Integer, ItemStack> is : stacks.entrySet()) {
             ItemStack stack = filterStack(is.getValue());
             if (stack == null)
                 continue;
-            CompoundTag itemTag = new CompoundTag();
-            itemTag.putByte("Slot", is.getKey().byteValue());
-            list.add(list.size(), CraftItemStack.asNMSCopy(is.getValue()).save(itemTag));
+
+            listNMSItemStackWithSlot.add(ReflectWrapper.unwrap(new ItemStackWithSlot(is.getKey(), CraftItemStack.asNMSCopy(is.getValue()))));
         }
-        data.put(key, list);
     }
 
 
     private ItemStack filterStack(ItemStack is) {
-        return is == null || is.getType().isEmpty() || is.getAmount() == 0 ? null : is;
+        return is == null || is.isEmpty() || is.getAmount() <= 0 ? null : is;
     }
 
 
