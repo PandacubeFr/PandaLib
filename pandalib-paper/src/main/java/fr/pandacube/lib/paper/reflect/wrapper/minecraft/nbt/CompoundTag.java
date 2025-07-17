@@ -24,7 +24,6 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 	private static final ReflectMethod<?> putInt = wrapEx(() -> REFLECT.method("putInt", String.class, int.class));
 	private static final ReflectMethod<?> putIntArray = wrapEx(() -> REFLECT.method("putIntArray", String.class, int[].class));
 	private static final ReflectMethod<?> putString = wrapEx(() -> REFLECT.method("putString", String.class, String.class));
-	private static final ReflectMethod<?> putUUID = wrapEx(() -> REFLECT.method("putUUID", String.class, UUID.class));
 	private static final ReflectMethod<?> putLong = wrapEx(() -> REFLECT.method("putLong", String.class, long.class));
 	private static final ReflectMethod<?> putLongArray = wrapEx(() -> REFLECT.method("putLongArray", String.class, long[].class));
 	private static final ReflectMethod<?> putShort = wrapEx(() -> REFLECT.method("putShort", String.class, short.class));
@@ -83,9 +82,6 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 	}
 	public void putString(String key, String value) {
 		wrapReflectEx(() -> putString.invoke(__getRuntimeInstance(), key, value));
-	}
-	public void putUUID(String key, UUID value) {
-		wrapReflectEx(() -> putUUID.invoke(__getRuntimeInstance(), key, value));
 	}
 	public void putLong(String key, long value) {
 		wrapReflectEx(() -> putLong.invoke(__getRuntimeInstance(), key, value));

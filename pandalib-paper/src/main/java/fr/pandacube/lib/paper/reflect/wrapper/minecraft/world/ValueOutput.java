@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import fr.pandacube.lib.reflect.Reflect;
 import fr.pandacube.lib.reflect.ReflectClass;
 import fr.pandacube.lib.reflect.ReflectMethod;
+import fr.pandacube.lib.reflect.wrapper.ConcreteWrapper;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapperI;
 
@@ -11,6 +12,7 @@ import static fr.pandacube.lib.reflect.wrapper.ReflectWrapper.wrap;
 import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
+@ConcreteWrapper(ValueOutput.__concrete.class)
 public interface ValueOutput extends ReflectWrapperI {
     ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("net.minecraft.world.level.storage.ValueOutput"));
     ReflectMethod<?> list = wrapEx(() -> REFLECT.method("list", String.class, Codec.class));
