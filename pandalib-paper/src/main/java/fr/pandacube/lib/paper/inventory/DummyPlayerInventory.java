@@ -18,6 +18,9 @@ import java.util.Objects;
  */
 public class DummyPlayerInventory extends InventoryWrapper implements PlayerInventory {
 
+    /**
+     * Total number of item slots in the player inventory.
+     */
     public static final int PLAYER_INVENTORY_SIZE = 43; // 36 base inventory + 4 armor slots + 1 off hand + 2 hidden slots (body and saddle)
 
     private int heldItemSlot;
@@ -116,18 +119,34 @@ public class DummyPlayerInventory extends InventoryWrapper implements PlayerInve
         setItem(36, boots);
     }
 
+    /**
+     * Gets the item stack in the SADDLE {@link EquipmentSlot}.
+     * @return the SADDLE item stack.
+     */
     public ItemStack getSaddle() {
         return getItem(42);
     }
 
+    /**
+     * Puts the provided item stack in the SADDLE {@link EquipmentSlot}.
+     * @param saddle the item.
+     */
     public void setSaddle(@Nullable ItemStack saddle) {
         setItem(42, saddle);
     }
 
+    /**
+     * Gets the item stack in the BODY {@link EquipmentSlot}.
+     * @return the BODY item stack.
+     */
     public ItemStack getBody() {
         return getItem(41);
     }
 
+    /**
+     * Puts the provided item stack in the BODY {@link EquipmentSlot}.
+     * @param body the item.
+     */
     public void setBody(@Nullable ItemStack body) {
         setItem(41, body);
     }
