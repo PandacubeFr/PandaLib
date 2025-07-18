@@ -41,7 +41,7 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 	private static final ReflectMethod<?> getLongArray = wrapEx(() -> REFLECT.method("getLongArray", String.class));
 	private static final ReflectMethod<?> getCompound = wrapEx(() -> REFLECT.method("getCompound", String.class));
 	private static final ReflectMethod<?> getBoolean = wrapEx(() -> REFLECT.method("getBoolean", String.class));
-	private static final ReflectMethod<?> getList = wrapEx(() -> REFLECT.method("getList", String.class, int.class));
+	private static final ReflectMethod<?> getList = wrapEx(() -> REFLECT.method("getList", String.class));
 
 	private static final ReflectMethod<?> get = wrapEx(() -> REFLECT.method("get", String.class));
 	private static final ReflectMethod<?> keySet = wrapEx(() -> REFLECT.method("keySet"));
@@ -141,8 +141,8 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 	public Optional<Boolean> getBoolean(String key) {
 		return (Optional<Boolean>) wrapReflectEx(() -> getBoolean.invoke(__getRuntimeInstance(), key));
 	}
-	public Optional<ListTag> getList(String key, int type) {
-		return ((Optional<?>) wrapReflectEx(() -> getList.invoke(__getRuntimeInstance(), key, type)))
+	public Optional<ListTag> getList(String key) {
+		return ((Optional<?>) wrapReflectEx(() -> getList.invoke(__getRuntimeInstance(), key)))
 				.map(u -> wrap(u, ListTag.class));
 	}
 	public Tag get(String key) {
