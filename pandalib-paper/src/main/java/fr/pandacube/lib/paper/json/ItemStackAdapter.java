@@ -41,6 +41,7 @@ import java.util.Map;
             return context.deserialize(jsonObj, ConfigurationSerializable.class);
 
 
+
         if (jsonObj.has("meta")
                 && jsonObj.get("meta") instanceof JsonObject metaJson
                 && !metaJson.has(ConfigurationSerialization.SERIALIZED_TYPE_KEY)) {
@@ -50,6 +51,16 @@ import java.util.Map;
             Map<String, Object> map = context.deserialize(jsonObj, MAP_STR_OBJ_TYPE.getType());
             fixDeserializationVersion(map);
             map.remove("meta");
+
+            // the deserialized json may contain older data compatible with pre 1.21.5 but not compatible after.
+            // if it contains both old and new data, delete the old one introduced for compatibility
+            if (map.containsKey("DataVersion")) { // it uses the new DataVersion data
+                map.remove("v");
+            }
+            if (map.containsKey("id")) {
+                map.remove("type");
+            }
+
             ItemStack is = ItemStack.deserialize(map);
 
             Class<? extends ItemMeta> metaClass = is.getItemMeta().getClass();
