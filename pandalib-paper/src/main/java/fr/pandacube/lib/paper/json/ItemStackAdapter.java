@@ -9,10 +9,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.google.gson.Strictness;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.internal.bind.TreeTypeAdapter;
 import com.google.gson.reflect.TypeToken;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
+import org.bukkit.Registry;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.inventory.ItemStack;
@@ -28,7 +31,7 @@ import java.util.Map;
     private static final TypeToken<Map<String, Object>> MAP_STR_OBJ_TYPE = new TypeToken<>() { };
 
     /** Gson instance with no custom type adapter */
-    private static final Gson vanillaGson = new GsonBuilder().setLenient().create();
+    private static final Gson vanillaGson = new GsonBuilder().setStrictness(Strictness.LENIENT).create();
 
     @Override
     public ItemStack deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -63,7 +66,17 @@ import java.util.Map;
 
     @Override
     public JsonElement serialize(ItemStack src, Type typeOfSrc, JsonSerializationContext context) {
-        return context.serialize(src.serialize(), MAP_STR_OBJ_TYPE.getType());
+        Map<String, Object> serialized = src.serialize();
+
+        // make the generated json compatible with pre 1.21.5 deserializer (temporary fix during the upgrade of the server)
+        if (serialized.containsKey("DataVersion")) {
+            serialized.put("v", serialized.get("DataVersion"));
+        }
+        if (serialized.containsKey("id")) {
+            serialized.put("type", Registry.MATERIAL.getOrThrow(Key.key((String)serialized.get("id"))).name());
+        }
+
+        return context.serialize(serialized, MAP_STR_OBJ_TYPE.getType());
     }
 
 
