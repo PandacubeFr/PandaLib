@@ -37,6 +37,16 @@ import java.util.Map;
     public ItemStack deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         if (!(json instanceof JsonObject jsonObj))
             throw new JsonParseException("Unable to deserialize a ConfigurationSerializable from the provided json structure.");
+
+        // the deserialized json may contain older data compatible with pre 1.21.5 but not compatible after.
+        // if it contains both old and new data, delete the old one introduced for compatibility
+        if (jsonObj.has("DataVersion")) { // it uses the new DataVersion data
+            jsonObj.remove("v");
+        }
+        if (jsonObj.has("id")) {
+            jsonObj.remove("type");
+        }
+
         if (jsonObj.has(ConfigurationSerialization.SERIALIZED_TYPE_KEY))
             return context.deserialize(jsonObj, ConfigurationSerializable.class);
 
@@ -52,14 +62,6 @@ import java.util.Map;
             fixDeserializationVersion(map);
             map.remove("meta");
 
-            // the deserialized json may contain older data compatible with pre 1.21.5 but not compatible after.
-            // if it contains both old and new data, delete the old one introduced for compatibility
-            if (map.containsKey("DataVersion")) { // it uses the new DataVersion data
-                map.remove("v");
-            }
-            if (map.containsKey("id")) {
-                map.remove("type");
-            }
 
             ItemStack is = ItemStack.deserialize(map);
 
