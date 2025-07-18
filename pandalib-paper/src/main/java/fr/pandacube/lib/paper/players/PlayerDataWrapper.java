@@ -179,9 +179,7 @@ public record PlayerDataWrapper(CompoundTag data) {
 
 
     private int getHeldItemSlot() {
-        if (!data.contains("SelectedItemSlot"))
-            return 0;
-        return data.getInt("SelectedItemSlot");
+        return data.getInt("SelectedItemSlot").orElse(0);
     }
 
     private void setHeldItemSlot(int slot) {
@@ -194,9 +192,7 @@ public record PlayerDataWrapper(CompoundTag data) {
      * @return the value of Score.
      */
     public int getScore() {
-        if (!data.contains("Score"))
-            return 0;
-        return data.getInt("Score");
+        return data.getInt("Score").orElse(0);
 
     }
 
@@ -214,9 +210,7 @@ public record PlayerDataWrapper(CompoundTag data) {
      * @return the value of XpTotal.
      */
     public int getTotalExperience() {
-        if (!data.contains("XpTotal"))
-            return 0;
-        return data.getInt("XpTotal");
+        return data.getInt("XpTotal").orElse(0);
     }
 
     /**

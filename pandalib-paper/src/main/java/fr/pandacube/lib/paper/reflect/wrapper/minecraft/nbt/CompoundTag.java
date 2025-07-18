@@ -7,8 +7,8 @@ import fr.pandacube.lib.reflect.ReflectMethod;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 import static fr.pandacube.lib.util.ThrowableUtil.wrapEx;
 import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
@@ -29,7 +29,6 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 	private static final ReflectMethod<?> putShort = wrapEx(() -> REFLECT.method("putShort", String.class, short.class));
 	private static final ReflectMethod<?> put = wrapEx(() -> REFLECT.method("put", String.class, Tag.REFLECT.get()));
 
-	private static final ReflectMethod<?> getTagType = wrapEx(() -> REFLECT.method("getTagType", String.class));
 	private static final ReflectMethod<?> getByte = wrapEx(() -> REFLECT.method("getByte", String.class));
 	private static final ReflectMethod<?> getShort = wrapEx(() -> REFLECT.method("getShort", String.class));
 	private static final ReflectMethod<?> getInt = wrapEx(() -> REFLECT.method("getInt", String.class));
@@ -45,11 +44,10 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 	private static final ReflectMethod<?> getList = wrapEx(() -> REFLECT.method("getList", String.class, int.class));
 
 	private static final ReflectMethod<?> get = wrapEx(() -> REFLECT.method("get", String.class));
-	private static final ReflectMethod<?> getAllKeys = wrapEx(() -> REFLECT.method("getAllKeys"));
+	private static final ReflectMethod<?> keySet = wrapEx(() -> REFLECT.method("keySet"));
 	private static final ReflectMethod<?> entrySet = wrapEx(() -> REFLECT.method("entrySet"));
 	private static final ReflectMethod<?> size = wrapEx(() -> REFLECT.method("size"));
 	private static final ReflectMethod<?> contains = wrapEx(() -> REFLECT.method("contains", String.class));
-	private static final ReflectMethod<?> containsStringInt = wrapEx(() -> REFLECT.method("contains", String.class, int.class));
 
 	public CompoundTag() {
 		this(wrapReflectEx(() -> CONSTRUCTOR.instantiate()));
@@ -95,54 +93,64 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 	public void put(String key, Tag value) {
 		wrapReflectEx(() -> put.invoke(__getRuntimeInstance(), key, unwrap(value)));
 	}
-	public byte getTagType(String key) {
-		return (byte) wrapReflectEx(() -> getTagType.invoke(__getRuntimeInstance(), key));
+	@SuppressWarnings("unchecked")
+	public Optional<Byte> getByte(String key) {
+		return (Optional<Byte>) wrapReflectEx(() -> getByte.invoke(__getRuntimeInstance(), key));
 	}
-	public byte getByte(String key) {
-		return (byte) wrapReflectEx(() -> getByte.invoke(__getRuntimeInstance(), key));
+	@SuppressWarnings("unchecked")
+	public Optional<Short> getShort(String key) {
+		return (Optional<Short>) wrapReflectEx(() -> getShort.invoke(__getRuntimeInstance(), key));
 	}
-	public short getShort(String key) {
-		return (short) wrapReflectEx(() -> getShort.invoke(__getRuntimeInstance(), key));
+	@SuppressWarnings("unchecked")
+	public Optional<Integer> getInt(String key) {
+		return (Optional<Integer>) wrapReflectEx(() -> getInt.invoke(__getRuntimeInstance(), key));
 	}
-	public int getInt(String key) {
-		return (int) wrapReflectEx(() -> getInt.invoke(__getRuntimeInstance(), key));
+	@SuppressWarnings("unchecked")
+	public Optional<Long> getLong(String key) {
+		return (Optional<Long>) wrapReflectEx(() -> getLong.invoke(__getRuntimeInstance(), key));
 	}
-	public long getLong(String key) {
-		return (long) wrapReflectEx(() -> getLong.invoke(__getRuntimeInstance(), key));
+	@SuppressWarnings("unchecked")
+	public Optional<Float> getFloat(String key) {
+		return (Optional<Float>) wrapReflectEx(() -> getFloat.invoke(__getRuntimeInstance(), key));
 	}
-	public float getFloat(String key) {
-		return (float) wrapReflectEx(() -> getFloat.invoke(__getRuntimeInstance(), key));
+	@SuppressWarnings("unchecked")
+	public Optional<Double> getDouble(String key) {
+		return (Optional<Double>) wrapReflectEx(() -> getDouble.invoke(__getRuntimeInstance(), key));
 	}
-	public double getDouble(String key) {
-		return (double) wrapReflectEx(() -> getDouble.invoke(__getRuntimeInstance(), key));
+	@SuppressWarnings("unchecked")
+	public Optional<String> getString(String key) {
+		return (Optional<String>) wrapReflectEx(() -> getString.invoke(__getRuntimeInstance(), key));
 	}
-	public String getString(String key) {
-		return (String) wrapReflectEx(() -> getString.invoke(__getRuntimeInstance(), key));
+	@SuppressWarnings("unchecked")
+	public Optional<byte[]> getByteArray(String key) {
+		return (Optional<byte[]>) wrapReflectEx(() -> getByteArray.invoke(__getRuntimeInstance(), key));
 	}
-	public byte[] getByteArray(String key) {
-		return (byte[]) wrapReflectEx(() -> getByteArray.invoke(__getRuntimeInstance(), key));
+	@SuppressWarnings("unchecked")
+	public Optional<int[]> getIntArray(String key) {
+		return (Optional<int[]>) wrapReflectEx(() -> getIntArray.invoke(__getRuntimeInstance(), key));
 	}
-	public int[] getIntArray(String key) {
-		return (int[]) wrapReflectEx(() -> getIntArray.invoke(__getRuntimeInstance(), key));
+	@SuppressWarnings("unchecked")
+	public Optional<long[]> getLongArray(String key) {
+		return (Optional<long[]>) wrapReflectEx(() -> getLongArray.invoke(__getRuntimeInstance(), key));
 	}
-	public long[] getLongArray(String key) {
-		return (long[]) wrapReflectEx(() -> getLongArray.invoke(__getRuntimeInstance(), key));
+	public Optional<CompoundTag> getCompound(String key) {
+		return ((Optional<?>) wrapReflectEx(() -> getCompound.invoke(__getRuntimeInstance(), key)))
+				.map(u -> wrap(u, CompoundTag.class));
 	}
-	public CompoundTag getCompound(String key) {
-		return wrap(wrapReflectEx(() -> getCompound.invoke(__getRuntimeInstance(), key)), CompoundTag.class);
+	@SuppressWarnings("unchecked")
+	public Optional<Boolean> getBoolean(String key) {
+		return (Optional<Boolean>) wrapReflectEx(() -> getBoolean.invoke(__getRuntimeInstance(), key));
 	}
-	public boolean getBoolean(String key) {
-		return (boolean) wrapReflectEx(() -> getBoolean.invoke(__getRuntimeInstance(), key));
-	}
-	public ListTag getList(String key, int type) {
-		return wrap(wrapReflectEx(() -> getList.invoke(__getRuntimeInstance(), key, type)), ListTag.class);
+	public Optional<ListTag> getList(String key, int type) {
+		return ((Optional<?>) wrapReflectEx(() -> getList.invoke(__getRuntimeInstance(), key, type)))
+				.map(u -> wrap(u, ListTag.class));
 	}
 	public Tag get(String key) {
 		return wrap(wrapReflectEx(() -> get.invoke(__getRuntimeInstance(), key)), Tag.class);
 	}
 	@SuppressWarnings("unchecked")
-	public Set<String> getAllKeys() {
-		return (Set<String>) wrapReflectEx(() -> getAllKeys.invoke(__getRuntimeInstance()));
+	public Set<String> keySet() {
+		return (Set<String>) wrapReflectEx(() -> keySet.invoke(__getRuntimeInstance()));
 	}
 
 	/**
@@ -158,9 +166,6 @@ public class CompoundTag extends ReflectWrapper implements Tag {
 	}
 	public boolean contains(String key) {
 		return (boolean) wrapReflectEx(() -> contains.invoke(__getRuntimeInstance(), key));
-	}
-	public boolean contains(String key, int type) {
-		return (boolean) wrapReflectEx(() -> containsStringInt.invoke(__getRuntimeInstance(), key, type));
 	}
 
 }
