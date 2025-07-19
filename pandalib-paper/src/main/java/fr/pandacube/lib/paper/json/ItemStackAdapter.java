@@ -38,15 +38,13 @@ import java.util.Map;
         if (!(json instanceof JsonObject jsonObj))
             throw new JsonParseException("Unable to deserialize a ConfigurationSerializable from the provided json structure.");
 
-        // the deserialized json may contain older data compatible with pre 1.21.5 but not compatible after.
         // if it contains both old and new data, delete the old one introduced for compatibility
-        if (jsonObj.has("DataVersion")) { // it uses the new DataVersion data
+        if (jsonObj.has("DataVersion") || jsonObj.has("id")) {
             jsonObj.remove("v");
-        }
-        if (jsonObj.has("id")) {
             jsonObj.remove("type");
         }
 
+        // format used when using ConfigurationSerialization
         if (jsonObj.has(ConfigurationSerialization.SERIALIZED_TYPE_KEY))
             return context.deserialize(jsonObj, ConfigurationSerializable.class);
 
@@ -79,17 +77,7 @@ import java.util.Map;
 
     @Override
     public JsonElement serialize(ItemStack src, Type typeOfSrc, JsonSerializationContext context) {
-        Map<String, Object> serialized = src.serialize();
-
-        // make the generated json compatible with pre 1.21.5 deserializer (temporary fix during the upgrade of the server)
-        if (serialized.containsKey("DataVersion")) {
-            serialized.put("v", serialized.get("DataVersion"));
-        }
-        if (serialized.containsKey("id")) {
-            serialized.put("type", Registry.MATERIAL.getOrThrow(Key.key((String)serialized.get("id"))).name());
-        }
-
-        return context.serialize(serialized, MAP_STR_OBJ_TYPE.getType());
+        return context.serialize(src.serialize(), MAP_STR_OBJ_TYPE.getType());
     }
 
 

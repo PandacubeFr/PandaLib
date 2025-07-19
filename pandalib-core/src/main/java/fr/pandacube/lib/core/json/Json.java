@@ -3,6 +3,7 @@ package fr.pandacube.lib.core.json;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
+import com.google.gson.Strictness;
 import com.google.gson.ToNumberStrategy;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
@@ -74,21 +75,21 @@ public class Json {
 	public static final Gson gson = build(Function.identity());
 
 	/**
-	 * {@link Gson} instance with {@link GsonBuilder#setLenient()}, {@link GsonBuilder#setPrettyPrinting()} and support
+	 * {@link Gson} instance with {@link Strictness#LENIENT}, {@link GsonBuilder#setPrettyPrinting()} and support
 	 * for Java records and additional {@link TypeAdapterFactory} provided with
 	 * {@link #registerTypeAdapterFactory(TypeAdapterFactory)}.
 	 */
 	public static final Gson gsonPrettyPrinting = build(GsonBuilder::setPrettyPrinting);
 
 	/**
-	 * {@link Gson} instance with {@link GsonBuilder#setLenient()}, {@link GsonBuilder#serializeNulls()} and support for
+	 * {@link Gson} instance with {@link Strictness#LENIENT}, {@link GsonBuilder#serializeNulls()} and support for
 	 * Java records and additional {@link TypeAdapterFactory} provided with
 	 * {@link #registerTypeAdapterFactory(TypeAdapterFactory)}.
 	 */
 	public static final Gson gsonSerializeNulls = build(GsonBuilder::serializeNulls);
 
 	/**
-	 * {@link Gson} instance with {@link GsonBuilder#setLenient()}, {@link GsonBuilder#serializeNulls()},
+	 * {@link Gson} instance with {@link Strictness#LENIENT}, {@link GsonBuilder#serializeNulls()},
 	 * {@link GsonBuilder#setPrettyPrinting()} and support for Java records and additional {@link TypeAdapterFactory}
 	 * provided with {@link #registerTypeAdapterFactory(TypeAdapterFactory)}.
 	 */
@@ -105,7 +106,7 @@ public class Json {
 				.registerTypeAdapterFactory(new CustomAdapterFactory())
 				.disableHtmlEscaping()
 				.setObjectToNumberStrategy(YAML_EQUIVALENT_NUMBER_STRATEGY)
-				.setLenient();
+				.setStrictness(Strictness.LENIENT);
 		return builderModifier.apply(base).create();
 	}
 
