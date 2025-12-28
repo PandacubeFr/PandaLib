@@ -15,8 +15,8 @@
 
     <repositories>
         <repository>
-            <id>bungeecord-repo</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <id>spigotmc-repo</id>
+            <url>https://hub.spigotmc.org/nexus/repository/public/</url>
         </repository>
     </repositories>
 
