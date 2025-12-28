@@ -45,6 +45,7 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.DedicatedPlayerLi
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.DedicatedServer;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.DedicatedServerProperties;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.MinecraftServer;
+import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.NameAndId;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.PlayerList;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerChunkCache;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerCommonPacketListenerImpl;
@@ -177,6 +178,7 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(DedicatedServer.class, DedicatedServer.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(DedicatedServerProperties.class, DedicatedServerProperties.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(MinecraftServer.class, MinecraftServer.REFLECT.get()));
+        thAcc.catchThrowable(() -> initWrapper(NameAndId.class, NameAndId.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(PlayerList.class, PlayerList.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(ServerChunkCache.class, ServerChunkCache.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(ServerCommonPacketListenerImpl.class, ServerCommonPacketListenerImpl.REFLECT.get()));
