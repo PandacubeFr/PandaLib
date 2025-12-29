@@ -1,29 +1,31 @@
 package fr.pandacube.lib.paper.permissions;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 import fr.pandacube.lib.db.DB;
 import fr.pandacube.lib.db.DBConnection;
+import fr.pandacube.lib.permissions.Permissions;
+import fr.pandacube.lib.util.log.Log;
+import io.papermc.paper.connection.PlayerLoginConnection;
+import io.papermc.paper.event.connection.PlayerConnectionValidateLoginEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.ServerOperator;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import fr.pandacube.lib.permissions.Permissions;
-import fr.pandacube.lib.util.log.Log;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Class that integrates the {@code pandalib-permissions} system into a Bukkit/Spigot/Paper instance.
@@ -93,10 +95,22 @@ public class PandalibPaperPermissions implements Listener {
 	 * @param event the event.
 	 */
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void onPlayerLogin(PlayerLoginEvent event) {
-		Permissions.clearPlayerCache(event.getPlayer().getUniqueId());
-		Permissions.precachePlayerAsync(event.getPlayer().getUniqueId());
-		
+	public void onPlayerLogin(PlayerConnectionValidateLoginEvent event) {
+		if (!(event.getConnection() instanceof PlayerLoginConnection playerConnection))
+			return;
+		UUID playerId = Objects.requireNonNull(playerConnection.getAuthenticatedProfile()).getId();
+
+		Permissions.clearPlayerCache(playerId);
+		Permissions.precachePlayerAsync(playerId);
+	}
+
+	/**
+	 * Player login event handler.
+	 * @param event the event.
+	 */
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		// this is now the earliest event fired where the Player instance exists (because before, there is the configuration phase)
 		PermissionsInjectorBukkit.inject(event.getPlayer());
 	}
 

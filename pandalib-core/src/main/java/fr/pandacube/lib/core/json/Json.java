@@ -69,7 +69,7 @@ public class Json {
 
 
 	/**
-	 * {@link Gson} instance with {@link GsonBuilder#setLenient()} and support for Java records and additional
+	 * {@link Gson} instance with {@link Strictness#LENIENT} and support for Java records and additional
 	 * {@link TypeAdapterFactory} provided with {@link #registerTypeAdapterFactory(TypeAdapterFactory)}.
 	 */
 	public static final Gson gson = build(Function.identity());
