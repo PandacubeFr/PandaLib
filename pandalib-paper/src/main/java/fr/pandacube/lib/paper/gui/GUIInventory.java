@@ -116,7 +116,8 @@ public class GUIInventory implements Listener {
 	 * @param delay the delay of the first execution of the task, in tick.
 	 * @param period the period between the task execution, in tick.
 	 * @param stackUpdater the task to execute. The given argument is the current item stack, and it must return the
-	 *                     new ItemStack to go in place of the old one.
+	 *                     new ItemStack to go in place of the old one. If the returned stack is the same object as the
+	 *                     provided one, there is no update.
 	 */
 	public void setAnimation(int slot, int delay, int period, UnaryOperator<ItemStack> stackUpdater) {
 		clearAnimation(slot);
@@ -125,7 +126,8 @@ public class GUIInventory implements Listener {
 			if (currentItem != null)
 				currentItem = currentItem.clone();
 			ItemStack newItem = stackUpdater.apply(currentItem);
-			inv.setItem(slot, newItem);
+			if (newItem != currentItem)
+				inv.setItem(slot, newItem);
 		}, delay, period);
 		animations.put(slot, task);
 	}
