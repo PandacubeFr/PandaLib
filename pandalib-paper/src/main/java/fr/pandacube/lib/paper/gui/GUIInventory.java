@@ -11,10 +11,13 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 
 /**
  * An inventory based GUI.
@@ -26,6 +29,7 @@ public class GUIInventory implements Listener {
 	private Consumer<InventoryCloseEvent> onCloseEvent;
 	private boolean isOpened = false;
 	private final Map<Integer, Consumer<InventoryClickEvent>> onClickEvents;
+	private final Map<Integer, BukkitTask> animations;
 
 	/**
 	 * Create a new inventory based GUI.
@@ -43,6 +47,7 @@ public class GUIInventory implements Listener {
 		setCloseEvent(closeEventAction);
 
 		onClickEvents = new HashMap<>();
+		animations = new HashMap<>();
 
 		player = p;
 
@@ -60,45 +65,78 @@ public class GUIInventory implements Listener {
 
 	/**
 	 * Set a button on the provided slot, if this slot is still empty.
-	 * @param p the slot index.
+	 * @param slot the slot index.
 	 * @param iStack the item to put in the slot.
 	 * @param clickEventActions the action to perform when the user clicks that button. The event passed as a parameter
 	 *                         is already cancelled. It is possible to un-cancel it if needed.
 	 */
-	public void setButtonIfEmpty(int p, ItemStack iStack, Consumer<InventoryClickEvent> clickEventActions) {
-		if (inv.getItem(p) == null)
-			setButton(p, iStack, clickEventActions);
+	public void setButtonIfEmpty(int slot, ItemStack iStack, Consumer<InventoryClickEvent> clickEventActions) {
+		if (inv.getItem(slot) == null)
+			setButton(slot, iStack, clickEventActions);
 	}
 
 	/**
 	 * Set a button on the provided slot.
-	 * @param p the slot index.
+	 * @param slot the slot index.
 	 * @param iStack the item to put in the slot.
 	 * @param clickEventActions the action to perform when the user clicks that button. The event passed as a parameter
 	 *                         is already cancelled. It is possible to un-cancel it if needed.
 	 */
-	public void setButton(int p, ItemStack iStack, Consumer<InventoryClickEvent> clickEventActions) {
-		inv.setItem(p, iStack);
-		changeClickEventAction(p, clickEventActions);
+	public void setButton(int slot, ItemStack iStack, Consumer<InventoryClickEvent> clickEventActions) {
+		inv.setItem(slot, iStack);
+		setClickEventAction(slot, clickEventActions);
 	}
 
 	/**
 	 * Update/replace the action to perform for a specific slot.
-	 * @param p the slot index.
+	 * @param slot the slot index.
 	 * @param clickEventActions the action to perform when the user clicks that button. The event passed as a parameter
 	 *                         is already cancelled. It is possible to un-cancel it if needed.
 	 */
-	public void changeClickEventAction(int p, Consumer<InventoryClickEvent> clickEventActions) {
-		onClickEvents.put(p, clickEventActions);
+	public void setClickEventAction(int slot, Consumer<InventoryClickEvent> clickEventActions) {
+		onClickEvents.put(slot, clickEventActions);
+	}
+
+	/**
+	 * Removes the animation task associated with the provided slot.
+	 * @param slot the slot from which to remove the animation task.
+	 */
+	public void clearAnimation(int slot) {
+		if (animations.containsKey(slot)) {
+			BukkitTask taskToCancel = animations.remove(slot);
+			try {
+				taskToCancel.cancel(); // if there is an error, then it was already cancelled or not yet scheduled
+			} catch (Exception ignored) { }
+		}
+	}
+
+	/**
+	 * Configures an animation task associated with the provided slot.
+	 * @param slot the slot to animate.
+	 * @param delay the delay of the first execution of the task, in tick.
+	 * @param period the period between the task execution, in tick.
+	 * @param stackUpdater the task to execute. The given argument is the current item stack, and it must return the
+	 *                     new ItemStack to go in place of the old one.
+	 */
+	public void setAnimation(int slot, int delay, int period, UnaryOperator<ItemStack> stackUpdater) {
+		clearAnimation(slot);
+		BukkitTask task = Bukkit.getScheduler().runTaskTimer(PandaLibPaper.getPlugin(), () -> {
+			ItemStack currentItem = getItemStack(slot);
+			if (currentItem != null)
+				currentItem = currentItem.clone();
+			ItemStack newItem = stackUpdater.apply(currentItem);
+			inv.setItem(slot, newItem);
+		}, delay, period);
+		animations.put(slot, task);
 	}
 
 	/**
 	 * Returns the item that is in the provided slot.
-	 * @param p the slot index.
+	 * @param slot the slot index.
 	 * @return the item that is in the provided slot.
 	 */
-	public ItemStack getItemStack(int p) {
-		return inv.getItem(p);
+	public ItemStack getItemStack(int slot) {
+		return inv.getItem(slot);
 	}
 
 	/**
@@ -133,6 +171,16 @@ public class GUIInventory implements Listener {
 	public void clear() {
 		onClickEvents.clear();
 		inv.clear();
+		clearAllAnimations();
+	}
+
+	/**
+	 * Clears all animation tasks of this GUI inventory.
+	 */
+	private void clearAllAnimations() {
+		for (int animatedSlot : Set.copyOf(animations.keySet())) {
+			clearAnimation(animatedSlot);
+		}
 	}
 
 	/**
@@ -144,6 +192,7 @@ public class GUIInventory implements Listener {
 		for (int i = firstElement; i < firstElement + nbElement; i++) {
 			inv.setItem(i, null);
 			onClickEvents.remove(i);
+			clearAnimation(i);
 		}
 	}
 
@@ -191,6 +240,7 @@ public class GUIInventory implements Listener {
 		if (onCloseEvent != null)
 			onCloseEvent.accept(event);
 		isOpened = false;
+		clearAllAnimations();
 	}
 
 
