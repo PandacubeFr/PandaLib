@@ -1,5 +1,8 @@
 package fr.pandacube.lib.db;
 
+import fr.pandacube.lib.util.EnumUtil;
+import fr.pandacube.lib.util.log.Log;
+
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -24,9 +27,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import fr.pandacube.lib.util.EnumUtil;
-import fr.pandacube.lib.util.log.Log;
 
 /**
  * Represents an entry in a SQL table. Each subclass is for a specific table.
@@ -67,11 +67,10 @@ public abstract class SQLElement<E extends SQLElement<E>> {
     /* package */ final Set<String> modifiedSinceLastSave;
 
     /**
-     * Create a new instance of a table entry, not yet saved in the database.
-     * All the required values has to be set before saving the entry in the database.
+     * Common initialization of SQLElement
      */
     @SuppressWarnings("unchecked")
-    protected SQLElement() {
+    private SQLElement(boolean defaultValuesSetModified) {
 
         try {
             DB.initTable((Class<E>)getClass());
@@ -96,8 +95,17 @@ public abstract class SQLElement<E extends SQLElement<E>> {
         values = new LinkedHashMap<>(fields.size());
         modifiedSinceLastSave = new HashSet<>(fields.size());
 
-        initDefaultValues();
+        initDefaultValues(defaultValuesSetModified);
+    }
 
+    /**
+     * Create a new instance of a table entry, not yet saved in the database.
+     * All the required values has to be set before saving the entry in the database.
+     */
+    protected SQLElement() {
+        /* setModified=true so we ensure default value are send to the database
+         * (default value from ORM takes priority over default value from DB) */
+        this(true);
     }
 
     /**
@@ -105,11 +113,14 @@ public abstract class SQLElement<E extends SQLElement<E>> {
      * <p>
      * Subclasses must implement a constructor with the same signature, that calls this parent constructor, and may be
      * private to avoid accidental instanciation. This constructor will be called by the DB API when fetching entries
-     * from the database.
+     * from the database, then each value of this entry will be set while not being marked as modified (so they are not
+     * saved back to the database unmodified).
      * @param id the id of the entry in the database.
      */
     protected SQLElement(int id) {
-        this();
+        /* setModified=false to avoid useless update in case we save the entry right after getting it from the
+         * database. */
+        this(false);
         @SuppressWarnings("unchecked")
         SQLField<E, Integer> idField = (SQLField<E, Integer>) fields.get("id");
         set(idField, id, false);
@@ -136,11 +147,13 @@ public abstract class SQLElement<E extends SQLElement<E>> {
      * Fills the entries values that are known to be nullable or have a default value.
      */
     @SuppressWarnings("unchecked")
-    private void initDefaultValues() {
-        for (@SuppressWarnings("rawtypes")
-        SQLField f : fields.values())
-            if (f.defaultValue != null) set(f, f.defaultValue);
-            else if (f.nullable || (f.autoIncrement && !stored)) set(f, null);
+    private void initDefaultValues(boolean setModified) {
+        for (@SuppressWarnings("rawtypes") SQLField f : fields.values()) {
+            if (f.defaultValue != null)
+                set(f, f.defaultValue, setModified);
+            else if (f.nullable || (f.autoIncrement && !stored))
+                set(f, null, setModified);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -208,7 +221,8 @@ public abstract class SQLElement<E extends SQLElement<E>> {
     }
 
     /* package */ <T> void set(SQLField<E, T> sqlField, T value, boolean setModified) {
-        if (sqlField == null) throw new IllegalArgumentException("sqlField can't be null");
+        if (sqlField == null)
+            throw new IllegalArgumentException("sqlField can't be null");
         if (!fields.containsValue(sqlField)) // should not append at runtime because of generic type check at compilation
             throw new IllegalStateException("In the table "+getClass().getName()+ ": the field asked for modification is not initialized properly.");
 
@@ -225,13 +239,15 @@ public abstract class SQLElement<E extends SQLElement<E>> {
 
         if (!values.containsKey(sqlField)) {
             values.put(sqlField, value);
-            if (setModified) modifiedSinceLastSave.add(sqlField.getName());
+            if (setModified)
+                modifiedSinceLastSave.add(sqlField.getName());
         }
         else {
             Object oldVal = values.get(sqlField);
             if (!Objects.equals(oldVal, value)) {
                 values.put(sqlField, value);
-                if (setModified) modifiedSinceLastSave.add(sqlField.getName());
+                if (setModified)
+                    modifiedSinceLastSave.add(sqlField.getName());
             }
             // sinon, rien n'est modifié
         }
