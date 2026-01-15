@@ -4,7 +4,6 @@ import fr.pandacube.lib.paper.reflect.wrapper.brigadier.CommandNode;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftItemStack;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftMapView;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftMetaItem;
-import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftNamespacedKey;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftPlayer;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftServer;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftVector;
@@ -19,7 +18,6 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.CommandSourceSt
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Commands;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Coordinates;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.GameProfileArgument;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.ResourceLocationArgument;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Vec3Argument;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.core.BlockPos;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.core.HolderLookupProvider;
@@ -39,7 +37,6 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.network.protocol.Clientb
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.network.protocol.Packet;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.network.protocol.custom.BrandPayload;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.network.protocol.custom.CustomPacketPayload;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.resources.ResourceLocation;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ChunkMap;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.DedicatedPlayerList;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.DedicatedServer;
@@ -125,7 +122,6 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(CraftItemStack.class, CraftItemStack.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(CraftMapView.class, CraftMapView.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(CraftMetaItem.class, CraftMetaItem.REFLECT.get()));
-        thAcc.catchThrowable(() -> initWrapper(CraftNamespacedKey.class, CraftNamespacedKey.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(CraftPlayer.class, CraftPlayer.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(CraftServer.class, CraftServer.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(CraftVector.class, CraftVector.REFLECT.get()));
@@ -143,7 +139,6 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(CommandSourceStack.class, CommandSourceStack.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(Coordinates.class, Coordinates.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(GameProfileArgument.class, GameProfileArgument.REFLECT.get()));
-        thAcc.catchThrowable(() -> initWrapper(ResourceLocationArgument.class, ResourceLocationArgument.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(Vec3Argument.class, Vec3Argument.REFLECT.get()));
         // minecraft.core
         thAcc.catchThrowable(() -> initWrapper(BlockPos.class, BlockPos.REFLECT.get()));
@@ -170,8 +165,6 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(Packet.class, Packet.REFLECT.get()));
         // minecraft.network
         thAcc.catchThrowable(() -> initWrapper(FriendlyByteBuf.class, FriendlyByteBuf.REFLECT.get()));
-        // minecraft.resources
-        thAcc.catchThrowable(() -> initWrapper(ResourceLocation.class, ResourceLocation.REFLECT.get()));
         // minecraft.server
         thAcc.catchThrowable(() -> initWrapper(ChunkMap.class, ChunkMap.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(DedicatedPlayerList.class, DedicatedPlayerList.REFLECT.get()));
