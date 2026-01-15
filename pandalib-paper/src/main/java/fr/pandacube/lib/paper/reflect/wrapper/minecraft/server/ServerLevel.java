@@ -12,12 +12,7 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 public class ServerLevel extends Level {
     public static final ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("net.minecraft.server.level.ServerLevel"));
     public static final ReflectMethod<?> save = wrapEx(() -> REFLECT.method("save", ProgressListener.REFLECT.get(), boolean.class, boolean.class));
-    public static final ReflectMethod<?> getChunkSource = wrapEx(() -> REFLECT.method("getChunkSource"));
 
-
-    public ServerChunkCache getChunkSource() {
-        return wrap(wrapReflectEx(() -> getChunkSource.invoke(__getRuntimeInstance())), ServerChunkCache.class);
-    }
 
     public void save(ProgressListener listener, boolean flush, boolean savingDisabled) {
         wrapReflectEx(() -> save.invoke(__getRuntimeInstance(), unwrap(listener), flush, savingDisabled));

@@ -11,12 +11,8 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class Level extends ReflectWrapper {
     public static final ReflectClass<?> REFLECT = wrapEx(() -> Reflect.ofClass("net.minecraft.world.level.Level"));
-    public static final ReflectMethod<?> getGameTime = wrapEx(() -> REFLECT.method("getGameTime"));
     public static final ReflectMethod<?> paperConfig = wrapEx(() -> REFLECT.method("paperConfig")); // paper method
 
-    public long getGameTime() {
-        return (long) wrapReflectEx(() -> getGameTime.invoke(__getRuntimeInstance()));
-    }
 
     public WorldConfiguration paperConfig() {
         return wrap(wrapReflectEx(() -> paperConfig.invoke(__getRuntimeInstance())), WorldConfiguration.class);

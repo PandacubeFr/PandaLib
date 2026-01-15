@@ -37,14 +37,12 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.network.protocol.Clientb
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.network.protocol.Packet;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.network.protocol.custom.BrandPayload;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.network.protocol.custom.CustomPacketPayload;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ChunkMap;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.DedicatedPlayerList;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.DedicatedServer;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.DedicatedServerProperties;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.MinecraftServer;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.NameAndId;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.PlayerList;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerChunkCache;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerCommonPacketListenerImpl;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerGamePacketListenerImpl;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerLevel;
@@ -54,7 +52,6 @@ import fr.pandacube.lib.paper.reflect.wrapper.minecraft.util.ProblemReporter;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.util.ProgressListener;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.AABB;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ChunkPos;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ChunkStorage;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.Entity;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ItemStack;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.world.ItemStackWithSlot;
@@ -82,7 +79,6 @@ import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.PaperBrigadier;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.ShadowBrigNode;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.configuration.FallbackValue_Int;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.configuration.WorldConfiguration;
-import fr.pandacube.lib.paper.reflect.wrapper.spottedleaf.moonrise.ChunkSystemChunkStorage;
 import fr.pandacube.lib.reflect.ReflectionWrapperBypass;
 import fr.pandacube.lib.util.ThrowableAccumulator;
 
@@ -166,14 +162,12 @@ public class PandalibPaperReflect {
         // minecraft.network
         thAcc.catchThrowable(() -> initWrapper(FriendlyByteBuf.class, FriendlyByteBuf.REFLECT.get()));
         // minecraft.server
-        thAcc.catchThrowable(() -> initWrapper(ChunkMap.class, ChunkMap.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(DedicatedPlayerList.class, DedicatedPlayerList.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(DedicatedServer.class, DedicatedServer.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(DedicatedServerProperties.class, DedicatedServerProperties.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(MinecraftServer.class, MinecraftServer.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(NameAndId.class, NameAndId.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(PlayerList.class, PlayerList.REFLECT.get()));
-        thAcc.catchThrowable(() -> initWrapper(ServerChunkCache.class, ServerChunkCache.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(ServerCommonPacketListenerImpl.class, ServerCommonPacketListenerImpl.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(ServerGamePacketListenerImpl.class, ServerGamePacketListenerImpl.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(ServerLevel.class, ServerLevel.REFLECT.get()));
@@ -188,7 +182,6 @@ public class PandalibPaperReflect {
         // minecraft.world
         thAcc.catchThrowable(() -> initWrapper(AABB.class, AABB.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(ChunkPos.class, ChunkPos.REFLECT.get()));
-        thAcc.catchThrowable(() -> initWrapper(ChunkStorage.class, ChunkStorage.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(Entity.class, Entity.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(ItemStack.class, ItemStack.REFLECT.get()));
         thAcc.catchThrowable(() -> initWrapper(ItemStackWithSlot.class, ItemStackWithSlot.REFLECT.get()));
@@ -223,9 +216,6 @@ public class PandalibPaperReflect {
         thAcc.catchThrowable(() -> initWrapper(WorldConfiguration.Chunks.class, WorldConfiguration.Chunks.REFLECT.get()));
         // paper
         thAcc.catchThrowable(() -> initWrapper(PaperAdventure.class, PaperAdventure.REFLECT.get()));
-
-        // spottedleaf
-        thAcc.catchThrowable(() -> initWrapper(ChunkSystemChunkStorage.class, ChunkSystemChunkStorage.REFLECT.get()));
 
 
         thAcc.throwCaught();
