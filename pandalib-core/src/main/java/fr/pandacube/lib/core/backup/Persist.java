@@ -6,6 +6,7 @@ import fr.pandacube.lib.core.json.Json;
 import fr.pandacube.lib.util.log.Log;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -41,8 +42,8 @@ public class Persist {
 			dirtySince = Json.gson.fromJson(reader, new TypeToken<Map<String, Long>>(){}.getType());
 			loaded = true;
 		}
-		catch (final IOException ignored) { }
-		catch (final JsonParseException e) {
+		catch (final FileNotFoundException ignored) { }
+		catch (final IOException | JsonParseException e) {
 			Log.severe("cannot load " + file, e);
 		}
 		finally {
