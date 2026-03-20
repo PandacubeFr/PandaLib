@@ -54,6 +54,8 @@ public class Persist {
 		if (!loaded) {
 			save();
 		}
+
+		Log.info("[Backup] Loaded " + file + ":\n" + Json.gsonPrettyPrinting.toJson(dirtySince));
 	}
 
 	private void save() {
@@ -101,6 +103,7 @@ public class Persist {
 	public synchronized long isDirtySince(String id) {
 		if (!dirtySince.containsKey(id))
 			setDirtySinceNow(id);
+		Log.info("[Backup] " + id + " is dirty since " + dirtySince.get(id));
 		return dirtySince.get(id);
 	}
 	
