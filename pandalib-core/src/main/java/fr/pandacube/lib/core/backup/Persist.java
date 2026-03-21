@@ -55,12 +55,13 @@ public class Persist {
 			save();
 		}
 
-		Log.info("[Backup] Loaded " + file + ":\n" + Json.gsonPrettyPrinting.toJson(dirtySince));
+		Log.info("[Backup] Loaded " + file + ":\n" + Json.gson.toJson(dirtySince));
 	}
 
 	private void save() {
 		try (FileWriter writer = new FileWriter(file, false)) {
 			Json.gsonPrettyPrinting.toJson(dirtySince, writer);
+			Log.info("[Backup] Saved " + file + ":\n" + Json.gson.toJson(dirtySince));
 		}
 		catch (final JsonParseException | IOException e) {
 			Log.severe("could not save " + file, e);
@@ -103,7 +104,6 @@ public class Persist {
 	public synchronized long isDirtySince(String id) {
 		if (!dirtySince.containsKey(id))
 			setDirtySinceNow(id);
-		Log.info("[Backup] " + id + " is dirty since " + dirtySince.get(id));
 		return dirtySince.get(id);
 	}
 	

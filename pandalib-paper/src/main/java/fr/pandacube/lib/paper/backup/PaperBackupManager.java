@@ -5,6 +5,7 @@ import fr.pandacube.lib.core.backup.BackupProcess;
 import fr.pandacube.lib.core.backup.RotatedLogsBackupProcess;
 import fr.pandacube.lib.paper.PandaLibPaper;
 import fr.pandacube.lib.paper.scheduler.SchedulerUtil;
+import fr.pandacube.lib.util.log.Log;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -130,12 +131,13 @@ public class PaperBackupManager extends BackupManager implements Listener {
 	private final Set<String> dirtyForSave = new HashSet<>();
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	void onWorldLoad(WorldLoadEvent event) {
+	public void onWorldLoad(WorldLoadEvent event) {
 		initWorldProcess(event.getWorld().getName());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	void onWorldSave(WorldSaveEvent event) {
+	public void onWorldSave(WorldSaveEvent event) {
+		Log.info("[Backup] " + event.getWorld().getName() + " saved");
 		if (event.getWorld().getLoadedChunks().length > 0
 				|| dirtyForSave.contains(event.getWorld().getName())) {
 			compressWorlds.get(event.getWorld().getName()).setDirtyAfterSave();
@@ -148,18 +150,18 @@ public class PaperBackupManager extends BackupManager implements Listener {
 
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	void onPlayerChangeWorldEvent(PlayerChangedWorldEvent event) {
+	public void onPlayerChangeWorldEvent(PlayerChangedWorldEvent event) {
 		dirtyForSave.add(event.getFrom().getName());
 		dirtyForSave.add(event.getPlayer().getWorld().getName());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	void onPlayerJoin(PlayerJoinEvent event) {
+	public void onPlayerJoin(PlayerJoinEvent event) {
 		dirtyForSave.add(event.getPlayer().getWorld().getName());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	void onPlayerQuit(PlayerQuitEvent event) {
+	public void onPlayerQuit(PlayerQuitEvent event) {
 		dirtyForSave.add(event.getPlayer().getWorld().getName());
 	}
 
