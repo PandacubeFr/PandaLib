@@ -137,7 +137,6 @@ public class PaperBackupManager extends BackupManager implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onWorldSave(WorldSaveEvent event) {
-		Log.info("[Backup] " + event.getWorld().getName() + " saved");
 		if (event.getWorld().getLoadedChunks().length > 0
 				|| dirtyForSave.contains(event.getWorld().getName())) {
 			compressWorlds.get(event.getWorld().getName()).setDirtyAfterSave();
