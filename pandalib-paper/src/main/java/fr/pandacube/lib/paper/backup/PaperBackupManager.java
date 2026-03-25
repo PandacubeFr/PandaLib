@@ -5,7 +5,6 @@ import fr.pandacube.lib.core.backup.BackupProcess;
 import fr.pandacube.lib.core.backup.RotatedLogsBackupProcess;
 import fr.pandacube.lib.paper.PandaLibPaper;
 import fr.pandacube.lib.paper.scheduler.SchedulerUtil;
-import fr.pandacube.lib.util.log.Log;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -130,11 +129,19 @@ public class PaperBackupManager extends BackupManager implements Listener {
 
 	private final Set<String> dirtyForSave = new HashSet<>();
 
+	/**
+	 * Called when a world loads.
+	 * @param event the event.
+	 */
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onWorldLoad(WorldLoadEvent event) {
 		initWorldProcess(event.getWorld().getName());
 	}
 
+	/**
+	 * Called when a world is saved.
+	 * @param event the event.
+	 */
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onWorldSave(WorldSaveEvent event) {
 		if (event.getWorld().getLoadedChunks().length > 0
@@ -148,17 +155,29 @@ public class PaperBackupManager extends BackupManager implements Listener {
 
 
 
+	/**
+	 * Called when a player changes world.
+	 * @param event the event.
+	 */
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerChangeWorldEvent(PlayerChangedWorldEvent event) {
 		dirtyForSave.add(event.getFrom().getName());
 		dirtyForSave.add(event.getPlayer().getWorld().getName());
 	}
 
+	/**
+	 * Called when a player joins the server.
+	 * @param event the event.
+	 */
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		dirtyForSave.add(event.getPlayer().getWorld().getName());
 	}
 
+	/**
+	 * Called when a player quits the server.
+	 * @param event the event.
+	 */
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		dirtyForSave.add(event.getPlayer().getWorld().getName());
