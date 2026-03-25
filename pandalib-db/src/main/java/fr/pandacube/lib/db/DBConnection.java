@@ -2,6 +2,7 @@ package fr.pandacube.lib.db;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.Duration;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 
@@ -40,6 +41,15 @@ public class DBConnection {
      */
     public DBConnection(String url, String login, String password) {
         connSource = new BasicDataSource();
+        connSource.setInitialSize(1);
+        connSource.setMinIdle(1);
+
+        connSource.setFastFailValidation(true);
+        connSource.setValidationQuery("SELECT 1;");
+        connSource.setTestWhileIdle(true);
+        connSource.setValidationQueryTimeout(Duration.ofSeconds(1));
+        connSource.setDurationBetweenEvictionRuns(Duration.ofMinutes(1));
+
         connSource.setUrl(url);
         connSource.setUsername(login);
         connSource.setPassword(password);
