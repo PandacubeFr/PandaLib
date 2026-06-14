@@ -99,7 +99,7 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>${paper.version}-SNAPSHOT</version>
+            <version>${paper.version}</version>
         </dependency>
     </dependencies>
 

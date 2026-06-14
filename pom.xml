@@ -56,7 +56,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         
         <bungeecord.version>26.1-R0.1-SNAPSHOT</bungeecord.version>
-        <paper.version>1.21.11-R0.1</paper.version>
+        <paper.version>26.1.2.build.70-stable</paper.version>
         <mc.version>1.21.11</mc.version>
 
         <guava.version>33.3.1-jre</guava.version> <!-- Match the version imported by Paper API/BungeeCord API if possible -->

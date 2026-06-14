@@ -724,16 +724,16 @@ public abstract class SQLElement<E extends SQLElement<E>> {
         return new SQLType<>("VARBINARY(" + byteCount + ")", byte[].class);
     }
 
-    /** SQL type {@code BLOB} represented in Java as a {@link byte[]}. */
+    /** SQL type {@code BLOB} represented in Java as a {@code byte[]}. */
     public static final SQLType<byte[]> BLOB = new SQLType<>("BLOB", byte[].class);
 
-    /** SQL type {@code TINYBLOB} represented in Java as a {@link byte[]}. */
+    /** SQL type {@code TINYBLOB} represented in Java as a {@code byte[]}. */
     public static final SQLType<byte[]> TINYBLOB = new SQLType<>("TINYBLOB", byte[].class);
 
-    /** SQL type {@code MEDIUMBLOB} represented in Java as a {@link byte[]}. */
+    /** SQL type {@code MEDIUMBLOB} represented in Java as a {@code byte[]}. */
     public static final SQLType<byte[]> MEDIUMBLOB = new SQLType<>("MEDIUMBLOB", byte[].class);
 
-    /** SQL type {@code LONGBLOB} represented in Java as a {@link byte[]}. */
+    /** SQL type {@code LONGBLOB} represented in Java as a {@code byte[]}. */
     public static final SQLType<byte[]> LONGBLOB = new SQLType<>("LONGBLOB", byte[].class);
 
     /** SQL type {@code TEXT} represented in Java as a {@link String}. */
