@@ -18,5 +18,5 @@ public class MessagePayload extends Payload {
     }
 
     @SuppressWarnings("unused")
-    private MessagePayload() { } // for Json deserialization
+    private MessagePayload() { } // for JSON deserialization
 }

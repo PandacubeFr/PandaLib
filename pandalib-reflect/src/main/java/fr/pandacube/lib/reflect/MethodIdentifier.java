@@ -11,9 +11,9 @@ import java.util.Objects;
 
     @Override
     public boolean equals(Object other) {
-        return other instanceof MethodIdentifier o
-                && o.methodName.equals(methodName)
-                && Arrays.equals(o.parameters, parameters);
+        return other instanceof MethodIdentifier(String oName, Class<?>[] oParams)
+                && methodName.equals(oName)
+                && Arrays.equals(parameters, oParams);
     }
 
     @Override

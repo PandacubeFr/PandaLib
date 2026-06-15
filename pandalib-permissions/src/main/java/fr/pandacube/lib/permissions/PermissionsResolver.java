@@ -183,22 +183,16 @@ import java.util.stream.Collectors;
 			return node;
 		}
 	}
-	
-	private static class DataCacheKey {
-		final String name;
-		final EntityType type;
-		final DataType dataType;
-		DataCacheKey(String n, EntityType t, DataType d) {
-			name = n; type = t; dataType = d;
-		}
+
+	private record DataCacheKey(String name, EntityType type, DataType dataType) {
 		@Override
-		public boolean equals(Object obj) {
-			return obj instanceof DataCacheKey o
-					&& Objects.equals(name, o.name)
-					&& type == o.type
-					&& dataType == o.dataType;
+			public boolean equals(Object obj) {
+				return obj instanceof DataCacheKey(String oName, EntityType oType, DataType oDataType)
+						&& Objects.equals(name, oName)
+						&& type == oType
+						&& dataType == oDataType;
+			}
 		}
-	}
 	
 	private enum DataType {
 		PREFIX(CachedEntity::getSelfPrefix),
@@ -434,14 +428,14 @@ import java.util.stream.Collectors;
 					.collect(Collectors.toList());
 
 				boolean explicitGranted = foundPerms.stream()
-						.anyMatch(n -> n.type == PermType.EXPLICIT && n.result == Boolean.TRUE);
+						.anyMatch(n -> n.type == PermType.EXPLICIT && n.result);
 				boolean explicitRevoked = foundPerms.stream()
-						.anyMatch(n -> n.type == PermType.EXPLICIT && n.result == Boolean.FALSE);
+						.anyMatch(n -> n.type == PermType.EXPLICIT && !n.result);
 				
 				boolean wildcardGranted = foundPerms.stream()
-						.anyMatch(n -> n.type == PermType.WILDCARD && n.result == Boolean.TRUE);
+						.anyMatch(n -> n.type == PermType.WILDCARD && n.result);
 				boolean wildcardRevoked = foundPerms.stream()
-						.anyMatch(n -> n.type == PermType.WILDCARD && n.result == Boolean.FALSE);
+						.anyMatch(n -> n.type == PermType.WILDCARD && !n.result);
 				
 				if (explicitGranted != explicitRevoked) {
 					result = PermState.of(explicitGranted);
@@ -510,40 +504,30 @@ import java.util.stream.Collectors;
 			return node;
 		}
 	}
-	
-	private static class ParsedSelfPermission {
-		final String permission;
-		final boolean result;
-		final PermType type;
-		public ParsedSelfPermission(String p, boolean r, PermType t) {
-			permission = p;
-			result = r;
-			type = t;
-		}
+
+	private record ParsedSelfPermission(String permission, boolean result, PermType type) {
 		public ChatTreeNode toDisplayTreeNode() {
 			return new ChatTreeNode(Chat.chat()
 					.then(result ? Chat.successText("✔") : Chat.failureText("✘"))
-					.then(Chat.text(permission).color(type == PermType.WILDCARD ? NamedTextColor.YELLOW : type == PermType.SPECIAL ? NamedTextColor.LIGHT_PURPLE : NamedTextColor.WHITE)));
+					.then(Chat.text(permission)
+							.color(type == PermType.WILDCARD ? NamedTextColor.YELLOW
+									: type == PermType.SPECIAL ? NamedTextColor.LIGHT_PURPLE
+									: NamedTextColor.WHITE)
+					));
 		}
 	}
-	
-	private static class PermCacheKey {
-		final String name;
-		final EntityType type;
-		final String permission, server, world;
-		public PermCacheKey(String n, EntityType t, String p, String s, String w) {
-			name = n; type = t; permission = p; server = s; world = w;
-		}
+
+	private record PermCacheKey(String name, EntityType type, String permission, String server, String world) {
 		@Override
-		public boolean equals(Object obj) {
-			return obj instanceof PermCacheKey o
-					&& type == o.type
-					&& Objects.equals(name, o.name)
-					&& Objects.equals(permission, o.permission)
-					&& Objects.equals(server, o.server)
-					&& Objects.equals(world, o.world);
+			public boolean equals(Object obj) {
+				return obj instanceof PermCacheKey(String oName, EntityType oType, String oPermission, String oServer, String oWorld)
+						&& type == oType
+						&& Objects.equals(name, oName)
+						&& Objects.equals(permission, oPermission)
+						&& Objects.equals(server, oServer)
+						&& Objects.equals(world, oWorld);
+			}
 		}
-	}
 	
 	private enum PermType {
 		EXPLICIT, WILDCARD, SPECIAL

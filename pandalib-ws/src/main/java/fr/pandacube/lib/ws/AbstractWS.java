@@ -123,9 +123,9 @@ public interface AbstractWS {
      * {@link PayloadRegistry#arbitraryToString(String, Object, boolean)}.
      * @param type the type.
      * @param obj the object to Jsonify.
-     * @param serializeNulls if null properties must be included in the json object.
+     * @param serializeNulls if null properties must be included in the JSON object.
      * @throws IOException if an IO error occurs when sending the data.
-     * @throws JsonParseException if the json is invalid.
+     * @throws JsonParseException if the JSON is invalid.
      * @see PayloadRegistry#arbitraryToString(String, Object, boolean)
      */
     default void sendAsJson(String type, Object obj, boolean serializeNulls) throws IOException, JsonParseException {
@@ -137,7 +137,7 @@ public interface AbstractWS {
      * {@link PayloadRegistry#arbitraryToString(String, Object, boolean)}.
      * @param type the type.
      * @param obj the object to Jsonify.
-     * @param serializeNulls if null properties must be included in the json object.
+     * @param serializeNulls if null properties must be included in the JSON object.
      * @return true if the data is sent successfully, false if an IO error occurs.
      * @see PayloadRegistry#arbitraryToString(String, Object, boolean)
      */
@@ -149,7 +149,7 @@ public interface AbstractWS {
      * Send the provided {@link Payload} to the remote endpoint.
      * @param payload the {@link Payload} to send.
      * @throws IOException if an IO error occurs when sending the data.
-     * @throws JsonParseException if the json is invalid.
+     * @throws JsonParseException if the JSON is invalid.
      * @see PayloadRegistry#toString(Payload)
      */
     default void sendAsJson(Payload payload) throws IOException, JsonParseException {

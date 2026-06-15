@@ -73,7 +73,7 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
      * Get the display name of the user, in legacy format.
      * @return the display name of the player.
      *
-     * @implNote This default implementation gets the display name from bukkit (if the player is online).
+     * @implNote This default implementation gets the display name from Bukkit (if the player is online).
      * If it's different to the player name, it returns it. Otherwise, it tries to generate the team display name with {@link #getTeamDisplayName()}.
      * If the player is not in a team, then the player name is used.
      */

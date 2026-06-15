@@ -18,5 +18,5 @@ public class LoginPayload extends Payload {
     }
 
     @SuppressWarnings("unused")
-    private LoginPayload() { } // for Json deserialization
+    private LoginPayload() { } // for JSON deserialization
 }

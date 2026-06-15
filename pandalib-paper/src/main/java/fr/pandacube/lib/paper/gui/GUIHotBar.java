@@ -43,7 +43,7 @@ public class GUIHotBar implements Listener {
 	 * @param defaultSlot the default slot (currently held item) when the player joins the hot bar.
 	 */
 	public GUIHotBar(int defaultSlot) {
-		this.defaultSlot = Math.max(0, Math.min(8, defaultSlot));
+		this.defaultSlot = Math.clamp(defaultSlot, 0, 8);
 		
 		BukkitEvent.register(this);
 	}

@@ -17,7 +17,7 @@ import java.util.Objects;
 
 /**
  * Wrapper for an {@link Inventory}.
- * Can be overridden to add specific behaviour to some methods.
+ * Can be overridden to add specific behavior to some methods.
  */
 public class InventoryWrapper implements Inventory {
     private final Inventory base;

@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 /**
  * Represents an entry in a SQL table. Each subclass is for a specific table.
  * @param <E> the type of the subclass.
- */// TODO exemple subclass
+ */// TODO example subclass
 public abstract class SQLElement<E extends SQLElement<E>> {
 
     // cache for fields for each subclass of SQLElement

@@ -188,7 +188,7 @@ public abstract sealed class Chat extends ChatStatic implements HoverEventSource
 
 
     /*
-     * Special sub-components appending
+     * Special subcomponents appending
      */
 
     /**

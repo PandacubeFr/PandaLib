@@ -324,11 +324,11 @@ public class PerformanceAnalysisManager implements Listener {
 					for (int i = 58; i >= 0; i--) {
 						int t = tpsHistory[i];
 						TextColor newC = tps1sGradient.pickColorAt(t);
-						if (barComponents.isEmpty() || !newC.equals(barComponents.get(barComponents.size() - 1).getKey())) {
+						if (barComponents.isEmpty() || !newC.equals(barComponents.getLast().getKey())) {
 							barComponents.add(Pair.of(newC, new AtomicInteger(1)));
 						}
 						else {
-							barComponents.get(barComponents.size() - 1).getValue().incrementAndGet();
+							barComponents.getLast().getValue().incrementAndGet();
 						}
 					}
 					Chat history = chat();
@@ -394,7 +394,7 @@ public class PerformanceAnalysisManager implements Listener {
 
 				bar.setTitle(title);
 				bar.setColor(barColor);
-				bar.setProgress(Math.max(0, Math.min(1, barProgress)));
+				bar.setProgress(Math.clamp(barProgress, 0, 1));
 				
 			}
 			

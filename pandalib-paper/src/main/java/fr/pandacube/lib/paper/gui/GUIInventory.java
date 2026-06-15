@@ -68,7 +68,7 @@ public class GUIInventory implements Listener {
 	 * @param slot the slot index.
 	 * @param iStack the item to put in the slot.
 	 * @param clickEventActions the action to perform when the user clicks that button. The event passed as a parameter
-	 *                         is already cancelled. It is possible to un-cancel it if needed.
+	 *                         is already canceled. It is possible to un-cancel it if needed.
 	 */
 	public void setButtonIfEmpty(int slot, ItemStack iStack, Consumer<InventoryClickEvent> clickEventActions) {
 		if (inv.getItem(slot) == null)
@@ -80,7 +80,7 @@ public class GUIInventory implements Listener {
 	 * @param slot the slot index.
 	 * @param iStack the item to put in the slot.
 	 * @param clickEventActions the action to perform when the user clicks that button. The event passed as a parameter
-	 *                         is already cancelled. It is possible to un-cancel it if needed.
+	 *                         is already canceled. It is possible to un-cancel it if needed.
 	 */
 	public void setButton(int slot, ItemStack iStack, Consumer<InventoryClickEvent> clickEventActions) {
 		inv.setItem(slot, iStack);
@@ -91,7 +91,7 @@ public class GUIInventory implements Listener {
 	 * Update/replace the action to perform for a specific slot.
 	 * @param slot the slot index.
 	 * @param clickEventActions the action to perform when the user clicks that button. The event passed as a parameter
-	 *                         is already cancelled. It is possible to un-cancel it if needed.
+	 *                         is already canceled. It is possible to un-cancel it if needed.
 	 */
 	public void setClickEventAction(int slot, Consumer<InventoryClickEvent> clickEventActions) {
 		onClickEvents.put(slot, clickEventActions);
@@ -105,7 +105,7 @@ public class GUIInventory implements Listener {
 		if (animations.containsKey(slot)) {
 			BukkitTask taskToCancel = animations.remove(slot);
 			try {
-				taskToCancel.cancel(); // if there is an error, then it was already cancelled or not yet scheduled
+				taskToCancel.cancel(); // if there is an error, then it was already canceled or not yet scheduled
 			} catch (Exception ignored) { }
 		}
 	}

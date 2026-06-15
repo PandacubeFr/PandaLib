@@ -19,7 +19,7 @@ public class MinecraftVersionUtil {
      * versioning to compare the versions.
      * @param v1 the first version to compare.
      * @param v2 the second version to compare.
-     * @return 0 if they are equal, &lt;0 if v1&lt;v2 and vice-versa.
+     * @return 0 if they are equal, &lt;0 if v1&lt;v2 and vice versa.
      */
     public static int compareVersions(String v1, String v2) {
         int[] v1Int = decomposedVersion(v1);
@@ -51,36 +51,43 @@ public class MinecraftVersionUtil {
     /**
      * Tells if the two provided Minecraft versions are consecutive.
      * <p>
-     * Two versions are consecutive if (considering {@code 1.X[.Y]}):
+     * Two versions are consecutive if (considering {@code X.Y[.Z]}):
      * <ul>
-     *     <li>They are part of the same main version (X value)</li>
-     *     <li>v1 has no Y value, and v2 has Y = 1 (eg. 1.19 and 1.19.1) OR
-     *         both v1 and v2 has a Y value and those values are consecutive.
+     *     <li>They are part of the same main version (X.Y value, e.g. 1.19 or 26.2)</li>
+     *     <li>v1 has no Z value, and v2 has Z = 1 (e.g. 1.19 and 1.19.1) OR
+     *         both v1 and v2 has a Z value and those values are consecutive.
      *     </li>
      * </ul>
+     * If at least 1 version string is less than 2 components or more than 3 components, it returns false.
      * @param v1 the first version.
      * @param v2 the second version.
-     * @return thue if the second version is consecutive to the first one.
+     * @return true if the second version is consecutive to the first one.
      */
     public static boolean areConsecutive(String v1, String v2) {
         int[] v1Int = decomposedVersion(v1);
         int[] v2Int = decomposedVersion(v2);
 
-        if (v1Int.length == v2Int.length) {
-            for (int i = 0; i < v1Int.length - 1; i++) {
-                if (v1Int[i] != v2Int[i])
-                    return false;
-            }
-            return v1Int[v1Int.length - 1] + 1 == v2Int[v2Int.length - 1];
-        }
-        else if (v1Int.length == v2Int.length - 1) {
-            for (int i = 0; i < v1Int.length; i++) {
-                if (v1Int[i] != v2Int[i])
-                    return false;
-            }
-            return v2Int[v2Int.length - 1] == 1;
+        if (v1Int.length < 2 || v2Int.length < 2 || v1Int.length > 3 || v2Int.length > 3)
+            return false;
+
+        // compare the 2 first components
+        if (v1Int[0] != v2Int[0] || v1Int[1] != v2Int[1]) {
+            return false;
         }
 
+        if (v1Int.length == 2) {      // v1 is x.y
+            if (v2Int.length == 2) {  // v2 is x.y
+                return true;
+            }
+            else {                    // v2 is x.y.?
+                return v2Int[2] == 1; // v2 is x.y.1
+            }
+        }
+        else {                        // v1 is x.y.?
+            if (v2Int.length == 3) {  // v2 is x.y.?
+                return v1Int[2] + 1 == v2Int[2]; // v1 is x.y.z and v2 is x.y.z+1
+            }
+        }
         return false;
     }
 
@@ -92,7 +99,7 @@ public class MinecraftVersionUtil {
      * merged consecutive versions and using
      * {@link StringUtil#joinGrammatically(CharSequence, CharSequence, List)}.
      *
-     * @param versions the minecraft versions list to use.
+     * @param versions the Minecraft versions list to use.
      * @param finalWordSeparator the word separator between the two last versions in the returned string, like "and",
      *                           "or" or any other word of any language. The spaces before and after are already
      *                           concatenated.

@@ -227,7 +227,7 @@ public final class DB {
      */
     public static <E extends SQLElement<E>> E getFirst(Class<E> elemClass, SQLWhere<E> where, SQLOrderBy<E> orderBy, Integer offset) throws DBException {
         SQLElementList<E> elements = getAll(elemClass, where, orderBy, 1, offset);
-        return (elements.isEmpty()) ? null : elements.get(0);
+        return (elements.isEmpty()) ? null : elements.getFirst();
     }
 
     /**
@@ -604,7 +604,7 @@ public final class DB {
                             val = ((SQLCustomType<Object, Object>)sqlField.type).dbToJavaConv.apply(val);
                         } catch (Exception e) {
                             throw new DBException("Error while converting value of field '"+sqlField.getName()+"' with SQLCustomType from "+((SQLCustomType<Object, Object>)sqlField.type).intermediateJavaType
-                                    +"(jdbc source) to "+sqlField.type.getJavaType()+"(java destination). The original value is '"+ val +"'", e);
+                                    +"(JDBC source) to "+sqlField.type.getJavaType()+"(java destination). The original value is '"+ val +"'", e);
                         }
                     }
 

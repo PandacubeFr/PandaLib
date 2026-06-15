@@ -50,7 +50,7 @@ public class OfflineUUID {
 	 * Main method for this class.
 	 * @param args the arguments. One argument is one player name.
 	 */
-	public static void main(String[] args) {
+	static void main(String[] args) {
 		if (args.length == 0) {
 			try (Scanner s = new Scanner(System.in)) {
 				for(;;) {

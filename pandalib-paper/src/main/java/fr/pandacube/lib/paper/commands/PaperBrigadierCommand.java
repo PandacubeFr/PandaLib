@@ -511,7 +511,7 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
     /**
      * Wraps the provided brigadier command executor in another one that logs eventual throw exceptions and informs the
      * player.
-     * The default behaviour of the vanilla instance of the Brigadier dispatcher is to ignore any unchecked exception
+     * The default behavior of the vanilla instance of the Brigadier dispatcher is to ignore any unchecked exception
      * thrown by a command executor.
      * @param cmd the command executor to wrap.
      * @return a wrapper command executor.

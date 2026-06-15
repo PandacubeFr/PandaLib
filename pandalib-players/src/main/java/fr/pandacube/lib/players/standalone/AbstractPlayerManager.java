@@ -292,7 +292,7 @@ public abstract class AbstractPlayerManager<OP extends AbstractOnlinePlayer, OF 
 	 * {@link #broadcast(ComponentLike, boolean, String, UUID)}.
 	 * <p>
 	 * This method decides to send the message to the console depending on whether {@code permission}
-	 * is null (will send to console) or not (will not send to console). To specify this behaviour, use
+	 * is null (will send to console) or not (will not send to console). To specify this behavior, use
 	 * {@link #broadcast(ComponentLike, boolean, boolean, String)}.
 	 *
 	 * @param message the message to send.
@@ -308,7 +308,7 @@ public abstract class AbstractPlayerManager<OP extends AbstractOnlinePlayer, OF 
 	/**
 	 * Broadcast a message to all players, and to the console.
 	 * <p>
-	 * This method sends the message to the console. To change this behaviour, use
+	 * This method sends the message to the console. To change this behavior, use
 	 * {@link #broadcast(ComponentLike, boolean, boolean, String, UUID)}.
 	 *
 	 * @param message the message to send.
@@ -330,7 +330,7 @@ public abstract class AbstractPlayerManager<OP extends AbstractOnlinePlayer, OF 
 	/**
 	 * Broadcast a message to some or all players, and eventually to the console.
 	 * <p>
-	 * This method doesn't restrict to a specific permission. To change this behaviour, use
+	 * This method doesn't restrict to a specific permission. To change this behavior, use
 	 * {@link #broadcast(ComponentLike, boolean, boolean, String, UUID)}.
 	 *
 	 * @param message the message to send.
@@ -354,7 +354,7 @@ public abstract class AbstractPlayerManager<OP extends AbstractOnlinePlayer, OF 
 	 * This method assumes this message is not caused by a specific player. To specify the source player, use
 	 * {@link #broadcast(ComponentLike, boolean, boolean, UUID)}.
 	 * <p>
-	 * This method doesn't restrict to a specific permission. To change this behaviour, use
+	 * This method doesn't restrict to a specific permission. To change this behavior, use
 	 * {@link #broadcast(ComponentLike, boolean, boolean, String)}.
 	 *
 	 * @param message the message to send.
@@ -369,10 +369,10 @@ public abstract class AbstractPlayerManager<OP extends AbstractOnlinePlayer, OF 
 	/**
 	 * Broadcast a message to all players, and to the console.
 	 * <p>
-	 * This method sends the message to the console. To change this behaviour, use
+	 * This method sends the message to the console. To change this behavior, use
 	 * {@link #broadcast(ComponentLike, boolean, boolean, UUID)}.
 	 * <p>
-	 * This method doesn't restrict to a specific permission. To change this behaviour, use
+	 * This method doesn't restrict to a specific permission. To change this behavior, use
 	 * {@link #broadcast(ComponentLike, boolean, String, UUID)}.
 	 *
 	 * @param message the message to send.
@@ -393,10 +393,10 @@ public abstract class AbstractPlayerManager<OP extends AbstractOnlinePlayer, OF 
 	 * This method assumes this message is not caused by a specific player. To specify the source player, use
 	 * {@link #broadcast(ComponentLike, boolean, UUID)}.
 	 * <p>
-	 * This method sends the message to the console. To change this behaviour, use
+	 * This method sends the message to the console. To change this behavior, use
 	 * {@link #broadcast(ComponentLike, boolean, boolean)}.
 	 * <p>
-	 * This method doesn't restrict to a specific permission. To change this behaviour, use
+	 * This method doesn't restrict to a specific permission. To change this behavior, use
 	 * {@link #broadcast(ComponentLike, boolean, String)}.
 	 *
 	 * @param message the message to send.

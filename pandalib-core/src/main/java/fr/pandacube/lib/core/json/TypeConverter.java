@@ -19,33 +19,35 @@ public class TypeConverter {
 	 * @throws ConversionException is a conversion error occurs.
 	 */
 	public static Integer toInteger(Object o) {
-		if (o == null) {
-			return null;
-		}
-		
-		if (o instanceof JsonElement) {
-			try {
-				return ((JsonElement)o).getAsInt();
-			} catch(UnsupportedOperationException e) {
-				throw new ConversionException(e);
-			}
-		}
-		
-		if (o instanceof Number) {
-			return ((Number)o).intValue();
-		}
-		if (o instanceof String) {
-			try {
-			return Integer.parseInt((String)o);
-			} catch (NumberFormatException e) {
-				throw new ConversionException(e);
-			}
-		}
-		if (o instanceof Boolean) {
-			return ((Boolean)o) ? 1 : 0;
-		}
-		
-		throw new ConversionException("No integer conversion available for an instance of "+o.getClass());
+        switch (o) {
+            case null -> {
+                return null;
+            }
+            case JsonElement el -> {
+                try {
+                    return el.getAsInt();
+                } catch (UnsupportedOperationException e) {
+                    throw new ConversionException(e);
+                }
+            }
+            case Number n -> {
+                return n.intValue();
+            }
+            case String s -> {
+                try {
+                    return Integer.parseInt(s);
+                } catch (NumberFormatException e) {
+                    throw new ConversionException(e);
+                }
+            }
+            case Boolean b -> {
+                return b ? 1 : 0;
+            }
+            default -> {
+            }
+        }
+
+        throw new ConversionException("No integer conversion available for an instance of "+o.getClass());
 	}
 
 	/**
@@ -68,33 +70,35 @@ public class TypeConverter {
 	 * @throws ConversionException is a conversion error occurs.
 	 */
 	public static Double toDouble(Object o) {
-		if (o == null) {
-			return null;
-		}
-		
-		if (o instanceof JsonElement) {
-			try {
-			return ((JsonElement)o).getAsDouble();
-			} catch(UnsupportedOperationException e) {
-				throw new ConversionException(e);
-			}
-		}
+        switch (o) {
+            case null -> {
+                return null;
+            }
+            case JsonElement el -> {
+                try {
+                    return el.getAsDouble();
+                } catch (UnsupportedOperationException e) {
+                    throw new ConversionException(e);
+                }
+            }
+            case Number n -> {
+                return n.doubleValue();
+            }
+            case String s -> {
+                try {
+                    return Double.parseDouble(s);
+                } catch (NumberFormatException e) {
+                    throw new ConversionException(e);
+                }
+            }
+            case Boolean b -> {
+                return b ? 1d : 0d;
+            }
+            default -> {
+            }
+        }
 
-		if (o instanceof Number) {
-			return ((Number)o).doubleValue();
-		}
-		if (o instanceof String) {
-			try {
-			return Double.parseDouble((String)o);
-			} catch (NumberFormatException e) {
-				throw new ConversionException(e);
-			}
-		}
-		if (o instanceof Boolean) {
-			return ((Boolean)o) ? 1d : 0d;
-		}
-		
-		throw new ConversionException("No double conversion available for an instance of "+o.getClass());
+        throw new ConversionException("No double conversion available for an instance of "+o.getClass());
 		
 	}
 

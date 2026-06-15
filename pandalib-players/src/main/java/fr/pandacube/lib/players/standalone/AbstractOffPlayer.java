@@ -61,7 +61,7 @@ public interface AbstractOffPlayer {
 	
 	/**
 	 * Returns the display name of the player (if any), with eventual prefix and suffix depending on permission groups
-	 * (and team for bukkit implementation).
+	 * (and team for Bukkit implementation).
 	 * @return the display name of the player.
 	 */
 	String getDisplayName();

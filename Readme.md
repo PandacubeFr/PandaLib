@@ -25,7 +25,7 @@ that are detailed in their respective Readme file (if any).
 
 ### Use in your projects
 
-To use one of the module as a Maven dependency, add the Jitpack repository in the `<repositories>` section in your `pom.xml`:
+To use one of the module as a Maven dependency, add the JitPack repository in the `<repositories>` section in your `pom.xml`:
 
 ```xml
     <repositories>

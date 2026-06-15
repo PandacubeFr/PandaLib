@@ -44,8 +44,8 @@ public class AABBBlockGroup implements BlockSet {
 	}
 
 	private AABBBlock initEnglobingAABB() {
-		Vector pos1 = subAABB.get(0).pos1.clone();
-		Vector pos2 = subAABB.get(0).pos2.clone().add(new Vector(-1, -1, -1));
+		Vector pos1 = subAABB.getFirst().pos1.clone();
+		Vector pos2 = subAABB.getFirst().pos2.clone().add(new Vector(-1, -1, -1));
 		for (int i = 1; i < subAABB.size(); i++) {
 			AABBBlock aabb = subAABB.get(i);
 			pos1.setX(Math.min(pos1.getBlockX(), aabb.pos1.getBlockX()));

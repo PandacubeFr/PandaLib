@@ -36,7 +36,7 @@ public class SchedulerUtil {
 	 * @param task the task to run on the main thread and to get the value from.
 	 * @return the value returned by the task.
 	 * @param <T> the type fo the return value of the task
-	 * @throws CancellationException – if the task was cancelled
+	 * @throws CancellationException – if the task was canceled
 	 * @throws ExecutionException – if the task threw an exception
 	 * @throws InterruptedException – if the current thread was interrupted while waiting
 	 */
@@ -57,7 +57,7 @@ public class SchedulerUtil {
 	 * If the current thread is the server thread, then the task is run right now, then this method returns.
 	 * Otherwise, it will wait for the task to finish on the main thread.
 	 * @param task the task to run on the main thread.
-	 * @throws CancellationException – if the task was cancelled
+	 * @throws CancellationException – if the task was canceled
 	 * @throws ExecutionException – if the task threw an exception
 	 * @throws InterruptedException – if the current thread was interrupted while waiting
 	 */

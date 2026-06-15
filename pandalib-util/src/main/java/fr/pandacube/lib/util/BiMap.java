@@ -34,7 +34,7 @@ public class BiMap<K, V> implements Iterable<Entry<K, V>> {
     private final Object lock;
 
     /**
-     * Create a new bi-directional map
+     * Create a new bidirectional map
      * @param mapSupplier a {@link Supplier} to create the two backend map.
      */
     @SuppressWarnings("unchecked")

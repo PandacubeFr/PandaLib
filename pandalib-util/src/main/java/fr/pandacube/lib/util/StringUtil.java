@@ -54,7 +54,7 @@ public class StringUtil {
 	    int size = strings == null ? 0 : strings.size();
 		return switch (size) {
 			case 0 -> "";
-			case 1 -> strings.get(0);
+			case 1 -> strings.getFirst();
 			default -> String.join(regularSeparator, strings.subList(0, --size)) + finalSeparator + strings.get(size);
 		};
 	}

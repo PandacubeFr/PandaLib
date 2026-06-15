@@ -159,9 +159,9 @@ public class CommandAdmin extends CLIBrigadierCommand {
 	
 	
 	private ChatTreeNode buildDisplayTree(DisplayCommandNode displayNode, CLICommandSender sender) {
-		Chat d = chat().then(displayCurrentNode(displayNode.nodes.get(0), false, sender));
+		Chat d = chat().then(displayCurrentNode(displayNode.nodes.getFirst(), false, sender));
 		
-		CommandNode<CLICommandSender> prevNode = displayNode.nodes.get(0);
+		CommandNode<CLICommandSender> prevNode = displayNode.nodes.getFirst();
 		for (int i = 1; i < displayNode.nodes.size(); i++) {
 			CommandNode<CLICommandSender> currNode = displayNode.nodes.get(i);
 			if (currNode.equals(prevNode.getRedirect())) {

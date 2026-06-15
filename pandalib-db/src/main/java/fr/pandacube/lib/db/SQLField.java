@@ -240,7 +240,7 @@ public class SQLField<E extends SQLElement<E>, T> {
                 ret = customType.javaToDbConv.apply(value);
             } catch (Exception e) {
                 throw new DBException("Error while converting value of field '" + name + "' with SQLCustomType from " + type.getJavaType()
-                        + "(java source) to " + customType.intermediateJavaType + "(jdbc destination). The original value is '" + value + "'", e);
+                        + "(java source) to " + customType.intermediateJavaType + "(JDBC destination). The original value is '" + value + "'", e);
             }
         }
         return ret;

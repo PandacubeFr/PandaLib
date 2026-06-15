@@ -68,7 +68,7 @@ public class PayloadRegistry {
      * Serialize the provided {@link Payload}.
      * @param p the {@link Payload} to serialize. Must be of a registered type.
      * @return the serialized data.
-     * @throws JsonParseException if the json is invalid.
+     * @throws JsonParseException if the JSON is invalid.
      */
     public static String toString(Payload p) throws JsonParseException {
         String type = payloadClasses.getKey(p.getClass());
@@ -83,9 +83,9 @@ public class PayloadRegistry {
      * to a Json string.
      * @param type the type
      * @param obj the object to Jsonify
-     * @param serializeNulls if null properties must be included in the json object.
+     * @param serializeNulls if null properties must be included in the JSON object.
      * @return the String to send through the websocket
-     * @throws JsonParseException if the json is invalid.
+     * @throws JsonParseException if the JSON is invalid.
      */
     public static String arbitraryToString(String type, Object obj, boolean serializeNulls) throws JsonParseException {
         return validateType(type) + PAYLOAD_TYPE_SEPARATOR + (serializeNulls ? Json.gsonSerializeNulls : Json.gson).toJson(obj);

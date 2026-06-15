@@ -9,8 +9,8 @@ import java.util.Arrays;
 
     @Override
     public boolean equals(Object other) {
-        return other instanceof ConstructorIdentifier o
-                && Arrays.equals(o.parameters, parameters);
+        return other instanceof ConstructorIdentifier(Class<?>[] oParams)
+                && Arrays.equals(parameters, oParams);
     }
 
     @Override

@@ -13,9 +13,9 @@ public record ServerWorldKey(String server, String world) implements Comparable<
 
 	@Override
 	public boolean equals(Object obj) {
-		return obj instanceof ServerWorldKey o
-				&& Objects.equals(server, o.server)
-				&& Objects.equals(world, o.world);
+		return obj instanceof ServerWorldKey(String oServer, String oWorld)
+				&& Objects.equals(server, oServer)
+				&& Objects.equals(world, oWorld);
 	}
 	@Override
 	public int hashCode() {

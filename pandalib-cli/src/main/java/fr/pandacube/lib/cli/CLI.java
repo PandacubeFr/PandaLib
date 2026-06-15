@@ -2,7 +2,6 @@ package fr.pandacube.lib.cli;
 
 import fr.pandacube.lib.cli.commands.CLIBrigadierDispatcher;
 import fr.pandacube.lib.cli.log.CLILogger;
-import fr.pandacube.lib.util.log.Log;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;

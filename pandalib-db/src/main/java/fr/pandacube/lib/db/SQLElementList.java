@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
 
     /**
-     * Creates an empty list of sql elements.
+     * Creates an empty list of SQL elements.
      */
     public SQLElementList() {}
 
@@ -74,10 +74,10 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
         if (storedEl.isEmpty()) return 0;
 
         @SuppressWarnings("unchecked")
-        Class<E> classEl = (Class<E>)storedEl.get(0).getClass();
+        Class<E> classEl = (Class<E>)storedEl.getFirst().getClass();
 
         int ret = DB.update(classEl,
-                storedEl.get(0).getIdField().in(storedEl.stream().map(SQLElement::getId).collect(Collectors.toList())
+                storedEl.getFirst().getIdField().in(storedEl.stream().map(SQLElement::getId).collect(Collectors.toList())
                 ),
                 modifiedValues);
 
@@ -116,10 +116,10 @@ public class SQLElementList<E extends SQLElement<E>> extends ArrayList<E> {
         if (storedEl.isEmpty()) return;
 
         @SuppressWarnings("unchecked")
-        Class<E> classEl = (Class<E>)storedEl.get(0).getClass();
+        Class<E> classEl = (Class<E>)storedEl.getFirst().getClass();
 
         DB.delete(classEl,
-                storedEl.get(0).getIdField().in(storedEl.stream().map(SQLElement::getId).collect(Collectors.toList()))
+                storedEl.getFirst().getIdField().in(storedEl.stream().map(SQLElement::getId).collect(Collectors.toList()))
         );
         for (E el : storedEl)
             el.markAsNotStored();

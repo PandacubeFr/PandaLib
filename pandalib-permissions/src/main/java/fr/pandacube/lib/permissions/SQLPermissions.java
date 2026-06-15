@@ -4,7 +4,7 @@ import fr.pandacube.lib.db.SQLElement;
 import fr.pandacube.lib.db.SQLField;
 
 /**
- * SQL Table to store the permissions data.
+ * SQL Table to store the permission's data.
  */
 public class SQLPermissions extends SQLElement<SQLPermissions> {
 

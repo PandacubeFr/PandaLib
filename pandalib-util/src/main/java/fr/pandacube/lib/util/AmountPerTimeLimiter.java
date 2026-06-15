@@ -59,8 +59,8 @@ public class AmountPerTimeLimiter {
 	 */
 	public synchronized void add(double amount) {
 		long currT = System.currentTimeMillis();
-		if (!entries.isEmpty() && entries.get(entries.size()-1).time == currT)
-			entries.get(entries.size()-1).amount += amount;
+		if (!entries.isEmpty() && entries.getLast().time == currT)
+			entries.getLast().amount += amount;
 		else
 			entries.add(new Entry(currT, amount));
 	}

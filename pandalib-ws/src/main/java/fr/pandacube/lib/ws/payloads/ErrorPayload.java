@@ -32,5 +32,5 @@ public class ErrorPayload extends Payload {
     }
 
     @SuppressWarnings("unused")
-    private ErrorPayload() { } // for Json deserialization
+    private ErrorPayload() { } // for JSON deserialization
 }

@@ -62,7 +62,7 @@ public class ChatColorUtil {
                     break;
                 }
 
-                // try detect non-rgb format
+                // try to detect a non-rgb format
                 char colorChar = legacyText.charAt(index + 1);
                 LegacyChatFormat legacyColor = LegacyChatFormat.of(colorChar);
 

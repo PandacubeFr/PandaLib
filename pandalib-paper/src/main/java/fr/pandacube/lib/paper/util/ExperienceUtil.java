@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 
 /**
  * A utility for managing Player experience properly.<br/>
- * <a href="https://gist.github.com/Jikoo/30ec040443a4701b8980">Github Gist - Jikoo</a>
+ * <a href="https://gist.github.com/Jikoo/30ec040443a4701b8980">GitHub Gist - Jikoo</a>
  *
  * @author Jikoo
  */

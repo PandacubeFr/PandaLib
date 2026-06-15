@@ -251,7 +251,7 @@ import fr.pandacube.lib.util.log.Log;
 		Map<String, List<SQLPermissions>> groupRawData = groupsRawData.getOrDefault(groupName, new LinkedHashMap<>());
 
 		boolean groupDefault = groupRawData.containsKey("default")
-				&& "true".equals(groupRawData.get("default").get(0).get(SQLPermissions.value));
+				&& "true".equals(groupRawData.get("default").getFirst().get(SQLPermissions.value));
 		
 		String groupSelfPrefix = null;
 		if (groupRawData.containsKey("prefix")) {

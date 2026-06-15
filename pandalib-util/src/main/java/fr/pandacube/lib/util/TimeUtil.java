@@ -426,7 +426,7 @@ public class TimeUtil {
 	 * Parse a duration string into a time in the past of future, relative to now.
 	 * Source: <a href="https://github.com/EssentialsX/Essentials/blob/2.x/Essentials/src/main/java/com/earth2me/essentials/utils/DateUtil.java">Essentials DateUtil#parseDuration(String, boolean)</a>
 	 * @param time the duration to parse.
-	 * @param future thur to return the time in the future, false for the time in the past.
+	 * @param future true to return the time in the future, false for the time in the past.
 	 * @return the computed timestamp in millisecond.
 	 * @throws IllegalArgumentException if the format is not valid.
 	 */

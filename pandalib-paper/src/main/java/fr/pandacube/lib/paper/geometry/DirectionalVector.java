@@ -21,19 +21,19 @@ import org.bukkit.util.Vector;
  */
 public class DirectionalVector {
     /**
-     * The X cartesian coordinate of this {@link DirectionalVector}.
+     * The X Cartesian coordinate of this {@link DirectionalVector}.
      * It corresponds to the X (west to east) axis in a Minecraft world.
      */
     public final double x;
 
     /**
-     * The Y cartesian coordinate of this {@link DirectionalVector}.
+     * The Y Cartesian coordinate of this {@link DirectionalVector}.
      * It corresponds to the Y (bottom to top) axis in a Minecraft world.
      */
     public final double y;
 
     /**
-     * The Z cartesian coordinate of this {@link DirectionalVector}.
+     * The Z Cartesian coordinate of this {@link DirectionalVector}.
      * It corresponds to the Z (north to south) axis in a Minecraft world.
      */
     public final double z;

@@ -87,7 +87,7 @@ public class ProtocolVersion implements Comparable<ProtocolVersion> {
             return;
         }
 
-        Log.warning("Unable to get minecraft version data from API. Using local data instead.");
+        Log.warning("Unable to get Minecraft version data from API. Using local data instead.");
         // try local source
         try (InputStream is = ProtocolVersion.class.getResourceAsStream("mcversion.json")) {
             if (is != null) {
@@ -167,7 +167,7 @@ public class ProtocolVersion implements Comparable<ProtocolVersion> {
      * Generate a string representation of the provided list of version, using
      * {@link StringUtil#joinGrammatically(CharSequence, CharSequence, List)}.
      *
-     * @param versions the minecraft versions to list
+     * @param versions the Minecraft versions to list
      * @param finalWordSeparator the word separator between the two last versions in the returned string, like "and",
      *                           "or" or any other word of any language. The spaces before and after are already
      *                           concatenated.
@@ -221,7 +221,7 @@ public class ProtocolVersion implements Comparable<ProtocolVersion> {
      * @return the first (earliest) Minecraft version that supports this protocol version.
      */
     public String getFirstVersion() {
-        return versions.get(0);
+        return versions.getFirst();
     }
 
     /**
@@ -229,7 +229,7 @@ public class ProtocolVersion implements Comparable<ProtocolVersion> {
      * @return the last (latest) Minecraft version that supports this protocol version.
      */
     public String getLastVersion() {
-        return versions.get(versions.size() - 1);
+        return versions.getLast();
     }
 
     @Override

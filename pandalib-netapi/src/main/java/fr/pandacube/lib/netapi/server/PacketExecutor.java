@@ -10,8 +10,7 @@ import fr.pandacube.lib.util.log.Log;
 /**
  * Prends en charge un socket client et le transmet au gestionnaire de paquet
  * correspondant.<br/>
- * La connexion est fermée après chaque requête du client (règle pouvant
- * évoluer)
+ * La connexion est fermée après chaque requête du client.
  *
  * @author Marc Baloup
  *

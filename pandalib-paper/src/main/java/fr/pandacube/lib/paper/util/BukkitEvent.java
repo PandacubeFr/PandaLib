@@ -25,7 +25,7 @@ public class BukkitEvent {
 	 * Register a single event executor.
 	 * <p>
 	 * The priority if the event executor is {@link EventPriority#NORMAL}.
-	 * Does not ignore cancelled events.
+	 * Does not ignore canceled events.
 	 * @param eventClass the class of the event to listen to.
 	 * @param eventExecutor the executor.
 	 * @return the {@link Listener} instance, that is in our case the provided executor.
@@ -38,7 +38,7 @@ public class BukkitEvent {
 	/**
 	 * Register a single event executor.
 	 * <p>
-	 * Does not ignore cancelled events.
+	 * Does not ignore canceled events.
 	 * @param eventClass the class of the event to listen to.
 	 * @param eventExecutor the executor.
 	 * @param priority the event priority.
@@ -55,12 +55,12 @@ public class BukkitEvent {
 	 * The priority if the event executor is {@link EventPriority#NORMAL}.
 	 * @param eventClass the class of the event to listen to.
 	 * @param eventExecutor the executor.
-	 * @param ignoreCancelled whether to pass cancelled events or not.
+	 * @param ignoreCanceled whether to pass canceled events or not.
 	 * @return the {@link Listener} instance, that is in our case the provided executor.
 	 * @param <E> the event type.
 	 */
-	public static <E extends Event> Listener register(Class<E> eventClass, EventListener<E> eventExecutor, boolean ignoreCancelled) {
-		return register(eventClass, eventExecutor, EventPriority.NORMAL, ignoreCancelled);
+	public static <E extends Event> Listener register(Class<E> eventClass, EventListener<E> eventExecutor, boolean ignoreCanceled) {
+		return register(eventClass, eventExecutor, EventPriority.NORMAL, ignoreCanceled);
 	}
 
 	/**
@@ -68,12 +68,12 @@ public class BukkitEvent {
 	 * @param eventClass the class of the event to listen to.
 	 * @param eventExecutor the executor.
 	 * @param priority the event priority.
-	 * @param ignoreCancelled whether to pass cancelled events or not.
+	 * @param ignoreCanceled whether to pass canceled events or not.
 	 * @return the {@link Listener} instance, that is in our case the provided executor.
 	 * @param <E> the event type.
 	 */
-	public static <E extends Event> Listener register(Class<E> eventClass, EventListener<E> eventExecutor, EventPriority priority, boolean ignoreCancelled) {
-		Bukkit.getPluginManager().registerEvent(eventClass, eventExecutor, priority, eventExecutor, PandaLibPaper.getPlugin(), ignoreCancelled);
+	public static <E extends Event> Listener register(Class<E> eventClass, EventListener<E> eventExecutor, EventPriority priority, boolean ignoreCanceled) {
+		Bukkit.getPluginManager().registerEvent(eventClass, eventExecutor, priority, eventExecutor, PandaLibPaper.getPlugin(), ignoreCanceled);
 		return eventExecutor;
 	}
 
@@ -172,11 +172,11 @@ public class BukkitEvent {
 		/**
 		 * Creates a new {@link EnforcedLastListener}.
 		 * @param eventClass the event to listen.
-		 * @param ignoreCancelled whether to pass cancelled events or not.
+		 * @param ignoreCanceled whether to pass canceled events or not.
 		 */
-		public EnforcedLastListener(Class<E> eventClass, boolean ignoreCancelled) {
+		public EnforcedLastListener(Class<E> eventClass, boolean ignoreCanceled) {
 			this.eventClass = eventClass;
-			this.ignoreCancelled = ignoreCancelled;
+			this.ignoreCancelled = ignoreCanceled;
 			register();
 		}
 		
