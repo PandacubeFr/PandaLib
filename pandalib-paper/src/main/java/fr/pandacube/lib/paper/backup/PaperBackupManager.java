@@ -6,6 +6,7 @@ import fr.pandacube.lib.core.backup.RotatedLogsBackupProcess;
 import fr.pandacube.lib.paper.PandaLibPaper;
 import fr.pandacube.lib.paper.scheduler.SchedulerUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -28,7 +29,7 @@ import java.util.concurrent.CancellationException;
  */
 public class PaperBackupManager extends BackupManager implements Listener {
 
-	private final Map<String, PaperWorldProcess> compressWorlds = new HashMap<>();
+	private final Map<NamespacedKey, PaperDimensionBackupProcess> compressWorlds = new HashMap<>();
 
 	PaperBackupConfig config;
 
@@ -41,10 +42,11 @@ public class PaperBackupManager extends BackupManager implements Listener {
 		setConfig(config);
 
 
-		for (final World world : Bukkit.getWorlds()) {
-			initWorldProcess(world.getName());
+		addProcess(new PaperServerLevelBackupProcess(this));
+		for (final World dimension : Bukkit.getWorlds()) {
+			initDimensionProcess(dimension.getKey());
 		}
-		addProcess(new PaperWorkdirProcess(this));
+		addProcess(new PaperWorkdirBackupProcess(this));
 		addProcess(new RotatedLogsBackupProcess(this, true, new File("logs"), "[0-9]{4}-[0-9]{2}-[0-9]{2}(-[0-9]+)?\\.log\\.gz"));
 
 		Bukkit.getServer().getPluginManager().registerEvents(this, PandaLibPaper.getPlugin());
@@ -67,13 +69,13 @@ public class PaperBackupManager extends BackupManager implements Listener {
 
 
 	private void updateProcessConfig(BackupProcess process) {
-		if (process instanceof PaperWorkdirProcess) {
+		if (process instanceof PaperWorkdirBackupProcess) {
 			process.setEnabled(config.workdirBackupEnabled);
 			process.setBackupCleaner(config.workdirBackupCleaner);
 			process.setScheduling(config.scheduling);
 			process.setIgnoreList(config.workdirIgnoreList);
 		}
-		else if (process instanceof PaperWorldProcess) {
+		else if (process instanceof PaperDimensionBackupProcess || process instanceof PaperServerLevelBackupProcess) {
 			process.setEnabled(config.worldBackupEnabled);
 			process.setBackupCleaner(config.worldBackupCleaner);
 			process.setScheduling(config.scheduling);
@@ -101,18 +103,18 @@ public class PaperBackupManager extends BackupManager implements Listener {
 		for (String wName : dirtyForSave) {
 			World w = Bukkit.getWorld(wName);
 			if (w != null)
-				compressWorlds.get(w.getName()).setDirtyAfterSave();
+				compressWorlds.get(w.getKey()).setDirtyAfterSave();
 		}
 
 		super.onDisable();
 	}
 	
-	private void initWorldProcess(final String worldName) {
-		if (compressWorlds.containsKey(worldName))
+	private void initDimensionProcess(final NamespacedKey key) {
+		if (compressWorlds.containsKey(key))
 			return;
-		PaperWorldProcess process = new PaperWorldProcess(this, worldName);
+		PaperDimensionBackupProcess process = new PaperDimensionBackupProcess(this, key);
 		addProcess(process);
-		compressWorlds.put(worldName, process);
+		compressWorlds.put(key, process);
 	}
 
 
@@ -135,7 +137,7 @@ public class PaperBackupManager extends BackupManager implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onWorldLoad(WorldLoadEvent event) {
-		initWorldProcess(event.getWorld().getName());
+		initDimensionProcess(event.getWorld().getKey());
 	}
 
 	/**
@@ -146,7 +148,7 @@ public class PaperBackupManager extends BackupManager implements Listener {
 	public void onWorldSave(WorldSaveEvent event) {
 		if (event.getWorld().getLoadedChunks().length > 0
 				|| dirtyForSave.contains(event.getWorld().getName())) {
-			compressWorlds.get(event.getWorld().getName()).setDirtyAfterSave();
+			compressWorlds.get(event.getWorld().getKey()).setDirtyAfterSave();
 			dirtyForSave.remove(event.getWorld().getName());
 		}
 	}

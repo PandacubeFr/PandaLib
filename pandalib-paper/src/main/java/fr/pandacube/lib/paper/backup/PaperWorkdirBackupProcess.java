@@ -6,13 +6,13 @@ import java.util.function.BiPredicate;
 /**
  * A backup process with specific logic around Paper server working directory.
  */
-public class PaperWorkdirProcess extends PaperBackupProcess {
+public class PaperWorkdirBackupProcess extends PaperBackupProcess {
 
 	/**
 	 * Instantiates a new backup process for the paper server working directory.
 	 * @param bm the associated backup manager.
 	 */
-	protected PaperWorkdirProcess(PaperBackupManager bm) {
+	protected PaperWorkdirBackupProcess(PaperBackupManager bm) {
 		super(bm, "workdir");
 	}
 
@@ -25,7 +25,7 @@ public class PaperWorkdirProcess extends PaperBackupProcess {
 				return false;
 			if (file.isFile() && file.getName().endsWith(".lck"))
 				return false;
-			return PaperWorkdirProcess.super.getFilenameFilter().test(file, path);
+			return PaperWorkdirBackupProcess.super.getFilenameFilter().test(file, path);
 		};
 	}
 	

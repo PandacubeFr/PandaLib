@@ -5,8 +5,7 @@ import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftServer;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.NbtIo;
 import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.NameAndId;
-import fr.pandacube.lib.paper.world.PrimaryWorlds;
-import fr.pandacube.lib.paper.world.WorldUtil;
+import fr.pandacube.lib.paper.world.LevelDir;
 import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
 import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 import org.bukkit.Bukkit;
@@ -206,7 +205,7 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
      * @return the file where the player-data is stored.
      */
     default File getPlayerDataFile(boolean old) {
-        File playerDataDir = new File(WorldUtil.worldDir(PrimaryWorlds.PRIMARY_WORLDS.getFirst()), "playerdata");
+        File playerDataDir = new File(LevelDir.ofServer().getDataDirectory(), "players/data");
         return new File(playerDataDir, getUniqueId() + (old ? ".dat_old" : ".dat"));
     }
 

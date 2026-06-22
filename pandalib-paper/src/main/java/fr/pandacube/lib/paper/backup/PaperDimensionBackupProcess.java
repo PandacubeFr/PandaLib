@@ -2,9 +2,10 @@ package fr.pandacube.lib.paper.backup;
 
 import fr.pandacube.lib.chat.LegacyChatFormat;
 import fr.pandacube.lib.paper.scheduler.SchedulerUtil;
-import fr.pandacube.lib.paper.world.WorldUtil;
+import fr.pandacube.lib.paper.world.DimensionDir;
 import fr.pandacube.lib.util.log.Log;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 
 import java.io.File;
@@ -12,40 +13,40 @@ import java.text.DateFormat;
 import java.util.Date;
 
 /**
- * A backup process with specific logic around Paper server world.
+ * A backup process with specific logic around a dimension.
  */
-public class PaperWorldProcess extends PaperBackupProcess {
-	private final String worldName;
+public class PaperDimensionBackupProcess extends PaperBackupProcess {
+	private final NamespacedKey dimensionKey;
 	
 	private boolean autoSave = true;
 
 	/**
-	 * Instantiates a new backup process for a world.
+	 * Instantiates a new backup process for a dimension.
 	 * @param bm the associated backup manager.
-	 * @param worldName the name of the world.
+	 * @param dimensionKey the key of the dimension.
 	 */
-	protected PaperWorldProcess(PaperBackupManager bm, final String worldName) {
-		super(bm, "worlds/" + worldName);
-		this.worldName = worldName;
+	protected PaperDimensionBackupProcess(PaperBackupManager bm, final NamespacedKey dimensionKey) {
+		super(bm, "dimension/" + dimensionKey.toString());
+		this.dimensionKey = dimensionKey;
 	}
 	
 	private World getWorld() {
-		return Bukkit.getWorld(worldName);
+		return Bukkit.getWorld(dimensionKey);
 	}
 	
 	
 	@Override
 	public File getSourceDir() {
-		return WorldUtil.worldDir(worldName);
+		return DimensionDir.fromServerLevel(dimensionKey).getDirectory();
 	}
 	
 	@Override
 	protected void onBackupStart() {
 		World w = getWorld();
-		if (w == null)
-			return;
-		autoSave = w.isAutoSave();
-		w.setAutoSave(false);
+		if (w != null) {
+			autoSave = w.isAutoSave();
+			w.setAutoSave(false);
+		}
 		super.onBackupStart();
 	}
 	
@@ -64,7 +65,7 @@ public class PaperWorldProcess extends PaperBackupProcess {
 
 	@Override
 	protected File getTargetDir() {
-		return new File(getBackupManager().getBackupDirectory(), "worlds/" + worldName);
+		return new File(getBackupManager().getBackupDirectory(), "dimensions/" + dimensionKey.getNamespace() + "/" + dimensionKey.getKey());
 	}
 
 
@@ -83,7 +84,7 @@ public class PaperWorldProcess extends PaperBackupProcess {
 
 
 	/**
-	 * Make the specified world dirty for compress. Also makes the specified world clean for saving if nobody is connected there.
+	 * Make the specified dimension dirty for backup, and makes it clean for saving if nobody is connected there.
 	 */
 	public void setDirtyAfterSave() {
 		if (!isDirty()) { // don't set dirty if it is already
