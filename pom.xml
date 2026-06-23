@@ -57,7 +57,7 @@
         
         <bungeecord.version>26.1-R0.1-SNAPSHOT</bungeecord.version>
         <paper.version>26.1.2.build.70-stable</paper.version>
-        <mc.version>1.21.11</mc.version>
+        <mc.version>26.1.2</mc.version>
 
         <guava.version>33.3.1-jre</guava.version> <!-- Match the version imported by Paper API/BungeeCord API if possible -->
         <gson.version>2.11.0</gson.version> <!-- Match the version imported by Paper API/BungeeCord API if possible -->
