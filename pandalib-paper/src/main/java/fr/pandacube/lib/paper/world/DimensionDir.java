@@ -121,6 +121,16 @@ public class DimensionDir {
     }
 
 
+    /**
+     * Tells if this level directory is a valid one (has a directory and contains a file named level.dat).
+     * @return true if the level exists, false otherwise.
+     */
+    public boolean isValidDimension() {
+        File d = getDataDirectory();
+        return d.isDirectory() && new File(d, "minecraft/world_gen_settings.dat").isFile();
+    }
+
+
     @Override
     public boolean equals(Object obj) {
         return obj instanceof DimensionDir o
@@ -131,5 +141,11 @@ public class DimensionDir {
     @Override
     public int hashCode() {
         return Objects.hash(level, key);
+    }
+
+
+    @Override
+    public String toString() {
+        return "DimensionDir(level=" + level + ";key=" + key + ")";
     }
 }

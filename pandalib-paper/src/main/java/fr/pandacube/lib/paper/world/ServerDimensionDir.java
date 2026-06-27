@@ -78,5 +78,11 @@ public class ServerDimensionDir extends DimensionDir {
     }
 
 
+    @Override
+    public String toString() {
+        return "ServerDimensionDir(level=" + getLevel() + ";key=" + getKey() + ")";
+    }
+
+
 
 }

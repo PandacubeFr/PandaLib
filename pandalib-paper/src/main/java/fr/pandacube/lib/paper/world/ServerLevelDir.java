@@ -36,4 +36,10 @@ public class ServerLevelDir extends LevelDir {
     public static String getServerLevelName() {
         return ReflectWrapper.wrapTyped(Bukkit.getServer(), CraftServer.class).getServer().getLevelIdName();
     }
+
+
+    @Override
+    public String toString() {
+        return "ServerLevelDir(" + getDirectory().getAbsolutePath() + ")";
+    }
 }

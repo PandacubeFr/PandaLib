@@ -129,4 +129,8 @@ public class LevelDir {
     }
 
 
+    @Override
+    public String toString() {
+        return "LevelDir(" + directory.getAbsoluteFile() + ")";
+    }
 }
