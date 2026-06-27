@@ -29,7 +29,7 @@ public class LevelDir {
      * @return the {@link LevelDir}.
      */
     public static LevelDir ofDirectory(File directory) {
-        if (directory.getAbsoluteFile().equals(ServerLevelDir.INSTANCE.getDirectory().getAbsoluteFile())) {
+        if (directory == null || directory.getAbsoluteFile().equals(ServerLevelDir.INSTANCE.getDirectory().getAbsoluteFile())) {
             return ofServer();
         }
         return new LevelDir(directory);
@@ -42,7 +42,7 @@ public class LevelDir {
      * @return the {@link LevelDir}.
      */
     public static LevelDir named(String name) {
-        return ofDirectory(new File(Bukkit.getWorldContainer(), name));
+        return ofDirectory(name == null ? null : new File(Bukkit.getWorldContainer(), name));
     }
 
 
