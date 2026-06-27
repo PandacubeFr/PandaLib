@@ -115,4 +115,18 @@ public class LevelDir {
     }
 
 
+
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof LevelDir o
+                && this.directory.getAbsoluteFile().equals(o.directory.getAbsoluteFile());
+    }
+
+    @Override
+    public int hashCode() {
+        return directory.getAbsoluteFile().hashCode();
+    }
+
+
 }

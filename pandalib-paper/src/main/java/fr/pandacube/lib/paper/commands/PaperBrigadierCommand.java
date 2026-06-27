@@ -499,6 +499,12 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
 
 
     /**
+     * A suggestion supplier that suggests the names of the worlds currently loaded on this server.
+     */
+    public static final SuggestionsSupplier<CommandSender> TAB_WORLDS_KEY = SuggestionsSupplier.fromStreamSupplier(() -> Bukkit.getWorlds().stream().map(w -> w.getKey().toString()));
+
+
+    /**
      * Wraps the provided {@link SuggestionsSupplier} into a Brigadier’s {@link SuggestionProvider}.
      * @param suggestions the suggestions to wrap.
      * @return a {@link SuggestionProvider} generating the suggestions from the provided {@link SuggestionsSupplier}.

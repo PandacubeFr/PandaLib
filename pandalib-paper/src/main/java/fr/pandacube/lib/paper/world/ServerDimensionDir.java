@@ -25,12 +25,12 @@ public class ServerDimensionDir extends DimensionDir {
     static {
         List<ServerDimensionDir> primaryDimensions = new ArrayList<>(3);
 
-        primaryDimensions.add(ofKey(NamespacedKey.minecraft("overworld")));
+        primaryDimensions.add(fromServerLevel(NamespacedKey.minecraft("overworld")));
         if (Bukkit.getAllowNether()) {
-            primaryDimensions.add(ofKey(NamespacedKey.minecraft("the_nether")));
+            primaryDimensions.add(fromServerLevel(NamespacedKey.minecraft("the_nether")));
         }
         if (Bukkit.getAllowEnd()) {
-            primaryDimensions.add(ofKey(NamespacedKey.minecraft("the_end")));
+            primaryDimensions.add(fromServerLevel(NamespacedKey.minecraft("the_end")));
         }
 
         PRIMARY_DIMENSIONS = Collections.unmodifiableList(primaryDimensions);
@@ -42,7 +42,7 @@ public class ServerDimensionDir extends DimensionDir {
      * @param key the dimension key.
      * @return a {@link ServerDimensionDir}.
      */
-    public static ServerDimensionDir ofKey(final NamespacedKey key) {
+    public static ServerDimensionDir fromServerLevel(final NamespacedKey key) {
         return new ServerDimensionDir(key);
     }
 

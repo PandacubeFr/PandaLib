@@ -2,7 +2,7 @@ package fr.pandacube.lib.paper.backup;
 
 import fr.pandacube.lib.chat.LegacyChatFormat;
 import fr.pandacube.lib.paper.scheduler.SchedulerUtil;
-import fr.pandacube.lib.paper.world.DimensionDir;
+import fr.pandacube.lib.paper.world.ServerDimensionDir;
 import fr.pandacube.lib.util.log.Log;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -37,7 +37,7 @@ public class PaperDimensionBackupProcess extends PaperBackupProcess {
 	
 	@Override
 	public File getSourceDir() {
-		return DimensionDir.fromServerLevel(dimensionKey).getDirectory();
+		return ServerDimensionDir.fromServerLevel(dimensionKey).getDirectory();
 	}
 	
 	@Override

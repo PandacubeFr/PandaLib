@@ -1,7 +1,6 @@
 package fr.pandacube.lib.paper.world;
 
 import org.bukkit.NamespacedKey;
-import org.bukkit.World;
 
 import java.io.File;
 import java.util.Arrays;
@@ -17,30 +16,14 @@ import java.util.stream.Stream;
 public class DimensionDir {
 
     /**
-     * Get the dimension from the provided key in the loaded server level.
-     * @param key the dimension key.
-     * @return the {@link DimensionDir}
-     */
-    public static DimensionDir fromServerLevel(final NamespacedKey key) {
-        return new DimensionDir(ServerLevelDir.INSTANCE, key);
-    }
-
-    /**
-     * Get the dimension from the provided Bukkit {@link World}.
-     * @param world the Bukkit {@link World}.
-     * @return the {@link DimensionDir}
-     */
-    public static DimensionDir fromWorld(final World world) {
-        return new DimensionDir(ServerLevelDir.INSTANCE, world.getKey());
-    }
-
-    /**
      * Get the dimension from the provided key in the provided level directory.
      * @param level the level directory.
      * @param key the dimension key.
      * @return the {@link DimensionDir}
      */
     public static DimensionDir fromLevel(final LevelDir level, final NamespacedKey key) {
+        if (level.equals(ServerLevelDir.INSTANCE))
+            return ServerDimensionDir.fromServerLevel(key);
         return new DimensionDir(level, key);
     }
 
@@ -138,4 +121,15 @@ public class DimensionDir {
     }
 
 
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof DimensionDir o
+                && this.key.equals(o.key)
+                && this.level.equals(o.level);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(level, key);
+    }
 }
