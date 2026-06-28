@@ -1,6 +1,6 @@
 package fr.pandacube.lib.paper.world;
 
-import fr.pandacube.lib.util.FileUtils;
+import fr.pandacube.lib.util.FileUtil;
 import fr.pandacube.lib.util.RandomUtil;
 import fr.pandacube.lib.util.log.Log;
 import org.bukkit.Bukkit;
@@ -77,7 +77,7 @@ public class TemplatedWorldHandler implements Listener {
 			String copiedName = rem.getName();
 			boolean ret = Bukkit.unloadWorld(rem, false);
 			if (ret)
-				FileUtils.delete(new File(Bukkit.getWorldContainer(), copiedName));
+				FileUtil.delete(new File(Bukkit.getWorldContainer(), copiedName));
 			else
 				Log.warning("Unable to unload game world " + copiedName + " for some reason.");
 			return ret;
@@ -121,8 +121,8 @@ public class TemplatedWorldHandler implements Listener {
 		
 		File srcDir = new File(Bukkit.getWorldContainer(), world);
 		File destDir = new File(Bukkit.getWorldContainer(), copiedName);
-		FileUtils.delete(destDir);
-		FileUtils.copy(srcDir, destDir);
+		FileUtil.delete(destDir);
+		FileUtil.copy(srcDir, destDir);
 		new File(destDir, "session.lock").delete();
 		new File(destDir, "uid.dat").delete();
 		

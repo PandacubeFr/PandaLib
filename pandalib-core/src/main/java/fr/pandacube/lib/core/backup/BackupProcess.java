@@ -3,7 +3,7 @@ package fr.pandacube.lib.core.backup;
 import fc.cron.CronExpression;
 import fr.pandacube.lib.chat.LegacyChatFormat;
 import fr.pandacube.lib.core.cron.CronScheduler;
-import fr.pandacube.lib.util.FileUtils;
+import fr.pandacube.lib.util.FileUtil;
 import fr.pandacube.lib.util.log.Log;
 
 import java.io.File;
@@ -242,7 +242,7 @@ public abstract class BackupProcess implements Comparable<BackupProcess>, Runnab
                 catch (final Exception e) {
                     Log.severe("[Backup] Failed: " + sourceDir + " -> " + target, e);
 
-                    FileUtils.delete(target);
+                    FileUtil.delete(target);
                     if (target.exists())
                         Log.warning("unable to delete: " + target);
                 } finally {
