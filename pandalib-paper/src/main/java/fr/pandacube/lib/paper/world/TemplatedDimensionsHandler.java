@@ -44,7 +44,7 @@ public class TemplatedDimensionsHandler implements Listener {
 			return loadedDimensions.get(templateDimension);
 		}
 		try {
-			return loadGameWorld(templateLevel, templateDimension, operationOnLoad);
+			return loadDimension(templateLevel, templateDimension, operationOnLoad);
 		} catch (IllegalStateException e) {
 			Log.severe(e);
 			return null;
@@ -80,7 +80,7 @@ public class TemplatedDimensionsHandler implements Listener {
 			ServerDimensionDir remDir = ServerDimensionDir.ofBukkitWorld(rem);
 
             if (!Bukkit.unloadWorld(rem, false)) {
-				Log.warning("Unable to unload game dimension " + copiedKey + " for some reason.");
+				Log.warning("Unable to unload templated dimension " + copiedKey + " for some reason.");
 				return false;
 			}
 			loadedDimensions.remove(templateDimension);
@@ -93,7 +93,7 @@ public class TemplatedDimensionsHandler implements Listener {
 
 
 	/**
-	 * Unload all the templated worlds, using {@link #unloadDimension(NamespacedKey)}.
+	 * Unload all the templated dimensions, using {@link #unloadDimension(NamespacedKey)}.
 	 */
 	public static void unloadUnusedDimensions() {
 		for (NamespacedKey dim : new ArrayList<>(loadedDimensions.keySet())) {
@@ -106,24 +106,24 @@ public class TemplatedDimensionsHandler implements Listener {
 
 
 	/**
-	 * Tells if the provided template world has a currently loaded copy.
+	 * Tells if the provided template dimension has a currently loaded copy.
 	 * @param templateDimension the dimension used as a template.
-	 * @return true if the world is loaded.
+	 * @return true if the dimension is loaded.
 	 */
-	public static boolean isWorldLoaded(NamespacedKey templateDimension) {
+	public static boolean isDimensionLoaded(NamespacedKey templateDimension) {
 		return loadedDimensions.containsKey(templateDimension);
 	}
 	
 	
 	
-	private static World loadGameWorld(String templateLevel, NamespacedKey templateDimension, Consumer<World> operationOnLoad) throws IOException {
+	private static World loadDimension(String templateLevel, NamespacedKey templateDimension, Consumer<World> operationOnLoad) throws IOException {
 		if (loadedDimensions.containsKey(templateDimension))
-			throw new IllegalStateException("GameWorld "+templateDimension+" is already loaded.");
+			throw new IllegalStateException("Template dimension "+templateDimension+" is already loaded.");
 
 		DimensionDir templateDim = LevelDir.named(templateLevel).getDimension(templateDimension);
 		
 		if (!templateDim.isValidDimension())
-			throw new IllegalStateException("Dimension "+templateDim+" is not a valid dimension.");
+			throw new IllegalStateException("Template dimension "+templateDim+" is not a valid dimension.");
 		
 		NamespacedKey copiedKey = NamespacedKey.fromString(templateDimension.namespace() + ":" + templateDimension.value() + "_gen" + RandomUtil.rand.nextInt(100000, 999999));
 
@@ -143,8 +143,6 @@ public class TemplatedDimensionsHandler implements Listener {
 		}
 		w.setAutoSave(false);
 		loadedDimensions.put(templateDimension, w);
-		if (Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null)
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mvm set hidden true "+copiedKey);
 		operationOnLoad.accept(w);
 		return w;
 	}

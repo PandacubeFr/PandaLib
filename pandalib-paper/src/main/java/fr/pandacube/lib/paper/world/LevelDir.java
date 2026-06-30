@@ -37,7 +37,7 @@ public class LevelDir {
 
 
     /**
-     * Get the level as a sub directory of the current server's world container ({@link Bukkit#getWorldContainer()}).
+     * Get the level as a subdirectory of the current server's world container ({@link Bukkit#getWorldContainer()}).
      * @param name the directory name of a Minecraft level.
      * @return the {@link LevelDir}.
      */

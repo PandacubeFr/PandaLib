@@ -17,7 +17,7 @@ public class ServerDimensionDir extends DimensionDir {
 
     /**
      * An unmodifiable list containing the primary (vanilla) dimensions of this server instance, in the order they
-     * ara loaded. This list can be accessed even if the corresponding worlds are not yet loaded, for instance in the
+     * are loaded. This list can be accessed even if the corresponding worlds are not yet loaded, for instance in the
      * {@link Plugin#onLoad()} method.
      */
     public static final List<ServerDimensionDir> PRIMARY_DIMENSIONS;
