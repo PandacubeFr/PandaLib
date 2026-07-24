@@ -35,16 +35,19 @@ public class TemplatedDimensionsHandler implements Listener {
 	 * Only one copy per template can be loaded per server instance.
 	 * @param templateLevel the level where the template dimension is located.
 	 * @param templateDimension the dimension used as a template.
+	 * @param targetNamespacedKey the target dimension key.
 	 * @param operationOnLoad an optional consumer executed if a world is loaded (it is ignored if a copy of the template is already loaded).
 	 * @return a World instance based on a copy of the provided world.
 	 * @throws IOException if an error occurs while loading a world.
 	 */
-	public static World getOrLoadDimension(String templateLevel, NamespacedKey templateDimension, Consumer<World> operationOnLoad) throws IOException {
+	public static World getOrLoadDimension(String templateLevel, NamespacedKey templateDimension,
+										   NamespacedKey targetNamespacedKey,
+										   Consumer<World> operationOnLoad) throws IOException {
 		if (loadedDimensions.containsKey(templateDimension)) {
 			return loadedDimensions.get(templateDimension);
 		}
 		try {
-			return loadDimension(templateLevel, templateDimension, operationOnLoad);
+			return loadDimension(templateLevel, templateDimension, targetNamespacedKey, operationOnLoad);
 		} catch (IllegalStateException e) {
 			Log.severe(e);
 			return null;
@@ -116,7 +119,8 @@ public class TemplatedDimensionsHandler implements Listener {
 	
 	
 	
-	private static World loadDimension(String templateLevel, NamespacedKey templateDimension, Consumer<World> operationOnLoad) throws IOException {
+	private static World loadDimension(String templateLevel, NamespacedKey templateDimension,
+									   NamespacedKey targetNamespacedKey, Consumer<World> operationOnLoad) throws IOException {
 		if (loadedDimensions.containsKey(templateDimension))
 			throw new IllegalStateException("Template dimension "+templateDimension+" is already loaded.");
 
@@ -124,10 +128,16 @@ public class TemplatedDimensionsHandler implements Listener {
 		
 		if (!templateDim.isValidDimension())
 			throw new IllegalStateException("Template dimension "+templateDim+" is not a valid dimension.");
-		
-		NamespacedKey copiedKey = NamespacedKey.fromString(templateDimension.namespace() + ":" + templateDimension.value() + "_gen" + RandomUtil.rand.nextInt(100000, 999999));
 
-		ServerDimensionDir targetDim = ServerDimensionDir.fromServerLevel(copiedKey);
+		if (targetNamespacedKey == null) {
+			String generatedNamespacedKey = templateDimension.namespace() + ":" + templateDimension.value() + "_tpl" + RandomUtil.rand.nextInt(100000, 999999);
+			targetNamespacedKey = NamespacedKey.fromString(generatedNamespacedKey);
+			if (targetNamespacedKey == null)
+				throw new IllegalArgumentException("Not a valid namespaced key: "+generatedNamespacedKey);
+		}
+
+
+		ServerDimensionDir targetDim = ServerDimensionDir.fromServerLevel(targetNamespacedKey);
 
 		File srcDir = templateDim.getDirectory();
 		File destDir = targetDim.getDirectory();
@@ -137,9 +147,9 @@ public class TemplatedDimensionsHandler implements Listener {
 
 		new File(destDir, "data/paper/metadata.dat").delete(); // contains the dimension’s UUID
 		
-		World w = Bukkit.createWorld(new WorldCreator(copiedKey).environment(Environment.NORMAL));
+		World w = Bukkit.createWorld(new WorldCreator(targetNamespacedKey).environment(Environment.NORMAL));
 		if (w == null) {
-			throw new RuntimeException("Unable to create the dimension " + copiedKey + ": Bukkit.createWorld(...) returned null value.");
+			throw new RuntimeException("Unable to create the dimension " + targetNamespacedKey + ": Bukkit.createWorld(...) returned null value.");
 		}
 		w.setAutoSave(false);
 		loadedDimensions.put(templateDimension, w);
