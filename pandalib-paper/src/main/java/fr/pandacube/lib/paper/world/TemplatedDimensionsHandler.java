@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 /**
@@ -36,18 +37,25 @@ public class TemplatedDimensionsHandler implements Listener {
 	 * @param templateLevel the level where the template dimension is located.
 	 * @param templateDimension the dimension used as a template.
 	 * @param targetNamespacedKey the target dimension key.
+	 * @param unloadExistingTarget true to unload existing dimension at target namespaced key.
+	 *                             If true and a dimension is loaded at the target and is managed by this
+	 *                             {@link TemplatedDimensionsHandler}, it will be un loaded. If it is not managed, the
+	 *                             requested dimension is not loaded and this method returns null.
+	 *                             If false and a dimension is already loaded at the target, this method returns null
+	 *                             and the requested dimension is not loaded.
 	 * @param operationOnLoad an optional consumer executed if a world is loaded (it is ignored if a copy of the template is already loaded).
 	 * @return a World instance based on a copy of the provided world.
 	 * @throws IOException if an error occurs while loading a world.
 	 */
 	public static World getOrLoadDimension(String templateLevel, NamespacedKey templateDimension,
 										   NamespacedKey targetNamespacedKey,
+										   boolean unloadExistingTarget,
 										   Consumer<World> operationOnLoad) throws IOException {
 		if (loadedDimensions.containsKey(templateDimension)) {
 			return loadedDimensions.get(templateDimension);
 		}
 		try {
-			return loadDimension(templateLevel, templateDimension, targetNamespacedKey, operationOnLoad);
+			return loadDimension(templateLevel, templateDimension, targetNamespacedKey, unloadExistingTarget, operationOnLoad);
 		} catch (IllegalStateException e) {
 			Log.severe(e);
 			return null;
@@ -120,20 +128,41 @@ public class TemplatedDimensionsHandler implements Listener {
 	
 	
 	private static World loadDimension(String templateLevel, NamespacedKey templateDimension,
-									   NamespacedKey targetNamespacedKey, Consumer<World> operationOnLoad) throws IOException {
+									   NamespacedKey targetNamespacedKey, boolean unloadExistingTarget,
+									   Consumer<World> operationOnLoad) throws IOException {
 		if (loadedDimensions.containsKey(templateDimension))
 			throw new IllegalStateException("Template dimension "+templateDimension+" is already loaded.");
 
 		DimensionDir templateDim = LevelDir.named(templateLevel).getDimension(templateDimension);
-		
+
 		if (!templateDim.isValidDimension())
 			throw new IllegalStateException("Template dimension "+templateDim+" is not a valid dimension.");
 
-		if (targetNamespacedKey == null) {
-			String generatedNamespacedKey = templateDimension.namespace() + ":" + templateDimension.value() + "_tpl" + RandomUtil.rand.nextInt(100000, 999999);
-			targetNamespacedKey = NamespacedKey.fromString(generatedNamespacedKey);
-			if (targetNamespacedKey == null)
-				throw new IllegalArgumentException("Not a valid namespaced key: "+generatedNamespacedKey);
+		if (targetNamespacedKey != null) {
+			World eventuallyAlreadyLoadedTarget = Bukkit.getWorld(targetNamespacedKey);
+			if (eventuallyAlreadyLoadedTarget != null) {
+				NamespacedKey originalTemplateKeyOfLoadedTarget = getTemplateDimensionOfLoadedWorld(eventuallyAlreadyLoadedTarget);
+				if (originalTemplateKeyOfLoadedTarget != null) {
+					if (unloadExistingTarget) {
+						if (!unloadDimension(originalTemplateKeyOfLoadedTarget))
+							return null;
+					}
+					else {
+						throw new IllegalStateException("Unable to load " + templateDimension + " on target " + targetNamespacedKey + " because there is world loaded there and unloading existing target is disabled.");
+					}
+				}
+				else {
+					throw new IllegalStateException("Unable to load " + templateDimension + " on target " + targetNamespacedKey + " because there is world loaded there that is not managed by this template dimension handler.");
+				}
+			}
+		}
+		else {
+			do {
+				String generatedNamespacedKey = templateDimension.namespace() + ":" + templateDimension.value() + "_tpl" + RandomUtil.rand.nextInt(100000, 999999);
+                targetNamespacedKey = NamespacedKey.fromString(generatedNamespacedKey);
+				if (targetNamespacedKey == null)
+					throw new IllegalStateException("Not a valid namespaced key: "+generatedNamespacedKey);
+			} while (Bukkit.getWorld(targetNamespacedKey) != null);
 		}
 
 
@@ -155,6 +184,18 @@ public class TemplatedDimensionsHandler implements Listener {
 		loadedDimensions.put(templateDimension, w);
 		operationOnLoad.accept(w);
 		return w;
+	}
+
+
+
+
+	private static NamespacedKey getTemplateDimensionOfLoadedWorld(World w) {
+		for (Entry<NamespacedKey, World> e : loadedDimensions.entrySet()) {
+			if (e.getValue().equals(w)) {
+				return e.getKey();
+			}
+		}
+		return null;
 	}
 	
 	
