@@ -1,7 +1,10 @@
 package fr.pandacube.lib.paper.geometry.blocks;
 
 import fr.pandacube.lib.util.RandomUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.structure.Structure;
 import org.bukkit.util.BlockVector;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
@@ -19,6 +22,7 @@ public class AABBBlock implements BlockSet, Cloneable {
 	/* package */ final Vector pos1, pos2;
 	private final Vector center;
 	private final long volume;
+	private final Vector size;
 	private BoundingBox bukkitBoundingBox;
 
 	private AABBBlock(AABBBlock original, int shiftX, int shiftY, int shiftZ) {
@@ -26,6 +30,7 @@ public class AABBBlock implements BlockSet, Cloneable {
 		pos1 = original.pos1.clone().add(shiftVec);
 		pos2 = original.pos2.clone().add(shiftVec);
 		center = original.center.clone().add(shiftVec);
+		size = original.size.clone();
 		volume = original.volume;
 	}
 
@@ -47,6 +52,7 @@ public class AABBBlock implements BlockSet, Cloneable {
 		pos2 = bb.getMax();
 		center = bb.getCenter();
 		volume = (int) bb.getVolume();
+		size = new Vector((int) bb.getWidthX(), (int) bb.getHeight(), (int) bb.getWidthZ());
 		bukkitBoundingBox = bb;
 	}
 
@@ -93,6 +99,8 @@ public class AABBBlock implements BlockSet, Cloneable {
 		pos2 = new Vector(p2x_, p2y_, p2z_);
 		
 		center = new Vector((p1x_ + p2x_) / 2d, (p1y_ + p2y_) / 2d, (p1z_ + p2z_) / 2d);
+
+		size = pos2.clone().subtract(pos1);
 		
 		volume = (long) Math.abs(p2x_ - p1x_) * Math.abs(p2x_ - p1x_) * Math.abs(p2x_ - p1x_);
 	}
@@ -172,6 +180,10 @@ public class AABBBlock implements BlockSet, Cloneable {
 		return volume;
 	}
 
+	public BlockVector getSize() {
+		return new BlockVector(pos1.clone().subtract(pos2.clone()));
+	}
+
 	/**
 	 * Gets the Bukkit equivalent of this bounding box.
 	 * @return a {@link BoundingBox} corresponding to this {@link AABBBlock}.
@@ -182,6 +194,12 @@ public class AABBBlock implements BlockSet, Cloneable {
 					pos2.getX(), pos2.getY(), pos2.getZ());
 		}
 		return bukkitBoundingBox;
+	}
+
+	public Structure getAsStructure(World w, boolean withEntities) {
+		Structure s = Bukkit.getStructureManager().createStructure();
+		s.fill(pos1.toLocation(w), size.toBlockVector(), withEntities);
+		return s;
 	}
 	
 	public Vector getRandomPosition() {
