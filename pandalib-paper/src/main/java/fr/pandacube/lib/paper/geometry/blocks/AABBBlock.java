@@ -153,6 +153,16 @@ public class AABBBlock implements BlockSet, Cloneable {
 		return new AABBBlock(this, x, y, z);
 	}
 
+	/**
+	 * Gets a new {@link AABBBlock} with its coordinates shifted so that its pos1 will be at the provided target.
+	 * @param target the target location to shift a copy of this AABBBlock to.
+	 * @return a shifted bounding box.
+	 */
+	public AABBBlock shiftPos1To(BlockVector target) {
+		Vector shift = target.clone().subtract(pos1);
+		return new AABBBlock(this, shift.getBlockX(), shift.getBlockY(), shift.getBlockZ());
+	}
+
 	@SuppressWarnings("MethodDoesntCallSuperMethod")
 	@Override
 	public AABBBlock clone() {
@@ -180,8 +190,12 @@ public class AABBBlock implements BlockSet, Cloneable {
 		return volume;
 	}
 
+	/**
+	 * Gets the 3D size of this bounding box.
+	 * @return the 3D size of this bounding box.
+	 */
 	public BlockVector getSize() {
-		return new BlockVector(pos1.clone().subtract(pos2.clone()));
+		return new BlockVector(pos1.clone().subtract(pos2));
 	}
 
 	/**
@@ -196,6 +210,13 @@ public class AABBBlock implements BlockSet, Cloneable {
 		return bukkitBoundingBox;
 	}
 
+	/**
+	 * Generate a Structure filled with the area in this bounding box in the provided world.
+	 * @param w the world from which to fill the structure.
+	 * @param withEntities true to include the entities.
+	 * @return a new {@link Structure}.
+	 * @see Structure#fill(Location, BlockVector, boolean)
+	 */
 	public Structure getAsStructure(World w, boolean withEntities) {
 		Structure s = Bukkit.getStructureManager().createStructure();
 		s.fill(pos1.toLocation(w), size.toBlockVector(), withEntities);
