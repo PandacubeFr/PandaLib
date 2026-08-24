@@ -3,6 +3,7 @@ package fr.pandacube.lib.paper.inventory;
 import com.google.common.base.Preconditions;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -11,7 +12,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Dummy implementation of a player inventory.
@@ -21,7 +24,7 @@ public class DummyPlayerInventory extends InventoryWrapper implements PlayerInve
     /**
      * Total number of item slots in the player inventory.
      */
-    public static final int PLAYER_INVENTORY_SIZE = 43; // 36 base inventory + 4 armor slots + 1 off hand + 2 hidden slots (body and saddle)
+    public static final int PLAYER_INVENTORY_SIZE = InventoryType.PLAYER.getDefaultSize(); // 36 base inventory + 4 armor slots + 1 off hand + 2 hidden slots (body and saddle)
 
     private int heldItemSlot;
 
@@ -30,13 +33,21 @@ public class DummyPlayerInventory extends InventoryWrapper implements PlayerInve
      * @param base the inventory itself.
      * @param heldItemSlot the currently held item slot, from 0 to 8.
      */
-    public DummyPlayerInventory(Inventory base, int heldItemSlot) {
+    public DummyPlayerInventory(Inventory base, int heldItemSlot, Map<EquipmentSlot, ItemStack> equipment) {
         super(base);
         if (base.getSize() < PLAYER_INVENTORY_SIZE)
             throw new IllegalArgumentException("base inventory should have a size of " + PLAYER_INVENTORY_SIZE + " (" + base.getSize() + " given).");
         if (heldItemSlot < 0 || heldItemSlot > 8)
             throw new IllegalArgumentException("heldItemSlot should be between 0 and 8 inclusive.");
         this.heldItemSlot = heldItemSlot;
+
+        if (equipment != null) {
+            for (Map.Entry<EquipmentSlot, ItemStack> eq : equipment.entrySet()) {
+                if (eq.getValue() != null) {
+                    setItem(eq.getKey(), eq.getValue());
+                }
+            }
+        }
     }
 
     @Override
@@ -81,7 +92,7 @@ public class DummyPlayerInventory extends InventoryWrapper implements PlayerInve
 
     @Override
     public ItemStack getHelmet() {
-        return getItem(39);
+        return Optional.ofNullable(getItem(39)).orElse(ItemStack.empty());
     }
 
     @Override
@@ -91,7 +102,7 @@ public class DummyPlayerInventory extends InventoryWrapper implements PlayerInve
 
     @Override
     public ItemStack getChestplate() {
-        return getItem(38);
+        return Optional.ofNullable(getItem(38)).orElse(ItemStack.empty());
     }
 
     @Override
@@ -101,7 +112,7 @@ public class DummyPlayerInventory extends InventoryWrapper implements PlayerInve
 
     @Override
     public ItemStack getLeggings() {
-        return getItem(37);
+        return Optional.ofNullable(getItem(37)).orElse(ItemStack.empty());
     }
 
     @Override
@@ -111,7 +122,7 @@ public class DummyPlayerInventory extends InventoryWrapper implements PlayerInve
 
     @Override
     public ItemStack getBoots() {
-        return getItem(36);
+        return Optional.ofNullable(getItem(36)).orElse(ItemStack.empty());
     }
 
     @Override
@@ -124,7 +135,7 @@ public class DummyPlayerInventory extends InventoryWrapper implements PlayerInve
      * @return the SADDLE item stack.
      */
     public ItemStack getSaddle() {
-        return getItem(42);
+        return Optional.ofNullable(getItem(42)).orElse(ItemStack.empty());
     }
 
     /**
@@ -140,7 +151,7 @@ public class DummyPlayerInventory extends InventoryWrapper implements PlayerInve
      * @return the BODY item stack.
      */
     public ItemStack getBody() {
-        return getItem(41);
+        return Optional.ofNullable(getItem(41)).orElse(ItemStack.empty());
     }
 
     /**
@@ -174,12 +185,12 @@ public class DummyPlayerInventory extends InventoryWrapper implements PlayerInve
         return switch (slot) {
             case HAND -> this.getItemInMainHand();
             case OFF_HAND -> this.getItemInOffHand();
-            case FEET -> Objects.requireNonNullElseGet(this.getBoots(), () -> new ItemStack(Material.AIR));
-            case LEGS -> Objects.requireNonNullElseGet(this.getLeggings(), () -> new ItemStack(Material.AIR));
-            case CHEST -> Objects.requireNonNullElseGet(this.getChestplate(), () -> new ItemStack(Material.AIR));
-            case HEAD -> Objects.requireNonNullElseGet(this.getHelmet(), () -> new ItemStack(Material.AIR));
-            case BODY -> Objects.requireNonNullElseGet(this.getBody(), () -> new ItemStack(Material.AIR)); // for horses/wolves armor
-            case SADDLE -> Objects.requireNonNullElseGet(this.getSaddle(), () -> new ItemStack(Material.AIR));
+            case FEET -> this.getBoots();
+            case LEGS -> this.getLeggings();
+            case CHEST -> this.getChestplate();
+            case HEAD -> this.getHelmet();
+            case BODY -> this.getBody(); // for horses/wolves armor
+            case SADDLE -> this.getSaddle();
         };
     }
 

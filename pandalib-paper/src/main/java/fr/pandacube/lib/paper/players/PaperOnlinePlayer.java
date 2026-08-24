@@ -348,12 +348,10 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
      * Player data
      */
 
-    @Override
     default PlayerInventory getInventory() {
         return getBukkitPlayer().getInventory();
     }
 
-    @Override
     default Inventory getEnderChest() {
         return getBukkitPlayer().getEnderChest();
     }

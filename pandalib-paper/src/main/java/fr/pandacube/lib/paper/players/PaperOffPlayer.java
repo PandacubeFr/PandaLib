@@ -1,23 +1,11 @@
 package fr.pandacube.lib.paper.players;
 
-import fr.pandacube.lib.paper.players.PlayerDataWrapper.PlayerDataLoadException;
-import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftServer;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.CompoundTag;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.nbt.NbtIo;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.NameAndId;
-import fr.pandacube.lib.paper.world.LevelDir;
 import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
-import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scoreboard.Team;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.function.UnaryOperator;
 
 /**
@@ -146,83 +134,5 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
     }
 
 
-
-
-    /*
-     * Player data
-     */
-
-    /**
-     * Gets the NBT data from the player-data file.
-     * It will not work if the player is online, because the data on the file are not synchronized with real-time values.
-     * @return the NBT data from the player-data file, or null if the file does not exist.
-     * @throws IllegalStateException if the player is online.
-     */
-    default CompoundTag getPlayerData() {
-        if (isOnline())
-            throw new IllegalStateException("Cannot access data file of " + getName() + " because they're online.");
-        try {
-            return ReflectWrapper.wrapTyped(Bukkit.getServer(), CraftServer.class)
-                    .getServer()
-                    .getPlayerList()
-                    .playerIo()
-                    .load(new NameAndId(getUniqueId(), getName())).orElse(null);
-        } catch (Exception|LinkageError e) {
-            throw new PlayerDataLoadException(getName(), getUniqueId(), e);
-        }
-    }
-
-    /**
-     * Gets a wrapper for the NBT data from the player-data file.
-     * It will not work if the player is online, because the data on the file are not synchronized with real-time values.
-     * @return the NBT data from the player-data file.
-     * @throws IllegalStateException if the player is online.
-     */
-    default PlayerDataWrapper getPlayerDataWrapper() {
-        return new PlayerDataWrapper(getPlayerData());
-    }
-
-    /**
-     * Saves the provided NBT data to the player-data file.
-     * It will not work if the player is online, because the provided data will be lost when the player disconnects.
-     * @param data the data to save.
-     * @throws IllegalStateException if the player is online.
-     * @throws IOException if an IO error occurs.
-     */
-    default void savePlayerData(PlayerDataWrapper data) throws IOException {
-        if (isOnline())
-            throw new IllegalStateException("Cannot write data file of " + getName() + " because they’re online.");
-        File file = getPlayerDataFile(false);
-        File old = getPlayerDataFile(true);
-        old.delete();
-        Files.move(file.toPath(), old.toPath());
-        NbtIo.writeCompressed(data.data(), file.toPath());
-    }
-
-    /**
-     * Gets the file where the player-data is stored.
-     * @param old true to return the path of old data, false to return the actual file.
-     * @return the file where the player-data is stored.
-     */
-    default File getPlayerDataFile(boolean old) {
-        File playerDataDir = new File(LevelDir.ofServer().getDirectory(), "players/data");
-        return new File(playerDataDir, getUniqueId() + (old ? ".dat_old" : ".dat"));
-    }
-
-    /**
-     * Gets the player’s inventory.
-     * @return the player’s inventory.
-     */
-    default PlayerInventory getInventory() {
-        return getPlayerDataWrapper().getInventory();
-    }
-
-    /**
-     * Gets the player’s enderchest.
-     * @return the player’s enderchest.
-     */
-    default Inventory getEnderChest() {
-        return getPlayerDataWrapper().getEnderChest();
-    }
 
 }
