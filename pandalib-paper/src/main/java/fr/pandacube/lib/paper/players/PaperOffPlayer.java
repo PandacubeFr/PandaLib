@@ -205,7 +205,7 @@ public interface PaperOffPlayer extends AbstractOffPlayer {
      * @return the file where the player-data is stored.
      */
     default File getPlayerDataFile(boolean old) {
-        File playerDataDir = new File(LevelDir.ofServer().getDataDirectory(), "players/data");
+        File playerDataDir = new File(LevelDir.ofServer().getDirectory(), "players/data");
         return new File(playerDataDir, getUniqueId() + (old ? ".dat_old" : ".dat"));
     }
 
