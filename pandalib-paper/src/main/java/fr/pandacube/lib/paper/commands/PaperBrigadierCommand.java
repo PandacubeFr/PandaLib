@@ -1,7 +1,6 @@
 package fr.pandacube.lib.paper.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -14,10 +13,7 @@ import fr.pandacube.lib.commands.BadCommandUsage;
 import fr.pandacube.lib.commands.BrigadierCommand;
 import fr.pandacube.lib.commands.SuggestionsSupplier;
 import fr.pandacube.lib.paper.PandaLibPaper;
-import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftVector;
 import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.VanillaCommandWrapper;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Coordinates;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.commands.Vec3Argument;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.APICommandMeta;
 import fr.pandacube.lib.paper.reflect.wrapper.paper.commands.BukkitCommandNode;
 import fr.pandacube.lib.players.standalone.AbstractOffPlayer;
@@ -37,7 +33,6 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.util.Vector;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
@@ -233,8 +228,9 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
                                 return;
                         }
                         else if (BukkitCommandNode.REFLECT.get().isInstance(actualNode)) {
-                            BukkitCommandNode bcn = wrap(actualNode, BukkitCommandNode.class);
-                            if (bcn.getBukkitCommand() instanceof PluginCommand pc && pc.getPlugin().equals(plugin))
+                            @SuppressWarnings("unchecked")
+                            BukkitCommandNode<CommandSourceStack> wrappedBCN = (BukkitCommandNode<CommandSourceStack>) wrap(actualNode, BukkitCommandNode.class);
+                            if (wrappedBCN.getBukkitCommand() instanceof PluginCommand pc && pc.getPlugin().equals(plugin))
                                 return;
                         }
                         Log.warning("Forcing registration of alias /" + aliasToForce + " for command /" + commandNode.getName() + ": replacing " + getCommandIdentity(actualNode));
@@ -306,7 +302,8 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
     private static String getCommandIdentity(CommandNode<CommandSourceStack> command) {
 
         if (BukkitCommandNode.REFLECT.get().isInstance(command)) {
-            BukkitCommandNode wrappedBCN = wrap(command, BukkitCommandNode.class);
+            @SuppressWarnings("unchecked")
+            BukkitCommandNode<CommandSourceStack> wrappedBCN = (BukkitCommandNode<CommandSourceStack>) wrap(command, BukkitCommandNode.class);
             Command bukkitCmd = wrappedBCN.getBukkitCommand();
             if (bukkitCmd instanceof PluginCommand cmd) {
                 return "Node /" + command.getName() + " wrapping Bukkit command /" + bukkitCmd.getName() + " from plugin " + cmd.getPlugin().getName();
@@ -339,7 +336,8 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
 
     private static Boolean isPluginCommand(CommandNode<CommandSourceStack> command) {
         if (BukkitCommandNode.REFLECT.get().isInstance(command)) {
-            BukkitCommandNode wrappedBCN = wrap(command, BukkitCommandNode.class);
+            @SuppressWarnings("unchecked")
+            BukkitCommandNode<CommandSourceStack> wrappedBCN = (BukkitCommandNode<CommandSourceStack>) wrap(command, BukkitCommandNode.class);
             Command bukkitCmd = wrappedBCN.getBukkitCommand();
             if (bukkitCmd instanceof PluginCommand) {
                 return true;
@@ -542,37 +540,6 @@ public abstract class PaperBrigadierCommand extends BrigadierCommand<CommandSour
 
 
 
-
-
-
-
-    /*
-     * Minecraft's argument type
-     */
-
-    /**
-     * Creates a new instance of the Brigadier argument type {@code minecraft:vec3}.
-     * @return the {@code minecraft:vec3} argument type.
-     */
-    public static ArgumentType<Object> argumentMinecraftVec3() {
-        return Vec3Argument.vec3(true);
-    }
-
-    /**
-     * Gets the value of the provided argument of type {@code minecraft:vec3}, from the provided context.
-     * @param context the command execution context.
-     * @param argument the argument name.
-     * @param deflt a default value if the argument is not found.
-     * @return the value of the argument.
-     */
-    public Vector tryGetMinecraftVec3Argument(CommandContext<CommandSourceStack> context, String argument,
-                                              Vector deflt) {
-        return tryGetArgument(context, argument, Coordinates.REFLECT.get(),
-                nmsCoordinate -> CraftVector.toBukkit(
-                        wrap(nmsCoordinate, Coordinates.class).getPosition(context.getSource())
-                ),
-                deflt);
-    }
 
 
 

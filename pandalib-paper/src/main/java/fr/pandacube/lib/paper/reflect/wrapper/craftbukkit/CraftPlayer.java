@@ -1,7 +1,6 @@
 package fr.pandacube.lib.paper.reflect.wrapper.craftbukkit;
 
 import fr.pandacube.lib.paper.reflect.OBCReflect;
-import fr.pandacube.lib.paper.reflect.wrapper.minecraft.server.ServerPlayer;
 import fr.pandacube.lib.reflect.ReflectClass;
 import fr.pandacube.lib.reflect.ReflectField;
 import fr.pandacube.lib.reflect.ReflectMethod;
@@ -19,14 +18,8 @@ import static fr.pandacube.lib.util.ThrowableUtil.wrapReflectEx;
 
 public class CraftPlayer extends ReflectWrapperTyped<Player> {
     public static final ReflectClass<?> REFLECT = wrapEx(() -> OBCReflect.ofClass("entity.CraftPlayer"));
-    private static final ReflectMethod<?> getHandle = wrapEx(() -> REFLECT.method("getHandle"));
     private static final ReflectMethod<?> getPluginWeakReference = wrapEx(() -> REFLECT.method("getPluginWeakReference", Plugin.class));
     private static final ReflectField<?> invertedVisibilityEntities = wrapEx(() -> REFLECT.field("invertedVisibilityEntities"));
-
-    public ServerPlayer getHandle() {
-        return wrap(wrapReflectEx(() -> getHandle.invoke(__getRuntimeInstance())), ServerPlayer.class);
-    }
-
 
     @SuppressWarnings("unchecked")
     public Map<UUID, Set<WeakReference<Plugin>>> getInvertedVisibilityEntities() {

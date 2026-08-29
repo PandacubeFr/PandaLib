@@ -4,9 +4,7 @@ import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.ClientOption.ChatVisibility;
 import com.destroystokyo.paper.SkinParts;
 import fr.pandacube.lib.paper.players.PlayerNonPersistentConfig.ExpirationPolicy;
-import fr.pandacube.lib.paper.reflect.wrapper.craftbukkit.CraftPlayer;
 import fr.pandacube.lib.players.standalone.AbstractOnlinePlayer;
-import fr.pandacube.lib.reflect.wrapper.ReflectWrapper;
 import io.papermc.paper.entity.TeleportFlag.Relative;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
@@ -62,14 +60,6 @@ public interface PaperOnlinePlayer extends PaperOffPlayer, AbstractOnlinePlayer 
     @Override
     default OfflinePlayer getBukkitOfflinePlayer() {
         return getBukkitPlayer();
-    }
-
-    /**
-     * Returns the OBC.CraftPlayer instance wrapped into the {@link CraftPlayer} reflection wrapper.
-     * @return the OBC.CraftPlayer instance wrapped into the {@link CraftPlayer} reflection wrapper.
-     */
-    default CraftPlayer getWrappedCraftPlayer() {
-        return ReflectWrapper.wrapTyped(getBukkitPlayer(), CraftPlayer.class);
     }
 
 
