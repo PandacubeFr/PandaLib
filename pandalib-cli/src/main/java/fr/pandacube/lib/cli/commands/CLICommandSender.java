@@ -1,10 +1,9 @@
 package fr.pandacube.lib.cli.commands;
 
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.audience.MessageType;
-import net.kyori.adventure.identity.Identity;
+import net.kyori.adventure.chat.ChatType;
+import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * A command sender.
@@ -41,9 +40,35 @@ public interface CLICommandSender extends Audience {
      */
     void sendMessage(String message);
 
-    @SuppressWarnings({"UnstableApiUsage", "deprecation"})
-    @Override // force implementation of super-interface default method
-    void sendMessage(@NotNull Identity source, @NotNull Component message, @NotNull MessageType type);
+    /**
+     * Sends the provided message to the sender.
+     * @param message the message to send.
+     */
+    @Override
+    void sendMessage(Component message);
+
+    /**
+     * Sends the provided message to the sender.
+     * @param message the message to send.
+     * @param boundChatType the bound chat type.
+     */
+    @Override
+    default void sendMessage(final Component message, final ChatType.Bound boundChatType) {
+        sendMessage(message);
+    }
+
+    /**
+     * Sends the provided message to the sender.
+     * @param message the message to send.
+     * @param boundChatType the bound chat type.
+     */
+    @Override
+    default void sendMessage(final SignedMessage message, final ChatType.Bound boundChatType) {
+        if (message.unsignedContent() != null)
+            sendMessage(message.unsignedContent());
+    }
+
+
 
 
 }
