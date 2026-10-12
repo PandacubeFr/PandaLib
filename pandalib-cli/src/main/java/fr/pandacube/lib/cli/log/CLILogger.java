@@ -12,6 +12,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -54,9 +55,16 @@ public class CLILogger {
 	 */
 	public static synchronized Logger getLogger(CLI cli) {
 		if (logger == null) {
-			logger = Logger.getGlobal();
+			logger = Logger.getLogger(""); // use root logger instead of global logger ("global" is child of root "")
 			logger.setLevel(Level.ALL);
-			logger.setUseParentHandlers(false);
+			logger.setUseParentHandlers(false); // root logger has no parent, but "just in case"
+
+			// remove default stderr handler
+			for (Handler handler : logger.getHandlers()) {
+				if (handler instanceof ConsoleHandler)
+					logger.removeHandler(handler);
+			}
+
 			
 			Handler cliLogHandler = new ColouredWriter(cli.getConsoleReader());
 			cliLogHandler.setFormatter(new ConciseFormatter(true));
