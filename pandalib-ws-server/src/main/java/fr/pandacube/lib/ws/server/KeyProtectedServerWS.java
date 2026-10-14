@@ -27,7 +27,7 @@ public abstract class KeyProtectedServerWS extends AbstractServerWS {
 
 	@Override
 	public final void onConnect() {
-		getSession().setIdleTimeout(Duration.ofSeconds(10)); // lower idle timeout for not yet logged in clients
+		getSession().setMaxIdleTimeout(Duration.ofSeconds(10).toMillis()); // lower idle timeout for not yet logged in clients
 		// nothing, just wait for the client to login
 	}
 
@@ -39,7 +39,7 @@ public abstract class KeyProtectedServerWS extends AbstractServerWS {
 		else if (payload instanceof LoginPayload login) {
 			if (keySupplier.get().equals(login.key)) {
 				loginSucceed = true;
-				getSession().setIdleTimeout(Duration.ofDays(1000)); // allow infinite timeout for logged in clients
+				getSession().setMaxIdleTimeout(Duration.ofDays(1000).toMillis()); // allow infinite timeout for logged in clients
 				trySendAsJson(new LoginSucceedPayload());
 				onLoginSucceed();
 			}
