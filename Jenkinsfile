@@ -22,7 +22,10 @@ pipeline {
     post {
         always {
             junit testResults: '**/target/surefire-reports/TEST-*.xml', allowEmptyResults: true
-            archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true, allowEmptyArchive: true
+            archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true, allowEmptyArchive: false
+        }
+        cleanup {
+            cleanWs()
         }
     }
 }
