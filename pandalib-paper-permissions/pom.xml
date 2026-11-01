@@ -62,7 +62,7 @@
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
-            <version>1.7.1</version>
+            <version>${vault.version}</version>
             <scope>provided</scope>
             <optional>true</optional>
             <exclusions>
@@ -77,7 +77,7 @@
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
-            <version>7.2.19</version>
+            <version>${worldedit.version}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
